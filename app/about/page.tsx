@@ -40,7 +40,7 @@ export default function AboutPage() {
           <h3 className="text-sm font-medium mb-3">Quick facts</h3>
           <ul className="text-sm text-stone-600 space-y-2">
             <li>📍 FTSM, UKM Bangi, Selangor</li>
-            <li>🎓 PhD, [Institution, Year]</li>
+            <li>🎓 PhD, USM, 2018</li>
           </ul>
         </div>
         <div className="p-4 bg-white border border-stone-200 rounded-lg">
