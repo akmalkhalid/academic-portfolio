@@ -71,3 +71,7 @@ See the README's deployment section or the conversation that generated this proj
 ## License
 
 Content: © Author. Code: MIT.
+=======
+# academic-portfolio
+Dr Akmal's Academic Portfolio
+>>>>>>> 2dcb686f6c5f371cb7c24107cb3bfa01f7d86367
