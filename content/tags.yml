@@ -1,0 +1,33 @@
+# Cross-collection research taxonomy. Used by publications, projects, and courses.
+# `id` is what you reference in other content files (e.g. topicTags: [generative-ai]).
+# `color` controls the badge appearance: purple, teal, coral, blue, green, amber.
+
+- id: generative-ai
+  name: "Generative AI"
+  color: purple
+  description: "Generative models and their applications."
+
+- id: expert-systems
+  name: "Expert Systems"
+  color: amber
+  description: "Knowledge-based and rule-based systems."
+
+- id: evolutionary-computing
+  name: "Evolutionary Computing"
+  color: teal
+  description: "Genetic algorithms, swarm intelligence, metaheuristics."
+
+- id: optimization
+  name: "Computational Optimization"
+  color: blue
+  description: "Combinatorial and continuous optimization."
+
+- id: games-informatics
+  name: "Games Informatics"
+  color: coral
+  description: "AI in games, procedural content generation."
+
+- id: simulation
+  name: "Simulation"
+  color: green
+  description: "Agent-based, Monte Carlo, system dynamics."

@@ -1,0 +1,28 @@
+# Open postgraduate research slots. Set isOpen: false to hide an entry without deleting it.
+
+- slotTitle: "PhD: Explainable Generative AI for Clinical Decision Support"
+  degreeLevel: "PhD"
+  fundingStatus: "Funded"
+  researchArea: ["generative-ai", "expert-systems"]
+  applicationDeadline: "2026-08-31"
+  isOpen: false
+  description: |
+    Funded position attached to the FRGS GenAI clinical project. The successful
+    candidate will work on hybrid LLM-ontology architectures for medical reasoning,
+    with empirical evaluation in collaboration with Hospital UKM.
+  requirements: |
+    Strong background in deep learning. Prior experience with transformer
+    architectures or medical informatics is highly desirable. IELTS 6.5+ required.
+
+- slotTitle: "MSc: Evolutionary AutoML for Edge Deployment"
+  degreeLevel: "MSc"
+  fundingStatus: "Scholarship-Eligible"
+  researchArea: ["evolutionary-computing", "optimization"]
+  isOpen: false
+  description: |
+    Self-funded or scholarship-pursuing candidates welcome. Project explores
+    multi-objective neural architecture search under inference-time and
+    memory constraints typical of edge devices.
+  requirements: |
+    Comfort with Python and PyTorch. Familiarity with evolutionary algorithms
+    or AutoML frameworks (e.g. NNI, AutoKeras) is a plus.

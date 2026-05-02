@@ -1,0 +1,21 @@
+# Site-wide configuration. Edit these values to personalize the entire site.
+authorName: "Dr. Mohd Nor Akmal Khalid"
+authorShortName: "Akmal"
+jobTitle: "Senior Lecturer"
+affiliation: "Faculty of Information Science and Technology, Universiti Kebangsaan Malaysia"
+email: "akmal@ukm.edu.my"
+office: "Block G, Level 3, FTSM, UKM Bangi, 43600 Selangor, Malaysia"
+phone: "+603-8921-6672"
+siteUrl: "https://akmalkhalid.github.io/academic-portfolio"
+
+# Social profiles. Leave any blank to hide it from the site.
+social:
+  scholar: "https://scholar.google.com/citations?user=GJeS-CwAAAAJ"
+  orcid: "https://orcid.org/0000-0002-7909-8869"
+  linkedin: "https://www.linkedin.com/in/mohd-nor-akmal-khalid-ts-dr-a9b69479"
+  github: ""
+  researchgate: "https://www.researchgate.net/profile/Mohd-Nor-Akmal-Khalid"
+
+# Hero section copy
+heroHeadline: "Engineering intelligence at the intersection of theory and play."
+heroSubheadline: "Senior lecturer and researcher at FTSM, UKM. My work explores how generative AI, evolutionary computing, computational intelligence, and games informatics, to solve real-world problems."

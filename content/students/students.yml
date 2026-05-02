@@ -1,0 +1,150 @@
+# All postgraduate students in one file. Edit this file to add or update entries.
+# Set showPublicly to false to hide a student from the website.
+
+- studentName: "Saadeddin Ali Mohammad Hroub"
+  thesisTitle: "Swarm-Based-Enhanced Hyperparameter Optimization for Optimizing Random Forest Models in Surgical Operation Patient Prioritization"
+  degree: "PhD"
+  status: "Ongoing"
+  startYear: 2020
+  role: "Co-Supervisor"
+  researchTags: ["evolutionary-computing", "optimization"]
+  showPublicly: true
+
+- studentName: "Yu Xiong"
+  thesisTitle: "Modeling Of Discrete Chaotic Maps with Enhanced Dynamical Properties and Their Application in Image Encryption"
+  degree: "PhD"
+  status: "Ongoing"
+  startYear: 2021
+  role: "Main Supervisor"
+  researchTags: ["expert-systems", "simulation", "optimization"]
+  showPublicly: true
+  
+- studentName: "Wang Yuting"
+  thesisTitle: "Large-Scale Differential Evolution Algorithm Based on Short-Board Dimension Identification and Improvement with Applications to Flexible Job Shop Scheduling"
+  degree: "PhD"
+  status: "Ongoing"
+  startYear: 2023
+  role: "Main Supervisor"
+  researchTags: ["evolutionary-computing", "optimization"]
+  showPublicly: true
+
+- studentName: "Najwa binti Abd Ghafar"
+  thesisTitle: "A Cognitive Augmented Reality Learning Model Integrating Multimodal Interaction and Gamification to Enhance Long-Term Memory Retention"
+  degree: "PhD"
+  status: "Ongoing"
+  startYear: 2022
+  role: "Co-Supervisor"
+  researchTags: ["expert-systems", "simulation", "games-informatics"]
+  showPublicly: true
+  
+- studentName: "Marwan Ghazwan Mitab Al Zuhairi"
+  thesisTitle: "SHAP Analysis in Metaheuristic Multimodal Features Selection for Disease Progress Prediction"
+  degree: "PhD"
+  status: "Ongoing"
+  startYear: 2022
+  role: "Co-Supervisor"
+  researchTags: ["expert-systems", "evolutionary-computing", "optimization"]
+  showPublicly: true
+
+- studentName: "Wirawati Dewi binti Ahmad"
+  thesisTitle: "Algoritma Kawanan Kucing Pasir Berasaskan Hiperbolik Untuk Masalah Pengoptimuman Pelbagai Objektif Penjadualan Kerja Fleksibel"
+  degree: "PhD"
+  status: "Ongoing"
+  startYear: 2023
+  role: "Co-Supervisor"
+  researchTags: ["expert-systems", "evolutionary-computing", "optimization"]
+  showPublicly: true
+
+- studentName: "Omar Hammad Jasim"
+  thesisTitle: "Deep Learning for Misinformation Detection on Big Data in Arabic language"
+  degree: "PhD"
+  status: "Ongoing"
+  startYear: 2023
+  role: "Co-Supervisor"
+  researchTags: ["expert-systems", "simulation"]
+  showPublicly: true
+
+- studentName: "Md All Moon Tasir"
+  thesisTitle: "Hybrid CNN-Transformer-Mamba Architecture for Interpretable Historical Place Image Classification"
+  degree: "MSc by Research"
+  status: "Ongoing"
+  startYear: 2024
+  role: "Main Supervisor"
+  researchTags: ["evolutionary-computing", "generative-ai", "simulation"]
+  showPublicly: true
+  
+- studentName: "Syed Sohaib Ali Shah"
+  thesisTitle: "PROTO-MOE: Prototype-Guided Sparse MoE for Efficient Multimodal Federated Fall Detection on Edge Devices"
+  degree: "PhD"
+  status: "Ongoing"
+  startYear: 2024
+  role: "Main Supervisor"
+  researchTags: ["expert-systems", "simulation"]
+  showPublicly: true
+
+- studentName: "Halimaton Saadiah binti Sadon"
+  thesisTitle: "Model Pembelajaran Multimodal Adaptif Berteras Keputusan bagi Pengoptimuman Pembelajaran Pelajar Pekak TVET"
+  degree: "PhD"
+  status: "Ongoing"
+  startYear: 2025
+  role: "Main Supervisor"
+  researchTags: ["generative-ai", "games-informatics", "simulation"]
+  showPublicly: true
+  
+- studentName: "Waseem Mishaal Hamdoon"
+  thesisTitle: "An Integrated Explainable AI (XAI) Framework for Urban Air Quality Early Warning: Leveraging Multi Source Environmental and Meteorological Data"
+  degree: "PhD"
+  status: "Ongoing"
+  startYear: 2025
+  role: "Main Supervisor"
+  researchTags: ["evolutionary-computing", "optimization", "simulation"]
+  showPublicly: true
+
+- studentName: "Nur Niswah Hasina binti Mohammad Amin"
+  thesisTitle: "Rangka Kerja Kolaboratif Manusia dan Kecerdasan Buatan dalam Pembelajaran Berasaskan Pemikiran Kreatif"
+  degree: "PhD"
+  status: "Ongoing"
+  startYear: 2025
+  role: "Main Supervisor"
+  researchTags: ["generative-ai", "games-informatics", "simulation"]
+  showPublicly: true
+  
+- studentName: "Zhang Yuhe"
+  thesisTitle: "T.B.D."
+  degree: "PhD"
+  status: "Ongoing"
+  startYear: 2025
+  role: "Main Supervisor"
+  researchTags: ["generative-ai", "games-informatics", "simulation"]
+  showPublicly: false
+
+- studentName: "Mohammad Ayed Abed Alrhman Bani Hani"
+  thesisTitle: "Procedural narrative generation using fine-tuned language models"
+  degree: "PhD"
+  status: "Ongoing"
+  startYear: 2025
+  role: "Main Supervisor"
+  researchTags: ["evolutionary-computing", "optimization", "simulation"]
+  showPublicly: false
+
+- studentName: "Haziqah binti Shamsudin"
+  thesisTitle: "Integration of FINCH Autoencoder Xgboost (AE-Xgb) in Boost epsilon-Greedy Policy Deep Q-Learning in Classifying Highly Imbalanced with High Complexity of Data"
+  degree: "PhD"
+  status: "Graduated"
+  startYear: 2019
+  completionYear: 2023
+  role: "Co-Supervisor"
+  currentPosition: "Senior Lecturer, Taylors University"
+  researchTags: ["optimization", "evolutionary-computing"]
+  showPublicly: true
+
+- studentName: "Nur Izzati binti Abd Kader"
+  thesisTitle: "Hidden Markov Model with Recurrent Neural Network-based Approach in Determining The Impact of Climate Change to Depression in Malaysia"
+  degree: "PhD"
+  status: "Graduated"
+  startYear: 2019
+  completionYear: 2025
+  role: "Co-Supervisor"
+  currentPosition: "Senior Lecturer, Universiti Tenaga Nasional (UNITEN)"
+  researchTags: ["optimization", "evolutionary-computing"]
+  showPublicly: true
