@@ -15,13 +15,13 @@ export default function AboutPage() {
         </p>
         <p>
           My academic journey has been shaped by a single guiding question: <em>How can we design intelligent
-          systems that adapt, optimize, and create — not just compute?</em> This question runs through my work
-          in Generative AI, Evolutionary Computing, Expert Systems, and Games Informatics.
+          systems that adapt, optimize, and create, not just compute?</em> This question runs through my work
+          in Generative AI, Evolutionary Computing, Expert Systems, and Game Informatics.
         </p>
         <p>
           At UKM, I am committed to nurturing the next generation of AI researchers and engineers in Malaysia
           and across the region. I supervise postgraduate students working on cutting-edge problems in
-          metaheuristic optimization, simulation modelling, and applied generative AI.
+          metaheuristic optimization, simulation modeling, and applied generative AI.
         </p>
 
         <h2>Core competencies</h2>
