@@ -1,0 +1,84 @@
+/* Tailwind base, components, utilities */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* =========================================================================
+   Custom styles preserved verbatim from the original <style> block.
+   Keeping them here (rather than in the HTML) means the production HTML
+   only links one stylesheet.
+   ========================================================================= */
+
+/* Theme Variables */
+:root {
+    --color-primary: #4f46e5; /* Indigo 600 */
+    --color-primary-dark: #4338ca; /* Indigo 700 */
+}
+.theme-emerald {
+    --color-primary: #10b981;
+    --color-primary-dark: #059669;
+}
+.theme-rose {
+    --color-primary: #e11d48;
+    --color-primary-dark: #be123c;
+}
+
+/* Language Toggle Logic */
+body[lang="en"] .bm { display: none !important; }
+body[lang="bm"] .en { display: none !important; }
+
+/* Scrollbar & UI */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+.dark ::-webkit-scrollbar-thumb { background: #475569; }
+.glass { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); }
+.dark .glass { background: rgba(30, 41, 59, 0.85); backdrop-filter: blur(12px); }
+.fade-in { animation: fadeIn 0.4s ease-out forwards; }
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Dynamic Path Switching CSS */
+.path-content { display: none; }
+[data-active-path="academic"] .path-academic { display: block; animation: fadeIn 0.4s ease-out forwards; }
+[data-active-path="business"] .path-business { display: block; animation: fadeIn 0.4s ease-out forwards; }
+[data-active-path="creative"] .path-creative { display: block; animation: fadeIn 0.4s ease-out forwards; }
+[data-active-path="it"]       .path-it       { display: block; animation: fadeIn 0.4s ease-out forwards; }
+
+*:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+
+/* Drag and Drop Styles */
+.draggable-item { cursor: grab; }
+.draggable-item:active { cursor: grabbing; opacity: 0.7; }
+.drop-zone {
+    min-height: 48px;
+    border: 2px dashed #cbd5e1;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    text-align: center;
+}
+.dark .drop-zone { border-color: #475569; }
+.drop-zone.drag-over {
+    border-color: var(--color-primary);
+    background-color: rgba(79, 70, 229, 0.1);
+}
+.drop-zone.filled {
+    border-style: solid;
+    border-color: var(--color-primary);
+}
+
+/* Copy Button Utility */
+.copy-btn { opacity: 0.6; transition: opacity 0.2s; }
+.group:hover .copy-btn { opacity: 1; }
+
+/* Medal Animations */
+.medal-pop { animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+@keyframes popIn {
+    0%   { transform: scale(0.5); opacity: 0; }
+    100% { transform: scale(1);   opacity: 1; }
+}

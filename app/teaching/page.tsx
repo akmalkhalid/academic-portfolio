@@ -18,10 +18,49 @@ export default function TeachingPage() {
       <div>
         <h1 className="text-3xl font-medium mb-2">Teaching & mentorship</h1>
         <p className="text-stone-600 max-w-3xl">
-          Courses I teach at FTSM, postgraduate students I supervise, and research opportunities for prospective applicants.
+          Courses I teach at FTSM, postgraduate students I supervise, interactive
+          self-instructional materials, and research opportunities for prospective applicants.
         </p>
       </div>
 
+      {/* Interactive teaching materials — featured prominently */}
+      <section>
+        <h2 className="text-2xl font-medium mb-4">Interactive teaching materials</h2>
+        <p className="text-stone-600 mb-6 max-w-2xl">
+          Self-paced learning modules I've designed to complement my courses. Open access,
+          no registration required.
+        </p>
+        <a
+          href="/courses/prompt-engineering/"
+          className="block p-6 bg-gradient-to-br from-indigo-50 via-white to-emerald-50 border border-stone-200 rounded-lg hover:border-stone-400 hover:shadow-md transition group"
+        >
+          <div className="flex items-start gap-4">
+            <div className="text-3xl">🧠</div>
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="bg-stone-100 text-stone-600 text-[10px] px-1.5 py-0.5 rounded-md font-medium uppercase tracking-wider">
+                  Self-instructional module
+                </span>
+                <span className="tag-green text-[10px] px-1.5 py-0.5 rounded-md font-medium">
+                  Free
+                </span>
+              </div>
+              <h3 className="text-lg font-medium mb-1 group-hover:text-indigo-700 transition">
+                Prompt Engineering Architect
+              </h3>
+              <p className="text-sm text-stone-600 mb-3">
+                An interactive course on designing effective prompts for large language models.
+                Includes quizzes, drag-and-drop exercises, hands-on analytics, and a global leaderboard.
+              </p>
+              <p className="text-xs text-stone-500">
+                Authored at CAIT, FTSM, UKM · English & Bahasa Melayu · Opens in this tab →
+              </p>
+            </div>
+          </div>
+        </a>
+      </section>
+
+      {/* Courses */}
       <section>
         <h2 className="text-2xl font-medium mb-4">Courses</h2>
         {currentCourses.length > 0 && (
@@ -42,6 +81,7 @@ export default function TeachingPage() {
         )}
       </section>
 
+      {/* Supervision */}
       <section>
         <h2 className="text-2xl font-medium mb-4">Postgraduate supervision</h2>
         {ongoing.length > 0 && (
@@ -93,6 +133,7 @@ export default function TeachingPage() {
         )}
       </section>
 
+      {/* Research opportunities */}
       <section className="bg-stone-50 border border-stone-200 rounded-lg p-6">
         <h2 className="text-2xl font-medium mb-4">Opportunities for prospective students</h2>
         <p className="text-stone-600 mb-6 max-w-2xl">
