@@ -155,6 +155,127 @@
             margin-bottom: 4px;
         }
         .dark .verb-panel-label { color: #94a3b8; }
+
+        /* ===== Module 2: Persona Stack Builder ===== */
+        .stack-builder { display: flex; flex-direction: column; gap: 12px; }
+        .stack-row {
+            background: #fff;
+            border: 1px solid rgba(0,0,0,0.06);
+            border-radius: 10px;
+            padding: 12px 14px;
+        }
+        .dark .stack-row { background: #1e293b; border-color: rgba(255,255,255,0.08); }
+        .stack-row-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        .stack-row-tag {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            padding: 3px 8px;
+            border-radius: 999px;
+        }
+        .stack-row-tag.role     { background: #ede9fe; color: #4c1d95; }
+        .stack-row-tag.tone     { background: #fef3c7; color: #78350f; }
+        .stack-row-tag.audience { background: #dbeafe; color: #1e3a8a; }
+        .dark .stack-row-tag.role     { background: rgba(76,29,149,0.35);  color: #ddd6fe; }
+        .dark .stack-row-tag.tone     { background: rgba(120,53,15,0.35);  color: #fde68a; }
+        .dark .stack-row-tag.audience { background: rgba(30,58,138,0.35);  color: #bfdbfe; }
+
+        .stack-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .stack-chip {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 500;
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            user-select: none;
+        }
+        .stack-chip:hover {
+            background: #e2e8f0;
+        }
+        .dark .stack-chip {
+            background: #334155;
+            color: #cbd5e1;
+        }
+        .dark .stack-chip:hover { background: #475569; }
+        .stack-chip[data-active="true"] {
+            background: var(--color-primary);
+            color: #fff;
+            border-color: var(--color-primary);
+        }
+        .dark .stack-chip[data-active="true"] {
+            background: var(--color-primary);
+            color: #fff;
+        }
+
+        /* Live preview */
+        .stack-preview {
+            margin-top: 14px;
+            padding: 14px;
+            border-radius: 12px;
+            background: #0f172a;
+            color: #e2e8f0;
+        }
+        .dark .stack-preview { background: #020617; }
+        .stack-preview-section { margin-bottom: 14px; position: relative; }
+        .stack-preview-section:last-child { margin-bottom: 0; }
+        .stack-preview-label {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #94a3b8;
+            margin-bottom: 6px;
+        }
+        .stack-preview-prompt {
+            font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+            font-size: 12px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            color: #e2e8f0;
+        }
+        .stack-preview-prompt .ph-role     { color: #c4b5fd; }
+        .stack-preview-prompt .ph-tone     { color: #fcd34d; }
+        .stack-preview-prompt .ph-audience { color: #93c5fd; }
+        .stack-preview-shape {
+            font-size: 13px;
+            color: #cbd5e1;
+            line-height: 1.55;
+            font-style: italic;
+        }
+        .stack-copy-btn {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: #334155;
+            color: #e2e8f0;
+            border: none;
+            font-size: 11px;
+            padding: 4px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .stack-copy-btn:hover { background: #475569; }
+        .stack-copy-btn.copied {
+            background: #047857;
+        }
     </style>
 
     <!-- Chart.js for Analytics -->
@@ -1142,24 +1263,34 @@ GARIS MASA ON-CALL: [tampal]</span></span>
                 </h2></div>
                 
                 <div class="prose dark:prose-invert max-w-none text-slate-700 dark:text-slate-300 mb-8">
-                    <p class="en">Assigning a <strong>Role</strong> or <strong>Persona</strong> immediately shifts the LLM's neural weights toward a specific vocabulary and expertise level.</p>
-                    <p class="bm">Menetapkan <strong>Peranan</strong> atau <strong>Persona</strong> serta-merta mengalihkan pemberat neural LLM ke arah perbendaharaan kata dan tahap kepakaran tertentu.</p>
+                    <p class="en">Assigning a <strong>Role</strong> or <strong>Persona</strong> does not give the LLM new knowledge — the model already contains the cardiologist's vocabulary, the lawyer's reasoning patterns, and the poet's diction somewhere in its training data. What persona does is act as a <strong>semantic lens</strong>: it narrows the model's attention to the regions of its latent space where that expertise lives, shifting its probability distribution toward profession-specific vocabulary and reasoning styles.</p>
+                    <p class="en">Think of it this way: a generic prompt ("explain insurance") draws from the entire surface of the model's knowledge — yielding a Wikipedia-flavored average answer. The same prompt prefixed with "<em>Act as a corporate-risk actuary with 15 years in marine reinsurance</em>" reaches into a much narrower, more technical zone of that knowledge. Persona is the single highest-leverage move in prompt engineering because it costs you ~20 tokens to change the entire register of every response that follows.</p>
+                    <p class="bm">Menetapkan <strong>Peranan</strong> atau <strong>Persona</strong> tidak memberi LLM pengetahuan baru — model sudah mengandungi perbendaharaan kata pakar kardiologi, corak penaakulan peguam, dan diksi penyair di suatu tempat dalam data latihannya. Apa yang persona lakukan ialah bertindak sebagai <strong>kanta semantik</strong>: ia menyempitkan perhatian model ke kawasan ruang latennya di mana kepakaran itu berada, mengalihkan taburan kebarangkaliannya ke arah perbendaharaan kata dan gaya penaakulan khusus profesion.</p>
+                    <p class="bm">Bayangkan begini: prompt generik ("terangkan insurans") mengambil daripada keseluruhan permukaan pengetahuan model — menghasilkan jawapan purata bercirikan Wikipedia. Prompt sama dengan awalan "<em>Bertindak sebagai aktuari risiko korporat dengan 15 tahun dalam reinsurans marin</em>" menjangkau ke zon pengetahuan yang lebih sempit dan teknikal. Persona ialah langkah dengan leverage tertinggi dalam kejuruteraan prompt kerana ia menelan kos ~20 token untuk menukar keseluruhan daftar setiap respons selepasnya.</p>
                 </div>
 
                 <!-- 2.1 -->
                 <div class="mb-8 border-l-4 border-primary pl-4">
                     <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2"><span class="en">2.1 The Power of Role-Playing</span><span class="bm">2.1 Kuasa Lakonan Peranan</span></h3>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
+                        <span class="en">A weak persona ("Act as an expert") is barely better than no persona — "expert" describes too broad a region of latent space. A strong persona is <strong>specific in three dimensions</strong>: profession + years of experience + sub-specialty. Compare "Act as a marketer" with "Act as a B2B SaaS growth marketer who's run paid acquisition for three Series-A startups" — the second narrows the lens dramatically.</span>
+                        <span class="bm">Persona lemah ("Bertindak sebagai pakar") hampir tidak lebih baik daripada tiada persona — "pakar" menerangkan kawasan ruang laten yang terlalu luas. Persona kuat ialah <strong>khusus dalam tiga dimensi</strong>: profesion + tahun pengalaman + sub-pengkhususan. Bandingkan "Bertindak sebagai pemasar" dengan "Bertindak sebagai pemasar pertumbuhan SaaS B2B yang telah menjalankan pemerolehan berbayar untuk tiga syarikat permulaan Siri-A" — yang kedua menyempitkan kanta dengan dramatik.</span>
+                    </p>
                     <div class="path-content path-academic space-y-3">
-                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-blue-600 block mb-1">Ex:</strong> <span class="prompt-text font-mono text-sm"><span class="en">Act as a strict peer reviewer for a high-impact neuroscience journal.</span><span class="bm">Bertindak sebagai pengulas rakan sebaya yang tegas untuk jurnal berimpak tinggi.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-blue-600 block mb-1">Ex 1:</strong> <span class="prompt-text font-mono text-sm"><span class="en">Act as a strict peer reviewer for a high-impact neuroscience journal.</span><span class="bm">Bertindak sebagai pengulas rakan sebaya yang tegas untuk jurnal berimpak tinggi.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-blue-600 block mb-1">Ex 2 (three-dimensional):</strong> <span class="prompt-text font-mono text-sm"><span class="en">Act as a quantitative methodologist with 12 years in educational measurement, specialising in IRT models for Malaysian secondary-school assessments.</span><span class="bm">Bertindak sebagai metodologis kuantitatif dengan 12 tahun dalam pengukuran pendidikan, mengkhusus dalam model IRT untuk pentaksiran sekolah menengah Malaysia.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
                     </div>
                     <div class="path-content path-business space-y-3">
-                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-emerald-600 block mb-1">Ex:</strong> <span class="prompt-text font-mono text-sm"><span class="en">Act as a Senior Marketing Executive with 20 years of B2B experience.</span><span class="bm">Bertindak sebagai Eksekutif Pemasaran Kanan dengan pengalaman B2B 20 tahun.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-emerald-600 block mb-1">Ex 1:</strong> <span class="prompt-text font-mono text-sm"><span class="en">Act as a Senior Marketing Executive with 20 years of B2B experience.</span><span class="bm">Bertindak sebagai Eksekutif Pemasaran Kanan dengan pengalaman B2B 20 tahun.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-emerald-600 block mb-1">Ex 2 (three-dimensional):</strong> <span class="prompt-text font-mono text-sm"><span class="en">Act as a fintech compliance officer with 8 years at Bank Negara Malaysia, focused on e-wallet AML controls for cross-border remittance.</span><span class="bm">Bertindak sebagai pegawai pematuhan fintech dengan 8 tahun di Bank Negara Malaysia, memfokuskan kawalan AML e-wallet untuk kiriman wang merentas sempadan.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
                     </div>
                     <div class="path-content path-creative space-y-3">
-                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-purple-600 block mb-1">Ex:</strong> <span class="prompt-text font-mono text-sm"><span class="en">Act as a master world-builder for a dark fantasy RPG.</span><span class="bm">Bertindak sebagai pembina dunia utama untuk permainan fantasi gelap.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-purple-600 block mb-1">Ex 1:</strong> <span class="prompt-text font-mono text-sm"><span class="en">Act as a master world-builder for a dark fantasy RPG.</span><span class="bm">Bertindak sebagai pembina dunia utama untuk permainan fantasi gelap.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-purple-600 block mb-1">Ex 2 (three-dimensional):</strong> <span class="prompt-text font-mono text-sm"><span class="en">Act as a short-story editor at Granta with 15 years of experience, known for championing voice-driven minimalist fiction in the tradition of Lydia Davis and Mary Robison.</span><span class="bm">Bertindak sebagai editor cerpen di Granta dengan 15 tahun pengalaman, dikenali kerana memperjuangkan fiksyen minimalis berasaskan suara dalam tradisi Lydia Davis dan Mary Robison.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
                     </div>
                     <div class="path-content path-it space-y-3">
-                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-amber-600 block mb-1">Ex:</strong> <span class="prompt-text font-mono text-sm"><span class="en">Act as a Senior Cyber-Security Analyst conducting a threat model.</span><span class="bm">Bertindak sebagai Penganalisis Keselamatan Siber yang mengendalikan model ancaman.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-amber-600 block mb-1">Ex 1:</strong> <span class="prompt-text font-mono text-sm"><span class="en">Act as a Senior Cyber-Security Analyst conducting a threat model.</span><span class="bm">Bertindak sebagai Penganalisis Keselamatan Siber yang mengendalikan model ancaman.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-amber-600 block mb-1">Ex 2 (three-dimensional):</strong> <span class="prompt-text font-mono text-sm"><span class="en">Act as a staff site-reliability engineer with 10 years scaling Kubernetes on AWS, who has run on-call rotations for payment systems processing &gt;1M tx/day.</span><span class="bm">Bertindak sebagai jurutera kebolehpercayaan tapak kanan dengan 10 tahun meningkatkan Kubernetes pada AWS, yang telah mengendalikan giliran on-call untuk sistem pembayaran memproses &gt;1J tx/hari.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
                     </div>
                 </div>
 
@@ -1168,21 +1299,53 @@ GARIS MASA ON-CALL: [tampal]</span></span>
                     <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">
                         <span class="en">2.2 Contextual Grounding</span><span class="bm">2.2 Pembumian Konteks</span>
                     </h3>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-3">
+                        <span class="en">Persona tells the model <em>who</em> it is. Context tells it <em>where it stands</em>: who the audience is, what the situation is, why the output matters. Without context, the LLM defaults to the most generic possible answer — the average of every similar request in its training data.</span>
+                        <span class="bm">Persona memberitahu model <em>siapa</em> ia. Konteks memberitahu <em>di mana ia berdiri</em>: siapa khalayaknya, apa situasinya, kenapa output itu penting. Tanpa konteks, LLM kembali kepada jawapan paling generik yang mungkin — purata setiap permintaan serupa dalam data latihannya.</span>
+                    </p>
                     <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
-                        <span class="en">Providing the 'Why' behind the prompt so the AI understands the audience and goal.</span>
-                        <span class="bm">Menyediakan 'Sebab' di sebalik prompt supaya AI memahami khalayak dan matlamat.</span>
+                        <span class="en">A diagnostic checklist for strong context: have you stated the <strong>audience</strong>, the <strong>purpose</strong>, the <strong>stakes</strong>, and the <strong>setting</strong>? Skip any of these and the model fills the gap with a default that's usually wrong for your situation.</span>
+                        <span class="bm">Senarai semak diagnostik untuk konteks kuat: adakah anda nyatakan <strong>khalayak</strong>, <strong>tujuan</strong>, <strong>kepentingan</strong>, dan <strong>seting</strong>? Tinggalkan mana-mana satu dan model mengisi jurang dengan tetapan lalai yang biasanya salah untuk situasi anda.</span>
                     </p>
                     <div class="path-content path-academic space-y-3">
                         <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-blue-600 block mb-1">Ex 1:</strong><span class="prompt-text font-mono text-sm"><span class="en">...I am submitting this to the NSF. The audience consists of expert biologists.</span><span class="bm">...Saya menyerahkan ini kepada pembiaya. Khalayak terdiri daripada ahli biologi pakar.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-blue-600 block mb-1">Ex 2 (full four-element grounding):</strong><span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">AUDIENCE: PhD examiners in computational linguistics.
+PURPOSE: Defend the methodological choice of using human raters instead of BLEU.
+STAKES: This is a single paragraph in my thesis viva — examiners will probe it.
+SETTING: Malaysian university; English-medium defence; 5-minute oral response.</span><span class="bm">KHALAYAK: Pemeriksa PhD dalam linguistik komputasi.
+TUJUAN: Pertahankan pilihan metodologi menggunakan penilai manusia bukannya BLEU.
+KEPENTINGAN: Ini satu perenggan dalam viva tesis — pemeriksa akan menyiasatnya.
+SETING: Universiti Malaysia; pertahanan dalam bahasa Inggeris; respons lisan 5 minit.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
                     </div>
                     <div class="path-content path-business space-y-3">
                         <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-emerald-600 block mb-1">Ex 1:</strong><span class="prompt-text font-mono text-sm"><span class="en">...This memo goes to the Board of Directors, who want bottom-line numbers.</span><span class="bm">...Memo ini dihantar kepada Lembaga Pengarah, yang mahukan angka keuntungan asas.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-emerald-600 block mb-1">Ex 2 (full four-element grounding):</strong><span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">AUDIENCE: Our 40 enterprise customers in ASEAN, mostly CTOs.
+PURPOSE: Announce a 3-month delay in our v2 launch.
+STAKES: We must preserve renewal intent; some contracts are up in Q1.
+SETTING: Email blast on a Tuesday morning, formal but not corporate.</span><span class="bm">KHALAYAK: 40 pelanggan korporat kami di ASEAN, kebanyakannya CTO.
+TUJUAN: Umumkan kelewatan 3 bulan dalam pelancaran v2 kami.
+KEPENTINGAN: Kami mesti mengekalkan niat pembaharuan; beberapa kontrak akan tamat di S1.
+SETING: Hantaran e-mel pagi Selasa, formal tetapi bukan korporat.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
                     </div>
                     <div class="path-content path-creative space-y-3">
                         <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-purple-600 block mb-1">Ex 1:</strong><span class="prompt-text font-mono text-sm"><span class="en">...This story is aimed at middle-grade readers who love mystery and puzzles.</span><span class="bm">...Kisah ini ditujukan kepada pembaca pertengahan umur yang menggemari misteri.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-purple-600 block mb-1">Ex 2 (full four-element grounding):</strong><span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">AUDIENCE: Listeners of a serialised mystery podcast, mostly women 30–50.
+PURPOSE: A cold-open hook for episode 1 of season 2.
+STAKES: Season 1 ended on a cliffhanger; we cannot lose listeners in the first 90 seconds.
+SETTING: Set in present-day Penang, dual-language is welcome but English carries the narrative.</span><span class="bm">KHALAYAK: Pendengar podcast misteri bersiri, kebanyakannya wanita 30–50.
+TUJUAN: Pembukaan menggegarkan untuk episod 1 musim 2.
+KEPENTINGAN: Musim 1 berakhir dengan cliffhanger; kami tidak boleh kehilangan pendengar dalam 90 saat pertama.
+SETING: Berlatarbelakangkan Pulau Pinang masa kini, dwibahasa dialu-alukan tetapi bahasa Inggeris membawa naratif.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
                     </div>
                     <div class="path-content path-it space-y-3">
                         <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-amber-600 block mb-1">Ex 1:</strong><span class="prompt-text font-mono text-sm"><span class="en">...This documentation is for junior developers onboarding to our new API.</span><span class="bm">...Dokumentasi ini adalah untuk pembangun junior yang baru menyertai API kami.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-amber-600 block mb-1">Ex 2 (full four-element grounding):</strong><span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">AUDIENCE: SRE on-call who has 3 minutes before deciding to page the VP.
+PURPOSE: Decide whether the spike in 5xx errors is rollback-worthy.
+STAKES: Customer-facing payment API; every minute = ~RM 8,000 lost revenue.
+SETTING: Grafana dashboard open; deploy was 18 minutes ago.</span><span class="bm">KHALAYAK: SRE on-call yang mempunyai 3 minit sebelum memutuskan untuk memanggil VP.
+TUJUAN: Putuskan sama ada lonjakan ralat 5xx ialah perkara yang patut di-rollback.
+KEPENTINGAN: API pembayaran berdepan pelanggan; setiap minit = ~RM 8,000 hasil hilang.
+SETING: Papan pemuka Grafana terbuka; deploy ialah 18 minit yang lalu.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
                     </div>
                 </div>
 
@@ -1192,20 +1355,24 @@ GARIS MASA ON-CALL: [tampal]</span></span>
                         <span class="en">2.3 Tone and Voice Calibration</span><span class="bm">2.3 Penentukuran Nada dan Suara</span>
                     </h3>
                     <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
-                        <span class="en">Explicitly stating the adjectives that define the output's personality.</span>
-                        <span class="bm">Menyatakan secara jelas kata sifat yang menentukan personaliti output.</span>
+                        <span class="en">Tone is a separate lever from persona. A "senior cardiologist" can speak <em>warmly to a frightened patient</em> or <em>brusquely to a junior resident</em> — same persona, opposite tones. The cheap, reliable trick: pick <strong>three adjectives</strong>. One alone is too vague ("formal"); two often conflict ("formal yet warm" — is fine, but pick the third anchor). Three is enough to lock the register without over-constraining word choice.</span>
+                        <span class="bm">Nada ialah tuil berasingan daripada persona. "Pakar kardiologi kanan" boleh bercakap <em>dengan mesra kepada pesakit yang takut</em> atau <em>secara terus-terang kepada pelatih junior</em> — persona sama, nada bertentangan. Helah murah dan boleh dipercayai: pilih <strong>tiga kata sifat</strong>. Satu sahaja terlalu kabur ("rasmi"); dua selalunya bercanggah ("rasmi tetapi mesra" — boleh, tetapi pilih sauh ketiga). Tiga sudah cukup untuk mengunci daftar tanpa mengekang pilihan perkataan secara berlebihan.</span>
                     </p>
                     <div class="path-content path-academic space-y-3">
                         <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-blue-600 block mb-1">Ex 1:</strong><span class="prompt-text font-mono text-sm"><span class="en">Maintain a tone that is objective, formal, and rigorously analytical.</span><span class="bm">Mengekalkan nada yang objektif, rasmi dan sangat analitikal.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-blue-600 block mb-1">Ex 2 (three-adjective lock):</strong><span class="prompt-text font-mono text-sm"><span class="en">Tone: cautious, citation-aware, intellectually humble. Hedge claims where evidence is mixed; do not hedge where it is established.</span><span class="bm">Nada: berhati-hati, peka petikan, rendah hati secara intelektual. Berpagari tuntutan apabila bukti bercampur; jangan berpagari apabila ia sudah mantap.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
                     </div>
                     <div class="path-content path-business space-y-3">
                         <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-emerald-600 block mb-1">Ex 1:</strong><span class="prompt-text font-mono text-sm"><span class="en">The tone must be apologetic, professional, and solution-oriented.</span><span class="bm">Nada mestilah memohon maaf, profesional dan berorientasikan penyelesaian.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-emerald-600 block mb-1">Ex 2 (three-adjective lock):</strong><span class="prompt-text font-mono text-sm"><span class="en">Tone: direct, numerically literate, slightly impatient — like a CFO running over time in a board meeting.</span><span class="bm">Nada: langsung, celik berangka, sedikit tidak sabar — seperti CFO yang melebihi masa dalam mesyuarat lembaga.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
                     </div>
                     <div class="path-content path-creative space-y-3">
                         <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-purple-600 block mb-1">Ex 1:</strong><span class="prompt-text font-mono text-sm"><span class="en">The narrator's voice should be whimsical, light-hearted, and slightly sarcastic.</span><span class="bm">Suara pencerita haruslah aneh, ringan dan sedikit sarkastik.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-purple-600 block mb-1">Ex 2 (three-adjective lock):</strong><span class="prompt-text font-mono text-sm"><span class="en">Tone: unsettling, restrained, observational — never explain the dread; let the reader infer it from sensory detail.</span><span class="bm">Nada: menggelisahkan, terkawal, pemerhatian — jangan terangkan ketakutan; biarkan pembaca menyimpulkannya daripada butiran deria.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
                     </div>
                     <div class="path-content path-it space-y-3">
                         <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-amber-600 block mb-1">Ex 1:</strong><span class="prompt-text font-mono text-sm"><span class="en">Maintain a tone that is highly technical, concise, and objective.</span><span class="bm">Mengekalkan nada yang sangat teknikal, ringkas dan objektif.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-amber-600 block mb-1">Ex 2 (three-adjective lock):</strong><span class="prompt-text font-mono text-sm"><span class="en">Tone: terse, blameless, action-oriented. Past tense for events; imperative mood for fixes. No adverbs.</span><span class="bm">Nada: ringkas, tanpa salah-menyalah, berorientasikan tindakan. Kala lampau untuk peristiwa; mood imperatif untuk pembaikan. Tiada adverb.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
                     </div>
                 </div>
 
@@ -1215,20 +1382,24 @@ GARIS MASA ON-CALL: [tampal]</span></span>
                         <span class="en">2.4 Audience Targeting</span><span class="bm">2.4 Penyasaran Khalayak</span>
                     </h3>
                     <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
-                        <span class="en">Adjusting the output complexity by explicitly naming the intended reader.</span>
-                        <span class="bm">Menyelaraskan kerumitan output dengan menamakan pembaca yang disasarkan secara jelas.</span>
+                        <span class="en">Naming the audience is the cheapest way to control complexity. The ladder goes roughly: 5-year-old → middle-school student → smart undergraduate → graduate student → working professional → domain expert. Each rung up doubles the jargon density the model permits itself. The pro move is to name the audience <em>and</em> what they already know — e.g. "a backend engineer who's never used Kafka but is fluent in Postgres". That second clause is what separates good audience targeting from generic "explain to a beginner."</span>
+                        <span class="bm">Menamakan khalayak ialah cara paling murah untuk mengawal kerumitan. Tangga lebih kurang: kanak-kanak 5 tahun → pelajar sekolah menengah → siswazah pintar → pelajar pascasiswazah → profesional kerja → pakar domain. Setiap anak tangga ke atas menggandakan ketumpatan jargon yang model benarkan dirinya. Helah pakar ialah menamakan khalayak <em>dan</em> apa yang mereka sudah tahu — contohnya "jurutera backend yang tidak pernah menggunakan Kafka tetapi fasih dalam Postgres". Klausa kedua itulah yang membezakan penyasaran khalayak yang baik daripada "terangkan kepada pemula" generik.</span>
                     </p>
                     <div class="path-content path-academic space-y-3">
                         <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-blue-600 block mb-1">Ex 1:</strong><span class="prompt-text font-mono text-sm"><span class="en">Explain this quantum physics concept to a first-year undergraduate student.</span><span class="bm">Terangkan konsep fizik kuantum ini kepada pelajar sarjana muda tahun pertama.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-blue-600 block mb-1">Ex 2 (audience + prior knowledge):</strong><span class="prompt-text font-mono text-sm"><span class="en">Explain Bayesian model averaging to a PhD student in econometrics who is comfortable with classical OLS and likelihood theory but has never used MCMC.</span><span class="bm">Terangkan purata model Bayesian kepada pelajar PhD ekonometrik yang selesa dengan OLS klasik dan teori kebolehjadian tetapi tidak pernah menggunakan MCMC.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
                     </div>
                     <div class="path-content path-business space-y-3">
                         <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-emerald-600 block mb-1">Ex 1:</strong><span class="prompt-text font-mono text-sm"><span class="en">Explain this software update to a non-technical C-level executive.</span><span class="bm">Terangkan kemas kini perisian ini kepada eksekutif bukan teknikal.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-emerald-600 block mb-1">Ex 2 (audience + prior knowledge):</strong><span class="prompt-text font-mono text-sm"><span class="en">Explain our churn-reduction strategy to a board member who built supply-chain businesses and reads P&L statements fluently but has never run a SaaS.</span><span class="bm">Terangkan strategi pengurangan churn kami kepada ahli lembaga yang membina perniagaan rantaian bekalan dan membaca penyata P&L dengan fasih tetapi tidak pernah menjalankan SaaS.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
                     </div>
                     <div class="path-content path-creative space-y-3">
                         <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-purple-600 block mb-1">Ex 1:</strong><span class="prompt-text font-mono text-sm"><span class="en">Write this fairy tale so it is easily understandable for a 5-year-old child.</span><span class="bm">Tulis kisah dongeng ini supaya mudah difahami oleh kanak-kanak berumur 5 tahun.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-purple-600 block mb-1">Ex 2 (audience + prior knowledge):</strong><span class="prompt-text font-mono text-sm"><span class="en">Pitch this novel concept to a literary agent who specialises in upmarket contemporary fiction, knows the Malaysian/Singaporean market well, and has rejected magical realism in the past.</span><span class="bm">Tawarkan konsep novel ini kepada ejen sastera yang mengkhusus dalam fiksyen kontemporari upmarket, mengenali pasaran Malaysia/Singapura dengan baik, dan pernah menolak realisme magis pada masa lalu.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
                     </div>
                     <div class="path-content path-it space-y-3">
                         <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-amber-600 block mb-1">Ex 1:</strong><span class="prompt-text font-mono text-sm"><span class="en">Explain how Kubernetes works to a Junior Front-End Developer.</span><span class="bm">Terangkan bagaimana Kubernetes berfungsi kepada Pembangun Front-End Junior.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-amber-600 block mb-1">Ex 2 (audience + prior knowledge):</strong><span class="prompt-text font-mono text-sm"><span class="en">Explain Rust's borrow checker to a senior C++ engineer who's fluent with RAII and smart pointers but has never touched Rust.</span><span class="bm">Terangkan borrow checker Rust kepada jurutera C++ kanan yang fasih dengan RAII dan smart pointer tetapi tidak pernah menyentuh Rust.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
                     </div>
                 </div>
 
@@ -1237,9 +1408,149 @@ GARIS MASA ON-CALL: [tampal]</span></span>
                     <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">
                         <span class="en">2.5 Multi-Persona Debate</span><span class="bm">2.5 Perdebatan Pelbagai Persona</span>
                     </h3>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-3">
+                        <span class="en">Instead of asking one persona for an answer, ask several to debate. The model then weighs perspectives against each other before producing a synthesis — which surfaces trade-offs that a single voice would gloss over. This is the same insight behind <em>Reflection of Thoughts (ROT)</em> in the literature: a panel of experts step-by-step, then a synthesis step.</span>
+                        <span class="bm">Bukannya bertanya satu persona untuk jawapan, minta beberapa untuk berdebat. Model kemudian menimbang perspektif antara satu sama lain sebelum menghasilkan sintesis — yang mendedahkan trade-off yang akan disembunyikan oleh satu suara sahaja. Ini idea sama di sebalik <em>Reflection of Thoughts (ROT)</em> dalam literatur: panel pakar langkah demi langkah, kemudian langkah sintesis.</span>
+                    </p>
                     <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
-                        <span class="en">Instructing the LLM to adopt differing personas to debate a topic before generating an answer.</span>
-                        <span class="bm">Mengarahkan LLM untuk menggunakan persona berbeza untuk membahaskan satu topik.</span>
+                        <span class="en">The pattern is reliable: <strong>(1) name 2–4 personas with deliberately different priorities</strong>, <strong>(2) ask each to argue their case</strong>, <strong>(3) ask for a synthesis that names the trade-offs explicitly</strong>. Use this whenever the "right answer" depends on values you haven't yet committed to.</span>
+                        <span class="bm">Coraknya boleh dipercayai: <strong>(1) namakan 2–4 persona dengan keutamaan yang sengaja berbeza</strong>, <strong>(2) minta setiap satu untuk berhujah</strong>, <strong>(3) minta sintesis yang menamakan trade-off secara eksplisit</strong>. Gunakan ini apabila "jawapan yang betul" bergantung pada nilai yang anda belum komit.</span>
+                    </p>
+                    <div class="path-content path-academic space-y-3">
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-blue-600 block mb-1">Ex 1 — Methodology debate:</strong><span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">Three reviewers will debate my proposed methodology:
+1. A POSITIVIST quantitative methodologist (privileges replicability and statistical power)
+2. A CRITICAL theorist (privileges context, power dynamics, and reflexivity)
+3. A PRAGMATIST (privileges feasibility and policy impact)
+
+Each reviewer writes a 4-sentence critique of the methodology below. Then write a 6-sentence synthesis that names the three trade-offs that any decision must accept.
+
+METHODOLOGY: [paste]</span><span class="bm">Tiga pengulas akan berdebat tentang metodologi cadangan saya:
+1. Metodologis kuantitatif POSITIVIS (mengutamakan kebolehulangan dan kuasa statistik)
+2. Teoris KRITIKAL (mengutamakan konteks, dinamik kuasa, dan refleksiviti)
+3. PRAGMATIS (mengutamakan kebolehlaksanaan dan kesan dasar)
+
+Setiap pengulas menulis kritikan 4 ayat tentang metodologi di bawah. Kemudian tulis sintesis 6 ayat yang menamakan tiga trade-off yang mana-mana keputusan mesti terima.
+
+METODOLOGI: [tampal]</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                    </div>
+                    <div class="path-content path-business space-y-3">
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-emerald-600 block mb-1">Ex 1 — Pricing decision panel:</strong><span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">Convene four advisors to debate our pricing change:
+1. A CFO obsessed with gross margin
+2. A growth marketer obsessed with funnel conversion
+3. A customer success lead worried about churn from existing accounts
+4. A competitor analyst tracking the market
+
+Each advisor writes 3 bullets defending their position. Then write a 1-paragraph synthesis I can take to the next exec meeting that names what we're trading off and recommends a course of action.
+
+PROPOSED CHANGE: [paste]</span><span class="bm">Adakan empat penasihat untuk berdebat perubahan harga kami:
+1. CFO obses dengan margin kasar
+2. Pemasar pertumbuhan obses dengan penukaran funnel
+3. Ketua kejayaan pelanggan bimbang tentang churn daripada akaun sedia ada
+4. Penganalisis pesaing menjejak pasaran
+
+Setiap penasihat menulis 3 bullet mempertahankan kedudukan mereka. Kemudian tulis sintesis 1-perenggan yang boleh saya bawa ke mesyuarat eksekutif seterusnya yang menamakan apa yang kami trade-off dan mengesyorkan tindakan.
+
+CADANGAN PERUBAHAN: [tampal]</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                    </div>
+                    <div class="path-content path-creative space-y-3">
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-purple-600 block mb-1">Ex 1 — Two editors, one manuscript:</strong><span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">Two editors will give notes on my opening chapter:
+1. A DEVELOPMENTAL editor focused on story structure, stakes, and character arc
+2. A LINE editor focused on sentence rhythm, word choice, and unnecessary modifiers
+
+Each writes 5 numbered notes, quoting the line they're reacting to. Then write a 4-sentence note from me-to-myself: which feedback to act on first, which to defer, and why.
+
+OPENING CHAPTER: [paste]</span><span class="bm">Dua editor akan memberi nota pada bab pembukaan saya:
+1. Editor PEMBANGUNAN memfokuskan struktur cerita, kepentingan, dan lengkok watak
+2. Editor LINE memfokuskan irama ayat, pilihan perkataan, dan pengubahsuai tidak perlu
+
+Setiap satu menulis 5 nota bernombor, memetik baris yang mereka bertindak balas. Kemudian tulis nota 4 ayat dari saya-kepada-diri-sendiri: maklum balas yang mana untuk bertindak dahulu, yang mana untuk tangguhkan, dan kenapa.
+
+BAB PEMBUKAAN: [tampal]</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                    </div>
+                    <div class="path-content path-it space-y-3">
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-amber-600 block mb-1">Ex 1 — Architecture review panel:</strong><span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">Three engineers will review my proposed architecture:
+1. A SECURITY engineer (privileges blast-radius and least-privilege)
+2. A PERFORMANCE engineer (privileges p99 latency and throughput)
+3. A COST engineer (privileges run rate and reserved-instance commitments)
+
+Each writes 3 concerns and 1 question they would ask in the design review. Then write a synthesis section "What we're optimising for" that ranks the three concerns in order of priority for our context.
+
+PROPOSED ARCHITECTURE: [paste]</span><span class="bm">Tiga jurutera akan mengulas seni bina cadangan saya:
+1. Jurutera KESELAMATAN (mengutamakan radius letupan dan least-privilege)
+2. Jurutera PRESTASI (mengutamakan latensi p99 dan throughput)
+3. Jurutera KOS (mengutamakan kadar runtime dan komitmen reserved-instance)
+
+Setiap satu menulis 3 kebimbangan dan 1 soalan yang mereka akan tanya dalam semakan reka bentuk. Kemudian tulis seksyen sintesis "Apa yang kita optimumkan" yang menyusun tiga kebimbangan mengikut keutamaan untuk konteks kami.
+
+SENI BINA DICADANGKAN: [tampal]</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                    </div>
+                </div>
+
+                <!-- 2.6 NEW: Interactive Persona Stack Builder -->
+                <div class="mb-8 border-l-4 border-primary pl-4">
+                    <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">
+                        <span class="en">2.6 Interactive Persona Stack Builder</span><span class="bm">2.6 Pembina Tindanan Persona Interaktif</span>
+                    </h3>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-3">
+                        <span class="en">Module 1.6 taught you to pick the right <em>verb</em>. This sandbox teaches you to <em>stack</em> persona + tone + audience into a single assembled prompt. Pick one option from each row below and watch the assembled prompt and the predicted response shape update in real time. The goal: build intuition for how each layer changes the model's behaviour.</span>
+                        <span class="bm">Modul 1.6 mengajar anda memilih <em>kata kerja</em> yang betul. Sandbox ini mengajar anda <em>menyusun</em> persona + nada + khalayak ke dalam satu prompt tersusun. Pilih satu pilihan daripada setiap baris di bawah dan lihat prompt tersusun dan bentuk respons diramalkan berubah secara langsung. Matlamat: membina intuisi tentang cara setiap lapisan mengubah tingkah laku model.</span>
+                    </p>
+
+                    <!-- Stack chips -->
+                    <div class="stack-builder mt-4 mb-2">
+                        <div class="stack-row" data-stack-row="role">
+                            <div class="stack-row-label">
+                                <span class="stack-row-tag role"><span class="en">ROLE</span><span class="bm">PERANAN</span></span>
+                                <span class="text-xs text-slate-500 dark:text-slate-400">
+                                    <span class="en">who the model is</span><span class="bm">siapa model itu</span>
+                                </span>
+                            </div>
+                            <div class="stack-chips" id="stack-chips-role"></div>
+                        </div>
+                        <div class="stack-row" data-stack-row="tone">
+                            <div class="stack-row-label">
+                                <span class="stack-row-tag tone"><span class="en">TONE</span><span class="bm">NADA</span></span>
+                                <span class="text-xs text-slate-500 dark:text-slate-400">
+                                    <span class="en">three adjectives that lock the register</span><span class="bm">tiga kata sifat yang mengunci daftar</span>
+                                </span>
+                            </div>
+                            <div class="stack-chips" id="stack-chips-tone"></div>
+                        </div>
+                        <div class="stack-row" data-stack-row="audience">
+                            <div class="stack-row-label">
+                                <span class="stack-row-tag audience"><span class="en">AUDIENCE</span><span class="bm">KHALAYAK</span></span>
+                                <span class="text-xs text-slate-500 dark:text-slate-400">
+                                    <span class="en">who is reading this</span><span class="bm">siapa yang membacanya</span>
+                                </span>
+                            </div>
+                            <div class="stack-chips" id="stack-chips-audience"></div>
+                        </div>
+                    </div>
+
+                    <!-- Live preview -->
+                    <div class="stack-preview" id="stack-preview">
+                        <div class="stack-preview-section">
+                            <div class="stack-preview-label">
+                                <span class="en">Assembled prompt</span><span class="bm">Prompt tersusun</span>
+                            </div>
+                            <div class="stack-preview-prompt" id="stack-prompt"></div>
+                            <button id="stack-copy" class="stack-copy-btn">
+                                <i class="fa-solid fa-copy"></i>
+                                <span class="en">Copy</span><span class="bm">Salin</span>
+                            </button>
+                        </div>
+                        <div class="stack-preview-section">
+                            <div class="stack-preview-label">
+                                <span class="en">Predicted response shape</span><span class="bm">Bentuk respons diramalkan</span>
+                            </div>
+                            <div class="stack-preview-shape" id="stack-shape"></div>
+                        </div>
+                    </div>
+
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-3">
+                        <i class="fa-solid fa-info-circle mr-1"></i>
+                        <span class="en">Tip: try switching only the Role chip while keeping Tone and Audience constant. Notice how the same audience question can be answered by a "constitutional lawyer" and a "village elder" with very different vocabulary and structure.</span>
+                        <span class="bm">Petua: cuba tukar hanya chip Peranan sambil mengekalkan Nada dan Khalayak tetap. Perhatikan bagaimana soalan khalayak yang sama boleh dijawab oleh "peguam perlembagaan" dan "tetua kampung" dengan perbendaharaan kata dan struktur yang sangat berbeza.</span>
                     </p>
                 </div>
 
@@ -3374,6 +3685,200 @@ Petunjuk: Fokus pada "cukai karbon" dan "subsidi boleh diperbaharui".</span></sp
             if (initial) activate(initial.dataset.verb);
         }
 
+        // --- 2.6 Persona Stack Builder ---
+        // Chip options per row, with bilingual labels and the text inserted into the
+        // assembled prompt. Each option also carries a "shape" hint describing how
+        // the chip flavours the predicted response.
+        const STACK_OPTIONS = {
+            role: [
+                { id: 'lawyer',    label: { en: 'Constitutional lawyer', bm: 'Peguam perlembagaan' },
+                  text:  { en: 'a constitutional lawyer with 20 years arguing cases at the Federal Court',
+                           bm: 'peguam perlembagaan dengan 20 tahun berhujah di Mahkamah Persekutuan' },
+                  shape: { en: 'precedent-citing, hedged with "subject to", clause-by-clause structure',
+                           bm: 'mempetik preseden, berpagari dengan "tertakluk kepada", struktur klausa demi klausa' } },
+                { id: 'doctor',    label: { en: 'Family doctor',         bm: 'Doktor keluarga' },
+                  text:  { en: 'a family doctor with 15 years in primary-care practice',
+                           bm: 'doktor keluarga dengan 15 tahun dalam amalan penjagaan primer' },
+                  shape: { en: 'clinical-but-warm, mentions when to escalate, uses analogies for body systems',
+                           bm: 'klinikal-tetapi-mesra, menyebut bila perlu eskalasi, guna analogi sistem badan' } },
+                { id: 'engineer',  label: { en: 'Senior software engineer', bm: 'Jurutera perisian kanan' },
+                  text:  { en: 'a senior software engineer with 12 years building production distributed systems',
+                           bm: 'jurutera perisian kanan dengan 12 tahun membina sistem teragih produksi' },
+                  shape: { en: 'trade-off framed, mentions failure modes, code-aware vocabulary',
+                           bm: 'dirangka trade-off, menyebut mod kegagalan, perbendaharaan kata sedar kod' } },
+                { id: 'elder',     label: { en: 'Village elder',         bm: 'Tetua kampung' },
+                  text:  { en: 'a Malaysian village elder who has settled community disputes for 30 years',
+                           bm: 'tetua kampung Malaysia yang telah menyelesaikan pertikaian komuniti selama 30 tahun' },
+                  shape: { en: 'story-shaped, uses proverbs, references community over individual',
+                           bm: 'berbentuk cerita, guna peribahasa, merujuk komuniti melebihi individu' } },
+                { id: 'editor',    label: { en: 'Literary editor',       bm: 'Editor sastera' },
+                  text:  { en: 'a literary editor at a respected independent press, known for line-level rigor',
+                           bm: 'editor sastera di akhbar bebas yang dihormati, dikenali kerana ketegasan peringkat baris' },
+                  shape: { en: 'quotes specific phrases, suggests cuts, attends to rhythm and concision',
+                           bm: 'memetik frasa tertentu, mencadangkan potongan, memberi perhatian kepada irama dan keringkasan' } }
+            ],
+            tone: [
+                { id: 'precise',  label: { en: 'Precise',            bm: 'Tepat' },
+                  text: { en: 'precise, evidence-led, and economical with words',
+                          bm: 'tepat, dipandu bukti, dan ekonomik dengan perkataan' },
+                  shape: { en: 'short sentences, qualifying claims, numbers where possible',
+                           bm: 'ayat pendek, tuntutan berpagari, nombor jika mungkin' } },
+                { id: 'warm',     label: { en: 'Warm',               bm: 'Mesra' },
+                  text: { en: 'warm, encouraging, and patient with confusion',
+                          bm: 'mesra, menggalakkan, dan sabar dengan kekeliruan' },
+                  shape: { en: 'second-person ("you"), normalising language, examples over abstractions',
+                           bm: 'orang kedua ("anda"), bahasa menormalkan, contoh melebihi abstraksi' } },
+                { id: 'blunt',    label: { en: 'Blunt',              bm: 'Terus-terang' },
+                  text: { en: 'blunt, time-conscious, and slightly impatient',
+                          bm: 'terus-terang, sedar masa, dan sedikit tidak sabar' },
+                  shape: { en: 'leads with the answer, no preamble, willing to say "this is wrong"',
+                           bm: 'mulakan dengan jawapan, tiada mukadimah, sanggup kata "ini salah"' } },
+                { id: 'narrative',label: { en: 'Narrative',          bm: 'Naratif' },
+                  text: { en: 'narrative, observational, and unhurried',
+                          bm: 'naratif, pemerhatian, dan tidak tergesa-gesa' },
+                  shape: { en: 'prose paragraphs, sensory anchors, slow build to the point',
+                           bm: 'perenggan prosa, sauh deria, pembinaan perlahan ke matlamat' } }
+            ],
+            audience: [
+                { id: 'highschool', label: { en: 'High-school student', bm: 'Pelajar sekolah menengah' },
+                  text: { en: 'a Malaysian Form-5 student who has the basics but no specialist vocabulary',
+                          bm: 'pelajar Tingkatan 5 Malaysia yang ada asas tetapi tiada perbendaharaan kata pakar' },
+                  shape: { en: 'no acronyms without expansion, concrete examples, ~150 words',
+                           bm: 'tiada singkatan tanpa pengembangan, contoh konkrit, ~150 patah kata' } },
+                { id: 'colleague',  label: { en: 'Peer colleague',       bm: 'Rakan sekerja' },
+                  text: { en: 'a peer colleague in my field who knows the basics but is new to this specific topic',
+                          bm: 'rakan sekerja dalam bidang saya yang tahu asas tetapi baru kepada topik khusus ini' },
+                  shape: { en: 'assumed shared vocabulary, references our shared tools, ~300 words',
+                           bm: 'perbendaharaan kata dikongsi diandaikan, rujuk alat kongsi, ~300 patah kata' } },
+                { id: 'exec',       label: { en: 'Time-pressed executive', bm: 'Eksekutif sibuk' },
+                  text: { en: 'a time-pressed executive who reads on her phone between meetings',
+                          bm: 'eksekutif sibuk yang membaca di telefon antara mesyuarat' },
+                  shape: { en: 'TL;DR up top, 3 bullets max, action-oriented language',
+                           bm: 'TL;DR di atas, maksimum 3 bullet, bahasa berorientasikan tindakan' } },
+                { id: 'expert',     label: { en: 'Domain expert',         bm: 'Pakar domain' },
+                  text: { en: 'a domain expert who will fact-check every claim',
+                          bm: 'pakar domain yang akan menyemak setiap dakwaan' },
+                  shape: { en: 'full jargon, no hand-holding, citations where claims are non-trivial',
+                           bm: 'jargon penuh, tiada bimbingan, petikan apabila tuntutan bukan remeh' } }
+            ]
+        };
+
+        // Default selections (when the page first loads)
+        const stackState = { role: 'engineer', tone: 'precise', audience: 'colleague' };
+
+        function getLang() {
+            // Read from body[lang] which the existing toggle already manages
+            return (document.body.getAttribute('lang') === 'bm') ? 'bm' : 'en';
+        }
+
+        function findOption(row, id) {
+            return STACK_OPTIONS[row].find(o => o.id === id) || STACK_OPTIONS[row][0];
+        }
+
+        function renderStackChips() {
+            const lang = getLang();
+            Object.keys(STACK_OPTIONS).forEach(row => {
+                const container = document.getElementById(`stack-chips-${row}`);
+                if (!container) return;
+                container.innerHTML = STACK_OPTIONS[row].map(opt => {
+                    const active = stackState[row] === opt.id;
+                    return `<span class="stack-chip" role="button" tabindex="0"
+                                  data-row="${row}" data-id="${opt.id}"
+                                  data-active="${active}">
+                                <span class="en">${opt.label.en}</span><span class="bm">${opt.label.bm}</span>
+                            </span>`;
+                }).join('');
+            });
+        }
+
+        function renderStackPreview() {
+            const role     = findOption('role',     stackState.role);
+            const tone     = findOption('tone',     stackState.tone);
+            const audience = findOption('audience', stackState.audience);
+
+            const promptEl = document.getElementById('stack-prompt');
+            const shapeEl  = document.getElementById('stack-shape');
+            if (!promptEl || !shapeEl) return;
+
+            // Build the bilingual prompt. We render both EN and BM in separate spans
+            // and let the body[lang] toggle reveal the appropriate one.
+            const lines = [
+                {
+                    en: `Act as <span class="ph-role">${role.text.en}</span>.`,
+                    bm: `Bertindak sebagai <span class="ph-role">${role.text.bm}</span>.`
+                },
+                {
+                    en: `Tone: <span class="ph-tone">${tone.text.en}</span>.`,
+                    bm: `Nada: <span class="ph-tone">${tone.text.bm}</span>.`
+                },
+                {
+                    en: `Audience: <span class="ph-audience">${audience.text.en}</span>.`,
+                    bm: `Khalayak: <span class="ph-audience">${audience.text.bm}</span>.`
+                },
+                {
+                    en: `\nTASK: [your task here]`,
+                    bm: `\nTUGAS: [tugas anda di sini]`
+                }
+            ];
+            promptEl.innerHTML =
+                '<span class="en">' + lines.map(l => l.en).join('\n') + '</span>' +
+                '<span class="bm">' + lines.map(l => l.bm).join('\n') + '</span>';
+
+            // Predicted response shape: combine the three shape hints
+            const shapeBits = [role.shape, tone.shape, audience.shape];
+            shapeEl.innerHTML =
+                '<span class="en">Expect a response that is: ' +
+                    shapeBits.map(s => s.en).join(' · ') + '.</span>' +
+                '<span class="bm">Jangka respons yang: ' +
+                    shapeBits.map(s => s.bm).join(' · ') + '.</span>';
+        }
+
+        function initStackBuilder() {
+            const builder = document.querySelector('.stack-builder');
+            if (!builder) return;
+
+            renderStackChips();
+            renderStackPreview();
+
+            // Event delegation: clicks on chips inside .stack-builder
+            builder.addEventListener('click', (e) => {
+                const chip = e.target.closest('.stack-chip');
+                if (!chip) return;
+                stackState[chip.dataset.row] = chip.dataset.id;
+                renderStackChips();
+                renderStackPreview();
+            });
+            builder.addEventListener('keydown', (e) => {
+                if (e.key !== 'Enter' && e.key !== ' ') return;
+                const chip = e.target.closest('.stack-chip');
+                if (!chip) return;
+                e.preventDefault();
+                stackState[chip.dataset.row] = chip.dataset.id;
+                renderStackChips();
+                renderStackPreview();
+            });
+
+            // Copy button: copy the visible-language prompt to clipboard
+            const copyBtn = document.getElementById('stack-copy');
+            if (copyBtn) {
+                copyBtn.addEventListener('click', () => {
+                    const lang = getLang();
+                    const promptEl = document.getElementById('stack-prompt');
+                    if (!promptEl) return;
+                    // Grab only the active-language span and use its plain text
+                    const langSpan = promptEl.querySelector(`.${lang}`);
+                    const text = (langSpan?.innerText || '').trim();
+                    if (!text) return;
+                    if (navigator.clipboard && navigator.clipboard.writeText) {
+                        navigator.clipboard.writeText(text).then(() => {
+                            copyBtn.classList.add('copied');
+                            setTimeout(() => copyBtn.classList.remove('copied'), 1200);
+                        });
+                    }
+                });
+            }
+        }
+
         // --- Initialization on Page Load ---
         document.addEventListener('DOMContentLoaded', () => {
             // Restore the learner's previously-entered name so their leaderboard row
@@ -3389,6 +3894,8 @@ Petunjuk: Fokus pada "cukai karbon" dan "subsidi boleh diperbaharui".</span></sp
 
             // Wire up the new Task Verb Sandbox (1.6)
             initVerbSandbox();
+            // Wire up the new Persona Stack Builder (2.6)
+            initStackBuilder();
 
             // Seed leaderboard preview
             try {
