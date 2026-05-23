@@ -33,6 +33,130 @@
     <!-- Tailwind CSS (pre-built, see tailwind.config.js + input.css) -->
     <link rel="stylesheet" href="./tailwind.css">
 
+    <!-- Module 1 enhancements: inline styles for new interactive components.
+         These don't require a Tailwind rebuild — they're plain CSS that
+         augments the existing utility-class styling. -->
+    <style id="m1-enhancements">
+        /* Token visualization: colored "chip" pills representing individual tokens */
+        .tok {
+            display: inline-block;
+            padding: 2px 6px;
+            margin: 2px 2px;
+            border-radius: 6px;
+            font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+            font-size: 12px;
+            line-height: 1.4;
+            border: 1px solid rgba(0,0,0,0.06);
+        }
+        .tok-a { background: #dbeafe; color: #1e3a8a; }
+        .tok-b { background: #fce7f3; color: #831843; }
+        .tok-c { background: #d1fae5; color: #064e3b; }
+        .tok-d { background: #fef3c7; color: #78350f; }
+        .tok-e { background: #ede9fe; color: #4c1d95; }
+        .tok-f { background: #ffe4e6; color: #881337; }
+        .dark .tok { border-color: rgba(255,255,255,0.1); }
+        .dark .tok-a { background: rgba(30,58,138,0.35); color: #bfdbfe; }
+        .dark .tok-b { background: rgba(131,24,67,0.35);  color: #fbcfe8; }
+        .dark .tok-c { background: rgba(6,78,59,0.35);    color: #a7f3d0; }
+        .dark .tok-d { background: rgba(120,53,15,0.35);  color: #fde68a; }
+        .dark .tok-e { background: rgba(76,29,149,0.35);  color: #ddd6fe; }
+        .dark .tok-f { background: rgba(136,19,55,0.35);  color: #fecdd3; }
+
+        /* Anatomy "blueprint" boxes: each element of Role/Context/Task/Constraints/Format */
+        .anatomy-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+        @media (min-width: 768px) {
+            .anatomy-grid { grid-template-columns: repeat(2, 1fr); }
+            .anatomy-grid > .anatomy-format { grid-column: span 2; }
+        }
+        .anatomy-card {
+            padding: 14px 16px;
+            border-radius: 10px;
+            border: 1px solid rgba(0,0,0,0.08);
+            background: #fff;
+        }
+        .dark .anatomy-card { background: #1e293b; border-color: rgba(255,255,255,0.08); }
+        .anatomy-card .label {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            padding: 2px 8px;
+            border-radius: 999px;
+            margin-bottom: 8px;
+        }
+        .anatomy-role     .label { background: #ede9fe; color: #4c1d95; }
+        .anatomy-context  .label { background: #dbeafe; color: #1e3a8a; }
+        .anatomy-task     .label { background: #d1fae5; color: #064e3b; }
+        .anatomy-constraints .label { background: #fef3c7; color: #78350f; }
+        .anatomy-format   .label { background: #ffe4e6; color: #881337; }
+        .dark .anatomy-role     .label { background: rgba(76,29,149,0.35);  color: #ddd6fe; }
+        .dark .anatomy-context  .label { background: rgba(30,58,138,0.35);  color: #bfdbfe; }
+        .dark .anatomy-task     .label { background: rgba(6,78,59,0.35);    color: #a7f3d0; }
+        .dark .anatomy-constraints .label { background: rgba(120,53,15,0.35); color: #fde68a; }
+        .dark .anatomy-format   .label { background: rgba(136,19,55,0.35);  color: #fecdd3; }
+
+        /* Task Verb Sandbox: tile grid + selected state */
+        .verb-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+        @media (min-width: 640px) {
+            .verb-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+        }
+        .verb-tile {
+            padding: 12px 10px;
+            border-radius: 10px;
+            border: 1px solid rgba(0,0,0,0.08);
+            background: #fff;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+            user-select: none;
+        }
+        .dark .verb-tile { background: #1e293b; border-color: rgba(255,255,255,0.08); }
+        .verb-tile:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px -2px rgba(0,0,0,0.08);
+        }
+        .verb-tile[data-active="true"] {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(79,70,229,0.15);
+        }
+        .verb-tile .verb-icon { font-size: 18px; margin-bottom: 6px; color: var(--color-primary); }
+        .verb-tile .verb-name { font-weight: 700; font-size: 13px; }
+        .verb-tile .verb-hint { font-size: 11px; color: #64748b; margin-top: 2px; }
+        .dark .verb-tile .verb-hint { color: #94a3b8; }
+
+        /* Verb detail panel */
+        .verb-panel {
+            margin-top: 16px;
+            padding: 16px;
+            border-radius: 12px;
+            background: #f8fafc;
+            border: 1px solid rgba(0,0,0,0.06);
+        }
+        .dark .verb-panel { background: #0f172a; border-color: rgba(255,255,255,0.08); }
+        .verb-panel-section {
+            margin-bottom: 12px;
+        }
+        .verb-panel-section:last-child { margin-bottom: 0; }
+        .verb-panel-label {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #64748b;
+            margin-bottom: 4px;
+        }
+        .dark .verb-panel-label { color: #94a3b8; }
+    </style>
+
     <!-- Chart.js for Analytics -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -653,10 +777,124 @@ Loop: `for k in map: out.append(k)` -> Comp:</span></span><button onclick="copyT
                     <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">
                         <span class="en">1.4 Context Windows & Tokens</span><span class="bm">1.4 Tetingkap Konteks & Token</span>
                     </h3>
-                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
-                        <span class="en">LLMs read text in "tokens" (roughly pieces of words). The "Context Window" is the maximum number of tokens it can hold in memory at once. Passing too much text causes the model to "forget" instructions at the beginning.</span>
-                        <span class="bm">LLM membaca teks dalam "token". "Tetingkap Konteks" ialah jumlah token maksimum yang boleh dipegang dalam ingatan serentak. Teks yang terlalu panjang menyebabkan model "lupa" arahan awal.</span>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-3">
+                        <span class="en">LLMs do not see characters or words — they see <strong>tokens</strong>, the atomic units the model was trained on. A token is typically a sub-word piece: common words like <code>"the"</code> are one token, longer or rarer words split into several. Every input and every output is counted in tokens, and you pay (in cost, latency, and attention budget) for each one.</span>
+                        <span class="bm">LLM tidak melihat aksara atau perkataan — ia melihat <strong>token</strong>, unit atom yang dilatih oleh model. Token biasanya keping sub-perkataan: perkataan biasa seperti <code>"itu"</code> ialah satu token, manakala perkataan panjang atau jarang dipecahkan kepada beberapa token. Setiap input dan output dikira dalam token, dan anda membayar (dalam kos, latensi, dan bajet perhatian) untuk setiapnya.</span>
                     </p>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
+                        <span class="en">The <strong>context window</strong> is the maximum number of tokens the model can hold at once — typically 8k, 32k, 128k, or 200k+ depending on the model. When you exceed it, the oldest content is dropped. Even within the window, attention quality degrades over long inputs: the middle of a long document is statistically the worst-attended region (the "lost in the middle" effect). This is why long prompts often "forget" instructions stated early on.</span>
+                        <span class="bm">Maksudnya, <strong>tetingkap konteks</strong> ialah bilangan maksimum token yang boleh dipegang oleh model serentak — biasanya 8k, 32k, 128k, atau 200k+ bergantung pada model. Apabila anda melebihi had, kandungan paling lama digugurkan. Walaupun dalam tetingkap, kualiti perhatian merosot ke atas input panjang: bahagian tengah dokumen panjang ialah kawasan paling kurang diberi perhatian secara statistik (kesan "hilang di tengah"). Inilah sebabnya prompt panjang sering "lupa" arahan yang dinyatakan pada awal.</span>
+                    </p>
+
+                    <!-- Token visualization: show the same sentence in EN and BM tokenized -->
+                    <div class="bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm mb-4">
+                        <p class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-3">
+                            <span class="en">Visualizing Tokens</span><span class="bm">Memvisualkan Token</span>
+                        </p>
+                        <p class="text-xs text-slate-600 dark:text-slate-400 mb-2">
+                            <span class="en">English (approx. 11 tokens — note how "tokenization" splits):</span>
+                            <span class="bm">Bahasa Inggeris (~ 11 token — perhatikan "tokenization" terpecah):</span>
+                        </p>
+                        <div class="mb-4">
+                            <span class="tok tok-a">Token</span><span class="tok tok-b">ization</span><span class="tok tok-c">is</span><span class="tok tok-d">how</span><span class="tok tok-e">LL</span><span class="tok tok-f">Ms</span><span class="tok tok-a">see</span><span class="tok tok-b">text</span><span class="tok tok-c">in</span><span class="tok tok-d">small</span><span class="tok tok-e">pieces</span><span class="tok tok-f">.</span>
+                        </div>
+                        <p class="text-xs text-slate-600 dark:text-slate-400 mb-2">
+                            <span class="en">Bahasa Melayu (approx. 14 tokens — non-English text typically uses more tokens):</span>
+                            <span class="bm">Bahasa Melayu (~ 14 token — teks bukan bahasa Inggeris biasanya guna lebih banyak token):</span>
+                        </p>
+                        <div class="mb-3">
+                            <span class="tok tok-a">Token</span><span class="tok tok-b">isasi</span><span class="tok tok-c">ialah</span><span class="tok tok-d">cara</span><span class="tok tok-e">LL</span><span class="tok tok-f">M</span><span class="tok tok-a">meli</span><span class="tok tok-b">hat</span><span class="tok tok-c">teks</span><span class="tok tok-d">dalam</span><span class="tok tok-e">ke</span><span class="tok tok-f">ping</span><span class="tok tok-a">an</span><span class="tok tok-b">.</span>
+                        </div>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 mt-3">
+                            <i class="fa-solid fa-info-circle mr-1"></i>
+                            <span class="en">Rule of thumb: ~4 characters ≈ 1 token in English; non-Latin scripts and rare words use more tokens per character.</span>
+                            <span class="bm">Petua ringkas: ~4 aksara ≈ 1 token dalam bahasa Inggeris; tulisan bukan Latin dan perkataan jarang menggunakan lebih banyak token setiap aksara.</span>
+                        </p>
+                        <a href="https://huggingface.co/spaces/Xenova/the-tokenizer-playground" target="_blank" rel="noopener noreferrer"
+                           class="inline-flex items-center gap-2 mt-3 px-4 py-2 bg-primary text-white text-sm font-bold rounded-lg hover:bg-primaryDark transition shadow-md">
+                            <i class="fa-solid fa-flask"></i>
+                            <span class="en">Try the live Tokenizer Playground</span><span class="bm">Cuba Tokenizer Playground secara langsung</span>
+                            <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+                        </a>
+                    </div>
+
+                    <!-- Path-based examples -->
+                    <div class="path-content path-academic space-y-3 text-sm">
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12">
+                            <strong class="text-blue-600 block mb-1">Ex 1 — Anti-pattern (instruction buried in long context):</strong>
+                            <span class="prompt-text font-mono text-xs">
+                                <span class="en">[5,000 words of literature review pasted here]<br>...<br>Now write the methodology section.</span>
+                                <span class="bm">[5,000 patah kata kajian literatur ditampal di sini]<br>...<br>Sekarang tulis bahagian metodologi.</span>
+                            </span>
+                            <p class="text-xs text-slate-500 mt-2 italic">
+                                <span class="en">Why it fails: the actual task ("write the methodology") is starved of attention by the massive preceding context. The model often summarizes the literature instead.</span>
+                                <span class="bm">Mengapa gagal: tugas sebenar ("tulis metodologi") kekurangan perhatian akibat konteks besar di hadapannya. Model selalunya merumus literatur sebaliknya.</span>
+                            </p>
+                            <button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button>
+                        </div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12">
+                            <strong class="text-blue-600 block mb-1">Ex 2 — Fix (task at the top + bottom):</strong>
+                            <span class="prompt-text font-mono text-xs">
+                                <span class="en">TASK: Write a 250-word methodology section using ONLY the literature below.<br><br>[5,000 words of literature review]<br><br>REMINDER: Output is the methodology section only — do not summarize the literature.</span>
+                                <span class="bm">TUGAS: Tulis bahagian metodologi 250 patah kata berdasarkan literatur di bawah SAHAJA.<br><br>[5,000 patah kata kajian literatur]<br><br>PERINGATAN: Output ialah bahagian metodologi sahaja — jangan rumus literatur.</span>
+                            </span>
+                            <button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button>
+                        </div>
+                    </div>
+                    <div class="path-content path-business space-y-3 text-sm">
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12">
+                            <strong class="text-emerald-600 block mb-1">Ex 1 — Token-efficient extraction:</strong>
+                            <span class="prompt-text font-mono text-xs">
+                                <span class="en">From the meeting transcript below, extract ONLY: (1) action items, (2) owner, (3) due date.<br>Output as a Markdown table. Skip pleasantries and small talk.<br><br>TRANSCRIPT: [paste here]</span>
+                                <span class="bm">Daripada transkrip mesyuarat di bawah, ekstrak SAHAJA: (1) item tindakan, (2) pemilik, (3) tarikh akhir.<br>Output sebagai jadual Markdown. Lewatkan basa-basi.<br><br>TRANSKRIP: [tampal di sini]</span>
+                            </span>
+                            <button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button>
+                        </div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12">
+                            <strong class="text-emerald-600 block mb-1">Ex 2 — Chunking strategy:</strong>
+                            <span class="prompt-text font-mono text-xs">
+                                <span class="en">This is part 1 of 3 of our Q3 report. Read it, then output a 5-bullet summary. Do not write conclusions yet — you will receive parts 2 and 3 in subsequent messages.</span>
+                                <span class="bm">Ini bahagian 1 daripada 3 laporan S3 kami. Baca, kemudian keluarkan ringkasan 5 mata. Jangan tulis kesimpulan dahulu — anda akan menerima bahagian 2 dan 3 dalam mesej berikutnya.</span>
+                            </span>
+                            <button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button>
+                        </div>
+                    </div>
+                    <div class="path-content path-creative space-y-3 text-sm">
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12">
+                            <strong class="text-purple-600 block mb-1">Ex 1 — Preserving voice across long generation:</strong>
+                            <span class="prompt-text font-mono text-xs">
+                                <span class="en">VOICE GUIDE (read once, apply throughout): cynical, terse, sentence fragments OK, no exclamation marks.<br><br>[Reference passage: 200 words]<br><br>Now continue the story for 3 more scenes. Re-read the voice guide before each scene.</span>
+                                <span class="bm">PANDUAN SUARA (baca sekali, gunakan sepanjang): sinis, ringkas, serpihan ayat OK, tiada tanda seru.<br><br>[Petikan rujukan: 200 patah kata]<br><br>Sekarang teruskan cerita selama 3 babak lagi. Baca semula panduan suara sebelum setiap babak.</span>
+                            </span>
+                            <button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button>
+                        </div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12">
+                            <strong class="text-purple-600 block mb-1">Ex 2 — Token budget for image prompts:</strong>
+                            <span class="prompt-text font-mono text-xs">
+                                <span class="en">Rewrite this image prompt to fit within 60 tokens. Preserve subject, mood, lighting. Drop redundancies and stylistic filler.<br>ORIGINAL: [paste long prompt]</span>
+                                <span class="bm">Tulis semula prompt imej ini supaya muat dalam 60 token. Kekalkan subjek, mood, pencahayaan. Buang lebihan dan pengisi gaya.<br>ASAL: [tampal prompt panjang]</span>
+                            </span>
+                            <button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button>
+                        </div>
+                    </div>
+                    <div class="path-content path-it space-y-3 text-sm">
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12">
+                            <strong class="text-amber-600 block mb-1">Ex 1 — Long code review with anchoring:</strong>
+                            <span class="prompt-text font-mono text-xs">
+                                <span class="en">TASK: Review the function `processOrder()` for security issues. Focus on auth, input validation, SQL injection.<br><br>[paste 800-line file]<br><br>REPEAT — your task is the security review of `processOrder()` only. Ignore unrelated code.</span>
+                                <span class="bm">TUGAS: Semak fungsi `processOrder()` untuk isu keselamatan. Fokus pada auth, pengesahan input, suntikan SQL.<br><br>[tampal fail 800 baris]<br><br>ULANG — tugas anda ialah semakan keselamatan `processOrder()` sahaja. Abaikan kod tidak berkaitan.</span>
+                            </span>
+                            <button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button>
+                        </div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12">
+                            <strong class="text-amber-600 block mb-1">Ex 2 — RAG-style context injection:</strong>
+                            <span class="prompt-text font-mono text-xs">
+                                <span class="en">Answer the user's question using ONLY the documentation below. If the answer is not in the docs, say "Not in the provided documentation."<br><br>DOCS: [retrieved chunks]<br><br>QUESTION: How do I configure timeout for the upload endpoint?</span>
+                                <span class="bm">Jawab soalan pengguna menggunakan dokumentasi di bawah SAHAJA. Jika jawapan tiada dalam dokumen, jawab "Tiada dalam dokumentasi disediakan."<br><br>DOKUMEN: [ketulan diambil]<br><br>SOALAN: Bagaimana saya konfigurasi timeout untuk endpoint muat naik?</span>
+                            </span>
+                            <button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- 1.5 -->
@@ -664,10 +902,211 @@ Loop: `for k in map: out.append(k)` -> Comp:</span></span><button onclick="copyT
                     <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">
                         <span class="en">1.5 The Universal Prompt Anatomy</span><span class="bm">1.5 Anatomi Prompt Universal</span>
                     </h3>
-                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
-                        <span class="en">The most robust prompts always contain 5 elements: <strong>Role, Context, Task, Constraints, and Output Format</strong>. We will practice this deeply in later modules.</span>
-                        <span class="bm">Prompt paling teguh sentiasa mengandungi 5 elemen: <strong>Peranan, Konteks, Tugas, Kekangan, dan Format Output</strong>. Kita akan praktikkannya dalam modul seterusnya.</span>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-3">
+                        <span class="en">A blueprint-grade prompt is built from five interlocking elements. Missing any one of them is the most common cause of disappointing output. Most "the AI gave a useless answer" complaints trace back to an absent <em>Constraint</em> or <em>Format</em> — the model defaulted to its training-data average instead of your specific need.</span>
+                        <span class="bm">Prompt bertaraf blueprint dibina daripada lima elemen yang saling berkait. Tiada mana-mana satu daripadanya ialah punca paling biasa output yang mengecewakan. Kebanyakan aduan "AI berikan jawapan tidak berguna" boleh dikesan kepada <em>Kekangan</em> atau <em>Format</em> yang hilang — model menggunakan purata data latihannya bukannya keperluan khusus anda.</span>
                     </p>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
+                        <span class="en">Think of these five as the <strong>columns of a load-bearing structure</strong>. Remove one and the answer collapses into vagueness:</span>
+                        <span class="bm">Anggap kelima-lima ini sebagai <strong>tiang struktur menanggung beban</strong>. Tanggalkan satu dan jawapan runtuh menjadi kabur:</span>
+                    </p>
+
+                    <!-- Annotated 5-element anatomy panel -->
+                    <div class="anatomy-grid mb-5">
+                        <div class="anatomy-card anatomy-role">
+                            <span class="label"><span class="en">Role</span><span class="bm">Peranan</span></span>
+                            <p class="text-sm text-slate-700 dark:text-slate-300">
+                                <span class="en">Who the model is. Narrows its expertise and tone.</span>
+                                <span class="bm">Siapa model itu. Sempitkan kepakaran dan nadanya.</span>
+                            </p>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 font-mono">
+                                "Act as a senior UX designer with 10 years in fintech."
+                            </p>
+                        </div>
+                        <div class="anatomy-card anatomy-context">
+                            <span class="label"><span class="en">Context</span><span class="bm">Konteks</span></span>
+                            <p class="text-sm text-slate-700 dark:text-slate-300">
+                                <span class="en">The situation, audience, and background the model needs.</span>
+                                <span class="bm">Situasi, audiens, dan latar belakang yang diperlukan oleh model.</span>
+                            </p>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 font-mono">
+                                "We're redesigning onboarding for first-time mobile banking users in Malaysia."
+                            </p>
+                        </div>
+                        <div class="anatomy-card anatomy-task">
+                            <span class="label"><span class="en">Task</span><span class="bm">Tugas</span></span>
+                            <p class="text-sm text-slate-700 dark:text-slate-300">
+                                <span class="en">The single, specific action — driven by a strong verb.</span>
+                                <span class="bm">Tindakan tunggal, khusus — didorong oleh kata kerja kuat.</span>
+                            </p>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 font-mono">
+                                "Critique the attached wireframes for friction points."
+                            </p>
+                        </div>
+                        <div class="anatomy-card anatomy-constraints">
+                            <span class="label"><span class="en">Constraints</span><span class="bm">Kekangan</span></span>
+                            <p class="text-sm text-slate-700 dark:text-slate-300">
+                                <span class="en">Boundaries: length, tone, what to avoid, what must be included.</span>
+                                <span class="bm">Sempadan: panjang, nada, apa yang perlu dielakkan, apa yang mesti disertakan.</span>
+                            </p>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 font-mono">
+                                "Max 5 issues. No jargon. Cite which screen each issue refers to."
+                            </p>
+                        </div>
+                        <div class="anatomy-card anatomy-format">
+                            <span class="label"><span class="en">Output Format</span><span class="bm">Format Output</span></span>
+                            <p class="text-sm text-slate-700 dark:text-slate-300">
+                                <span class="en">The shape of the response. The most under-used lever — and the one with the largest payoff.</span>
+                                <span class="bm">Bentuk respons. Tuil paling kurang digunakan — dan yang memberikan pulangan paling besar.</span>
+                            </p>
+                            <p class="text-xs text-slate-500 dark:text-slate-400 mt-2 font-mono">
+                                "Markdown table with columns: Screen | Issue | Severity (1–3) | Suggested fix."
+                            </p>
+                        </div>
+                    </div>
+
+                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
+                        <span class="en">Each example below assembles all five elements for a realistic task in your domain. Notice how the Format field alone changes the response from a wall of text into something immediately actionable.</span>
+                        <span class="bm">Setiap contoh di bawah menyusun kelima-lima elemen untuk tugas realistik dalam domain anda. Perhatikan bagaimana medan Format sahaja menukar respons daripada dinding teks menjadi sesuatu yang boleh ditindak segera.</span>
+                    </p>
+
+                    <!-- Path-based examples with all 5 elements assembled -->
+                    <div class="path-content path-academic space-y-3 text-sm">
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12">
+                            <strong class="text-blue-600 block mb-1">Ex 1 — Literature gap analysis:</strong>
+                            <span class="prompt-text font-mono text-xs whitespace-pre-wrap"><span class="en">ROLE: You are a research methodologist in education sciences.
+CONTEXT: I am preparing a PhD proposal on AI tutoring for primary school mathematics in low-resource settings.
+TASK: Identify the three biggest research gaps in the literature I'm about to paste.
+CONSTRAINTS: Cite at least one paper per gap. No gap older than 5 years. Avoid generic phrases like "more research is needed".
+FORMAT: Markdown — one H3 per gap, then bullets: (a) What's missing (b) Why it matters (c) Best supporting citation.
+
+LITERATURE: [paste 5–10 abstracts]</span><span class="bm">PERANAN: Anda metodologis penyelidikan dalam sains pendidikan.
+KONTEKS: Saya menyediakan cadangan PhD tentang tutor AI untuk matematik sekolah rendah dalam persekitaran sumber rendah.
+TUGAS: Kenal pasti tiga jurang penyelidikan terbesar dalam literatur yang saya akan tampal.
+KEKANGAN: Petik sekurang-kurangnya satu kertas setiap jurang. Tiada jurang lebih lama dari 5 tahun. Elak frasa generik seperti "lebih banyak penyelidikan diperlukan".
+FORMAT: Markdown — satu H3 setiap jurang, kemudian bullet: (a) Apa yang hilang (b) Kenapa ia penting (c) Petikan menyokong terbaik.
+
+LITERATUR: [tampal 5–10 abstrak]</span></span>
+                            <button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button>
+                        </div>
+                    </div>
+                    <div class="path-content path-business space-y-3 text-sm">
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12">
+                            <strong class="text-emerald-600 block mb-1">Ex 1 — Customer churn analysis:</strong>
+                            <span class="prompt-text font-mono text-xs whitespace-pre-wrap"><span class="en">ROLE: You are a senior customer success analyst.
+CONTEXT: We are a B2B SaaS with 1,200 customers. Last quarter our churn rate jumped from 3% to 7%. The exit surveys are below.
+TASK: Identify the three dominant churn drivers and recommend one mitigation per driver.
+CONSTRAINTS: Recommendations must be implementable within 30 days. Budget &lt; MYR 50k. No generic advice ("improve onboarding").
+FORMAT: A table with columns Driver | Evidence count | Mitigation | Owner role. Then a 3-sentence executive summary above the table.
+
+EXIT SURVEYS: [paste data]</span><span class="bm">PERANAN: Anda penganalisis kejayaan pelanggan kanan.
+KONTEKS: Kami SaaS B2B dengan 1,200 pelanggan. Suku tahun lepas kadar churn melonjak dari 3% ke 7%. Tinjauan keluar di bawah.
+TUGAS: Kenal pasti tiga pemacu churn dominan dan cadangkan satu mitigasi setiap pemacu.
+KEKANGAN: Cadangan mesti boleh dilaksanakan dalam 30 hari. Bajet &lt; MYR 50k. Tiada nasihat generik ("baiki onboarding").
+FORMAT: Jadual dengan lajur Pemacu | Bilangan bukti | Mitigasi | Peranan pemilik. Kemudian ringkasan eksekutif 3 ayat di atas jadual.
+
+TINJAUAN KELUAR: [tampal data]</span></span>
+                            <button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button>
+                        </div>
+                    </div>
+                    <div class="path-content path-creative space-y-3 text-sm">
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12">
+                            <strong class="text-purple-600 block mb-1">Ex 1 — Short story opener:</strong>
+                            <span class="prompt-text font-mono text-xs whitespace-pre-wrap"><span class="en">ROLE: You are a literary fiction editor known for Carver-style minimalism.
+CONTEXT: I'm writing a short story about a woman who returns to her childhood home after 20 years and finds it unchanged in ways she cannot explain.
+TASK: Write the opening 200 words.
+CONSTRAINTS: No backstory dumps. No adverbs ending in -ly. The unsettling tone must emerge from concrete sensory details, not from telling the reader something is wrong.
+FORMAT: A single paragraph of prose. After the paragraph, list the three sensory details you used and why each one carries the mood.</span><span class="bm">PERANAN: Anda editor fiksyen sastera terkenal dengan minimalisme gaya Carver.
+KONTEKS: Saya menulis cerpen tentang seorang wanita yang pulang ke rumah masa kecilnya selepas 20 tahun dan mendapatinya tidak berubah dengan cara yang tidak dapat dijelaskan.
+TUGAS: Tulis pembukaan 200 patah kata.
+KEKANGAN: Tiada lambakan latar belakang. Tiada kata adverb berakhir dengan -ly. Nada menggelisahkan mesti muncul daripada butiran deria konkrit, bukan daripada memberitahu pembaca sesuatu tidak kena.
+FORMAT: Satu perenggan prosa. Selepas perenggan, senaraikan tiga butiran deria yang anda guna dan kenapa setiap satu membawa mood.</span></span>
+                            <button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button>
+                        </div>
+                    </div>
+                    <div class="path-content path-it space-y-3 text-sm">
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12">
+                            <strong class="text-amber-600 block mb-1">Ex 1 — Production incident postmortem:</strong>
+                            <span class="prompt-text font-mono text-xs whitespace-pre-wrap"><span class="en">ROLE: You are a senior SRE writing a blameless postmortem.
+CONTEXT: Our payment API experienced 14 minutes of 5xx errors during peak hours on 2025-11-14. Logs and the on-call timeline are below.
+TASK: Draft the postmortem document.
+CONSTRAINTS: No naming of individuals. No speculative root cause — state "unconfirmed" if logs don't prove it. Action items must each have an owner role and a target date.
+FORMAT: Markdown sections in this exact order: Summary | Impact | Timeline (UTC) | Root cause | Action items (table) | Lessons learned.
+
+LOGS: [paste]
+ON-CALL TIMELINE: [paste]</span><span class="bm">PERANAN: Anda SRE kanan menulis postmortem tanpa salah-menyalah.
+KONTEKS: API pembayaran kami mengalami 14 minit ralat 5xx pada waktu puncak 14/11/2025. Log dan garis masa on-call di bawah.
+TUGAS: Draf dokumen postmortem.
+KEKANGAN: Tiada penamaan individu. Tiada punca utama spekulatif — nyatakan "tidak disahkan" jika log tidak membuktikan. Item tindakan mesti ada peranan pemilik dan tarikh sasaran.
+FORMAT: Seksyen Markdown dalam susunan tepat ini: Ringkasan | Impak | Garis masa (UTC) | Punca utama | Item tindakan (jadual) | Pengajaran.
+
+LOG: [tampal]
+GARIS MASA ON-CALL: [tampal]</span></span>
+                            <button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 1.6 -->
+                <div class="mb-8 border-l-4 border-primary pl-4">
+                    <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">
+                        <span class="en">1.6 Interactive Task Verb Sandbox</span><span class="bm">1.6 Sandbox Interaktif Kata Kerja Tugas</span>
+                    </h3>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-3">
+                        <span class="en">The single most important word in any prompt is the <strong>task verb</strong>. It tells the model what shape of output to produce. <em>"Discuss"</em> yields an essay. <em>"Compare"</em> yields a side-by-side. <em>"Classify"</em> yields a single label. Choosing the wrong verb is the fastest way to get a response that's technically related to your question but useless for your purpose.</span>
+                        <span class="bm">Perkataan tunggal paling penting dalam mana-mana prompt ialah <strong>kata kerja tugas</strong>. Ia memberitahu model bentuk output yang perlu dihasilkan. <em>"Discuss"</em> menghasilkan esei. <em>"Compare"</em> menghasilkan jadual perbandingan. <em>"Classify"</em> menghasilkan label tunggal. Memilih kata kerja salah ialah cara paling cepat untuk dapat respons yang berkaitan secara teknikal dengan soalan anda tetapi tidak berguna untuk tujuan anda.</span>
+                    </p>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
+                        <span class="en">Click any verb below to see what it actually does to the model's behaviour — what shape of output it asks for, when to use it, and a worked example.</span>
+                        <span class="bm">Klik mana-mana kata kerja di bawah untuk lihat apa yang ia lakukan kepada tingkah laku model — bentuk output yang dimintanya, bila digunakan, dan contoh.</span>
+                    </p>
+
+                    <!-- Verb tiles grid -->
+                    <div id="verb-grid" class="verb-grid mb-2" role="tablist">
+                        <div class="verb-tile" role="tab" data-verb="explain" data-active="true" tabindex="0">
+                            <div class="verb-icon"><i class="fa-solid fa-book-open"></i></div>
+                            <div class="verb-name">Explain</div>
+                            <div class="verb-hint"><span class="en">unpack a concept</span><span class="bm">huraikan konsep</span></div>
+                        </div>
+                        <div class="verb-tile" role="tab" data-verb="compare" tabindex="0">
+                            <div class="verb-icon"><i class="fa-solid fa-scale-balanced"></i></div>
+                            <div class="verb-name">Compare</div>
+                            <div class="verb-hint"><span class="en">side-by-side</span><span class="bm">bersebelahan</span></div>
+                        </div>
+                        <div class="verb-tile" role="tab" data-verb="critique" tabindex="0">
+                            <div class="verb-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+                            <div class="verb-name">Critique</div>
+                            <div class="verb-hint"><span class="en">find weaknesses</span><span class="bm">cari kelemahan</span></div>
+                        </div>
+                        <div class="verb-tile" role="tab" data-verb="summarize" tabindex="0">
+                            <div class="verb-icon"><i class="fa-solid fa-compress"></i></div>
+                            <div class="verb-name">Summarize</div>
+                            <div class="verb-hint"><span class="en">condense</span><span class="bm">padatkan</span></div>
+                        </div>
+                        <div class="verb-tile" role="tab" data-verb="generate" tabindex="0">
+                            <div class="verb-icon"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+                            <div class="verb-name">Generate</div>
+                            <div class="verb-hint"><span class="en">create new</span><span class="bm">cipta baru</span></div>
+                        </div>
+                        <div class="verb-tile" role="tab" data-verb="classify" tabindex="0">
+                            <div class="verb-icon"><i class="fa-solid fa-tags"></i></div>
+                            <div class="verb-name">Classify</div>
+                            <div class="verb-hint"><span class="en">assign a label</span><span class="bm">letak label</span></div>
+                        </div>
+                        <div class="verb-tile" role="tab" data-verb="extract" tabindex="0">
+                            <div class="verb-icon"><i class="fa-solid fa-arrow-up-from-bracket"></i></div>
+                            <div class="verb-name">Extract</div>
+                            <div class="verb-hint"><span class="en">pull facts</span><span class="bm">tarik fakta</span></div>
+                        </div>
+                        <div class="verb-tile" role="tab" data-verb="translate" tabindex="0">
+                            <div class="verb-icon"><i class="fa-solid fa-language"></i></div>
+                            <div class="verb-name">Translate</div>
+                            <div class="verb-hint"><span class="en">change form</span><span class="bm">tukar bentuk</span></div>
+                        </div>
+                    </div>
+
+                    <!-- Verb detail panel — populated by JS based on active tile -->
+                    <div id="verb-panel" class="verb-panel" aria-live="polite"></div>
                 </div>
 
                 <!-- Fun Fact & Summary -->
@@ -2767,6 +3206,174 @@ Petunjuk: Fokus pada "cukai karbon" dan "subsidi boleh diperbaharui".</span></sp
             chartsRendered = true;
         }
 
+        // --- 1.6 Interactive Task Verb Sandbox ---
+        // Data is local-only (no LLM call). Each verb has: what it does, when to use,
+        // a worked example prompt, and a sample expected output. Bilingual.
+        const VERB_DATA = {
+            explain: {
+                role:    { en: "Unpack a concept",                  bm: "Huraikan konsep" },
+                shape:   { en: "Prose with cause/effect or definitions; usually 1–3 paragraphs.",
+                           bm: "Prosa dengan sebab/akibat atau definisi; biasanya 1–3 perenggan." },
+                useWhen: { en: "The reader needs to understand WHY or HOW something works.",
+                           bm: "Pembaca perlu faham KENAPA atau BAGAIMANA sesuatu berfungsi." },
+                example: { en: "Explain how backpropagation updates neural network weights, using a 3-layer network as a worked example. Avoid mathematical notation beyond basic derivatives.",
+                           bm: "Terangkan bagaimana perambatan balik mengemaskini pemberat rangkaian neural, dengan rangkaian 3 lapisan sebagai contoh. Elak notasi matematik selain derivatif asas." },
+                output:  { en: "Backpropagation moves error backwards through the network in two phases. First, the forward pass computes the prediction… (continues as a structured explanation).",
+                           bm: "Perambatan balik menggerakkan ralat ke belakang melalui rangkaian dalam dua fasa. Pertama, hantaran ke hadapan mengira ramalan… (sambung sebagai penerangan berstruktur)." },
+                contrast:{ en: "Use Explain when you want depth. Use Summarize if the reader already knows the topic and just needs the gist.",
+                           bm: "Guna Explain untuk kedalaman. Guna Summarize jika pembaca sudah tahu topik dan hanya perlukan intipati." }
+            },
+            compare: {
+                role:    { en: "Place options side by side",        bm: "Letak pilihan bersebelahan" },
+                shape:   { en: "Almost always a table or parallel bullet structure. Avoid prose.",
+                           bm: "Hampir selalu jadual atau struktur bullet selari. Elak prosa." },
+                useWhen: { en: "You're choosing between two or more candidates with shared attributes.",
+                           bm: "Anda memilih antara dua atau lebih calon dengan atribut yang sama." },
+                example: { en: "Compare PostgreSQL, MySQL, and SQLite for a Malaysian fintech startup of 10 engineers. Output a Markdown table with columns: Database | Best for | Operational cost | One key risk.",
+                           bm: "Bandingkan PostgreSQL, MySQL, dan SQLite untuk startup fintech Malaysia 10 jurutera. Output jadual Markdown dengan lajur: Pangkalan Data | Sesuai untuk | Kos operasi | Satu risiko utama." },
+                output:  { en: "| Database | Best for | Operational cost | Key risk |\n|---|---|---|---|\n| PostgreSQL | Complex queries, strict consistency | Medium | Vacuuming at scale |\n| MySQL | Read-heavy workloads | Low | Replication lag |\n| SQLite | Embedded/edge | Near-zero | Concurrent writes |",
+                           bm: "| Pangkalan Data | Sesuai untuk | Kos operasi | Risiko utama |\n|---|---|---|---|\n| PostgreSQL | Pertanyaan kompleks, konsistensi tegas | Sederhana | Vacuum pada skala |\n| MySQL | Beban kerja baca-berat | Rendah | Lag replikasi |\n| SQLite | Tertanam/tepi | Hampir-sifar | Tulisan serentak |" },
+                contrast:{ en: "Compare needs ≥2 candidates. With one item, you actually want Critique or Explain.",
+                           bm: "Compare perlu ≥2 calon. Dengan satu item, anda sebenarnya mahu Critique atau Explain." }
+            },
+            critique: {
+                role:    { en: "Find weaknesses and suggest fixes", bm: "Cari kelemahan dan cadang penambahbaikan" },
+                shape:   { en: "Numbered list of issues, each with: observation, why it matters, suggested fix.",
+                           bm: "Senarai bernombor isu, setiap satu dengan: pemerhatian, kenapa penting, cadangan." },
+                useWhen: { en: "You want adversarial feedback, not validation. Pair with an explicit standard or rubric.",
+                           bm: "Anda mahu maklum balas adversarial, bukan pengesahan. Sertakan piawai eksplisit." },
+                example: { en: "Critique my abstract below against IMRaD conventions and clarity. Identify up to 5 issues; for each, quote the problem phrase and propose a one-sentence rewrite.\n\nABSTRACT: [paste]",
+                           bm: "Kritik abstrak saya di bawah berdasarkan konvensi IMRaD dan kejelasan. Kenal pasti sehingga 5 isu; untuk setiap satu, petik frasa bermasalah dan cadang penulisan semula satu ayat.\n\nABSTRAK: [tampal]" },
+                output:  { en: "1. \"In this work we attempt to…\" — Hedge weakens the claim. Rewrite: \"We demonstrate that…\"\n2. Methods missing in the abstract — readers can't evaluate validity. Add one sentence on dataset + method.\n…",
+                           bm: "1. \"Dalam kerja ini kami cuba…\" — Lindung melemahkan tuntutan. Tulis semula: \"Kami menunjukkan bahawa…\"\n2. Kaedah tiada dalam abstrak — pembaca tidak boleh nilai kesahihan. Tambah satu ayat tentang dataset + kaedah.\n…" },
+                contrast:{ en: "Critique looks for what's wrong. Explain looks for what's true. Don't merge them — you'll get a vague, hedged review.",
+                           bm: "Critique cari apa yang salah. Explain cari apa yang benar. Jangan campur — anda dapat ulasan kabur dan berlapis." }
+            },
+            summarize: {
+                role:    { en: "Condense to essence",                bm: "Padatkan ke intipati" },
+                shape:   { en: "Always specify length AND format (3 bullets / 1 paragraph / 50 words).",
+                           bm: "Sentiasa nyatakan panjang DAN format (3 bullet / 1 perenggan / 50 patah kata)." },
+                useWhen: { en: "The reader needs to decide whether to engage with the full content.",
+                           bm: "Pembaca perlu putuskan sama ada untuk terlibat dengan kandungan penuh." },
+                example: { en: "Summarize the article below in exactly 3 bullets. Each bullet ≤ 20 words. Lead with the most decision-relevant finding. Avoid quoting directly.\n\nARTICLE: [paste]",
+                           bm: "Ringkaskan artikel di bawah dalam tepat 3 bullet. Setiap bullet ≤ 20 patah kata. Mulakan dengan penemuan paling relevan. Elak petikan langsung.\n\nARTIKEL: [tampal]" },
+                output:  { en: "• Switching to async caused a 38% drop in API latency at peak hours.\n• The fix is portable to other services using the same framework.\n• Team estimates 6 weeks to roll out org-wide.",
+                           bm: "• Pertukaran kepada async menyebabkan penurunan 38% latensi API pada waktu puncak.\n• Pembaikan boleh dialih ke perkhidmatan lain yang menggunakan rangka kerja sama.\n• Pasukan menganggar 6 minggu untuk pelaksanaan seluruh organisasi." },
+                contrast:{ en: "Summarize keeps the structure of the source. Extract pulls specific facts. If you need a list of dates, use Extract instead.",
+                           bm: "Summarize kekalkan struktur sumber. Extract tarik fakta tertentu. Jika anda perlu senarai tarikh, guna Extract." }
+            },
+            generate: {
+                role:    { en: "Create new content from a brief",   bm: "Cipta kandungan baru dari taklimat" },
+                shape:   { en: "Variable — depends on what you ask for. Always specify form, length, and audience.",
+                           bm: "Pelbagai — bergantung apa yang diminta. Sentiasa nyatakan bentuk, panjang, dan audiens." },
+                useWhen: { en: "The artefact doesn't yet exist. Generate is the most over-used verb — try Critique or Compare first to refine your idea.",
+                           bm: "Artifak belum wujud. Generate ialah kata kerja paling kerap disalah guna — cuba Critique atau Compare dahulu untuk halusi idea." },
+                example: { en: "Generate 5 distinct names for a Malaysian sustainability tech startup focused on solar leasing for low-income households. Each name should be: pronounceable in BM and EN, 2–3 syllables, and not contain \"green\", \"eco\", or \"sun\".",
+                           bm: "Hasilkan 5 nama berbeza untuk startup teknologi kelestarian Malaysia yang fokus pada pajakan solar untuk isi rumah berpendapatan rendah. Setiap nama: boleh disebut dalam BM dan BI, 2–3 suku kata, tanpa \"green\", \"eco\", atau \"sun\"." },
+                output:  { en: "1. Tenagaku — \"my energy\" with personal ownership\n2. Suria Pintar — confident and direct\n3. Cahaya Co — minimal, brandable\n4. Tampuk — neutral; means \"core/source\"\n5. Watt & Co — universal, financial-feel",
+                           bm: "1. Tenagaku — \"tenaga saya\" dengan rasa pemilikan\n2. Suria Pintar — yakin dan langsung\n3. Cahaya Co — minimal, boleh dijenamakan\n4. Tampuk — neutral; bermaksud \"teras/sumber\"\n5. Watt & Co — universal, rasa kewangan" },
+                contrast:{ en: "Generate without constraints produces generic AI slop. Always include at least 2 must-have constraints AND 1 must-NOT-have constraint.",
+                           bm: "Generate tanpa kekangan menghasilkan output AI generik. Sentiasa sertakan sekurang-kurangnya 2 kekangan mesti-ada DAN 1 kekangan jangan-ada." }
+            },
+            classify: {
+                role:    { en: "Assign a single label",              bm: "Beri label tunggal" },
+                shape:   { en: "ONE word or short phrase per item — never prose. Often paired with confidence.",
+                           bm: "SATU patah perkataan atau frasa pendek setiap item — bukan prosa. Selalunya dipasangkan dengan keyakinan." },
+                useWhen: { en: "You have a fixed, enumerated set of categories the output MUST belong to.",
+                           bm: "Anda mempunyai set kategori tetap yang output MESTI tergolong di dalamnya." },
+                example: { en: "Classify each email subject below as one of: URGENT, INFORMATIONAL, PROMOTIONAL, SPAM. Output as a Markdown table with the subject and the label only. No explanation.\n\n1. \"Your invoice is overdue — action required\"\n2. \"Quarterly newsletter from MyTech\"\n3. \"You've won a free iPhone — claim now!\"",
+                           bm: "Kelaskan setiap subjek e-mel di bawah sebagai salah satu daripada: MENDESAK, MAKLUMAT, PROMOSI, SPAM. Output sebagai jadual Markdown dengan subjek dan label sahaja. Tiada penjelasan.\n\n1. \"Invois anda tertunggak — tindakan diperlukan\"\n2. \"Surat berita suku tahunan dari MyTech\"\n3. \"Anda menang iPhone percuma — tuntut sekarang!\"" },
+                output:  { en: "| Subject | Label |\n|---|---|\n| Your invoice is overdue… | URGENT |\n| Quarterly newsletter… | INFORMATIONAL |\n| You've won a free iPhone… | SPAM |",
+                           bm: "| Subjek | Label |\n|---|---|\n| Invois anda tertunggak… | MENDESAK |\n| Surat berita suku tahunan… | MAKLUMAT |\n| Anda menang iPhone percuma… | SPAM |" },
+                contrast:{ en: "Always provide the closed category list. \"Classify the sentiment\" without options invites the model to invent ad-hoc labels.",
+                           bm: "Sentiasa beri senarai kategori tertutup. \"Kelaskan sentimen\" tanpa pilihan menjemput model mencipta label ad-hoc." }
+            },
+            extract: {
+                role:    { en: "Pull specific facts from a source", bm: "Tarik fakta tertentu dari sumber" },
+                shape:   { en: "Structured list, table, or JSON — schema must be specified.",
+                           bm: "Senarai berstruktur, jadual, atau JSON — skema mesti dinyatakan." },
+                useWhen: { en: "The target facts already exist in the source text. The model is acting as a parser, not a generator.",
+                           bm: "Fakta sasaran sudah wujud dalam teks sumber. Model bertindak sebagai parser, bukan penjana." },
+                example: { en: "Extract every meeting commitment from the transcript below as JSON. Schema: [{owner, action, due_date|null, evidence_quote}]. If a field is unstated, use null. Do not invent due dates.\n\nTRANSCRIPT: [paste]",
+                           bm: "Ekstrak setiap komitmen mesyuarat daripada transkrip di bawah sebagai JSON. Skema: [{pemilik, tindakan, tarikh_tamat|null, petikan_bukti}]. Jika medan tidak dinyatakan, guna null. Jangan reka tarikh.\n\nTRANSKRIP: [tampal]" },
+                output:  { en: "[\n  {\"owner\":\"Aisyah\", \"action\":\"Send revised SOW to client\", \"due_date\":\"2025-12-05\",\n   \"evidence_quote\":\"Aisyah: I'll have the new SOW out by Friday.\"},\n  {\"owner\":\"Daniel\", \"action\":\"Schedule design review\", \"due_date\":null,\n   \"evidence_quote\":\"Daniel agreed to set up the review some time next sprint.\"}\n]",
+                           bm: "[\n  {\"pemilik\":\"Aisyah\", \"tindakan\":\"Hantar SOW disemak kepada pelanggan\", \"tarikh_tamat\":\"2025-12-05\",\n   \"petikan_bukti\":\"Aisyah: SOW baru akan saya hantar menjelang Jumaat.\"},\n  {\"pemilik\":\"Daniel\", \"tindakan\":\"Jadualkan semakan reka bentuk\", \"tarikh_tamat\":null,\n   \"petikan_bukti\":\"Daniel bersetuju aturkan semakan dalam sprint seterusnya.\"}\n]" },
+                contrast:{ en: "Extract reuses what's in the source. If you need information NOT in the text, you need Generate or Explain instead.",
+                           bm: "Extract guna semula apa yang ada dalam sumber. Jika anda perlu maklumat TIADA dalam teks, gunakan Generate atau Explain." }
+            },
+            translate: {
+                role:    { en: "Change form while preserving meaning", bm: "Tukar bentuk sambil kekalkan makna" },
+                shape:   { en: "Same shape as input, in the target form/language/dialect.",
+                           bm: "Bentuk sama seperti input, dalam bentuk/bahasa/dialek sasaran." },
+                useWhen: { en: "When information must move between representations: languages, formats (XML→JSON), registers (formal→casual), or jargon levels.",
+                           bm: "Bila maklumat perlu berpindah antara representasi: bahasa, format (XML→JSON), daftar (formal→santai), atau tahap jargon." },
+                example: { en: "Translate the technical paragraph below for an audience of non-engineer hospital administrators. Preserve every clinical fact. Replace jargon with plain Malaysian English. Maximum 120 words.\n\nPARAGRAPH: [paste]",
+                           bm: "Terjemahkan perenggan teknikal di bawah untuk audiens pentadbir hospital bukan jurutera. Kekalkan setiap fakta klinikal. Ganti jargon dengan Bahasa Melayu mudah. Maksimum 120 patah kata.\n\nPERENGGAN: [tampal]" },
+                output:  { en: "The new system checks every patient record against three databases before flagging duplicates. It catches around 9 out of every 10 duplicate records that the old system missed, and it runs fast enough that nurses won't notice a delay…",
+                           bm: "Sistem baru menyemak setiap rekod pesakit terhadap tiga pangkalan data sebelum menanda pendua. Ia menangkap sekitar 9 daripada 10 rekod pendua yang sistem lama terlepas, dan ia berjalan cukup pantas sehingga jururawat tidak akan perasan kelewatan…" },
+                contrast:{ en: "Translate preserves the source. Summarize compresses it. Critique evaluates it. Don't ask one verb to do another verb's job.",
+                           bm: "Translate kekalkan sumber. Summarize mampatkannya. Critique menilainya. Jangan minta satu kata kerja buat tugas kata kerja lain." }
+            }
+        };
+
+        function renderVerbPanel(verb) {
+            const data = VERB_DATA[verb];
+            if (!data) return;
+            const panel = document.getElementById('verb-panel');
+            if (!panel) return;
+            // Build bilingual content; the body[lang] toggle handles which one shows.
+            const section = (labelEn, labelBm, valEn, valBm, isMono) => {
+                const cls = isMono ? 'font-mono text-xs whitespace-pre-wrap' : 'text-sm';
+                return `
+                  <div class="verb-panel-section">
+                    <div class="verb-panel-label">
+                      <span class="en">${labelEn}</span><span class="bm">${labelBm}</span>
+                    </div>
+                    <div class="${cls} text-slate-700 dark:text-slate-300">
+                      <span class="en">${valEn}</span><span class="bm">${valBm}</span>
+                    </div>
+                  </div>`;
+            };
+            panel.innerHTML =
+                section("What this verb asks the model to do", "Apa yang kata kerja ini minta model lakukan",
+                        data.role.en, data.role.bm) +
+                section("Output shape", "Bentuk output",
+                        data.shape.en, data.shape.bm) +
+                section("When to use it", "Bila digunakan",
+                        data.useWhen.en, data.useWhen.bm) +
+                section("Worked example prompt", "Contoh prompt",
+                        data.example.en, data.example.bm, true) +
+                section("Sample expected output", "Contoh output dijangka",
+                        data.output.en, data.output.bm, true) +
+                section("Contrast — when NOT to use this verb", "Kontras — bila JANGAN guna kata kerja ini",
+                        data.contrast.en, data.contrast.bm);
+        }
+
+        function initVerbSandbox() {
+            const grid = document.getElementById('verb-grid');
+            if (!grid) return;
+            const tiles = grid.querySelectorAll('.verb-tile');
+
+            const activate = (verb) => {
+                tiles.forEach(t => t.setAttribute('data-active', String(t.dataset.verb === verb)));
+                renderVerbPanel(verb);
+            };
+
+            tiles.forEach(tile => {
+                tile.addEventListener('click', () => activate(tile.dataset.verb));
+                tile.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        activate(tile.dataset.verb);
+                    }
+                });
+            });
+
+            // Initial render with the default-active verb
+            const initial = grid.querySelector('.verb-tile[data-active="true"]') || tiles[0];
+            if (initial) activate(initial.dataset.verb);
+        }
+
         // --- Initialization on Page Load ---
         document.addEventListener('DOMContentLoaded', () => {
             // Restore the learner's previously-entered name so their leaderboard row
@@ -2779,6 +3386,10 @@ Petunjuk: Fokus pada "cukai karbon" dan "subsidi boleh diperbaharui".</span></sp
             });
             // Shuffle drag-and-drop items so they don't start in the answer order
             ['m2', 'm4', 'm5', 'm6'].forEach(mod => shuffleDragItems(mod));
+
+            // Wire up the new Task Verb Sandbox (1.6)
+            initVerbSandbox();
+
             // Seed leaderboard preview
             try {
                 if (!localStorage.getItem(getLeaderboardKey())) {
