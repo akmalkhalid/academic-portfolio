@@ -276,6 +276,127 @@
         .stack-copy-btn.copied {
             background: #047857;
         }
+
+        /* ===== Module 3: Reasoning Pattern Selector ===== */
+        .reasoning-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+        @media (min-width: 768px) {
+            .reasoning-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        }
+        .reasoning-tile {
+            padding: 14px 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(0,0,0,0.08);
+            background: #fff;
+            text-align: left;
+            cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+            user-select: none;
+        }
+        .dark .reasoning-tile { background: #1e293b; border-color: rgba(255,255,255,0.08); }
+        .reasoning-tile:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px -2px rgba(0,0,0,0.08);
+        }
+        .reasoning-tile[data-active="true"] {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(79,70,229,0.15);
+        }
+        .reasoning-tile .reasoning-icon {
+            font-size: 16px;
+            color: var(--color-primary);
+            margin-bottom: 6px;
+        }
+        .reasoning-tile .reasoning-name {
+            font-weight: 700;
+            font-size: 13px;
+            line-height: 1.3;
+            margin-bottom: 3px;
+        }
+        .reasoning-tile .reasoning-hint {
+            font-size: 11px;
+            color: #64748b;
+            line-height: 1.35;
+        }
+        .dark .reasoning-tile .reasoning-hint { color: #94a3b8; }
+
+        /* Recommendation panel — visually distinct from the M1 verb panel */
+        .reasoning-panel {
+            margin-top: 16px;
+            padding: 18px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #f0f9ff 0%, #faf5ff 100%);
+            border: 1px solid rgba(79,70,229,0.15);
+        }
+        .dark .reasoning-panel {
+            background: linear-gradient(135deg, rgba(8,47,73,0.4) 0%, rgba(76,29,149,0.25) 100%);
+            border-color: rgba(167,139,250,0.2);
+        }
+        .reasoning-recommendation {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed rgba(0,0,0,0.08);
+        }
+        .dark .reasoning-recommendation { border-bottom-color: rgba(255,255,255,0.1); }
+        .reasoning-rec-label {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #64748b;
+        }
+        .dark .reasoning-rec-label { color: #94a3b8; }
+        .reasoning-rec-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--color-primary);
+        }
+        .reasoning-rec-badge {
+            display: inline-block;
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 999px;
+            background: #ede9fe;
+            color: #4c1d95;
+            font-weight: 600;
+        }
+        .dark .reasoning-rec-badge {
+            background: rgba(76,29,149,0.4);
+            color: #ddd6fe;
+        }
+        .reasoning-panel-section {
+            margin-bottom: 12px;
+        }
+        .reasoning-panel-section:last-child { margin-bottom: 0; }
+        .reasoning-panel-label {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #64748b;
+            margin-bottom: 4px;
+        }
+        .dark .reasoning-panel-label { color: #94a3b8; }
+        .reasoning-panel-example {
+            font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+            font-size: 12px;
+            line-height: 1.55;
+            white-space: pre-wrap;
+            padding: 10px 12px;
+            background: rgba(15,23,42,0.04);
+            border-radius: 6px;
+            color: #334155;
+        }
+        .dark .reasoning-panel-example {
+            background: rgba(2,6,23,0.5);
+            color: #cbd5e1;
+        }
     </style>
 
     <!-- Chart.js for Analytics -->
@@ -1623,28 +1744,90 @@ SENI BINA DICADANGKAN: [tampal]</span></span><button onclick="copyToClipboard(th
                 </h2></div>
                 
                 <div class="prose dark:prose-invert max-w-none text-slate-700 dark:text-slate-300 mb-8">
-                    <p class="en">If you force an immediate answer to a complex problem, LLMs guess. <strong>Chain-of-Thought (CoT)</strong> forces them to output their reasoning steps first. Here we explore variations of reasoning frameworks.</p>
-                    <p class="bm">Jika anda memaksa jawapan segera untuk masalah kompleks, LLM meneka. <strong>Rantaian Pemikiran (CoT)</strong> memaksa mereka mengeluarkan langkah penaakulan dahulu. Di sini kita meneroka variasi rangka kerja penaakulan.</p>
+                    <p class="en">By default, an LLM uses <strong>greedy decoding</strong>: it picks the most likely next token, then the most likely token after that, all the way to the answer. For straightforward tasks this is fine. But for multi-step problems — proofs, debugging, financial reasoning, plot logic — the model gets locked into the first plausible-sounding path and can't recover. A single wrong step early on poisons everything downstream.</p>
+                    <p class="en"><strong>Chain-of-Thought (CoT)</strong> and its cousins fix this by forcing the model to <em>think out loud</em> before committing to an answer. Once the reasoning is on the page, two things happen: (1) each step becomes a checkpoint the model can self-correct against, and (2) you, the human, can audit the logic instead of just rubber-stamping a single confident sentence. The techniques in this module differ in <strong>how the reasoning is structured</strong>: linear, branching, decomposed, or re-sampled.</p>
+                    <p class="bm">Secara lalai, LLM menggunakan <strong>penyahkodan tamak</strong>: ia memilih token seterusnya yang paling mungkin, kemudian token paling mungkin selepasnya, terus hingga ke jawapan. Untuk tugas mudah ini tidak menjadi masalah. Tetapi untuk masalah berbilang langkah — bukti matematik, debugging, penaakulan kewangan, logik plot — model terkunci pada laluan pertama yang kedengaran munasabah dan tidak boleh pulih. Satu langkah salah pada awal meracuni segala-galanya di hilir.</p>
+                    <p class="bm"><strong>Rantaian Pemikiran (CoT)</strong> dan saudara-saudaranya memperbaiki ini dengan memaksa model <em>berfikir secara terbuka</em> sebelum komit kepada jawapan. Sebaik sahaja penaakulan berada di atas kertas, dua perkara berlaku: (1) setiap langkah menjadi pos semakan yang model boleh perbetulkan sendiri, dan (2) anda, manusia, boleh mengaudit logik bukannya hanya mengesahkan satu ayat berkeyakinan. Teknik dalam modul ini berbeza dalam <strong>cara penaakulan distrukturkan</strong>: linear, bercabang, terurai, atau diambil semula.</p>
                 </div>
 
                 <!-- 3.1 -->
                 <div class="mb-8 border-l-4 border-primary pl-4">
                     <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2"><span class="en">3.1 Zero-Shot & Emotional CoT</span><span class="bm">3.1 CoT Zero-Shot & Emosi</span></h3>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-3">
+                        <span class="en">The cheapest reasoning trick in the entire field: append a "thinking trigger" to any complex question. Different triggers have different empirical strengths, and you don't pay much to swap between them. The original is <em>"Let's think step by step"</em>; the "<em>Take a deep breath</em>" variant came later when researchers found that emotionally-grounded prompts produced better math performance, possibly because emotional language appears in the training data alongside more careful, slower reasoning patterns.</span>
+                        <span class="bm">Helah penaakulan paling murah dalam keseluruhan bidang: tambahkan "pencetus pemikiran" pada mana-mana soalan kompleks. Pencetus berbeza mempunyai kekuatan empirik berbeza, dan anda tidak banyak membayar untuk bertukar antara mereka. Yang asal ialah <em>"Mari kita fikir langkah demi langkah"</em>; varian "<em>Tarik nafas panjang</em>" datang kemudian apabila penyelidik mendapati prompt yang berasaskan emosi menghasilkan prestasi matematik yang lebih baik, mungkin kerana bahasa emosi muncul dalam data latihan bersama corak penaakulan yang lebih berhati-hati dan perlahan.</span>
+                    </p>
                     <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
-                        <span class="en">Adding a simple phrase to trigger sequential processing. Combining it with emotional regulation improves logic (from the Prompt Cookbook).</span>
-                        <span class="bm">Menambah frasa mudah untuk mencetuskan pemprosesan berjujukan. Menggabungkannya dengan kawalan emosi meningkatkan logik.</span>
+                        <span class="en">A working trigger library: <code>"Let's think step by step"</code> · <code>"Take a deep breath and work this out carefully"</code> · <code>"Let's work this out in a step by step way to be sure we have the right answer"</code> (the APE variant) · <code>"Reason through this slowly. Show every step, even the obvious ones."</code> Pick one and use it consistently; switching trigger phrases mid-conversation can dilute the effect.</span>
+                        <span class="bm">Perpustakaan pencetus berfungsi: <code>"Mari kita fikir langkah demi langkah"</code> · <code>"Tarik nafas panjang dan kerjakan ini dengan teliti"</code> · <code>"Mari kita selesaikan ini secara langkah demi langkah untuk pastikan kita ada jawapan yang betul"</code> (varian APE) · <code>"Buat penaakulan ini perlahan-lahan. Tunjukkan setiap langkah, walaupun yang jelas."</code> Pilih satu dan gunakan secara konsisten; bertukar frasa pencetus di tengah perbualan boleh menjejaskan kesan.</span>
                     </p>
                     <div class="path-content path-academic space-y-3">
                         <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-blue-600 block mb-1">Ex 1:</strong><span class="prompt-text font-mono text-sm"><span class="en">Take a deep breath. Analyze the flaws in this research methodology step-by-step.</span><span class="bm">Tarik nafas panjang. Analisis kelemahan dalam metodologi kajian ini selangkah demi selangkah.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-blue-600 block mb-1">Ex 2 (with explicit step labels):</strong><span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">Let's work through this carefully. For each premise in the argument below, walk through:
+Step 1 — restate the premise in your own words
+Step 2 — identify any hidden assumptions it relies on
+Step 3 — judge whether those assumptions hold in this context
+Only then state the overall verdict.
+
+ARGUMENT: [paste]</span><span class="bm">Mari kita kerjakan ini dengan teliti. Untuk setiap premis dalam hujah di bawah, lalui:
+Langkah 1 — nyatakan semula premis dalam perkataan anda sendiri
+Langkah 2 — kenal pasti andaian tersembunyi yang bergantung padanya
+Langkah 3 — nilaikan sama ada andaian itu kukuh dalam konteks ini
+Hanya kemudian nyatakan keputusan keseluruhan.
+
+HUJAH: [tampal]</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
                     </div>
                     <div class="path-content path-business space-y-3">
                         <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-emerald-600 block mb-1">Ex 1:</strong><span class="prompt-text font-mono text-sm"><span class="en">Take a deep breath. Determine the net profit margin based on this Q3 report step-by-step.</span><span class="bm">Tarik nafas panjang. Kira margin untung bersih selangkah demi selangkah.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-emerald-600 block mb-1">Ex 2 (with explicit step labels):</strong><span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">Reason through this pricing decision slowly. Show every step.
+Step 1 — calculate current gross margin per unit
+Step 2 — model the proposed 12% price cut against current volume
+Step 3 — model the same cut with a +20% volume elasticity assumption
+Step 4 — list two scenarios where the cut destroys margin even with elasticity
+Step 5 — give a recommendation with explicit confidence level
+
+DATA: [paste P&L lines]</span><span class="bm">Buat penaakulan untuk keputusan harga ini perlahan-lahan. Tunjukkan setiap langkah.
+Langkah 1 — kira margin kasar semasa per unit
+Langkah 2 — model pemotongan harga 12% terhadap volum semasa
+Langkah 3 — model pemotongan yang sama dengan andaian elastisiti +20%
+Langkah 4 — senaraikan dua senario di mana pemotongan memusnahkan margin walaupun dengan elastisiti
+Langkah 5 — berikan cadangan dengan tahap keyakinan eksplisit
+
+DATA: [tampal baris P&L]</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
                     </div>
                     <div class="path-content path-creative space-y-3">
                         <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-purple-600 block mb-1">Ex 1:</strong><span class="prompt-text font-mono text-sm"><span class="en">Take a deep breath. Resolve this plot hole where the villain escapes step-by-step.</span><span class="bm">Tarik nafas panjang. Selesaikan kelompangan plot ini selangkah demi selangkah.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-purple-600 block mb-1">Ex 2 (with explicit step labels):</strong><span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">Work through this plot problem carefully.
+Step 1 — list the constraints established in the previous chapter (what the villain can and cannot do)
+Step 2 — list the constraints the escape would violate
+Step 3 — propose three repairs: one that changes the villain's earlier setup, one that changes the escape mechanism, one that changes the chapter where the escape happens
+Step 4 — rank the three by which preserves the most existing story
+
+PROBLEM: [paste plot summary]</span><span class="bm">Kerjakan masalah plot ini dengan teliti.
+Langkah 1 — senaraikan kekangan yang ditubuhkan dalam bab sebelumnya (apa yang penjahat boleh dan tidak boleh lakukan)
+Langkah 2 — senaraikan kekangan yang akan dilanggar oleh pelarian
+Langkah 3 — cadangkan tiga pembaikan: satu yang menukar persediaan awal penjahat, satu yang menukar mekanisme pelarian, satu yang menukar bab di mana pelarian berlaku
+Langkah 4 — susun tiga itu mengikut yang paling banyak mengekalkan cerita sedia ada
+
+MASALAH: [tampal ringkasan plot]</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
                     </div>
                     <div class="path-content path-it space-y-3">
                         <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-amber-600 block mb-1">Ex 1:</strong><span class="prompt-text font-mono text-sm"><span class="en">Take a deep breath. Diagnose this NullReferenceException error step-by-step.</span><span class="bm">Tarik nafas panjang. Diagnosis ralat NullReferenceException ini selangkah demi selangkah.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-amber-600 block mb-1">Ex 2 (with explicit step labels):</strong><span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">Reason through this bug slowly. Show every step.
+Step 1 — list every place in the stack trace where the null could originate
+Step 2 — for each candidate, identify what would have to be true for null to reach this line
+Step 3 — rank candidates by likelihood given the surrounding code
+Step 4 — suggest one log line or assertion that would disprove the top candidate
+
+STACK TRACE: [paste]
+RELEVANT CODE: [paste]</span><span class="bm">Buat penaakulan untuk pepijat ini perlahan-lahan. Tunjukkan setiap langkah.
+Langkah 1 — senaraikan setiap tempat dalam jejak tumpukan di mana null boleh berasal
+Langkah 2 — untuk setiap calon, kenal pasti apa yang perlu benar untuk null mencapai baris ini
+Langkah 3 — susun calon mengikut kebarangkalian berdasarkan kod sekeliling
+Langkah 4 — cadangkan satu baris log atau assertion yang akan menafikan calon teratas
+
+JEJAK TUMPUKAN: [tampal]
+KOD BERKAITAN: [tampal]</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
                     </div>
                 </div>
 
@@ -1653,22 +1836,102 @@ SENI BINA DICADANGKAN: [tampal]</span></span><button onclick="copyToClipboard(th
                     <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">
                         <span class="en">3.2 Few-Shot CoT</span><span class="bm">3.2 CoT Few-Shot</span>
                     </h3>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-3">
+                        <span class="en">Zero-shot CoT tells the model <em>to</em> reason. Few-shot CoT shows it <em>how</em>. You provide 2–4 worked examples where each example includes the <strong>reasoning trace AND the final answer</strong>, not just the answer. The model picks up the pattern and applies the same shape of reasoning to your new question.</span>
+                        <span class="bm">Zero-shot CoT memberitahu model <em>untuk</em> menaakul. Few-shot CoT menunjukkannya <em>bagaimana</em>. Anda menyediakan 2–4 contoh terkerja di mana setiap contoh termasuk <strong>jejak penaakulan DAN jawapan akhir</strong>, bukan hanya jawapan. Model mengambil corak dan menggunakan bentuk penaakulan yang sama pada soalan baharu anda.</span>
+                    </p>
                     <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
-                        <span class="en">Providing examples that *include* the reasoning process, not just the final answer.</span>
-                        <span class="bm">Menyediakan contoh yang *termasuk* proses penaakulan, bukan hanya jawapan akhir.</span>
+                        <span class="en">Use few-shot CoT when zero-shot CoT keeps producing the right answer with the wrong structure — for example, when you want the model to <em>quote evidence before concluding</em>, <em>compute intermediate variables in a specific order</em>, or <em>use a discipline-specific reasoning template</em> (IRAC for law, IMRaD for science). The examples lock the shape.</span>
+                        <span class="bm">Guna few-shot CoT apabila zero-shot CoT terus menghasilkan jawapan betul dengan struktur salah — contohnya, apabila anda mahu model <em>memetik bukti sebelum membuat kesimpulan</em>, <em>mengira pembolehubah perantaraan dalam susunan tertentu</em>, atau <em>menggunakan templat penaakulan khusus disiplin</em> (IRAC untuk undang-undang, IMRaD untuk sains). Contoh mengunci bentuk.</span>
                     </p>
                     
                     <div class="path-content path-academic space-y-3">
                         <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm font-mono text-xs pr-12"><span class="text-blue-600 font-sans block mb-1">Ex 1:</span><span class="prompt-text"><span class="en">Q: Does Paper A support Paper B? <br>A: A claims X causes Y. B claims X prevents Y. These contradict. Therefore, no.</span><span class="bm">S: Adakah Kajian A menyokong B? <br>J: A mendakwa X menyebabkan Y. B mendakwa X menghalang Y. Ini bercanggah. Oleh itu, tidak.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm font-mono text-xs whitespace-pre-wrap pr-12"><span class="text-blue-600 font-sans block mb-1">Ex 2 (locking the IRAC structure):</span><span class="prompt-text"><span class="en">Q: Does the Federal Court ruling in Indira Gandhi apply to a 2024 custody dispute?
+A:
+ISSUE — Whether religious conversion of a minor without consent of both parents creates valid custody grounds.
+RULE — Per Indira Gandhi (2018), unilateral conversion violates Article 12(4); both parents must consent.
+APPLICATION — In the 2024 case, the father converted the child without informing the mother.
+CONCLUSION — Yes, the Indira Gandhi ruling applies; the conversion lacks legal effect for custody purposes.
+
+Q: Does the same ruling apply when both parents initially consented but one later withdrew consent?
+A:</span><span class="bm">S: Adakah keputusan Mahkamah Persekutuan dalam Indira Gandhi terpakai pada pertikaian hak penjagaan 2024?
+J:
+ISU — Sama ada penukaran agama kanak-kanak tanpa persetujuan kedua-dua ibu bapa mewujudkan asas hak penjagaan yang sah.
+PERATURAN — Per Indira Gandhi (2018), penukaran sebelah pihak melanggar Perkara 12(4); kedua-dua ibu bapa mesti bersetuju.
+APLIKASI — Dalam kes 2024, bapa menukar agama anak tanpa memaklumkan ibu.
+KESIMPULAN — Ya, keputusan Indira Gandhi terpakai; penukaran itu tidak mempunyai kesan undang-undang untuk tujuan hak penjagaan.
+
+S: Adakah keputusan yang sama terpakai apabila kedua-dua ibu bapa pada mulanya bersetuju tetapi seorang kemudian menarik balik persetujuan?
+J:</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
                     </div>
                     <div class="path-content path-business space-y-3">
                         <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm font-mono text-xs pr-12"><span class="text-emerald-600 font-sans block mb-1">Ex 1:</span><span class="prompt-text"><span class="en">Q: Should we invest in Project X? <br>A: Project X costs $50k and returns $40k. 40k &lt; 50k, resulting in a net loss. Therefore, no.</span><span class="bm">S: Patutkah kita melabur Projek X? <br>J: Kos X $50k dan pulangan $40k. 40k &lt; 50k, rugi. Oleh itu, tidak.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm font-mono text-xs whitespace-pre-wrap pr-12"><span class="text-emerald-600 font-sans block mb-1">Ex 2 (locking a unit-economics template):</span><span class="prompt-text"><span class="en">Q: Should we keep the Starter tier at RM 29/month?
+A:
+CAC for Starter — RM 180 (paid ads + onboarding email touch)
+Gross margin per month — RM 22 (after Stripe + hosting + support time)
+Months to payback — 180 / 22 = ~8.2 months
+Benchmark — SaaS standard is &lt;12 months payback for healthy unit economics
+CONCLUSION — Yes, keep at RM 29. Payback is within bounds.
+
+Q: Should we keep the Pro tier at RM 99/month?
+A:</span><span class="bm">S: Patutkah kita kekalkan tier Starter pada RM 29/bulan?
+J:
+CAC untuk Starter — RM 180 (iklan berbayar + sentuhan e-mel onboarding)
+Margin kasar per bulan — RM 22 (selepas Stripe + hosting + masa sokongan)
+Bulan untuk bayar balik — 180 / 22 = ~8.2 bulan
+Penanda aras — Standard SaaS ialah &lt;12 bulan bayar balik untuk ekonomi unit sihat
+KESIMPULAN — Ya, kekalkan pada RM 29. Bayar balik dalam had.
+
+S: Patutkah kita kekalkan tier Pro pada RM 99/bulan?
+J:</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
                     </div>
                     <div class="path-content path-creative space-y-3">
                         <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm font-mono text-xs pr-12"><span class="text-purple-600 font-sans block mb-1">Ex 1:</span><span class="prompt-text"><span class="en">Q: Why did John betray the King? <br>A: John's family was exiled by the King. He seeks revenge. Therefore, he betrayed him.</span><span class="bm">S: Mengapa John mengkhianati Raja? <br>J: Keluarganya dibuang negeri oleh Raja. Dia berdendam. Oleh itu, dia mengkhianatinya.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm font-mono text-xs whitespace-pre-wrap pr-12"><span class="text-purple-600 font-sans block mb-1">Ex 2 (locking a character-motivation template):</span><span class="prompt-text"><span class="en">Q: Why does Maya refuse to leave the house?
+A:
+EXTERNAL WANT — She tells her sister she's "just tired of going out."
+INTERNAL WOUND — Her last public outing was the night her partner died in a hit-and-run.
+THE LIE SHE BELIEVES — "If I stay inside, the world can't hurt anyone else I love."
+WHY NOW — Her sister's wedding invitation arrived this morning.
+THE TRUE REASON — Going to the wedding would require her to admit the world keeps moving without him.
+
+Q: Why does Daniel keep returning to the old factory at night?
+A:</span><span class="bm">S: Mengapa Maya enggan meninggalkan rumah?
+J:
+KEHENDAK LUARAN — Dia memberitahu kakaknya dia "hanya penat keluar."
+LUKA DALAMAN — Hari keluar terakhirnya ialah malam pasangannya mati dalam langgar lari.
+KEBOHONGAN YANG DIA PERCAYA — "Jika saya kekal di dalam, dunia tidak boleh sakiti sesiapa lagi yang saya sayangi."
+MENGAPA SEKARANG — Jemputan perkahwinan kakaknya tiba pagi tadi.
+SEBAB SEBENAR — Pergi ke majlis perkahwinan memerlukannya mengakui dunia terus bergerak tanpa dia.
+
+S: Mengapa Daniel sentiasa pulang ke kilang lama pada waktu malam?
+J:</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
                     </div>
                     <div class="path-content path-it space-y-3">
                         <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm font-mono text-xs pr-12"><span class="text-amber-600 font-sans block mb-1">Ex 1:</span><span class="prompt-text"><span class="en">Q: Why is `data.length` undefined? <br>A: `data` was fetched from an API but not parsed from JSON. It's a string, not an array. Therefore it's undefined.</span><span class="bm">S: Mengapa `data.length` undefined? <br>J: `data` diambil dari API tetapi belum dihuraikan dari JSON. Ia rentetan. Oleh itu undefined.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm font-mono text-xs whitespace-pre-wrap pr-12"><span class="text-amber-600 font-sans block mb-1">Ex 2 (locking a bug-triage template):</span><span class="prompt-text"><span class="en">Q: Why does the upload endpoint return 502 only on files over 8 MB?
+A:
+SYMPTOM — 502 Bad Gateway, never 4xx; happens at the proxy layer not the app.
+HYPOTHESIS 1 — App is slow on large files and exceeds proxy idle timeout (default 60s).
+HYPOTHESIS 2 — Proxy has a max-body-size lower than the app accepts.
+HYPOTHESIS 3 — Memory spike on large files causes worker OOM, killing the connection.
+CHEAPEST TEST FIRST — Check nginx error log for "client intended to send too large body" — that distinguishes H2 from H1/H3 in &lt;30 seconds.
+NEXT STEP IF TEST IS NEGATIVE — Add upload-duration metric to differentiate H1 from H3.
+
+Q: Why do background jobs occasionally process the same record twice?
+A:</span><span class="bm">S: Mengapa endpoint muat naik mengembalikan 502 hanya pada fail melebihi 8 MB?
+J:
+SIMPTOM — 502 Bad Gateway, tidak pernah 4xx; berlaku di lapisan proksi bukan apl.
+HIPOTESIS 1 — Apl perlahan pada fail besar dan melebihi tamat masa proksi melahu (lalai 60s).
+HIPOTESIS 2 — Proksi mempunyai max-body-size lebih rendah daripada yang diterima oleh apl.
+HIPOTESIS 3 — Lonjakan memori pada fail besar menyebabkan worker OOM, membunuh sambungan.
+UJIAN PALING MURAH DAHULU — Semak log ralat nginx untuk "client intended to send too large body" — itu membezakan H2 daripada H1/H3 dalam &lt;30 saat.
+LANGKAH SETERUSNYA JIKA UJIAN NEGATIF — Tambah metrik tempoh muat naik untuk membezakan H1 daripada H3.
+
+S: Mengapa kerja latar belakang sekali-sekala memproses rekod yang sama dua kali?
+J:</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
                     </div>
                 </div>
 
@@ -1677,22 +1940,50 @@ SENI BINA DICADANGKAN: [tampal]</span></span><button onclick="copyToClipboard(th
                     <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">
                         <span class="en">3.3 Step-Back Prompting</span><span class="bm">3.3 Prompt Langkah Ke Belakang</span>
                     </h3>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-3">
+                        <span class="en">When a question is too specific to answer well, ask the model to <strong>step back</strong> first — identify the general principle at play, then apply it to the specific case. This works because LLMs are trained on far more general principles than specific instances. The abstract answer is usually high-quality; the specific case becomes a worked example of the principle rather than a guess.</span>
+                        <span class="bm">Apabila soalan terlalu khusus untuk dijawab dengan baik, minta model <strong>melangkah ke belakang</strong> dahulu — kenal pasti prinsip umum yang terlibat, kemudian gunakannya pada kes khusus. Ini berfungsi kerana LLM dilatih pada lebih banyak prinsip umum daripada contoh khusus. Jawapan abstrak biasanya berkualiti tinggi; kes khusus menjadi contoh terkerja prinsip itu, bukan tekaan.</span>
+                    </p>
                     <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
-                        <span class="en">Asking the model to abstract the question to a higher level of underlying principles before attempting to solve the specific instance.</span>
-                        <span class="bm">Meminta model untuk mengabstrakkan soalan kepada tahap prinsip asas yang lebih tinggi sebelum cuba menyelesaikan masalah khusus tersebut.</span>
+                        <span class="en">The recipe is two-step: (1) <em>"Before answering, what general principle governs this situation?"</em> → (2) <em>"Now apply that principle to my specific question."</em> Use step-back whenever you would have started with "<em>how do I…</em>" and gotten back a list of generic best-practices. The principle question gives the model permission to access its strongest knowledge first.</span>
+                        <span class="bm">Resipinya dua langkah: (1) <em>"Sebelum menjawab, apakah prinsip umum yang mengawal situasi ini?"</em> → (2) <em>"Sekarang gunakan prinsip itu pada soalan khusus saya."</em> Gunakan step-back apabila anda akan mulakan dengan "<em>bagaimana saya…</em>" dan dapat kembali senarai amalan terbaik generik. Soalan prinsip memberi model kebenaran untuk mengakses pengetahuan terkuatnya dahulu.</span>
                     </p>
                     
                     <div class="path-content path-academic space-y-3">
                         <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-blue-600 block mb-1">Ex 1:</strong><span class="prompt-text font-mono text-sm"><span class="en">Before evaluating this methodology, first explain the core principles of qualitative research design.</span><span class="bm">Sebelum menilai metodologi ini, terangkan dahulu prinsip teras reka bentuk penyelidikan kualitatif.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-blue-600 block mb-1">Ex 2 (two-step):</strong><span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">STEP-BACK: What are the general criteria for selecting a sampling strategy in mixed-methods education research?
+THEN APPLY: Using those criteria, evaluate whether my proposed stratified-purposeful sampling is appropriate for studying digital-literacy gaps across three Malaysian states.
+
+MY DESIGN: [paste 1-paragraph design]</span><span class="bm">LANGKAH KE BELAKANG: Apakah kriteria umum untuk memilih strategi persampelan dalam penyelidikan pendidikan kaedah campuran?
+KEMUDIAN GUNAKAN: Dengan menggunakan kriteria itu, nilaikan sama ada persampelan bertujuan berstrata cadangan saya sesuai untuk mengkaji jurang literasi digital di tiga negeri Malaysia.
+
+REKA BENTUK SAYA: [tampal reka bentuk 1-perenggan]</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
                     </div>
                     <div class="path-content path-business space-y-3">
                         <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-emerald-600 block mb-1">Ex 1:</strong><span class="prompt-text font-mono text-sm"><span class="en">Before setting the Q3 marketing budget, what are the fundamental drivers of customer acquisition in SaaS?</span><span class="bm">Sebelum menetapkan bajet pemasaran Q3, apakah pemacu asas pemerolehan pelanggan dalam SaaS?</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-emerald-600 block mb-1">Ex 2 (two-step):</strong><span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">STEP-BACK: What are the general principles that govern when a SaaS company should raise prices vs. add tiers vs. stay flat?
+THEN APPLY: Using those principles, recommend whether we should raise our Pro tier from RM 99 to RM 129 given our current numbers below.
+
+NUMBERS: [paste churn, NPS, gross margin, competitor pricing]</span><span class="bm">LANGKAH KE BELAKANG: Apakah prinsip umum yang mengawal bila syarikat SaaS patut menaikkan harga vs. tambah tier vs. kekal sama?
+KEMUDIAN GUNAKAN: Dengan menggunakan prinsip itu, cadangkan sama ada kami patut menaikkan tier Pro daripada RM 99 ke RM 129 berdasarkan angka semasa di bawah.
+
+ANGKA: [tampal churn, NPS, margin kasar, harga pesaing]</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
                     </div>
                     <div class="path-content path-creative space-y-3">
                         <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-purple-600 block mb-1">Ex 1:</strong><span class="prompt-text font-mono text-sm"><span class="en">Before writing the climax, what are the central themes established in the hero's journey so far?</span><span class="bm">Sebelum menulis klimaks, apakah tema utama yang ditubuhkan dalam perjalanan wira setakat ini?</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-purple-600 block mb-1">Ex 2 (two-step):</strong><span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">STEP-BACK: What makes a betrayal scene feel earned vs. melodramatic in literary fiction?
+THEN APPLY: Using those criteria, draft a scene where Maya discovers her sister has been hiding their mother's diagnosis for six months. 400 words. Restrained tone.</span><span class="bm">LANGKAH KE BELAKANG: Apa yang menjadikan adegan pengkhianatan terasa berbaloi vs. melodramatik dalam fiksyen sastera?
+KEMUDIAN GUNAKAN: Dengan menggunakan kriteria itu, draf adegan di mana Maya mendapati kakaknya telah menyembunyikan diagnosis ibu mereka selama enam bulan. 400 patah kata. Nada terkawal.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
                     </div>
                     <div class="path-content path-it space-y-3">
                         <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-amber-600 block mb-1">Ex 1:</strong><span class="prompt-text font-mono text-sm"><span class="en">Before debugging this React hook, explain the component lifecycle and state management principles.</span><span class="bm">Sebelum menyahpepijat cangkuk React ini, terangkan kitaran hayat komponen dan prinsip pengurusan.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-amber-600 block mb-1">Ex 2 (two-step):</strong><span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">STEP-BACK: What are the general failure modes when a synchronous queue worker is converted to an async one?
+THEN APPLY: Using those failure modes as a checklist, review my migration PR below and flag any of them that apply.
+
+PR: [paste diff]</span><span class="bm">LANGKAH KE BELAKANG: Apakah mod kegagalan umum apabila pekerja baris gilir segerak ditukar kepada tak segerak?
+KEMUDIAN GUNAKAN: Dengan menggunakan mod kegagalan itu sebagai senarai semak, semak PR migrasi saya di bawah dan tanda mana-mana yang terpakai.
+
+PR: [tampal diff]</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
                     </div>
                 </div>
 
@@ -1701,22 +1992,94 @@ SENI BINA DICADANGKAN: [tampal]</span></span><button onclick="copyToClipboard(th
                     <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">
                         <span class="en">3.4 Least-to-Most Prompting</span><span class="bm">3.4 Prompt Sedikit ke Paling Banyak</span>
                     </h3>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-3">
+                        <span class="en">CoT chains reasoning forward. Least-to-Most works in the other direction: <strong>decompose</strong> the problem into the smallest possible sub-problems, solve the easiest one first, then use that answer as input to the next. The literature shows this outperforms standard CoT on tasks that need <em>more than 5 inference steps</em> — exactly the cases where greedy decoding fails worst.</span>
+                        <span class="bm">CoT merangkai penaakulan ke hadapan. Least-to-Most berfungsi dalam arah lain: <strong>uraikan</strong> masalah kepada sub-masalah terkecil yang mungkin, selesaikan yang termudah dahulu, kemudian gunakan jawapan itu sebagai input kepada yang seterusnya. Literatur menunjukkan ini mengatasi CoT standard pada tugas yang memerlukan <em>lebih daripada 5 langkah inferens</em> — tepat dalam kes-kes di mana penyahkodan tamak gagal paling teruk.</span>
+                    </p>
                     <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
-                        <span class="en">Decomposing a complex problem into a specific sequence of sub-problems and instructing the model to solve them sequentially.</span>
-                        <span class="bm">Menguraikan masalah yang kompleks kepada urutan sub-masalah tertentu dan mengarahkan model untuk menyelesaikannya secara berurutan.</span>
+                        <span class="en">The pattern: <strong>(1) ask the model to decompose</strong> the problem into ordered sub-problems → <strong>(2) explicitly solve sub-problem 1</strong> → <strong>(3) feed that answer into sub-problem 2</strong>, and so on. The key difference from CoT is that each sub-problem gets its own conversational turn (or its own block), so earlier mistakes don't propagate silently into later reasoning.</span>
+                        <span class="bm">Coraknya: <strong>(1) minta model menguraikan</strong> masalah kepada sub-masalah bertertib → <strong>(2) selesaikan sub-masalah 1 secara eksplisit</strong> → <strong>(3) suapkan jawapan itu ke sub-masalah 2</strong>, dan seterusnya. Perbezaan utama daripada CoT ialah setiap sub-masalah mendapat giliran perbualannya sendiri (atau bloknya sendiri), supaya kesilapan awal tidak menular secara senyap ke penaakulan lewat.</span>
                     </p>
                     
                     <div class="path-content path-academic space-y-3">
                         <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-blue-600 block mb-1">Ex 1:</strong><span class="prompt-text font-mono text-sm"><span class="en">First, list the variables. Next, identify the formula. Finally, solve the equation.</span><span class="bm">Pertama, senaraikan pembolehubah. Seterusnya, kenal pasti formula. Akhir sekali, selesaikan persamaan.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-blue-600 block mb-1">Ex 2 (decompose then solve):</strong><span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">PHASE 1 — Decompose: Break this thesis-defence question into the smallest sub-questions a panellist might ask, in the order an examiner would naturally probe them. List the sub-questions only; do not answer yet.
+
+PHASE 2 (after I confirm the decomposition) — Answer sub-question 1 in 3–4 sentences.
+
+PHASE 3 — Using your sub-question 1 answer, now answer sub-question 2.
+
+(continue until all sub-questions are addressed)
+
+ORIGINAL QUESTION: [paste the broad question]</span><span class="bm">FASA 1 — Uraikan: Pecahkan soalan pertahanan tesis ini kepada sub-soalan terkecil yang panelis mungkin tanya, dalam susunan yang pemeriksa akan secara semula jadi siasat. Senaraikan sub-soalan sahaja; jangan jawab dahulu.
+
+FASA 2 (selepas saya sahkan penguraian) — Jawab sub-soalan 1 dalam 3–4 ayat.
+
+FASA 3 — Dengan menggunakan jawapan sub-soalan 1 anda, sekarang jawab sub-soalan 2.
+
+(sambung sehingga semua sub-soalan ditangani)
+
+SOALAN ASAL: [tampal soalan luas]</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
                     </div>
                     <div class="path-content path-business space-y-3">
                         <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-emerald-600 block mb-1">Ex 1:</strong><span class="prompt-text font-mono text-sm"><span class="en">First, summarize Q1 revenue. Next, summarize Q2 expenses. Finally, calculate the net delta.</span><span class="bm">Pertama, ringkaskan hasil Q1. Seterusnya, ringkaskan perbelanjaan Q2. Akhir sekali, kira delta bersih.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-emerald-600 block mb-1">Ex 2 (decompose then solve):</strong><span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">PHASE 1 — Decompose: To decide whether to enter the Indonesian market next year, what are the smallest sub-questions I need answered first? Order them from cheapest-to-answer to most expensive. Do not answer them yet.
+
+PHASE 2 — Answer sub-question 1, using only public data.
+
+PHASE 3 — Conditional on the sub-question 1 answer, do we still need to ask sub-question 2? If yes, answer it.
+
+(continue until either we have a recommendation or hit a sub-question we cannot answer from public data)
+
+GOAL: Decide whether to enter the Indonesian market in 2026.</span><span class="bm">FASA 1 — Uraikan: Untuk memutuskan sama ada untuk memasuki pasaran Indonesia tahun depan, apakah sub-soalan terkecil yang saya perlu jawab dahulu? Susun dari paling murah-untuk-dijawab kepada paling mahal. Jangan jawab dahulu.
+
+FASA 2 — Jawab sub-soalan 1, dengan menggunakan hanya data awam.
+
+FASA 3 — Bersyarat pada jawapan sub-soalan 1, adakah kita masih perlu tanya sub-soalan 2? Jika ya, jawablah.
+
+(sambung sehingga sama ada kami ada cadangan atau menemui sub-soalan yang tidak boleh dijawab dari data awam)
+
+MATLAMAT: Putuskan sama ada untuk memasuki pasaran Indonesia pada 2026.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
                     </div>
                     <div class="path-content path-creative space-y-3">
                         <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-purple-600 block mb-1">Ex 1:</strong><span class="prompt-text font-mono text-sm"><span class="en">First, outline the character's motivation. Next, describe the setting. Finally, write the scene.</span><span class="bm">Pertama, gariskan motivasi watak. Seterusnya, terangkan latar. Akhir sekali, tulis adegan itu.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-purple-600 block mb-1">Ex 2 (decompose then solve):</strong><span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">PHASE 1 — Decompose: To write a satisfying reveal scene where the reader learns the narrator has been unreliable the whole novel, what are the smallest authorial decisions I need to settle first? List them in the order they must be answered.
+
+PHASE 2 — Answer decision 1 (likely "what specifically was the narrator wrong about?")
+
+PHASE 3 — Given decision 1, answer decision 2.
+
+(continue until we have all the inputs needed to actually draft the scene)
+
+PREMISE: [paste the novel's premise]</span><span class="bm">FASA 1 — Uraikan: Untuk menulis adegan pendedahan yang memuaskan di mana pembaca belajar pencerita telah tidak boleh dipercayai sepanjang novel, apakah keputusan penulisan terkecil yang saya perlu selesaikan dahulu? Senaraikan dalam susunan yang perlu dijawab.
+
+FASA 2 — Jawab keputusan 1 (mungkin "apa khusus yang pencerita salah?")
+
+FASA 3 — Berdasarkan keputusan 1, jawab keputusan 2.
+
+(sambung sehingga kami ada semua input yang diperlukan untuk benar-benar mendraf adegan)
+
+PREMIS: [tampal premis novel]</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
                     </div>
                     <div class="path-content path-it space-y-3">
                         <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-amber-600 block mb-1">Ex 1:</strong><span class="prompt-text font-mono text-sm"><span class="en">First, set up the database connection. Next, write the query. Finally, parse the JSON.</span><span class="bm">Pertama, sediakan sambungan pangkalan data. Seterusnya, tulis pertanyaan. Akhir sekali, huraikan JSON.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-amber-600 block mb-1">Ex 2 (decompose then solve):</strong><span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">PHASE 1 — Decompose: To migrate this monolith's user-auth subsystem to a separate service without downtime, what are the smallest changes I need to ship first, in dependency order? List them only.
+
+PHASE 2 — Detail change 1 as a concrete PR description (files touched, expected risk, rollback plan).
+
+PHASE 3 — Given change 1 has shipped, detail change 2 with the same structure.
+
+(continue until cut-over is described)
+
+CURRENT STATE: [paste relevant architecture details]</span><span class="bm">FASA 1 — Uraikan: Untuk memindahkan sub-sistem auth-pengguna monolit ini ke perkhidmatan berasingan tanpa downtime, apakah perubahan terkecil yang saya perlu hantar dahulu, dalam susunan kebergantungan? Senaraikan sahaja.
+
+FASA 2 — Perincikan perubahan 1 sebagai penerangan PR konkrit (fail disentuh, risiko dijangka, pelan rollback).
+
+FASA 3 — Berdasarkan perubahan 1 telah dihantar, perincikan perubahan 2 dengan struktur yang sama.
+
+(sambung sehingga peralihan dijelaskan)
+
+KEADAAN SEMASA: [tampal butiran seni bina relevan]</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
                     </div>
                 </div>
 
@@ -1725,10 +2088,141 @@ SENI BINA DICADANGKAN: [tampal]</span></span><button onclick="copyToClipboard(th
                     <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">
                         <span class="en">3.5 Self-Consistency</span><span class="bm">3.5 Konsistensi Kendiri</span>
                     </h3>
-                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
-                        <span class="en">Asking the model to generate multiple distinct reasoning paths and take the majority vote as the final answer.</span>
-                        <span class="bm">Meminta model menjana beberapa laluan penaakulan yang berbeza dan mengambil undian majoriti sebagai jawapan akhir.</span>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-3">
+                        <span class="en">Standard CoT samples a single reasoning path. <strong>Self-Consistency</strong> samples <em>many</em> reasoning paths, then takes the majority answer. Different paths can reach the same answer through different routes — when most converge, you have higher confidence; when they diverge, you've found a genuinely uncertain question. This is the same principle behind ensemble methods in classical ML.</span>
+                        <span class="bm">CoT standard mengambil satu laluan penaakulan. <strong>Konsistensi Kendiri</strong> mengambil <em>banyak</em> laluan penaakulan, kemudian mengambil jawapan majoriti. Laluan berbeza boleh mencapai jawapan yang sama melalui rute berbeza — apabila kebanyakan menumpu, anda mempunyai keyakinan yang lebih tinggi; apabila ia berbeza, anda telah menemui soalan yang benar-benar tidak pasti. Ini prinsip sama di sebalik kaedah ensemble dalam pembelajaran mesin klasik.</span>
                     </p>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
+                        <span class="en">The single-prompt recipe: <strong>(1) ask for N independent reasoning chains</strong> (typically 3–5), <strong>(2) instruct that each chain must explore a different starting assumption or method</strong>, <strong>(3) ask for the majority answer and the dissent</strong>. The dissent is often more valuable than the consensus — it tells you exactly where the model's confidence is shakiest.</span>
+                        <span class="bm">Resipi prompt-tunggal: <strong>(1) minta N rantaian penaakulan bebas</strong> (biasanya 3–5), <strong>(2) arahkan setiap rantaian mesti meneroka andaian atau kaedah permulaan yang berbeza</strong>, <strong>(3) minta jawapan majoriti dan bantahan</strong>. Bantahan selalunya lebih berharga daripada konsensus — ia memberitahu anda dengan tepat di mana keyakinan model paling goyah.</span>
+                    </p>
+                    
+                    <div class="path-content path-academic space-y-3">
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-blue-600 block mb-1">Ex 1 — Statistical interpretation:</strong><span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">I need to decide what to conclude from this regression result. Generate THREE independent interpretations, each starting from a different assumption:
+
+CHAIN 1 — Assume the data are i.i.d. and the linearity assumption holds.
+CHAIN 2 — Assume there is unmeasured confounding from a likely third variable.
+CHAIN 3 — Assume measurement error in the predictor variable is non-trivial.
+
+After all three chains: report the majority verdict on whether the effect is real, and explicitly name the disagreements.
+
+REGRESSION OUTPUT: [paste]</span><span class="bm">Saya perlu memutuskan apa yang harus disimpulkan daripada keputusan regresi ini. Hasilkan TIGA interpretasi bebas, setiap satu bermula dari andaian berbeza:
+
+RANTAIAN 1 — Andaikan data adalah i.i.d. dan andaian kelinearan terpakai.
+RANTAIAN 2 — Andaikan terdapat pengeliruan tidak diukur dari kemungkinan pembolehubah ketiga.
+RANTAIAN 3 — Andaikan ralat pengukuran dalam pembolehubah peramal adalah tidak remeh.
+
+Selepas ketiga-tiga rantaian: laporkan keputusan majoriti sama ada kesan adalah benar, dan namakan percanggahan secara eksplisit.
+
+OUTPUT REGRESI: [tampal]</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                    </div>
+                    <div class="path-content path-business space-y-3">
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-emerald-600 block mb-1">Ex 1 — Strategic decision under uncertainty:</strong><span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">Should we acquire our smaller competitor for RM 12M? Generate FOUR independent analyses, each from a different lens:
+
+CHAIN 1 — Financial lens: discount their cash flows, ignore strategic value.
+CHAIN 2 — Talent lens: value the deal as cost-per-engineer at market rate.
+CHAIN 3 — Defensive lens: model what we lose if they're acquired by a competitor instead.
+CHAIN 4 — Integration lens: assume realistic 30% talent attrition post-acquisition.
+
+After all four: state the majority recommendation (acquire / don't), and identify the single number that would flip the decision.
+
+TARGET COMPANY DATA: [paste]</span><span class="bm">Patutkah kita mengambil alih pesaing kecil kami untuk RM 12J? Hasilkan EMPAT analisis bebas, setiap satu dari sudut berbeza:
+
+RANTAIAN 1 — Sudut kewangan: diskaun aliran tunai mereka, abaikan nilai strategik.
+RANTAIAN 2 — Sudut bakat: nilai perjanjian sebagai kos-per-jurutera pada kadar pasaran.
+RANTAIAN 3 — Sudut pertahanan: model apa yang kita rugi jika mereka diambil alih oleh pesaing.
+RANTAIAN 4 — Sudut integrasi: andaikan kemerosotan bakat realistik 30% pasca-pengambilalihan.
+
+Selepas keempat-empatnya: nyatakan cadangan majoriti (ambil alih / jangan), dan kenal pasti nombor tunggal yang akan menterbalikkan keputusan.
+
+DATA SYARIKAT SASARAN: [tampal]</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                    </div>
+                    <div class="path-content path-creative space-y-3">
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-purple-600 block mb-1">Ex 1 — Ending choice for a short story:</strong><span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">My short story has three possible endings. Generate THREE independent literary analyses, each from a different critical tradition:
+
+CHAIN 1 — A FORMALIST critic: judges by internal consistency, motif payoff, sentence-level craft.
+CHAIN 2 — A READER-RESPONSE critic: judges by emotional resolution and reader satisfaction.
+CHAIN 3 — A STRUCTURALIST critic: judges by what archetype the ending fulfils and whether that fits the setup.
+
+After all three: state which ending wins the most votes, and describe the one reader for whom the dissenting ending would actually be better.
+
+STORY PREMISE + THE THREE ENDINGS: [paste]</span><span class="bm">Cerpen saya mempunyai tiga kemungkinan pengakhiran. Hasilkan TIGA analisis sastera bebas, setiap satu dari tradisi kritikal berbeza:
+
+RANTAIAN 1 — Pengkritik FORMALIS: menilai melalui konsistensi dalaman, pembayaran motif, kraf peringkat-ayat.
+RANTAIAN 2 — Pengkritik RESPONS-PEMBACA: menilai melalui resolusi emosi dan kepuasan pembaca.
+RANTAIAN 3 — Pengkritik STRUKTURALIS: menilai melalui arketaip yang dipenuhi pengakhiran dan sama ada itu sepadan dengan persediaan.
+
+Selepas ketiga-tiganya: nyatakan pengakhiran mana yang menang undi terbanyak, dan terangkan satu pembaca yang pengakhiran bercanggah akan lebih baik untuknya.
+
+PREMIS CERITA + TIGA PENGAKHIRAN: [tampal]</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                    </div>
+                    <div class="path-content path-it space-y-3">
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-amber-600 block mb-1">Ex 1 — Production incident root-cause:</strong><span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">Generate THREE independent root-cause analyses for the incident below, each starting from a different leading hypothesis:
+
+CHAIN 1 — Assume the cause is in the application code we shipped 18 minutes before the incident.
+CHAIN 2 — Assume the cause is in the infrastructure layer (network, DNS, load balancer).
+CHAIN 3 — Assume the cause is upstream (a dependency or third-party service).
+
+For each chain, work backwards from symptoms and identify what single observation would confirm or refute it. After all three chains: state which hypothesis the majority of evidence supports, and what we should monitor to catch the dissenting hypothesis if it turns out we're wrong.
+
+INCIDENT LOGS + TIMELINE: [paste]</span><span class="bm">Hasilkan TIGA analisis punca utama bebas untuk insiden di bawah, setiap satu bermula dari hipotesis utama yang berbeza:
+
+RANTAIAN 1 — Andaikan puncanya dalam kod aplikasi yang kami hantar 18 minit sebelum insiden.
+RANTAIAN 2 — Andaikan puncanya dalam lapisan infrastruktur (rangkaian, DNS, load balancer).
+RANTAIAN 3 — Andaikan puncanya di hulu (kebergantungan atau perkhidmatan pihak ketiga).
+
+Untuk setiap rantaian, kerjakan ke belakang dari simptom dan kenal pasti satu pemerhatian yang akan mengesahkan atau menafikannya. Selepas ketiga-tiga rantaian: nyatakan hipotesis mana yang disokong oleh majoriti bukti, dan apa yang patut kami pantau untuk menangkap hipotesis bercanggah jika kami salah.
+
+LOG INSIDEN + GARIS MASA: [tampal]</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                    </div>
+                </div>
+
+                <!-- 3.6 NEW: Interactive Reasoning Pattern Selector -->
+                <div class="mb-8 border-l-4 border-primary pl-4">
+                    <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">
+                        <span class="en">3.6 Interactive Reasoning Pattern Selector</span><span class="bm">3.6 Pemilih Corak Penaakulan Interaktif</span>
+                    </h3>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-3">
+                        <span class="en">Most "my CoT prompt didn't help" complaints trace to a mismatch: people use one reasoning technique on a problem that needs a different one. This sandbox helps you match the technique to the problem. Pick the characteristic that best describes your problem, and you'll see the recommended technique, why it fits, and a runnable example you can adapt.</span>
+                        <span class="bm">Kebanyakan aduan "prompt CoT saya tidak membantu" boleh dikesan kepada ketidakpadanan: orang menggunakan satu teknik penaakulan untuk masalah yang memerlukan yang berbeza. Sandbox ini membantu anda padankan teknik dengan masalah. Pilih ciri yang paling menggambarkan masalah anda, dan anda akan lihat teknik disyorkan, mengapa ia sesuai, dan contoh boleh-jalan yang anda boleh adaptasi.</span>
+                    </p>
+
+                    <!-- Problem characteristic tiles -->
+                    <div id="reasoning-grid" class="reasoning-grid mb-2" role="tablist">
+                        <div class="reasoning-tile" role="tab" data-pattern="linear" data-active="true" tabindex="0">
+                            <div class="reasoning-icon"><i class="fa-solid fa-arrow-right-long"></i></div>
+                            <div class="reasoning-name"><span class="en">Linear, multi-step</span><span class="bm">Linear, berbilang langkah</span></div>
+                            <div class="reasoning-hint"><span class="en">math, arithmetic, simple logic</span><span class="bm">matematik, aritmetik, logik mudah</span></div>
+                        </div>
+                        <div class="reasoning-tile" role="tab" data-pattern="patterned" tabindex="0">
+                            <div class="reasoning-icon"><i class="fa-solid fa-layer-group"></i></div>
+                            <div class="reasoning-name"><span class="en">Needs a specific format</span><span class="bm">Perlu format khusus</span></div>
+                            <div class="reasoning-hint"><span class="en">IRAC, IMRaD, postmortem, etc.</span><span class="bm">IRAC, IMRaD, postmortem, dll.</span></div>
+                        </div>
+                        <div class="reasoning-tile" role="tab" data-pattern="abstract" tabindex="0">
+                            <div class="reasoning-icon"><i class="fa-solid fa-mountain"></i></div>
+                            <div class="reasoning-name"><span class="en">Question too specific</span><span class="bm">Soalan terlalu khusus</span></div>
+                            <div class="reasoning-hint"><span class="en">needs domain principles first</span><span class="bm">perlu prinsip domain dahulu</span></div>
+                        </div>
+                        <div class="reasoning-tile" role="tab" data-pattern="decompose" tabindex="0">
+                            <div class="reasoning-icon"><i class="fa-solid fa-diagram-project"></i></div>
+                            <div class="reasoning-name"><span class="en">5+ inference steps</span><span class="bm">5+ langkah inferens</span></div>
+                            <div class="reasoning-hint"><span class="en">long chains where errors compound</span><span class="bm">rantaian panjang ralat berkompaun</span></div>
+                        </div>
+                        <div class="reasoning-tile" role="tab" data-pattern="ambiguous" tabindex="0">
+                            <div class="reasoning-icon"><i class="fa-solid fa-code-fork"></i></div>
+                            <div class="reasoning-name"><span class="en">Genuinely uncertain</span><span class="bm">Benar-benar tidak pasti</span></div>
+                            <div class="reasoning-hint"><span class="en">multiple plausible answers</span><span class="bm">beberapa jawapan munasabah</span></div>
+                        </div>
+                        <div class="reasoning-tile" role="tab" data-pattern="trivial" tabindex="0">
+                            <div class="reasoning-icon"><i class="fa-solid fa-circle-question"></i></div>
+                            <div class="reasoning-name"><span class="en">Simple lookup</span><span class="bm">Carian mudah</span></div>
+                            <div class="reasoning-hint"><span class="en">honest answer: skip CoT</span><span class="bm">jawapan jujur: langkau CoT</span></div>
+                        </div>
+                    </div>
+
+                    <!-- Recommendation panel -->
+                    <div id="reasoning-panel" class="reasoning-panel" aria-live="polite"></div>
                 </div>
 
                 <!-- Fun Fact & Summary -->
@@ -3879,6 +4373,254 @@ Petunjuk: Fokus pada "cukai karbon" dan "subsidi boleh diperbaharui".</span></sp
             }
         }
 
+        // --- 3.6 Reasoning Pattern Selector ---
+        // Maps a problem characteristic to the recommended reasoning technique,
+        // an explanation of why, and a runnable example prompt. Bilingual.
+        const REASONING_PATTERNS = {
+            linear: {
+                technique: { en: 'Zero-Shot CoT', bm: 'CoT Zero-Shot' },
+                section:   '3.1',
+                why: {
+                    en: 'Linear multi-step problems with a single correct answer (arithmetic, simple logic, deterministic calculations) respond very well to the cheapest trick: just append "Let\'s think step by step." The model has plenty of similar worked examples in its training data — it just needs permission to slow down.',
+                    bm: 'Masalah berbilang langkah linear dengan satu jawapan betul (aritmetik, logik mudah, pengiraan deterministik) bertindak balas dengan baik kepada helah paling murah: tambah sahaja "Mari kita fikir langkah demi langkah." Model mempunyai banyak contoh terkerja yang serupa dalam data latihannya — ia hanya perlukan kebenaran untuk perlahan.'
+                },
+                avoid: {
+                    en: 'Skip this if the problem needs a specific output structure — zero-shot CoT will reason correctly but format the answer however it likes.',
+                    bm: 'Langkau ini jika masalah memerlukan struktur output khusus — zero-shot CoT akan menaakul dengan betul tetapi memformat jawapan sesuka hatinya.'
+                },
+                example: {
+                    en: `Let's think step by step.
+
+A bookshop has 240 books. They sell 30% in the first week and another 25 books in the second week. What fraction of the original stock remains?
+
+Show every calculation.`,
+                    bm: `Mari kita fikir langkah demi langkah.
+
+Sebuah kedai buku ada 240 buah buku. Mereka menjual 30% pada minggu pertama dan 25 buah lagi pada minggu kedua. Apakah pecahan stok asal yang masih tinggal?
+
+Tunjukkan setiap pengiraan.`
+                }
+            },
+            patterned: {
+                technique: { en: 'Few-Shot CoT', bm: 'CoT Few-Shot' },
+                section:   '3.2',
+                why: {
+                    en: 'When the answer must follow a specific shape — IRAC for legal analysis, IMRaD for scientific writing, postmortem template, structured incident analysis — zero-shot CoT produces correct reasoning in the wrong format. Two or three worked examples in the target format lock the shape and the model picks it up immediately.',
+                    bm: 'Apabila jawapan mesti mengikut bentuk tertentu — IRAC untuk analisis undang-undang, IMRaD untuk penulisan saintifik, templat postmortem, analisis insiden berstruktur — zero-shot CoT menghasilkan penaakulan betul dalam format yang salah. Dua atau tiga contoh terkerja dalam format sasaran mengunci bentuk dan model mengambilnya dengan segera.'
+                },
+                avoid: {
+                    en: 'Skip few-shot CoT when you don\'t actually have 2–3 good examples — making them up or copying low-quality samples teaches the wrong pattern.',
+                    bm: 'Langkau few-shot CoT apabila anda tidak sebenarnya ada 2–3 contoh yang baik — mencipta atau menyalin sampel berkualiti rendah mengajar corak yang salah.'
+                },
+                example: {
+                    en: `Q: Is the new data-retention clause enforceable under PDPA?
+A:
+ISSUE — Whether a 7-year retention period exceeds PDPA's "as long as necessary" principle.
+RULE — PDPA Section 10(2): data must not be retained longer than required for its purpose.
+APPLICATION — The stated purpose is fraud detection, which industry norms cap at 5 years.
+CONCLUSION — No; 7 years exceeds the necessary period for the stated purpose.
+
+Q: Is our new consent banner compliant?
+A:`,
+                    bm: `S: Adakah klausa pengekalan data baharu boleh dikuatkuasakan di bawah PDPA?
+J:
+ISU — Sama ada tempoh pengekalan 7 tahun melebihi prinsip "selama yang perlu" PDPA.
+PERATURAN — Seksyen 10(2) PDPA: data tidak boleh dikekalkan lebih lama daripada yang diperlukan untuk tujuannya.
+APLIKASI — Tujuan dinyatakan ialah pengesanan penipuan, yang norma industri hadkan pada 5 tahun.
+KESIMPULAN — Tidak; 7 tahun melebihi tempoh yang diperlukan untuk tujuan dinyatakan.
+
+S: Adakah sepanduk persetujuan baharu kami patuh?
+J:`
+                }
+            },
+            abstract: {
+                technique: { en: 'Step-Back Prompting', bm: 'Prompt Langkah Ke Belakang' },
+                section:   '3.3',
+                why: {
+                    en: 'When your question is highly specific ("should I use a microservice for X?") the model often jumps to a generic answer because the specific case is rare in its training data. Step-back asks for the general principle first — which is well-represented in training — then applies it to your case. The principle answer is usually high-quality; the application becomes a worked example rather than a guess.',
+                    bm: 'Apabila soalan anda sangat khusus ("patutkah saya gunakan mikroperkhidmatan untuk X?") model selalunya melompat ke jawapan generik kerana kes khusus jarang dalam data latihannya. Step-back meminta prinsip umum dahulu — yang diwakili dengan baik dalam latihan — kemudian menggunakannya pada kes anda. Jawapan prinsip biasanya berkualiti tinggi; aplikasinya menjadi contoh terkerja bukannya tekaan.'
+                },
+                avoid: {
+                    en: 'Skip step-back for tasks where the general principle is already obvious to you — you\'ll just burn tokens watching the model restate things you know.',
+                    bm: 'Langkau step-back untuk tugas yang prinsip umumnya sudah jelas kepada anda — anda hanya akan membakar token melihat model menyatakan semula perkara yang anda tahu.'
+                },
+                example: {
+                    en: `STEP-BACK: What are the general principles that determine when to extract a piece of code into a microservice vs. keep it as a module in a monolith?
+
+THEN APPLY: Using those principles, judge whether our user-notifications subsystem should be extracted into its own service. Below are the relevant characteristics:
+- ~30k notifications/day, spiky around campaigns
+- 3 engineers maintain it; rest of monolith has 12 engineers
+- Coupling: shares the users table; emits to SendGrid + Firebase
+- Independent release cadence would be valuable
+
+Use the principles you stated to ground your recommendation.`,
+                    bm: `LANGKAH KE BELAKANG: Apakah prinsip umum yang menentukan bila untuk mengekstrak kod ke dalam mikroperkhidmatan vs. kekalkan sebagai modul dalam monolit?
+
+KEMUDIAN GUNAKAN: Dengan menggunakan prinsip itu, nilaikan sama ada sub-sistem notifikasi-pengguna kami patut diekstrak menjadi perkhidmatannya sendiri. Di bawah adalah ciri-ciri relevan:
+- ~30k notifikasi/hari, melonjak sekitar kempen
+- 3 jurutera mengekalkannya; selebihnya monolit ada 12 jurutera
+- Gandingan: kongsi jadual users; menghantar ke SendGrid + Firebase
+- Kadens pelepasan bebas akan bernilai
+
+Gunakan prinsip yang anda nyatakan untuk mengasaskan cadangan anda.`
+                }
+            },
+            decompose: {
+                technique: { en: 'Least-to-Most Prompting', bm: 'Prompt Sedikit ke Paling Banyak' },
+                section:   '3.4',
+                why: {
+                    en: 'When a problem requires more than 5 inference steps, standard CoT degrades because errors at step 2 silently corrupt steps 3 through 10. Least-to-Most splits the problem into ordered sub-problems and solves each one as a checkpoint. You can audit each sub-answer before letting it feed into the next.',
+                    bm: 'Apabila masalah memerlukan lebih daripada 5 langkah inferens, CoT standard merosot kerana ralat pada langkah 2 secara senyap merosakkan langkah 3 hingga 10. Least-to-Most membahagikan masalah kepada sub-masalah bertertib dan menyelesaikan setiap satu sebagai pos semakan. Anda boleh mengaudit setiap sub-jawapan sebelum membenarkannya memasuki yang seterusnya.'
+                },
+                avoid: {
+                    en: 'Skip this for problems that decompose poorly — where the sub-problems are deeply entangled and solving one requires already knowing the answer to another.',
+                    bm: 'Langkau ini untuk masalah yang menguraikan dengan buruk — di mana sub-masalah sangat terjalin dan menyelesaikan satu memerlukan sudah tahu jawapan kepada yang lain.'
+                },
+                example: {
+                    en: `PHASE 1 — Decompose:
+To estimate the staffing needed to launch our new ASEAN-wide support tier in 6 months, what are the smallest sub-questions I need answered first? Order them from cheapest-to-answer to most expensive. Don't answer yet — just list.
+
+PHASE 2 — Answer sub-question 1.
+
+PHASE 3 — Given the answer to sub-question 1, do we still need sub-question 2? If yes, answer it.
+
+(Continue. Stop if we hit a sub-question we can't answer from public data.)`,
+                    bm: `FASA 1 — Uraikan:
+Untuk menganggar tenaga kerja yang diperlukan untuk melancarkan tier sokongan baharu seluruh-ASEAN kami dalam 6 bulan, apakah sub-soalan terkecil yang saya perlu jawab dahulu? Susun dari paling murah-untuk-dijawab kepada paling mahal. Jangan jawab dahulu — senaraikan sahaja.
+
+FASA 2 — Jawab sub-soalan 1.
+
+FASA 3 — Berdasarkan jawapan sub-soalan 1, adakah kita masih perlu sub-soalan 2? Jika ya, jawablah.
+
+(Sambung. Berhenti jika kita menemui sub-soalan yang tidak boleh dijawab dari data awam.)`
+                }
+            },
+            ambiguous: {
+                technique: { en: 'Self-Consistency', bm: 'Konsistensi Kendiri' },
+                section:   '3.5',
+                why: {
+                    en: 'When the question has multiple plausible answers depending on starting assumptions, a single reasoning chain just commits to one and rationalizes the rest. Self-consistency forces the model to take 3–5 independent paths from different starting points, then identifies which answer wins the majority — and crucially, which dissent is worth taking seriously.',
+                    bm: 'Apabila soalan mempunyai beberapa jawapan munasabah bergantung pada andaian permulaan, satu rantaian penaakulan hanya komit kepada satu dan merasionalkan selebihnya. Konsistensi kendiri memaksa model mengambil 3–5 laluan bebas dari titik permulaan berbeza, kemudian mengenal pasti jawapan mana yang menang majoriti — dan yang penting, bantahan mana yang patut diambil serius.'
+                },
+                avoid: {
+                    en: 'Don\'t use this for clear-cut problems with a single correct answer — you\'ll burn 3–5x the tokens to get the same result as zero-shot CoT.',
+                    bm: 'Jangan gunakan ini untuk masalah jelas dengan satu jawapan betul — anda akan membakar token 3–5x untuk dapat keputusan sama dengan zero-shot CoT.'
+                },
+                example: {
+                    en: `Generate THREE independent analyses of whether we should hire a Head of Marketing now, each from a different starting assumption:
+
+CHAIN 1 — Assume our growth is product-led and marketing is a multiplier, not a driver.
+CHAIN 2 — Assume our growth has plateaued because we lack a distribution function.
+CHAIN 3 — Assume the next 18 months will be funding-constrained.
+
+After all three chains: state the majority recommendation, then identify the single piece of evidence that would shift the answer if it turned out to be wrong.
+
+CURRENT METRICS: [paste]`,
+                    bm: `Hasilkan TIGA analisis bebas sama ada kita patut mengupah Ketua Pemasaran sekarang, setiap satu dari andaian permulaan berbeza:
+
+RANTAIAN 1 — Andaikan pertumbuhan kami dipacu produk dan pemasaran ialah pengganda, bukan pemacu.
+RANTAIAN 2 — Andaikan pertumbuhan kami telah mendatar kerana kami kekurangan fungsi pengedaran.
+RANTAIAN 3 — Andaikan 18 bulan akan datang akan dihadkan dari segi pembiayaan.
+
+Selepas ketiga-tiga rantaian: nyatakan cadangan majoriti, kemudian kenal pasti satu bukti yang akan menukar jawapan jika ternyata salah.
+
+METRIK SEMASA: [tampal]`
+                }
+            },
+            trivial: {
+                technique: { en: 'No CoT needed', bm: 'CoT tidak diperlukan' },
+                section:   null,
+                why: {
+                    en: 'For simple factual lookups, definitions, or single-step conversions, CoT actually hurts: it slows the response, costs more tokens, and sometimes the model invents reasoning where none was needed. The honest answer for "what year did Malaysia gain independence?" is just "1957" — not "Let me think about this step by step. First, Malaysia is a country in Southeast Asia..."',
+                    bm: 'Untuk carian fakta mudah, definisi, atau penukaran langkah-tunggal, CoT sebenarnya merosakkan: ia melambatkan respons, lebih mahal token, dan kadangkala model mencipta penaakulan di mana tiada yang diperlukan. Jawapan jujur untuk "Pada tahun bilakah Malaysia mencapai kemerdekaan?" hanyalah "1957" — bukan "Mari kita fikir tentang ini langkah demi langkah. Pertama, Malaysia ialah negara di Asia Tenggara..."'
+                },
+                avoid: {
+                    en: 'The skill here is recognising when not to add reasoning machinery. Sign of misuse: your prompt is 50 tokens and asks for one fact.',
+                    bm: 'Kemahiran di sini ialah mengenali bila tidak menambah mesin penaakulan. Tanda salah guna: prompt anda 50 token dan minta satu fakta.'
+                },
+                example: {
+                    en: `What is the current capital of Kazakhstan?
+
+(No "think step by step" needed — direct answer is the right tool.)`,
+                    bm: `Apakah ibu negara Kazakhstan semasa?
+
+(Tidak perlu "fikir langkah demi langkah" — jawapan langsung ialah alat yang betul.)`
+                }
+            }
+        };
+
+        function renderReasoningPanel(pattern) {
+            const data = REASONING_PATTERNS[pattern];
+            if (!data) return;
+            const panel = document.getElementById('reasoning-panel');
+            if (!panel) return;
+            const sectionBadge = data.section
+                ? `<span class="reasoning-rec-badge">§${data.section}</span>`
+                : `<span class="reasoning-rec-badge"><span class="en">Skip CoT</span><span class="bm">Langkau CoT</span></span>`;
+            panel.innerHTML = `
+              <div class="reasoning-recommendation">
+                <div>
+                  <div class="reasoning-rec-label">
+                    <span class="en">Recommended technique</span><span class="bm">Teknik disyorkan</span>
+                  </div>
+                  <div class="reasoning-rec-name">
+                    <span class="en">${data.technique.en}</span><span class="bm">${data.technique.bm}</span>
+                  </div>
+                </div>
+                ${sectionBadge}
+              </div>
+              <div class="reasoning-panel-section">
+                <div class="reasoning-panel-label">
+                  <span class="en">Why this fits</span><span class="bm">Mengapa ia sesuai</span>
+                </div>
+                <p class="text-sm text-slate-700 dark:text-slate-300">
+                  <span class="en">${data.why.en}</span><span class="bm">${data.why.bm}</span>
+                </p>
+              </div>
+              <div class="reasoning-panel-section">
+                <div class="reasoning-panel-label">
+                  <span class="en">When NOT to use it</span><span class="bm">Bila JANGAN guna</span>
+                </div>
+                <p class="text-sm text-slate-700 dark:text-slate-300">
+                  <span class="en">${data.avoid.en}</span><span class="bm">${data.avoid.bm}</span>
+                </p>
+              </div>
+              <div class="reasoning-panel-section">
+                <div class="reasoning-panel-label">
+                  <span class="en">Runnable example</span><span class="bm">Contoh boleh-jalan</span>
+                </div>
+                <div class="reasoning-panel-example">
+                  <span class="en">${data.example.en}</span><span class="bm">${data.example.bm}</span>
+                </div>
+              </div>
+            `;
+        }
+
+        function initReasoningSelector() {
+            const grid = document.getElementById('reasoning-grid');
+            if (!grid) return;
+            const tiles = grid.querySelectorAll('.reasoning-tile');
+
+            const activate = (pattern) => {
+                tiles.forEach(t => t.setAttribute('data-active',
+                    String(t.dataset.pattern === pattern)));
+                renderReasoningPanel(pattern);
+            };
+
+            tiles.forEach(tile => {
+                tile.addEventListener('click', () => activate(tile.dataset.pattern));
+                tile.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        activate(tile.dataset.pattern);
+                    }
+                });
+            });
+
+            const initial = grid.querySelector('.reasoning-tile[data-active="true"]') || tiles[0];
+            if (initial) activate(initial.dataset.pattern);
+        }
+
         // --- Initialization on Page Load ---
         document.addEventListener('DOMContentLoaded', () => {
             // Restore the learner's previously-entered name so their leaderboard row
@@ -3896,6 +4638,8 @@ Petunjuk: Fokus pada "cukai karbon" dan "subsidi boleh diperbaharui".</span></sp
             initVerbSandbox();
             // Wire up the new Persona Stack Builder (2.6)
             initStackBuilder();
+            // Wire up the new Reasoning Pattern Selector (3.6)
+            initReasoningSelector();
 
             // Seed leaderboard preview
             try {
