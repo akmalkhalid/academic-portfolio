@@ -499,6 +499,150 @@
             line-height: 1.55;
             font-style: italic;
         }
+
+        /* ===== Module 5: Iteration Loop Simulator ===== */
+        .loop-grid {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: stretch;
+            justify-content: center;
+            gap: 6px;
+            margin-bottom: 16px;
+        }
+        .loop-tile {
+            flex: 1 1 120px;
+            min-width: 110px;
+            max-width: 200px;
+            padding: 12px 10px;
+            border-radius: 10px;
+            border: 1px solid rgba(0,0,0,0.08);
+            background: #fff;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+            user-select: none;
+            position: relative;
+        }
+        .dark .loop-tile { background: #1e293b; border-color: rgba(255,255,255,0.08); }
+        .loop-tile:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px -2px rgba(0,0,0,0.08);
+        }
+        .loop-tile[data-active="true"] {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(79,70,229,0.15);
+        }
+        .loop-step-num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: var(--color-primary);
+            color: #fff;
+            font-weight: 700;
+            font-size: 13px;
+            margin-bottom: 6px;
+        }
+        .loop-step-name {
+            font-weight: 700;
+            font-size: 13px;
+            line-height: 1.2;
+            margin-bottom: 3px;
+        }
+        .loop-step-hint {
+            font-size: 11px;
+            color: #64748b;
+            line-height: 1.3;
+        }
+        .dark .loop-step-hint { color: #94a3b8; }
+        .loop-arrow {
+            display: flex;
+            align-items: center;
+            color: #94a3b8;
+            font-size: 14px;
+            padding: 0 2px;
+        }
+        @media (max-width: 640px) {
+            .loop-arrow { display: none; }
+        }
+
+        /* Loop detail panel */
+        .loop-panel {
+            margin-top: 16px;
+            padding: 18px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #fef3c7 0%, #fce7f3 100%);
+            border: 1px solid rgba(217,119,6,0.2);
+        }
+        .dark .loop-panel {
+            background: linear-gradient(135deg, rgba(120,53,15,0.3) 0%, rgba(131,24,67,0.25) 100%);
+            border-color: rgba(252,211,77,0.2);
+        }
+        .loop-stage-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed rgba(0,0,0,0.08);
+        }
+        .dark .loop-stage-header { border-bottom-color: rgba(255,255,255,0.1); }
+        .loop-stage-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #78350f;
+        }
+        .dark .loop-stage-title { color: #fde68a; }
+        .loop-stage-counter {
+            display: inline-block;
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 999px;
+            background: rgba(217,119,6,0.15);
+            color: #78350f;
+            font-weight: 600;
+        }
+        .dark .loop-stage-counter {
+            background: rgba(252,211,77,0.2);
+            color: #fde68a;
+        }
+        .loop-section {
+            margin-bottom: 12px;
+        }
+        .loop-section:last-child { margin-bottom: 0; }
+        .loop-section-label {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #92400e;
+            margin-bottom: 4px;
+        }
+        .dark .loop-section-label { color: #fcd34d; }
+        .loop-section-content {
+            font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+            font-size: 12px;
+            line-height: 1.55;
+            white-space: pre-wrap;
+            padding: 10px 12px;
+            background: rgba(255,255,255,0.6);
+            border-radius: 6px;
+            color: #334155;
+            border: 1px solid rgba(0,0,0,0.04);
+        }
+        .dark .loop-section-content {
+            background: rgba(2,6,23,0.4);
+            color: #e2e8f0;
+            border-color: rgba(255,255,255,0.06);
+        }
+        .loop-section-prose {
+            font-size: 13px;
+            color: #44403c;
+            line-height: 1.55;
+        }
+        .dark .loop-section-prose { color: #e7e5e4; }
     </style>
 
     <!-- Chart.js for Analytics -->
@@ -3059,86 +3203,654 @@ DIFF PR: [tampal]</span></span><button onclick="copyToClipboard(this)" class="co
                 </h2></div>
                 
                 <div class="prose dark:prose-invert max-w-none text-slate-700 dark:text-slate-300 mb-8">
-                    <p class="en">Robust LLM workflows rely on iterative pipelines rather than single prompts. This includes safety hatches, chaining, reflection, and using the LLM to orchestrate itself.</p>
-                    <p class="bm">Aliran kerja LLM yang mantap bergantung kepada saluran berulang. Ini termasuk "jalan keluar" keselamatan, rantaian, refleksi, dan menggunakan LLM untuk menyusun dirinya sendiri.</p>
+                    <p class="en">The previous modules taught you to craft <em>a good prompt</em>. This one teaches you to design <em>a good pipeline</em>. The mental shift is from <strong>artisan</strong> to <strong>engineer</strong>: instead of perfecting a single prompt, you build a workflow where each step has one clear job, one expected output shape, and one defined way to fail safely. The reliable LLM systems shipped in production are almost never single prompts — they're chains of focused prompts where the output of step N becomes the input to step N+1.</p>
+                    <p class="en">Five techniques compose into the pipeline: <strong>escape hatches</strong> let any step fail safely instead of hallucinating; <strong>chaining</strong> splits one big task into several small ones; <strong>reflexion</strong> makes the model audit its own work before committing; <strong>meta-prompting</strong> uses the LLM to orchestrate sub-instances of itself; and <strong>templates</strong> make the whole pipeline reusable across many inputs. Used together, they turn the LLM from a "one-shot oracle" into a programmable component in a larger system.</p>
+                    <p class="bm">Modul sebelumnya mengajar anda membentuk <em>prompt yang baik</em>. Modul ini mengajar anda mereka <em>saluran yang baik</em>. Peralihan mental ialah daripada <strong>tukang</strong> kepada <strong>jurutera</strong>: bukannya menyempurnakan prompt tunggal, anda membina aliran kerja di mana setiap langkah ada satu tugas jelas, satu bentuk output dijangka, dan satu cara ditakrifkan untuk gagal dengan selamat. Sistem LLM yang boleh dipercayai dihantar dalam pengeluaran hampir tidak pernah prompt tunggal — ia rantaian prompt fokus di mana output langkah N menjadi input langkah N+1.</p>
+                    <p class="bm">Lima teknik membentuk saluran: <strong>jalan keluar selamat</strong> membenarkan mana-mana langkah gagal dengan selamat bukannya halusinasi; <strong>rantaian</strong> memecah satu tugas besar kepada beberapa yang kecil; <strong>refleksi</strong> menjadikan model mengaudit kerjanya sendiri sebelum komit; <strong>meta-prompting</strong> menggunakan LLM untuk mengatur sub-contoh dirinya; dan <strong>templat</strong> menjadikan keseluruhan saluran boleh-guna-semula merentas banyak input. Digunakan bersama, ia menukar LLM daripada "oracle satu-tembakan" kepada komponen boleh atur cara dalam sistem yang lebih besar.</p>
                 </div>
 
                 <!-- 5.1 -->
                 <div class="mb-8 border-l-4 border-primary pl-4">
                     <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2"><span class="en">5.1 The Escape Hatch</span><span class="bm">5.1 Jalan Keluar Selamat</span></h3>
-                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-4"><span class="en">Giving the AI explicit permission to fail safely to prevent hallucinations.</span><span class="bm">Memberi AI kebenaran eksplisit untuk gagal dengan selamat demi mencegah halusinasi.</span></p>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-3">
+                        <span class="en">An LLM's default failure mode is <strong>hallucination</strong> — when it doesn't know the answer, it confabulates a plausible one. The fix is counter-intuitive: give the model <em>explicit permission to fail</em>. When you've told the model "if you don't know, say <code>N/A</code>", you've replaced silent fabrication with loud, parseable failure. Production pipelines depend on this: code can detect <code>N/A</code> and route to a human reviewer; it cannot detect a confidently-stated hallucination.</span>
+                        <span class="bm">Mod kegagalan lalai LLM ialah <strong>halusinasi</strong> — apabila ia tidak tahu jawapan, ia mereka jawapan yang munasabah. Pembaikannya berlawanan dengan intuisi: beri model <em>kebenaran eksplisit untuk gagal</em>. Apabila anda telah memberitahu model "jika anda tidak tahu, kata <code>N/A</code>", anda telah menggantikan rekaan senyap dengan kegagalan kuat dan boleh-dihuraikan. Saluran pengeluaran bergantung kepada ini: kod boleh mengesan <code>N/A</code> dan menyalurkan ke pengulas manusia; ia tidak boleh mengesan halusinasi yang dinyatakan dengan yakin.</span>
+                    </p>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
+                        <span class="en">A graceful degradation hierarchy works best: <strong>(1)</strong> a single fixed sentinel value (<code>N/A</code>, <code>UNKNOWN</code>, <code>null</code>) for downstream code to detect; <strong>(2)</strong> a tagged failure with the reason (<code>{ "answer": null, "reason": "sample size not stated in source" }</code>) so the human reviewer knows what to investigate; <strong>(3)</strong> a confidence score for borderline cases. The principle: <em>failure must be louder than success</em>.</span>
+                        <span class="bm">Hierarki kemerosotan anggun berfungsi terbaik: <strong>(1)</strong> satu nilai sentinel tetap (<code>N/A</code>, <code>UNKNOWN</code>, <code>null</code>) untuk kod hiliran mengesan; <strong>(2)</strong> kegagalan bertag dengan alasan (<code>{ "answer": null, "reason": "saiz sampel tidak dinyatakan dalam sumber" }</code>) supaya pengulas manusia tahu apa yang perlu disiasat; <strong>(3)</strong> skor keyakinan untuk kes sempadan. Prinsipnya: <em>kegagalan mesti lebih kuat daripada kejayaan</em>.</span>
+                    </p>
                     <div class="path-content path-academic space-y-3">
-                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-blue-600 block mb-1">Ex:</strong> <span class="prompt-text font-mono text-sm"><span class="en">If the research paper does not explicitly state the sample size, output ONLY 'N/A'.</span><span class="bm">Jika kajian tidak menyatakan saiz sampel secara jelas, keluarkan HANYA 'N/A'.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-blue-600 block mb-1">Ex 1 (sentinel):</strong> <span class="prompt-text font-mono text-sm"><span class="en">If the research paper does not explicitly state the sample size, output ONLY 'N/A'.</span><span class="bm">Jika kajian tidak menyatakan saiz sampel secara jelas, keluarkan HANYA 'N/A'.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-blue-600 block mb-1">Ex 2 (tagged failure with reason):</strong> <span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">Extract the sample size from the paper. Output strictly as JSON:
+{ "value": &lt;integer&gt; | null,
+  "confidence": "high" | "medium" | "low" | "none",
+  "evidence_quote": &lt;string from the paper&gt; | null,
+  "failure_reason": &lt;short string explaining what's missing&gt; | null }
+
+If "value" is null, "failure_reason" must be set. Never invent a value.</span><span class="bm">Ekstrak saiz sampel daripada kertas. Hasilkan secara tegas sebagai JSON:
+{ "value": &lt;integer&gt; | null,
+  "confidence": "high" | "medium" | "low" | "none",
+  "evidence_quote": &lt;rentetan daripada kertas&gt; | null,
+  "failure_reason": &lt;rentetan pendek menerangkan apa yang hilang&gt; | null }
+
+Jika "value" ialah null, "failure_reason" mesti ditetapkan. Jangan reka nilai.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
                     </div>
                     <div class="path-content path-business space-y-3">
-                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-emerald-600 block mb-1">Ex:</strong> <span class="prompt-text font-mono text-sm"><span class="en">If the client's email does not contain an invoice number, reply strictly with 'Missing'.</span><span class="bm">Jika e-mel pelanggan tidak mengandungi nombor invois, balas tegas dengan 'Tiada'.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-emerald-600 block mb-1">Ex 1 (sentinel):</strong> <span class="prompt-text font-mono text-sm"><span class="en">If the client's email does not contain an invoice number, reply strictly with 'Missing'.</span><span class="bm">Jika e-mel pelanggan tidak mengandungi nombor invois, balas tegas dengan 'Tiada'.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-emerald-600 block mb-1">Ex 2 (route to human):</strong> <span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">Classify this support ticket. Output JSON only:
+{ "category": &lt;one of: billing | technical | feature_request | other | NEEDS_HUMAN&gt;,
+  "confidence": &lt;0.0–1.0&gt;,
+  "human_review_reason": &lt;string&gt; | null }
+
+Set category to NEEDS_HUMAN whenever:
+  - the ticket mentions a legal threat, refund, or data breach
+  - confidence would otherwise be below 0.7
+  - the ticket is in a language other than English or Malay
+If NEEDS_HUMAN, "human_review_reason" must be set.</span><span class="bm">Kelaskan tiket sokongan ini. Hasilkan JSON sahaja:
+{ "category": &lt;salah satu: billing | technical | feature_request | other | NEEDS_HUMAN&gt;,
+  "confidence": &lt;0.0–1.0&gt;,
+  "human_review_reason": &lt;rentetan&gt; | null }
+
+Tetapkan category kepada NEEDS_HUMAN apabila:
+  - tiket menyebut ugutan undang-undang, bayaran balik, atau pelanggaran data
+  - keyakinan sebaliknya di bawah 0.7
+  - tiket dalam bahasa selain bahasa Inggeris atau Melayu
+Jika NEEDS_HUMAN, "human_review_reason" mesti ditetapkan.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
                     </div>
                     <div class="path-content path-creative space-y-3">
-                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-purple-600 block mb-1">Ex:</strong> <span class="prompt-text font-mono text-sm"><span class="en">If the requested genre mix is incompatible, output ONLY 'Genre Clash'.</span><span class="bm">Jika campuran genre tidak serasi, hanya keluarkan 'Pertembungan Genre'.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-purple-600 block mb-1">Ex 1 (sentinel):</strong> <span class="prompt-text font-mono text-sm"><span class="en">If the requested genre mix is incompatible, output ONLY 'Genre Clash'.</span><span class="bm">Jika campuran genre tidak serasi, hanya keluarkan 'Pertembungan Genre'.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-purple-600 block mb-1">Ex 2 (decline gracefully):</strong> <span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">Generate a scene matching the brief below. BEFORE writing, check the brief for any of these blockers:
+
+  - Asks for content involving real, named, living people
+  - Requires factual claims about real medical, legal, or financial decisions
+  - Internal contradictions in the brief itself
+
+If any blocker applies, output ONLY:
+DECLINED: &lt;one-sentence reason&gt;
+DOES NOT BLOCK GENERATION: &lt;one-sentence suggestion of how to revise the brief&gt;
+
+Otherwise, write the scene.</span><span class="bm">Hasilkan babak yang menepati taklimat di bawah. SEBELUM menulis, semak taklimat untuk mana-mana penghalang ini:
+
+  - Meminta kandungan melibatkan orang sebenar, bernama, masih hidup
+  - Memerlukan dakwaan fakta tentang keputusan perubatan, undang-undang, atau kewangan sebenar
+  - Percanggahan dalaman dalam taklimat itu sendiri
+
+Jika mana-mana penghalang terpakai, hasilkan SAHAJA:
+DITOLAK: &lt;sebab satu-ayat&gt;
+TIDAK MENGHALANG PENJANAAN: &lt;cadangan satu-ayat bagaimana menyemak taklimat&gt;
+
+Jika tidak, tulis babak.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
                     </div>
                     <div class="path-content path-it space-y-3">
-                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-amber-600 block mb-1">Ex:</strong> <span class="prompt-text font-mono text-sm"><span class="en">If the code snippet contains a vulnerability, output strictly 'VULNERABLE'.</span><span class="bm">Jika kod mempunyai kelemahan keselamatan, keluarkan 'TERdedah'.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-amber-600 block mb-1">Ex 1 (sentinel):</strong> <span class="prompt-text font-mono text-sm"><span class="en">If the code snippet contains a vulnerability, output strictly 'VULNERABLE'.</span><span class="bm">Jika kod mempunyai kelemahan keselamatan, keluarkan 'TERdedah'.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-amber-600 block mb-1">Ex 2 (structured triage):</strong> <span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">Review the diff for security issues. Output JSON only:
+{ "verdict": "SAFE" | "ISSUES_FOUND" | "INSUFFICIENT_CONTEXT",
+  "issues": [{ "line": int, "severity": "high"|"med"|"low", "type": string, "evidence": string }],
+  "context_missing": [string] | null }
+
+Set verdict to INSUFFICIENT_CONTEXT (with a list of missing files in context_missing) if you cannot judge correctness without seeing additional code. Do not guess; do not fabricate issues. An empty "issues" array is a valid "SAFE" answer.</span><span class="bm">Semak diff untuk isu keselamatan. Hasilkan JSON sahaja:
+{ "verdict": "SAFE" | "ISSUES_FOUND" | "INSUFFICIENT_CONTEXT",
+  "issues": [{ "line": int, "severity": "high"|"med"|"low", "type": string, "evidence": string }],
+  "context_missing": [string] | null }
+
+Tetapkan verdict kepada INSUFFICIENT_CONTEXT (dengan senarai fail yang hilang dalam context_missing) jika anda tidak boleh menilai ketepatan tanpa melihat kod tambahan. Jangan teka; jangan mereka isu. Senarai "issues" kosong ialah jawapan "SAFE" yang sah.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
                     </div>
                 </div>
 
                 <!-- 5.2 -->
                 <div class="mb-8 border-l-4 border-primary pl-4">
                     <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2"><span class="en">5.2 Prompt Chaining</span><span class="bm">5.2 Rantaian Prompt</span></h3>
-                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-4"><span class="en">Breaking complex tasks into a sequence of smaller prompts.</span><span class="bm">Memecahkan tugas yang kompleks kepada urutan prompt yang lebih kecil.</span></p>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-3">
+                        <span class="en">A single long prompt asks the model to do many things at once and tends to half-do all of them. A chain asks the model to do one thing well, then uses that output as the input to the next prompt. The key discipline: <strong>each step's output is a structured artifact</strong> (JSON, Markdown table, tagged sections), not free prose — because Step N+1 needs to read it reliably.</span>
+                        <span class="bm">Satu prompt panjang meminta model melakukan banyak perkara serentak dan cenderung melakukan separuh kesemuanya. Rantaian meminta model melakukan satu perkara dengan baik, kemudian menggunakan output itu sebagai input prompt seterusnya. Disiplin utama: <strong>output setiap langkah ialah artifak berstruktur</strong> (JSON, jadual Markdown, seksyen bertag), bukan prosa bebas — kerana Langkah N+1 perlu membacanya dengan boleh dipercayai.</span>
+                    </p>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
+                        <span class="en">A well-designed chain has three properties: <strong>(1)</strong> each step's purpose is stateable in one sentence; <strong>(2)</strong> each step's output schema is fixed in advance and parseable; <strong>(3)</strong> any step can be re-run independently if its input is the same, so you can debug step 4 without re-running steps 1–3. This is how production LLM pipelines actually work — they're acyclic graphs of focused prompts, not single mega-prompts.</span>
+                        <span class="bm">Rantaian yang direka dengan baik mempunyai tiga sifat: <strong>(1)</strong> tujuan setiap langkah boleh dinyatakan dalam satu ayat; <strong>(2)</strong> skema output setiap langkah ditetapkan terlebih dahulu dan boleh dihuraikan; <strong>(3)</strong> mana-mana langkah boleh dijalankan semula secara berasingan jika inputnya sama, supaya anda boleh menyahpepijat langkah 4 tanpa menjalankan semula langkah 1–3. Inilah cara saluran LLM pengeluaran sebenarnya berfungsi — ia graf akiklik prompt fokus, bukan mega-prompt tunggal.</span>
+                    </p>
                     <div class="path-content path-academic space-y-3">
-                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-blue-600 block mb-1">Ex:</strong> <span class="prompt-text font-mono text-sm"><span class="en">Step 1: "Extract claims." -> Step 2: "Fact-check claims."</span><span class="bm">Langkah 1: "Keluarkan dakwaan." -> Langkah 2: "Semak fakta dakwaan."</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-blue-600 block mb-1">Ex 1:</strong> <span class="prompt-text font-mono text-sm"><span class="en">Step 1: "Extract claims." -> Step 2: "Fact-check claims."</span><span class="bm">Langkah 1: "Keluarkan dakwaan." -> Langkah 2: "Semak fakta dakwaan."</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-blue-600 block mb-1">Ex 2 (3-step chain with parseable artifacts):</strong> <span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">STEP 1 — Extract:
+Output JSON: [{ "claim_id": int, "claim": string, "page": int }] from the paper below.
+
+STEP 2 — Fact-check (input = Step 1 output):
+For each claim, output JSON: [{ "claim_id": int, "verdict": "supported"|"contradicted"|"unverifiable", "supporting_quote": string|null }] using ONLY the paper's references.
+
+STEP 3 — Report (input = Step 2 output):
+Render a Markdown table with columns: Claim | Verdict | Evidence. Sort by verdict (contradicted first).</span><span class="bm">LANGKAH 1 — Ekstrak:
+Hasilkan JSON: [{ "claim_id": int, "claim": string, "page": int }] daripada kertas di bawah.
+
+LANGKAH 2 — Semak fakta (input = output Langkah 1):
+Untuk setiap dakwaan, hasilkan JSON: [{ "claim_id": int, "verdict": "supported"|"contradicted"|"unverifiable", "supporting_quote": string|null }] dengan menggunakan HANYA rujukan kertas.
+
+LANGKAH 3 — Laporkan (input = output Langkah 2):
+Hasilkan jadual Markdown dengan lajur: Dakwaan | Keputusan | Bukti. Susun mengikut verdict (contradicted dahulu).</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
                     </div>
                     <div class="path-content path-business space-y-3">
-                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-emerald-600 block mb-1">Ex:</strong> <span class="prompt-text font-mono text-sm"><span class="en">Step 1: "Analyze tone." -> Step 2: "Draft response based on tone."</span><span class="bm">Langkah 1: "Analisis nada." -> Langkah 2: "Rangka respons berdasarkan nada."</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-emerald-600 block mb-1">Ex 1:</strong> <span class="prompt-text font-mono text-sm"><span class="en">Step 1: "Analyze tone." -> Step 2: "Draft response based on tone."</span><span class="bm">Langkah 1: "Analisis nada." -> Langkah 2: "Rangka respons berdasarkan nada."</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-emerald-600 block mb-1">Ex 2 (3-step support pipeline):</strong> <span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">STEP 1 — Triage (input = customer email):
+Output JSON: { "category": "billing"|"technical"|"refund"|"other", "urgency": "low"|"med"|"high", "sentiment": "negative"|"neutral"|"positive", "key_facts": [string] }
+
+STEP 2 — Pull context (input = Step 1 output):
+For category="billing", look up invoice mentioned in key_facts. Output JSON: { "invoice_status": "paid"|"unpaid"|"not_found", "amount_myr": number|null }
+
+STEP 3 — Draft reply (input = Step 1 + Step 2):
+Write a customer-facing email that addresses the triage and uses the looked-up context. Tone: per sentiment. Max 120 words.</span><span class="bm">LANGKAH 1 — Triaj (input = e-mel pelanggan):
+Hasilkan JSON: { "category": "billing"|"technical"|"refund"|"other", "urgency": "low"|"med"|"high", "sentiment": "negative"|"neutral"|"positive", "key_facts": [string] }
+
+LANGKAH 2 — Ambil konteks (input = output Langkah 1):
+Untuk category="billing", cari invois yang disebut dalam key_facts. Hasilkan JSON: { "invoice_status": "paid"|"unpaid"|"not_found", "amount_myr": number|null }
+
+LANGKAH 3 — Draf balasan (input = Langkah 1 + Langkah 2):
+Tulis e-mel berhadapan-pelanggan yang menangani triaj dan menggunakan konteks yang diambil. Nada: ikut sentimen. Maksimum 120 patah kata.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
                     </div>
                     <div class="path-content path-creative space-y-3">
-                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-purple-600 block mb-1">Ex:</strong> <span class="prompt-text font-mono text-sm"><span class="en">Step 1: "Outline the plot." -> Step 2: "Write Chapter 1 based on outline."</span><span class="bm">Langkah 1: "Rangka plot." -> Langkah 2: "Tulis Bab 1 berdasarkan rangka."</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-purple-600 block mb-1">Ex 1:</strong> <span class="prompt-text font-mono text-sm"><span class="en">Step 1: "Outline the plot." -> Step 2: "Write Chapter 1 based on outline."</span><span class="bm">Langkah 1: "Rangka plot." -> Langkah 2: "Tulis Bab 1 berdasarkan rangka."</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-purple-600 block mb-1">Ex 2 (4-step scene chain):</strong> <span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">STEP 1 — Scene card (input = premise):
+Output YAML with keys: pov_character, goal, conflict, outcome (win|loss|partial|reversal), word_target.
+
+STEP 2 — Beat sheet (input = Step 1):
+Output 4 numbered narrative beats that deliver the scene card's outcome. Each beat: 1 sentence describing what happens.
+
+STEP 3 — Draft (input = Step 2):
+Write the scene prose hitting each beat in order. Target word count from Step 1.
+
+STEP 4 — Voice pass (input = Step 3):
+Rewrite the draft applying these rules: no adverbs ending in -ly, no hedging verbs ("seemed", "appeared"), maximum two sentences per paragraph.</span><span class="bm">LANGKAH 1 — Kad babak (input = premis):
+Hasilkan YAML dengan kunci: pov_character, goal, conflict, outcome (win|loss|partial|reversal), word_target.
+
+LANGKAH 2 — Helaian rentak (input = Langkah 1):
+Hasilkan 4 rentak naratif bernombor yang menyampaikan hasil kad babak. Setiap rentak: 1 ayat menerangkan apa yang berlaku.
+
+LANGKAH 3 — Draf (input = Langkah 2):
+Tulis prosa babak yang menepati setiap rentak mengikut susunan. Sasaran kiraan perkataan daripada Langkah 1.
+
+LANGKAH 4 — Pas suara (input = Langkah 3):
+Tulis semula draf dengan menggunakan peraturan ini: tiada adverb berakhir dengan -ly, tiada kata kerja berpagari ("seemed", "appeared"), maksimum dua ayat setiap perenggan.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
                     </div>
                     <div class="path-content path-it space-y-3">
-                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-amber-600 block mb-1">Ex:</strong> <span class="prompt-text font-mono text-sm"><span class="en">Step 1: "Write unit tests." -> Step 2: "Write code to pass the tests."</span><span class="bm">Langkah 1: "Tulis ujian unit." -> Langkah 2: "Tulis kod untuk melepasi ujian."</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-amber-600 block mb-1">Ex 1:</strong> <span class="prompt-text font-mono text-sm"><span class="en">Step 1: "Write unit tests." -> Step 2: "Write code to pass the tests."</span><span class="bm">Langkah 1: "Tulis ujian unit." -> Langkah 2: "Tulis kod untuk melepasi ujian."</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-amber-600 block mb-1">Ex 2 (4-step migration chain):</strong> <span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">STEP 1 — Inventory (input = legacy module):
+Output JSON: [{ "function_name": string, "callers_count": int, "exported": bool, "has_tests": bool }]
+
+STEP 2 — Migration plan (input = Step 1):
+For each function, output JSON: { "function_name": string, "action": "port_as_is"|"refactor"|"deprecate", "rationale": string, "blocking_dependencies": [string] }
+
+STEP 3 — Test scaffolding (input = Step 2 actions=port_as_is|refactor):
+Generate pytest skeletons (test names only, with TODO comments for assertions) covering each function's documented behaviour.
+
+STEP 4 — PR description (input = Step 2 + Step 3):
+Write the PR description in Conventional Commits format. Body must list each deprecated function and its replacement.</span><span class="bm">LANGKAH 1 — Inventori (input = modul lama):
+Hasilkan JSON: [{ "function_name": string, "callers_count": int, "exported": bool, "has_tests": bool }]
+
+LANGKAH 2 — Pelan migrasi (input = Langkah 1):
+Untuk setiap fungsi, hasilkan JSON: { "function_name": string, "action": "port_as_is"|"refactor"|"deprecate", "rationale": string, "blocking_dependencies": [string] }
+
+LANGKAH 3 — Perancah ujian (input = Langkah 2 actions=port_as_is|refactor):
+Hasilkan rangka pytest (nama ujian sahaja, dengan komen TODO untuk assertion) merangkumi kelakuan didokumenkan setiap fungsi.
+
+LANGKAH 4 — Penerangan PR (input = Langkah 2 + Langkah 3):
+Tulis penerangan PR dalam format Conventional Commits. Badan mesti senaraikan setiap fungsi yang dimansuhkan dan penggantiannya.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
                     </div>
                 </div>
 
                 <!-- 5.3 -->
                 <div class="mb-8 border-l-4 border-primary pl-4">
                     <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2"><span class="en">5.3 Reflexion</span><span class="bm">5.3 Refleksi</span></h3>
-                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-4"><span class="en">Asking the model to evaluate its own previous output before finalizing.</span><span class="bm">Meminta model untuk menilai output sebelumnya sebelum dimuktamadkan.</span></p>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-3">
+                        <span class="en">"Review your answer" alone produces sycophantic agreement — the model says "looks good!" and changes nothing. Reflexion works only when you give it a <strong>rubric to critique against</strong>. The pattern: <em>(1) draft, (2) critique against an explicit standard, (3) revise applying the critique</em>. The standard can be a checklist, a sample of good output, or a list of common failure modes for the task type.</span>
+                        <span class="bm">"Semak jawapan anda" sahaja menghasilkan persetujuan menjilat — model berkata "kelihatan baik!" dan tidak mengubah apa-apa. Refleksi berfungsi hanya apabila anda memberinya <strong>rubrik untuk mengkritik</strong>. Coraknya: <em>(1) draf, (2) kritik berdasarkan piawaian eksplisit, (3) semak dengan menerapkan kritikan</em>. Piawaian boleh menjadi senarai semak, sampel output baik, atau senarai mod kegagalan biasa untuk jenis tugas.</span>
+                    </p>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
+                        <span class="en">The critical move: ask the model to <strong>quote the specific line</strong> it's criticising. Vague critiques ("the introduction is unclear") produce vague revisions; quoted critiques ("the second sentence claims X without evidence") produce surgical edits. If the model can't quote what it's criticising, the critique is probably hallucinated and the revision will make things worse.</span>
+                        <span class="bm">Langkah kritikal: minta model <strong>memetik baris khusus</strong> yang dikritiknya. Kritikan kabur ("pengenalan tidak jelas") menghasilkan semakan kabur; kritikan berpetikan ("ayat kedua mendakwa X tanpa bukti") menghasilkan suntingan pembedahan. Jika model tidak boleh memetik apa yang dikritiknya, kritikan itu mungkin halusinasi dan semakan akan menjadikan keadaan lebih teruk.</span>
+                    </p>
                     <div class="path-content path-academic space-y-3">
-                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-blue-600 block mb-1">Ex:</strong> <span class="prompt-text font-mono text-sm"><span class="en">Review your previous critique. Are there biases? Revise if necessary.</span><span class="bm">Semak semula kritikan anda. Adakah terdapat berat sebelah? Semak semula.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-blue-600 block mb-1">Ex 1:</strong> <span class="prompt-text font-mono text-sm"><span class="en">Review your previous critique. Are there biases? Revise if necessary.</span><span class="bm">Semak semula kritikan anda. Adakah terdapat berat sebelah? Semak semula.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-blue-600 block mb-1">Ex 2 (rubric-based reflexion):</strong> <span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">Reflect on your draft using this rubric:
+
+CHECKLIST:
+[ ] Every empirical claim has a citation OR is hedged ("appears", "may suggest")
+[ ] No paragraph longer than 5 sentences
+[ ] No use of "very", "really", "extremely", "significantly" without a number
+[ ] The methodology section answers: WHO was studied, WHAT was measured, HOW measurement validity was established
+
+For each unchecked box, quote the exact phrase from your draft that fails and propose a replacement.
+Then output the revised draft incorporating every replacement.</span><span class="bm">Buat refleksi terhadap draf anda menggunakan rubrik ini:
+
+SENARAI SEMAK:
+[ ] Setiap dakwaan empirik mempunyai petikan ATAU dipagari ("kelihatan", "mungkin menunjukkan")
+[ ] Tiada perenggan lebih panjang daripada 5 ayat
+[ ] Tiada penggunaan "sangat", "betul-betul", "amat", "ketara" tanpa nombor
+[ ] Bahagian metodologi menjawab: SIAPA dikaji, APA diukur, BAGAIMANA kesahihan pengukuran ditubuhkan
+
+Untuk setiap kotak yang tidak ditanda, petik frasa tepat daripada draf anda yang gagal dan cadangkan gantian.
+Kemudian hasilkan draf disemak yang menerapkan setiap gantian.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
                     </div>
                     <div class="path-content path-business space-y-3">
-                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-emerald-600 block mb-1">Ex:</strong> <span class="prompt-text font-mono text-sm"><span class="en">Review the copy. Does it meet the constraint of avoiding jargon? Rewrite.</span><span class="bm">Semak teks. Adakah ia memenuhi kekangan mengelak jargon? Tulis semula.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-emerald-600 block mb-1">Ex 1:</strong> <span class="prompt-text font-mono text-sm"><span class="en">Review the copy. Does it meet the constraint of avoiding jargon? Rewrite.</span><span class="bm">Semak teks. Adakah ia memenuhi kekangan mengelak jargon? Tulis semula.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-emerald-600 block mb-1">Ex 2 (adversarial reflexion):</strong> <span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">Imagine a sceptical CFO is about to read your draft proposal. They will ask exactly three questions:
+
+  Q1 — Where does the projected revenue number come from?
+  Q2 — What's the smallest realistic version of this we can ship in 30 days?
+  Q3 — If this fails, what does failure look like and what does it cost?
+
+For each question, quote the sentence in your draft that answers it. If no sentence answers a question, write the sentence that should answer it, and add it to a revised draft.</span><span class="bm">Bayangkan seorang CFO ragu-ragu akan membaca draf cadangan anda. Mereka akan tanya tepat tiga soalan:
+
+  S1 — Dari mana angka hasil unjuran datang?
+  S2 — Apakah versi paling kecil dan realistik yang boleh kami hantar dalam 30 hari?
+  S3 — Jika ini gagal, rupa kegagalan dan kosnya apa?
+
+Untuk setiap soalan, petik ayat dalam draf anda yang menjawabnya. Jika tiada ayat menjawab soalan, tulis ayat yang patut menjawabnya, dan tambah pada draf disemak.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
                     </div>
                     <div class="path-content path-creative space-y-3">
-                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-purple-600 block mb-1">Ex:</strong> <span class="prompt-text font-mono text-sm"><span class="en">Read your dialogue. Do all characters sound the same? Make voice A more gruff.</span><span class="bm">Baca dialog anda. Adakah semua berbunyi sama? Jadikan suara A lebih kasar.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-purple-600 block mb-1">Ex 1:</strong> <span class="prompt-text font-mono text-sm"><span class="en">Read your dialogue. Do all characters sound the same? Make voice A more gruff.</span><span class="bm">Baca dialog anda. Adakah semua berbunyi sama? Jadikan suara A lebih kasar.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-purple-600 block mb-1">Ex 2 (line-level reflexion):</strong> <span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">Critique your draft using these five literary-fiction failure modes. For each one that applies, quote the offending line:
+
+  - Telling instead of showing (find the moment you stated an emotion directly)
+  - Floating dialogue (find an exchange where I can't tell who is speaking)
+  - Over-explained motivation (find a place you tell the reader why a character did something)
+  - Setting-as-postcard (find a description that doesn't reflect the POV character's mood)
+  - Adverb crutch (find every adverb ending in -ly)
+
+Quote each offending line. Propose a replacement line. Then output the full revised draft applying all replacements.</span><span class="bm">Kritik draf anda menggunakan lima mod kegagalan fiksyen sastera ini. Untuk setiap satu yang terpakai, petik baris yang melanggar:
+
+  - Memberitahu bukannya menunjukkan (cari saat anda menyatakan emosi secara langsung)
+  - Dialog terapung (cari pertukaran di mana saya tidak boleh tahu siapa bercakap)
+  - Motivasi dijelaskan berlebihan (cari tempat anda memberitahu pembaca mengapa watak melakukan sesuatu)
+  - Latar-sebagai-poskad (cari penerangan yang tidak mencerminkan mood watak POV)
+  - Tongkat adverb (cari setiap adverb berakhir dengan -ly)
+
+Petik setiap baris yang melanggar. Cadangkan baris gantian. Kemudian hasilkan draf disemak penuh dengan menerapkan semua gantian.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
                     </div>
                     <div class="path-content path-it space-y-3">
-                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-amber-600 block mb-1">Ex:</strong> <span class="prompt-text font-mono text-sm"><span class="en">Review your SQL query. Does it handle SQL injection risks? Fix it.</span><span class="bm">Semak pertanyaan SQL anda. Adakah ia mengendalikan risiko suntikan SQL?</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-amber-600 block mb-1">Ex 1:</strong> <span class="prompt-text font-mono text-sm"><span class="en">Review your SQL query. Does it handle SQL injection risks? Fix it.</span><span class="bm">Semak pertanyaan SQL anda. Adakah ia mengendalikan risiko suntikan SQL?</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-amber-600 block mb-1">Ex 2 (test-driven reflexion):</strong> <span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">Critique your code against this rubric. For each item, quote the line that violates it OR write "PASS — no violation":
+
+  1. Every public function has type hints on all parameters
+  2. Every error path either logs OR returns; never both, never neither
+  3. No bare `except:` clauses — every catch names a specific exception
+  4. No magic numbers — any integer literal &gt; 1 is a named constant or has a comment
+  5. Concurrency primitives (threads, locks, queues) have a comment explaining the invariant they protect
+
+For each violation, output the fixed line. Then output the full revised code applying all fixes.</span><span class="bm">Kritik kod anda berdasarkan rubrik ini. Untuk setiap item, petik baris yang melanggar ATAU tulis "PASS — tiada pelanggaran":
+
+  1. Setiap fungsi awam mempunyai type hint pada semua parameter
+  2. Setiap laluan ralat sama ada log ATAU pulangkan; tidak pernah kedua-duanya, tidak pernah tiada
+  3. Tiada klausa `except:` kosong — setiap tangkap menamakan pengecualian khusus
+  4. Tiada nombor sihir — mana-mana integer literal &gt; 1 ialah pemalar bernama atau ada komen
+  5. Primitif concurrency (thread, lock, queue) mempunyai komen yang menerangkan invarian yang dilindunginya
+
+Untuk setiap pelanggaran, hasilkan baris yang diperbaiki. Kemudian hasilkan kod disemak penuh dengan menerapkan semua pembaikan.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
                     </div>
                 </div>
 
                 <!-- 5.4 -->
                 <div class="mb-8 border-l-4 border-primary pl-4">
                     <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2"><span class="en">5.4 Meta-Prompting</span><span class="bm">5.4 Meta-Prompting</span></h3>
-                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-4"><span class="en">Transforming the LLM into a multi-faceted conductor that creates and manages specialized "expert" sub-instances.</span><span class="bm">Mengubah LLM kepada konduktor pelbagai rupa yang mencipta "pakar" sub-contoh.</span></p>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-3">
+                        <span class="en">Meta-prompting asks the LLM to play multiple specialised roles within a single response — a conductor coordinating an orchestra of personas. This is the natural evolution of Module 2.5's Multi-Persona Debate, but now structured around <strong>division of labour</strong>: each sub-instance has one job, one expertise lens, and one defined output. The conductor's role is to synthesise their outputs into a single coherent deliverable.</span>
+                        <span class="bm">Meta-prompting meminta LLM memainkan beberapa peranan khusus dalam satu respons — konduktor menyelaras orkestra persona. Ini ialah evolusi semula jadi Perdebatan Pelbagai Persona Modul 2.5, tetapi kini distrukturkan sekitar <strong>pembahagian kerja</strong>: setiap sub-contoh ada satu tugas, satu kanta kepakaran, dan satu output ditakrifkan. Peranan konduktor ialah mensintesiskan output mereka menjadi satu deliverable yang koheren.</span>
+                    </p>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
+                        <span class="en">A good meta-prompt specifies three things <em>per sub-instance</em>: <strong>(1)</strong> the role and what they care about, <strong>(2)</strong> the specific question they should answer, <strong>(3)</strong> the format of their answer (so the conductor can reliably merge). Skip any one of these and the conductor either invents the sub-instances' perspectives (defeating the purpose) or produces an ungrounded synthesis (defeating the rest).</span>
+                        <span class="bm">Meta-prompt yang baik menentukan tiga perkara <em>setiap sub-contoh</em>: <strong>(1)</strong> peranan dan apa yang mereka pedulikan, <strong>(2)</strong> soalan khusus yang patut mereka jawab, <strong>(3)</strong> format jawapan mereka (supaya konduktor boleh menggabungkan dengan boleh dipercayai). Langkau mana-mana satu dan konduktor sama ada mereka perspektif sub-contoh (mengalahkan tujuan) atau menghasilkan sintesis tidak bertanah (mengalahkan selebihnya).</span>
+                    </p>
                     <div class="path-content path-academic space-y-3">
-                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-blue-600 block mb-1">Ex:</strong> <span class="prompt-text font-mono text-sm"><span class="en">You are the conductor. Ask Expert 1 to review literature, Expert 2 to check methods, and synthesize their findings.</span><span class="bm">Anda konduktor. Minta Pakar 1 semak literatur, Pakar 2 semak kaedah, dan sintesiskan penemuan.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-blue-600 block mb-1">Ex 1:</strong> <span class="prompt-text font-mono text-sm"><span class="en">You are the conductor. Ask Expert 1 to review literature, Expert 2 to check methods, and synthesize their findings.</span><span class="bm">Anda konduktor. Minta Pakar 1 semak literatur, Pakar 2 semak kaedah, dan sintesiskan penemuan.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-blue-600 block mb-1">Ex 2 (explicit role specs):</strong> <span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">You are the lead reviewer. You will convene three sub-reviewers, each with a specific role, question, and output format:
+
+REVIEWER A — Statistical methodologist
+  Question: Are the inferential claims justified by the reported tests?
+  Output format: Markdown list. One issue per bullet. Quote the line and name the test.
+
+REVIEWER B — Domain content expert (early-childhood education)
+  Question: Are the constructs being measured well-operationalised given the field's standards?
+  Output format: 3-paragraph review. Para 1: what's established. Para 2: what's debatable. Para 3: what's missing.
+
+REVIEWER C — Reviewer-for-the-reader
+  Question: Would a master's student understand the methods section on first read?
+  Output format: 5-bullet list of the clearest barriers to understanding, in reading order.
+
+Then YOU (the lead reviewer) write a final synthesis (max 200 words) that resolves disagreements between reviewers and names the one revision the authors should prioritise.
+
+PAPER: [paste]</span><span class="bm">Anda pengulas utama. Anda akan mengadakan tiga sub-pengulas, setiap satu dengan peranan, soalan, dan format output khusus:
+
+PENGULAS A — Metodologis statistik
+  Soalan: Adakah dakwaan inferens dibenarkan oleh ujian yang dilaporkan?
+  Format output: Senarai Markdown. Satu isu setiap bullet. Petik baris dan namakan ujian.
+
+PENGULAS B — Pakar kandungan domain (pendidikan awal kanak-kanak)
+  Soalan: Adakah konstruk yang diukur dioperasionalisasikan dengan baik mengikut piawaian bidang?
+  Format output: Ulasan 3-perenggan. Perenggan 1: apa yang ditubuhkan. Perenggan 2: apa yang boleh dibahaskan. Perenggan 3: apa yang hilang.
+
+PENGULAS C — Pengulas-untuk-pembaca
+  Soalan: Adakah pelajar sarjana akan memahami bahagian metodologi pada bacaan pertama?
+  Format output: Senarai 5-bullet halangan paling jelas kepada pemahaman, dalam susunan bacaan.
+
+Kemudian ANDA (pengulas utama) menulis sintesis akhir (maks 200 patah kata) yang menyelesaikan perselisihan antara pengulas dan menamakan satu semakan yang penulis patut utamakan.
+
+KERTAS: [tampal]</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
                     </div>
                     <div class="path-content path-business space-y-3">
-                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-emerald-600 block mb-1">Ex:</strong> <span class="prompt-text font-mono text-sm"><span class="en">Ask the Legal agent to check compliance, the PR agent to check tone, and combine into a final press release.</span><span class="bm">Minta ejen Undang-undang semak pematuhan, ejen PR semak nada, dan gabungkan jadi siaran akhbar.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-emerald-600 block mb-1">Ex 1:</strong> <span class="prompt-text font-mono text-sm"><span class="en">Ask the Legal agent to check compliance, the PR agent to check tone, and combine into a final press release.</span><span class="bm">Minta ejen Undang-undang semak pematuhan, ejen PR semak nada, dan gabungkan jadi siaran akhbar.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-emerald-600 block mb-1">Ex 2 (product launch review board):</strong> <span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">You are the launch lead. Convene three reviewers for the launch announcement below:
+
+REVIEWER A — Legal compliance (Malaysia + Singapore + Indonesia)
+  Question: Are there any claims that require regulatory disclaimers in any of these markets?
+  Output: Numbered list. Each item: (a) claim, (b) jurisdiction, (c) required disclaimer or rewrite.
+
+REVIEWER B — Brand voice
+  Question: Does the announcement match our brand voice (warm, plain-spoken, specific over abstract)?
+  Output: Quote 3 sentences and label each: "ON_BRAND", "OFF_BRAND", or "AMBIGUOUS".
+
+REVIEWER C — Sales enablement
+  Question: Can our reps answer "what's the one-line elevator pitch?" after reading this?
+  Output: Write the elevator pitch in &lt;= 20 words.
+
+Then YOU integrate the reviews: produce the final announcement (max 300 words) incorporating Reviewer A's disclaimers, applying Reviewer B's rewrites, and ending with Reviewer C's elevator pitch.
+
+DRAFT ANNOUNCEMENT: [paste]</span><span class="bm">Anda ketua pelancaran. Adakan tiga pengulas untuk pengumuman pelancaran di bawah:
+
+PENGULAS A — Pematuhan undang-undang (Malaysia + Singapura + Indonesia)
+  Soalan: Adakah ada dakwaan yang memerlukan penafian peraturan dalam mana-mana pasaran ini?
+  Output: Senarai bernombor. Setiap item: (a) dakwaan, (b) bidang kuasa, (c) penafian atau penulisan semula diperlukan.
+
+PENGULAS B — Suara jenama
+  Question: Adakah pengumuman menepati suara jenama kami (mesra, berbahasa biasa, khusus berbanding abstrak)?
+  Output: Petik 3 ayat dan label setiap satu: "PATUH_JENAMA", "TIDAK_PATUH_JENAMA", atau "KABUR".
+
+PENGULAS C — Pemboleh jualan
+  Soalan: Bolehkah wakil kami menjawab "apa pitch lif satu-baris?" selepas membaca ini?
+  Output: Tulis pitch lif dalam &lt;= 20 patah kata.
+
+Kemudian ANDA mengintegrasikan ulasan: hasilkan pengumuman akhir (maks 300 patah kata) menerapkan penafian Pengulas A, menggunakan penulisan semula Pengulas B, dan berakhir dengan pitch lif Pengulas C.
+
+DRAF PENGUMUMAN: [tampal]</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
                     </div>
                     <div class="path-content path-creative space-y-3">
-                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-purple-600 block mb-1">Ex:</strong> <span class="prompt-text font-mono text-sm"><span class="en">Have the Dialogue expert and the World-Building expert review the scene and merge their edits.</span><span class="bm">Minta pakar Dialog dan pakar Pembinaan Dunia menyemak adegan dan menggabungkan suntingan mereka.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-purple-600 block mb-1">Ex 1:</strong> <span class="prompt-text font-mono text-sm"><span class="en">Have the Dialogue expert and the World-Building expert review the scene and merge their edits.</span><span class="bm">Minta pakar Dialog dan pakar Pembinaan Dunia menyemak adegan dan menggabungkan suntingan mereka.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-purple-600 block mb-1">Ex 2 (writers' room):</strong> <span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">You are the showrunner. Convene three writers on the draft scene below:
+
+WRITER A — Voice specialist
+  Question: Does each speaking character sound distinct? Could I remove the dialogue tags and still know who's talking?
+  Output: For each line of dialogue, write either "DISTINCT" or "GENERIC". For each GENERIC line, propose a rewrite that anchors the speaker's voice.
+
+WRITER B — Stakes auditor
+  Question: At every beat in the scene, what does the POV character stand to win or lose? Where does the scene's tension actually live?
+  Output: Number each beat in the scene. For each, state the stake in one sentence. If a beat has no stake, label it "DEAD_AIR".
+
+WRITER C — Sensory grounder
+  Question: In which beats do we know what the POV character can see, hear, smell, or feel? Where does the scene float in a sensory vacuum?
+  Output: For each numbered beat, list the sensory anchors present, or write "FLOATING".
+
+Then YOU produce the revised scene that fixes every GENERIC line (per A), removes or repurposes DEAD_AIR (per B), and adds one sensory anchor to each FLOATING beat (per C).
+
+DRAFT SCENE: [paste]</span><span class="bm">Anda penerbit eksekutif. Adakan tiga penulis pada draf babak di bawah:
+
+PENULIS A — Pakar suara
+  Soalan: Adakah setiap watak yang bercakap kedengaran berbeza? Bolehkah saya alih keluar tag dialog dan masih tahu siapa bercakap?
+  Output: Untuk setiap baris dialog, tulis sama ada "BERBEZA" atau "GENERIK". Untuk setiap baris GENERIK, cadangkan penulisan semula yang menambat suara penutur.
+
+PENULIS B — Pengaudit kepentingan
+  Soalan: Pada setiap rentak dalam babak, apa yang watak POV boleh menang atau rugi? Di mana ketegangan babak sebenarnya tinggal?
+  Output: Nomborkan setiap rentak dalam babak. Untuk setiap satu, nyatakan kepentingan dalam satu ayat. Jika rentak tiada kepentingan, label "UDARA_MATI".
+
+PENULIS C — Penambat deria
+  Soalan: Dalam rentak manakah kita tahu apa yang watak POV boleh lihat, dengar, hidu, atau rasa? Di mana babak terapung dalam vakum deria?
+  Output: Untuk setiap rentak bernombor, senaraikan penambat deria yang hadir, atau tulis "TERAPUNG".
+
+Kemudian ANDA hasilkan babak disemak yang membaiki setiap baris GENERIK (mengikut A), mengalih keluar atau mengubah suai UDARA_MATI (mengikut B), dan menambah satu penambat deria pada setiap rentak TERAPUNG (mengikut C).
+
+DRAF BABAK: [tampal]</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
                     </div>
                     <div class="path-content path-it space-y-3">
-                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-amber-600 block mb-1">Ex:</strong> <span class="prompt-text font-mono text-sm"><span class="en">Ask the Security agent and the Performance agent to review the code, then output the synthesized code.</span><span class="bm">Minta Ejen Keselamatan dan Ejen Prestasi menyemak kod, kemudian hasilkan kod sintesis.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-amber-600 block mb-1">Ex 1:</strong> <span class="prompt-text font-mono text-sm"><span class="en">Ask the Security agent and the Performance agent to review the code, then output the synthesized code.</span><span class="bm">Minta Ejen Keselamatan dan Ejen Prestasi menyemak kod, kemudian hasilkan kod sintesis.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-amber-600 block mb-1">Ex 2 (design review board):</strong> <span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">You are the tech lead. Convene three engineers on the design doc below:
+
+ENGINEER A — Security (threat model owner)
+  Question: What's the blast radius if any single component is compromised? Which trust boundaries does this design cross?
+  Output: A table with columns: Component | Trust boundary crossed (yes/no) | Worst-case impact if compromised | Mitigation in current design (or "MISSING").
+
+ENGINEER B — Reliability (on-call owner)
+  Question: At the predicted peak load × 3, where does this design fail first? Which failure modes does it not handle gracefully?
+  Output: An ordered list of the 5 most likely failure modes at load × 3. For each: trigger condition, observable symptom, current mitigation (or "MISSING").
+
+ENGINEER C — Cost (FinOps owner)
+  Question: At peak load, what's the dominant cost line item? Are any cheaper architectures plausible without sacrificing the must-have requirements?
+  Output: A breakdown of cost as a percentage by component. Then propose one cheaper alternative architecture and name the trade-off.
+
+Then YOU (the tech lead) write the design review verdict: APPROVE / APPROVE_WITH_CONDITIONS / REJECT. If conditions or rejection, list the specific changes required, each tagged with which engineer raised it.
+
+DESIGN DOC: [paste]</span><span class="bm">Anda ketua teknikal. Adakan tiga jurutera pada dokumen reka bentuk di bawah:
+
+JURUTERA A — Keselamatan (pemilik model ancaman)
+  Soalan: Apa radius letupan jika mana-mana komponen tunggal dikompromi? Sempadan kepercayaan mana yang reka bentuk ini silang?
+  Output: Jadual dengan lajur: Komponen | Sempadan kepercayaan disilangkan (ya/tidak) | Impak kes terburuk jika dikompromi | Mitigasi dalam reka bentuk semasa (atau "HILANG").
+
+JURUTERA B — Kebolehpercayaan (pemilik on-call)
+  Soalan: Pada beban puncak diramalkan × 3, di mana reka bentuk ini gagal dahulu? Mod kegagalan mana yang tidak dikendalikannya dengan baik?
+  Output: Senarai bertertib 5 mod kegagalan paling mungkin pada beban × 3. Untuk setiap satu: keadaan pencetus, simptom boleh diperhatikan, mitigasi semasa (atau "HILANG").
+
+JURUTERA C — Kos (pemilik FinOps)
+  Soalan: Pada beban puncak, apakah item kos dominan? Adakah seni bina yang lebih murah munasabah tanpa mengorbankan keperluan mesti-ada?
+  Output: Pecahan kos sebagai peratusan mengikut komponen. Kemudian cadangkan satu seni bina alternatif lebih murah dan namakan trade-off.
+
+Kemudian ANDA (ketua teknikal) menulis keputusan semakan reka bentuk: APPROVE / APPROVE_WITH_CONDITIONS / REJECT. Jika syarat atau penolakan, senaraikan perubahan khusus diperlukan, setiap satu ditag dengan jurutera mana yang membangkitkannya.
+
+DOKUMEN REKA BENTUK: [tampal]</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
                     </div>
                 </div>
 
                 <!-- 5.5 -->
                 <div class="mb-8 border-l-4 border-primary pl-4">
                     <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2"><span class="en">5.5 Prompt Templates & Parameterization</span><span class="bm">5.5 Templat Prompt & Parameterisasi</span></h3>
-                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-4"><span class="en">Using placeholders like {{TEXT}} to reuse a perfectly engineered prompt framework across multiple inputs.</span><span class="bm">Menggunakan pemegang tempat seperti {{TEKS}} untuk menggunakan semula templat prompt yang sama.</span></p>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-3">
+                        <span class="en">Once a prompt works well, the next move is to make it <strong>reusable</strong>. Replace the variable parts with placeholders ( <code>{{TOPIC}}</code>, <code>{{AUDIENCE}}</code>, <code>{{INPUT_TEXT}}</code> ), separate the template from the input, and now you have a tool — not a one-off prompt. This is the boundary between using LLMs as an artisan and using them as engineering infrastructure.</span>
+                        <span class="bm">Sebaik sahaja prompt berfungsi dengan baik, langkah seterusnya ialah menjadikannya <strong>boleh diguna semula</strong>. Gantikan bahagian boleh berubah dengan pemegang tempat ( <code>{{TAJUK}}</code>, <code>{{KHALAYAK}}</code>, <code>{{TEKS_INPUT}}</code> ), pisahkan templat daripada input, dan kini anda mempunyai alat — bukan prompt sekali pakai. Inilah sempadan antara menggunakan LLM sebagai tukang dan menggunakannya sebagai infrastruktur kejuruteraan.</span>
+                    </p>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
+                        <span class="en">Three disciplines make templates production-quality: <strong>(1)</strong> use a distinctive placeholder syntax ( <code>{{VARIABLE}}</code> double curly braces are the de-facto standard) so substitution failures are visible; <strong>(2)</strong> validate inputs before substitution — an empty <code>{{INPUT_TEXT}}</code> should fail loudly, not produce a hallucinated answer about nothing; <strong>(3)</strong> version the template like code — when the prompt changes, downstream outputs change, and you need to know which version produced which artefact.</span>
+                        <span class="bm">Tiga disiplin menjadikan templat berkualiti pengeluaran: <strong>(1)</strong> gunakan sintaks pemegang tempat tersendiri ( <code>{{PEMBOLEHUBAH}}</code> kurungan berganda ialah piawaian de-facto) supaya kegagalan penggantian dapat dilihat; <strong>(2)</strong> sahkan input sebelum penggantian — <code>{{TEKS_INPUT}}</code> kosong patut gagal dengan kuat, bukan menghasilkan jawapan halusinasi tentang ketiadaan; <strong>(3)</strong> versi templat seperti kod — apabila prompt berubah, output hiliran berubah, dan anda perlu tahu versi mana menghasilkan artifak yang mana.</span>
+                    </p>
+                    <div class="path-content path-academic space-y-3">
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-blue-600 block mb-1">Ex 1 — Abstract template (literature review automation):</strong> <span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">[TEMPLATE: lit-review-extract.v3]
+
+You are reviewing a paper in {{FIELD}} for a meta-analysis on {{REVIEW_TOPIC}}.
+
+From the abstract below, extract:
+{ "year": int | null,
+  "research_question": string,
+  "study_design": "{{DESIGN_VOCAB}}" | "other" | null,
+  "sample_size": int | null,
+  "key_finding": string,
+  "relevance_to_topic": "high" | "medium" | "low" }
+
+Use null for any field not stated in the abstract. Use "other" if study_design exists but doesn't match {{DESIGN_VOCAB}}.
+
+ABSTRACT: """{{ABSTRACT_TEXT}}"""</span><span class="bm">[TEMPLAT: lit-review-extract.v3]
+
+Anda sedang menyemak kertas dalam {{BIDANG}} untuk meta-analisis tentang {{TAJUK_ULASAN}}.
+
+Daripada abstrak di bawah, ekstrak:
+{ "year": int | null,
+  "research_question": string,
+  "study_design": "{{KOSAKATA_REKABENTUK}}" | "other" | null,
+  "sample_size": int | null,
+  "key_finding": string,
+  "relevance_to_topic": "high" | "medium" | "low" }
+
+Gunakan null untuk mana-mana medan tidak dinyatakan dalam abstrak. Gunakan "other" jika study_design wujud tetapi tidak menepati {{KOSAKATA_REKABENTUK}}.
+
+ABSTRAK: """{{TEKS_ABSTRAK}}"""</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                    </div>
+                    <div class="path-content path-business space-y-3">
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-emerald-600 block mb-1">Ex 1 — Support reply template:</strong> <span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">[TEMPLATE: support-reply.v7]
+
+You are a {{COMPANY_NAME}} support specialist replying to a customer in {{CUSTOMER_LANGUAGE}}.
+
+Constraints:
+- Tone: warm, specific, no apologetic preamble.
+- Length: under {{MAX_WORDS}} words.
+- Must include: the specific resolution OR a clear next step with timeline.
+- Must NOT include: marketing language, "feel free to", "I hope this helps".
+
+Use these facts only — do not invent:
+- Customer name: {{CUSTOMER_NAME}}
+- Account status: {{ACCOUNT_STATUS}}
+- Issue category: {{ISSUE_CATEGORY}}
+- Known resolution (if any): {{RESOLUTION_OR_NEXT_STEP}}
+
+CUSTOMER MESSAGE: """{{CUSTOMER_MESSAGE}}"""</span><span class="bm">[TEMPLAT: support-reply.v7]
+
+Anda pakar sokongan {{NAMA_SYARIKAT}} membalas pelanggan dalam {{BAHASA_PELANGGAN}}.
+
+Kekangan:
+- Nada: mesra, khusus, tiada mukadimah memohon maaf.
+- Panjang: di bawah {{MAKS_PATAH_KATA}} patah kata.
+- Mesti termasuk: penyelesaian khusus ATAU langkah seterusnya yang jelas dengan garis masa.
+- Mesti TIDAK termasuk: bahasa pemasaran, "jangan teragak-agak", "saya harap ini membantu".
+
+Gunakan fakta ini sahaja — jangan reka:
+- Nama pelanggan: {{NAMA_PELANGGAN}}
+- Status akaun: {{STATUS_AKAUN}}
+- Kategori isu: {{KATEGORI_ISU}}
+- Penyelesaian diketahui (jika ada): {{PENYELESAIAN_ATAU_LANGKAH_SETERUSNYA}}
+
+MESEJ PELANGGAN: """{{MESEJ_PELANGGAN}}"""</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                    </div>
+                    <div class="path-content path-creative space-y-3">
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-purple-600 block mb-1">Ex 1 — Scene-card template:</strong> <span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">[TEMPLATE: scene-card.v2]
+
+Write one scene for a {{GENRE}} story aimed at {{AUDIENCE}}.
+
+Scene spec:
+  pov_character: {{POV_CHARACTER}}
+  goal: {{POV_GOAL_THIS_SCENE}}
+  conflict: {{SOURCE_OF_CONFLICT}}
+  outcome: {{ONE_OF: win | loss | partial | reversal}}
+  word_target: {{WORD_TARGET}}
+  voice_anchor: {{VOICE_ADJECTIVES_3}}
+
+Hard rules:
+- Open with a sensory anchor — not exposition.
+- End on the outcome — never on reflection.
+- Maximum {{MAX_ADVERBS}} adverbs ending in -ly across the whole scene.
+- If the conflict cannot plausibly produce the outcome given the POV character's established abilities, output:
+  CONFLICT_OUTCOME_MISMATCH: &lt;one sentence explaining the issue&gt;
+  and stop. Do not write the scene.</span><span class="bm">[TEMPLAT: scene-card.v2]
+
+Tulis satu babak untuk cerita {{GENRE}} yang disasarkan kepada {{KHALAYAK}}.
+
+Spesifikasi babak:
+  pov_character: {{WATAK_POV}}
+  goal: {{MATLAMAT_POV_BABAK_INI}}
+  conflict: {{SUMBER_KONFLIK}}
+  outcome: {{SALAH_SATU: win | loss | partial | reversal}}
+  word_target: {{SASARAN_PATAH_KATA}}
+  voice_anchor: {{KATA_SIFAT_SUARA_3}}
+
+Peraturan ketat:
+- Mulakan dengan penambat deria — bukan ekspositori.
+- Akhirkan pada hasil — bukan pada refleksi.
+- Maksimum {{MAKS_ADVERB}} adverb berakhir dengan -ly merentas keseluruhan babak.
+- Jika konflik tidak boleh secara munasabah menghasilkan hasil dengan keupayaan watak POV yang ditubuhkan, hasilkan:
+  CONFLICT_OUTCOME_MISMATCH: &lt;satu ayat menerangkan isu&gt;
+  dan berhenti. Jangan tulis babak.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                    </div>
+                    <div class="path-content path-it space-y-3">
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-amber-600 block mb-1">Ex 1 — PR review template:</strong> <span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">[TEMPLATE: pr-review.v5]
+
+You are reviewing a PR in {{LANGUAGE}} for a {{SERVICE_TYPE}} service. The author is {{AUTHOR_SENIORITY}}.
+
+Output JSON only:
+{ "summary": string,           // one paragraph: what this PR does
+  "blocking": "NONE" | "NIT" | "SHOULD_FIX" | "MUST_FIX",
+  "issues": [{
+    "file": string,
+    "line": int,
+    "severity": "nit" | "should_fix" | "must_fix",
+    "category": "correctness" | "security" | "performance" | "style" | "testability",
+    "evidence_quote": string,  // quote the line from the diff
+    "suggested_fix": string
+  }],
+  "missing_tests": [string] | null,
+  "questions_for_author": [string]
+}
+
+Calibrate severity to author seniority: for {{AUTHOR_SENIORITY}}=junior, escalate testability and clarity concerns; for senior, focus on architectural and security concerns only.
+
+PR DIFF: """{{DIFF}}"""</span><span class="bm">[TEMPLAT: pr-review.v5]
+
+Anda menyemak PR dalam {{BAHASA}} untuk perkhidmatan {{JENIS_PERKHIDMATAN}}. Penulis ialah {{KEKANANAN_PENULIS}}.
+
+Hasilkan JSON sahaja:
+{ "summary": string,           // satu perenggan: apa yang dilakukan PR ini
+  "blocking": "NONE" | "NIT" | "SHOULD_FIX" | "MUST_FIX",
+  "issues": [{
+    "file": string,
+    "line": int,
+    "severity": "nit" | "should_fix" | "must_fix",
+    "category": "correctness" | "security" | "performance" | "style" | "testability",
+    "evidence_quote": string,  // petik baris daripada diff
+    "suggested_fix": string
+  }],
+  "missing_tests": [string] | null,
+  "questions_for_author": [string]
+}
+
+Kalibrasi keterukan kepada kekananan penulis: untuk {{KEKANANAN_PENULIS}}=junior, eskalasikan kebimbangan boleh-uji dan kejelasan; untuk senior, fokus hanya pada kebimbangan seni bina dan keselamatan.
+
+DIFF PR: """{{DIFF}}"""</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                    </div>
+                </div>
+
+                <!-- 5.6 NEW: Interactive Iteration Loop Simulator -->
+                <div class="mb-8 border-l-4 border-primary pl-4">
+                    <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">
+                        <span class="en">5.6 Interactive Iteration Loop Simulator</span><span class="bm">5.6 Simulator Gelung Lelaran Interaktif</span>
+                    </h3>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-3">
+                        <span class="en">Reading about iteration loops is not the same as walking through one. Click the steps below to step through a complete <strong>Draft → Critique → Revise → Final</strong> loop. At each stage, you'll see the actual prompt sent to the LLM and the kind of artefact it returns. Notice how the critique stage uses a rubric (not vague "check it") and how the revise stage feeds the critique back as structured input.</span>
+                        <span class="bm">Membaca tentang gelung lelaran tidak sama dengan melaluinya. Klik langkah-langkah di bawah untuk melangkah melalui gelung lengkap <strong>Draf → Kritik → Semak → Akhir</strong>. Pada setiap peringkat, anda akan melihat prompt sebenar yang dihantar kepada LLM dan jenis artifak yang dikembalikan. Perhatikan bagaimana peringkat kritik menggunakan rubrik (bukannya "semak ia" yang kabur) dan bagaimana peringkat semak menyalurkan kritikan semula sebagai input berstruktur.</span>
+                    </p>
+
+                    <!-- Loop stage tiles -->
+                    <div id="loop-grid" class="loop-grid mb-2" role="tablist">
+                        <div class="loop-tile" role="tab" data-stage="draft" data-active="true" tabindex="0">
+                            <div class="loop-step-num">1</div>
+                            <div class="loop-step-name"><span class="en">Draft</span><span class="bm">Draf</span></div>
+                            <div class="loop-step-hint"><span class="en">first attempt</span><span class="bm">percubaan pertama</span></div>
+                        </div>
+                        <div class="loop-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                        <div class="loop-tile" role="tab" data-stage="critique" tabindex="0">
+                            <div class="loop-step-num">2</div>
+                            <div class="loop-step-name"><span class="en">Critique</span><span class="bm">Kritik</span></div>
+                            <div class="loop-step-hint"><span class="en">rubric-based audit</span><span class="bm">audit berasaskan rubrik</span></div>
+                        </div>
+                        <div class="loop-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                        <div class="loop-tile" role="tab" data-stage="revise" tabindex="0">
+                            <div class="loop-step-num">3</div>
+                            <div class="loop-step-name"><span class="en">Revise</span><span class="bm">Semak</span></div>
+                            <div class="loop-step-hint"><span class="en">apply the critique</span><span class="bm">terapkan kritikan</span></div>
+                        </div>
+                        <div class="loop-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                        <div class="loop-tile" role="tab" data-stage="final" tabindex="0">
+                            <div class="loop-step-num">4</div>
+                            <div class="loop-step-name"><span class="en">Final</span><span class="bm">Akhir</span></div>
+                            <div class="loop-step-hint"><span class="en">ship it</span><span class="bm">hantarnya</span></div>
+                        </div>
+                    </div>
+
+                    <!-- Loop detail panel -->
+                    <div id="loop-panel" class="loop-panel" aria-live="polite"></div>
+
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-3">
+                        <i class="fa-solid fa-info-circle mr-1"></i>
+                        <span class="en">Tip: the magic isn't in any single step — it's in the data flowing between them. Step 2 produces a list of specific issues; Step 3 receives that list as input. If you skip the structured critique, Step 3 is just "rewrite it" — which is why one-shot revision loops rarely improve much.</span>
+                        <span class="bm">Petua: ajaibnya bukan dalam mana-mana langkah tunggal — ia dalam data mengalir antara mereka. Langkah 2 menghasilkan senarai isu khusus; Langkah 3 menerima senarai itu sebagai input. Jika anda langkau kritikan berstruktur, Langkah 3 hanyalah "tulis semula" — itulah sebabnya gelung semakan satu-tembakan jarang banyak memperbaiki.</span>
+                    </p>
                 </div>
 
                 <!-- Fun Fact & Summary -->
@@ -5453,6 +6165,348 @@ METRIK SEMASA: [tampal]`
             }
         }
 
+        // --- 5.6 Iteration Loop Simulator ---
+        // Walks the learner through a single concrete iteration cycle. Each stage
+        // shows: (a) the goal of this step, (b) the actual prompt that would be
+        // sent to the LLM, (c) the artifact that step would produce. The example
+        // task is shared across all four stages so the iteration is coherent.
+        const LOOP_STAGES = {
+            draft: {
+                num: 1,
+                title:   { en: 'Stage 1 — Draft',    bm: 'Peringkat 1 — Draf' },
+                counter: { en: 'first attempt; not yet audited',
+                           bm: 'percubaan pertama; belum diaudit' },
+                purpose: {
+                    en: 'The goal of this stage is volume, not perfection. Get a complete draft on the page so the next stage has something concrete to critique. Premature self-editing here ruins the loop.',
+                    bm: 'Matlamat peringkat ini ialah jumlah, bukan kesempurnaan. Dapatkan draf lengkap di atas kertas supaya peringkat seterusnya ada sesuatu konkrit untuk dikritik. Penyuntingan-sendiri terlalu awal di sini merosakkan gelung.'
+                },
+                prompt: {
+                    en: `Write the 250-word executive summary for the quarterly product review below.
+
+Audience: CEO + board members.
+Tone: confident, numbers-led, no hedging.
+Constraints: maximum 250 words; lead with the headline result; one paragraph per pillar (Acquisition / Retention / Revenue).
+
+QUARTERLY DATA: [3 pages of metrics omitted in this preview]`,
+                    bm: `Tulis ringkasan eksekutif 250-patah-kata untuk semakan produk suku-tahunan di bawah.
+
+Khalayak: CEO + ahli lembaga.
+Nada: yakin, dipacu nombor, tiada pengelakan.
+Kekangan: maksimum 250 patah kata; mulakan dengan keputusan utama; satu perenggan setiap tiang (Pemerolehan / Pengekalan / Hasil).
+
+DATA SUKU TAHUNAN: [3 halaman metrik diabaikan dalam pratonton ini]`
+                },
+                artifact: {
+                    en: `[DRAFT v1, 268 words — over budget]
+
+This quarter we saw strong momentum across the board, with several encouraging signals in the underlying metrics. Acquisition trended positively, with notable improvements in cost efficiency and channel diversification. Retention also showed promising movement, particularly in our core enterprise segment, where engagement deepened. On the revenue side, we are tracking ahead of our internal forecast, though there are a few areas worth flagging for further discussion...
+
+[continues for several more paragraphs of warm but vague prose]`,
+                    bm: `[DRAF v1, 268 patah kata — melebihi bajet]
+
+Suku tahun ini kami melihat momentum kuat merentas keseluruhan, dengan beberapa isyarat menggalakkan dalam metrik asas. Pemerolehan menunjukkan trend positif, dengan peningkatan ketara dalam kecekapan kos dan kepelbagaian saluran. Pengekalan juga menunjukkan pergerakan yang memberangsangkan, terutamanya dalam segmen perusahaan teras kami, di mana penglibatan mendalam. Pada bahagian hasil, kami mengejar di hadapan unjuran dalaman kami, walaupun terdapat beberapa kawasan yang patut ditandakan untuk perbincangan lanjut...
+
+[bersambung untuk beberapa perenggan lagi prosa hangat tetapi kabur]`
+                },
+                feedsInto: {
+                    en: 'This draft now becomes the INPUT to Stage 2. Note how vague it is — that\'s exactly the kind of output the rubric will catch.',
+                    bm: 'Draf ini kini menjadi INPUT kepada Peringkat 2. Perhatikan betapa kaburnya — itulah jenis output yang akan ditangkap rubrik.'
+                }
+            },
+            critique: {
+                num: 2,
+                title:   { en: 'Stage 2 — Critique',    bm: 'Peringkat 2 — Kritik' },
+                counter: { en: 'rubric-based audit; quotes specific failures',
+                           bm: 'audit berasaskan rubrik; petik kegagalan khusus' },
+                purpose: {
+                    en: 'The goal of this stage is to find specific, quoted failures — not vague impressions. A rubric forces the model to compare the draft against explicit criteria. The output of this stage must be parseable so Stage 3 can apply the fixes mechanically.',
+                    bm: 'Matlamat peringkat ini ialah mencari kegagalan khusus dan berpetikan — bukan tanggapan kabur. Rubrik memaksa model membandingkan draf dengan kriteria eksplisit. Output peringkat ini mesti boleh dihuraikan supaya Peringkat 3 boleh menerapkan pembaikan secara mekanikal.'
+                },
+                prompt: {
+                    en: `Critique the draft below against this rubric. For each failure, quote the offending phrase and propose a replacement.
+
+RUBRIC:
+[ ] Every sentence claiming a trend includes a specific number
+[ ] No use of "strong", "positive", "promising", "notable" without a number
+[ ] Word count is at or below 250 words
+[ ] Headline result is in the first sentence
+[ ] Each pillar (Acquisition / Retention / Revenue) gets exactly one paragraph
+
+Output JSON:
+[{ "rubric_item": string,
+   "verdict": "PASS" | "FAIL",
+   "evidence_quote": string | null,
+   "suggested_replacement": string | null }]
+
+DRAFT: """${'[Stage 1 draft above]'}"""`,
+                    bm: `Kritik draf di bawah berdasarkan rubrik ini. Untuk setiap kegagalan, petik frasa yang melanggar dan cadangkan gantian.
+
+RUBRIK:
+[ ] Setiap ayat yang mendakwa trend termasuk nombor khusus
+[ ] Tiada penggunaan "kuat", "positif", "memberangsangkan", "ketara" tanpa nombor
+[ ] Kiraan perkataan pada atau di bawah 250 patah kata
+[ ] Keputusan utama dalam ayat pertama
+[ ] Setiap tiang (Pemerolehan / Pengekalan / Hasil) mendapat tepat satu perenggan
+
+Hasilkan JSON:
+[{ "rubric_item": string,
+   "verdict": "PASS" | "FAIL",
+   "evidence_quote": string | null,
+   "suggested_replacement": string | null }]
+
+DRAF: """${'[draf Peringkat 1 di atas]'}"""`
+                },
+                artifact: {
+                    en: `[
+  { "rubric_item": "Every trend sentence includes a number",
+    "verdict": "FAIL",
+    "evidence_quote": "Acquisition trended positively",
+    "suggested_replacement": "CAC dropped 18% QoQ to RM 142, with paid channels contributing 60% of new signups" },
+  { "rubric_item": "No use of 'strong/positive/promising/notable' without a number",
+    "verdict": "FAIL",
+    "evidence_quote": "strong momentum across the board",
+    "suggested_replacement": "Net revenue grew 31% QoQ on a 22% headcount growth" },
+  { "rubric_item": "Word count <= 250",
+    "verdict": "FAIL",
+    "evidence_quote": "[full draft is 268 words]",
+    "suggested_replacement": "Cut the opening paragraph; lead directly with the headline number" },
+  { "rubric_item": "Headline result is in the first sentence",
+    "verdict": "FAIL",
+    "evidence_quote": "This quarter we saw strong momentum across the board",
+    "suggested_replacement": "Net revenue grew 31% QoQ — our largest single-quarter gain since launch" },
+  { "rubric_item": "One paragraph per pillar",
+    "verdict": "PASS",
+    "evidence_quote": null,
+    "suggested_replacement": null }
+]`,
+                    bm: `[
+  { "rubric_item": "Setiap ayat trend termasuk nombor",
+    "verdict": "FAIL",
+    "evidence_quote": "Pemerolehan menunjukkan trend positif",
+    "suggested_replacement": "CAC menurun 18% QoQ ke RM 142, dengan saluran berbayar menyumbang 60% pendaftaran baharu" },
+  { "rubric_item": "Tiada penggunaan 'kuat/positif/memberangsangkan/ketara' tanpa nombor",
+    "verdict": "FAIL",
+    "evidence_quote": "momentum kuat merentas keseluruhan",
+    "suggested_replacement": "Hasil bersih meningkat 31% QoQ pada pertumbuhan headcount 22%" },
+  { "rubric_item": "Kiraan perkataan <= 250",
+    "verdict": "FAIL",
+    "evidence_quote": "[draf penuh ialah 268 patah kata]",
+    "suggested_replacement": "Potong perenggan pembukaan; mulakan terus dengan nombor utama" },
+  { "rubric_item": "Keputusan utama dalam ayat pertama",
+    "verdict": "FAIL",
+    "evidence_quote": "Suku tahun ini kami melihat momentum kuat merentas keseluruhan",
+    "suggested_replacement": "Hasil bersih meningkat 31% QoQ — keuntungan suku-tunggal terbesar kami sejak pelancaran" },
+  { "rubric_item": "Satu perenggan setiap tiang",
+    "verdict": "PASS",
+    "evidence_quote": null,
+    "suggested_replacement": null }
+]`
+                },
+                feedsInto: {
+                    en: 'This JSON is now structured input for Stage 3. Because each FAIL carries an evidence_quote AND a suggested_replacement, Stage 3 can apply the fixes deterministically — no second round of "what was wrong again?"',
+                    bm: 'JSON ini kini input berstruktur untuk Peringkat 3. Kerana setiap FAIL membawa evidence_quote DAN suggested_replacement, Peringkat 3 boleh menerapkan pembaikan secara deterministik — tiada pusingan kedua "apa yang salah tadi?"'
+                }
+            },
+            revise: {
+                num: 3,
+                title:   { en: 'Stage 3 — Revise',    bm: 'Peringkat 3 — Semak' },
+                counter: { en: 'apply each FAIL\'s suggested replacement',
+                           bm: 'terapkan gantian setiap FAIL' },
+                purpose: {
+                    en: 'The goal of this stage is mechanical application — not creative rewriting. Each FAIL item from Stage 2 contains an evidence_quote AND a suggested_replacement. The revision is a deterministic find-and-replace on those pairs, plus any structural changes the rubric flagged.',
+                    bm: 'Matlamat peringkat ini ialah aplikasi mekanikal — bukan penulisan semula kreatif. Setiap item FAIL daripada Peringkat 2 mengandungi evidence_quote DAN suggested_replacement. Semakan ialah cari-dan-ganti deterministik pada pasangan tersebut, ditambah dengan mana-mana perubahan struktur yang ditanda rubrik.'
+                },
+                prompt: {
+                    en: `Apply every FAIL item from the critique below to the draft. For each one, locate the evidence_quote in the draft and substitute the suggested_replacement. Then handle any structural rubric items (word count, paragraph structure) explicitly.
+
+After applying ALL substitutions, output the revised draft followed by a confirmation block:
+SUBSTITUTIONS_APPLIED: <count>
+WORD_COUNT_BEFORE: <int>
+WORD_COUNT_AFTER: <int>
+
+ORIGINAL DRAFT: """${'[Stage 1 draft]'}"""
+CRITIQUE: """${'[Stage 2 JSON]'}"""`,
+                    bm: `Terapkan setiap item FAIL daripada kritikan di bawah pada draf. Untuk setiap satu, cari evidence_quote dalam draf dan gantikan dengan suggested_replacement. Kemudian tangani sebarang item rubrik struktur (kiraan perkataan, struktur perenggan) secara eksplisit.
+
+Selepas menerapkan SEMUA penggantian, hasilkan draf disemak diikuti blok pengesahan:
+SUBSTITUTIONS_APPLIED: <kiraan>
+WORD_COUNT_BEFORE: <int>
+WORD_COUNT_AFTER: <int>
+
+DRAF ASAL: """${'[draf Peringkat 1]'}"""
+KRITIKAN: """${'[JSON Peringkat 2]'}"""`
+                },
+                artifact: {
+                    en: `[REVISED DRAFT v2, 247 words — within budget]
+
+Net revenue grew 31% QoQ — our largest single-quarter gain since launch.
+
+ACQUISITION. CAC dropped 18% QoQ to RM 142, with paid channels contributing 60% of new signups. We retired two underperforming channels and consolidated spend into Google + LinkedIn, which together drove 84% of qualified leads.
+
+RETENTION. Enterprise gross retention held at 96%, while SMB churn declined from 3.8% to 2.4% after the onboarding redesign shipped in week 4. Net Revenue Retention reached 118% — first time above 115% in six quarters.
+
+REVENUE. We closed Q3 at RM 14.2M (vs RM 12.8M forecast), driven by three deals above RM 500K and the new annual-billing default. Gross margin held at 71%.
+
+---
+SUBSTITUTIONS_APPLIED: 4
+WORD_COUNT_BEFORE: 268
+WORD_COUNT_AFTER: 247`,
+                    bm: `[DRAF DISEMAK v2, 247 patah kata — dalam bajet]
+
+Hasil bersih meningkat 31% QoQ — keuntungan suku-tunggal terbesar kami sejak pelancaran.
+
+PEMEROLEHAN. CAC menurun 18% QoQ ke RM 142, dengan saluran berbayar menyumbang 60% pendaftaran baharu. Kami menamatkan dua saluran berprestasi rendah dan menyatukan perbelanjaan ke Google + LinkedIn, yang bersama-sama memacu 84% petunjuk berkelayakan.
+
+PENGEKALAN. Pengekalan kasar perusahaan kekal pada 96%, manakala churn SMB menurun daripada 3.8% kepada 2.4% selepas reka bentuk semula onboarding dihantar pada minggu 4. Pengekalan Hasil Bersih mencapai 118% — kali pertama melebihi 115% dalam enam suku tahun.
+
+HASIL. Kami menutup Q3 pada RM 14.2J (vs unjuran RM 12.8J), didorong oleh tiga perjanjian melebihi RM 500K dan lalai bil-tahunan baharu. Margin kasar kekal pada 71%.
+
+---
+SUBSTITUTIONS_APPLIED: 4
+WORD_COUNT_BEFORE: 268
+WORD_COUNT_AFTER: 247`
+                },
+                feedsInto: {
+                    en: 'The revised draft now goes to Stage 4 — a final sanity check. The confirmation block (SUBSTITUTIONS_APPLIED + word counts) lets downstream tooling verify that the revision actually applied every fix, not just looked like it did.',
+                    bm: 'Draf disemak kini pergi ke Peringkat 4 — semakan kewarasan akhir. Blok pengesahan (SUBSTITUTIONS_APPLIED + kiraan perkataan) membenarkan alat hiliran mengesahkan bahawa semakan benar-benar menerapkan setiap pembaikan, bukan hanya kelihatan seperti.'
+                }
+            },
+            final: {
+                num: 4,
+                title:   { en: 'Stage 4 — Final',    bm: 'Peringkat 4 — Akhir' },
+                counter: { en: 'ship-ready; one last sanity check',
+                           bm: 'sedia untuk dihantar; satu semakan kewarasan akhir' },
+                purpose: {
+                    en: 'The goal of this stage is to catch anything the rubric missed. Reflexion + rubric handles the explicit failure modes, but the loop\'s final pass asks one open question: "is there anything else?" If the model finds nothing, you ship. If it finds something, you go back to Stage 2 with the new rubric item.',
+                    bm: 'Matlamat peringkat ini ialah menangkap apa-apa yang terlepas oleh rubrik. Refleksi + rubrik mengendalikan mod kegagalan eksplisit, tetapi pas akhir gelung bertanya satu soalan terbuka: "adakah apa-apa lagi?" Jika model tidak menjumpai apa-apa, anda hantar. Jika ia menjumpai sesuatu, anda kembali ke Peringkat 2 dengan item rubrik baharu.'
+                },
+                prompt: {
+                    en: `Read the revised draft below as if you were the CEO opening this in their inbox.
+
+Answer exactly two questions:
+1. Is there one factual claim in here that, if wrong, would embarrass me? (If yes, quote it.)
+2. Is there a single sentence I would cut for being filler? (If yes, quote it.)
+
+If both answers are "no", output exactly: APPROVED FOR SEND.
+Otherwise, output the issues — do NOT auto-revise. Send them back as new rubric items for the next iteration.
+
+REVISED DRAFT: """${'[Stage 3 output]'}"""`,
+                    bm: `Baca draf disemak di bawah seolah-olah anda adalah CEO membukanya dalam peti masuk mereka.
+
+Jawab tepat dua soalan:
+1. Adakah ada satu dakwaan fakta di sini yang, jika salah, akan memalukan saya? (Jika ya, petik.)
+2. Adakah ada satu ayat yang saya akan potong sebagai pengisi? (Jika ya, petik.)
+
+Jika kedua-dua jawapan ialah "tidak", hasilkan tepat: APPROVED FOR SEND.
+Jika tidak, hasilkan isu — JANGAN auto-semak. Hantar semula sebagai item rubrik baharu untuk lelaran seterusnya.
+
+DRAF DISEMAK: """${'[output Peringkat 3]'}"""`
+                },
+                artifact: {
+                    en: `Q1 — Embarrassing-if-wrong claim:
+"NRR reached 118% — first time above 115% in six quarters"
+
+This is a strong number cited as a milestone. Verify it against the actual NRR dashboard for the past 6 quarters before sending. If accurate → keep. If the streak is 5 or 7 quarters not 6 → adjust.
+
+Q2 — Filler sentence:
+None found. Every sentence carries either a number or a structural transition.
+
+VERDICT: NEEDS_ONE_VERIFICATION
+(Not yet APPROVED FOR SEND — verify the 6-quarter claim, then re-run this stage.)`,
+                    bm: `S1 — Dakwaan memalukan-jika-salah:
+"NRR mencapai 118% — kali pertama melebihi 115% dalam enam suku tahun"
+
+Ini ialah nombor kuat dipetik sebagai pencapaian. Sahkan terhadap papan pemuka NRR sebenar untuk 6 suku tahun lalu sebelum menghantar. Jika tepat → kekal. Jika streak ialah 5 atau 7 suku tahun bukan 6 → laraskan.
+
+S2 — Ayat pengisi:
+Tiada dijumpai. Setiap ayat membawa sama ada nombor atau peralihan struktur.
+
+KEPUTUSAN: NEEDS_ONE_VERIFICATION
+(Belum lagi APPROVED FOR SEND — sahkan dakwaan 6-suku tahun, kemudian jalankan semula peringkat ini.)`
+                },
+                feedsInto: {
+                    en: 'This is where most teams stop the loop too early. The verdict isn\'t "approved" — it\'s "verify one factual claim, then re-run me." A real production pipeline would either route to a human, or kick off another iteration with a verification step. Shipping at this point would risk the only thing worse than a vague draft: a confidently-stated wrong number.',
+                    bm: 'Di sinilah kebanyakan pasukan menghentikan gelung terlalu awal. Keputusannya bukan "diluluskan" — ia "sahkan satu dakwaan fakta, kemudian jalankan saya semula." Saluran pengeluaran sebenar akan sama ada menyalurkan kepada manusia, atau memulakan lelaran lain dengan langkah pengesahan. Menghantar pada peringkat ini akan berisiko satu-satunya perkara yang lebih teruk daripada draf kabur: nombor salah yang dinyatakan dengan yakin.'
+                }
+            }
+        };
+
+        function renderLoopPanel(stage) {
+            const data = LOOP_STAGES[stage];
+            if (!data) return;
+            const panel = document.getElementById('loop-panel');
+            if (!panel) return;
+            panel.innerHTML = `
+              <div class="loop-stage-header">
+                <div>
+                  <div class="loop-stage-title">
+                    <span class="en">${data.title.en}</span><span class="bm">${data.title.bm}</span>
+                  </div>
+                </div>
+                <span class="loop-stage-counter">
+                  <span class="en">${data.counter.en}</span><span class="bm">${data.counter.bm}</span>
+                </span>
+              </div>
+              <div class="loop-section">
+                <div class="loop-section-label">
+                  <span class="en">Purpose of this stage</span><span class="bm">Tujuan peringkat ini</span>
+                </div>
+                <div class="loop-section-prose">
+                  <span class="en">${data.purpose.en}</span><span class="bm">${data.purpose.bm}</span>
+                </div>
+              </div>
+              <div class="loop-section">
+                <div class="loop-section-label">
+                  <span class="en">Prompt sent to the LLM</span><span class="bm">Prompt dihantar kepada LLM</span>
+                </div>
+                <div class="loop-section-content">
+                  <span class="en">${data.prompt.en}</span><span class="bm">${data.prompt.bm}</span>
+                </div>
+              </div>
+              <div class="loop-section">
+                <div class="loop-section-label">
+                  <span class="en">Artifact produced</span><span class="bm">Artifak dihasilkan</span>
+                </div>
+                <div class="loop-section-content">
+                  <span class="en">${data.artifact.en}</span><span class="bm">${data.artifact.bm}</span>
+                </div>
+              </div>
+              <div class="loop-section">
+                <div class="loop-section-label">
+                  <span class="en">What feeds into the next stage</span><span class="bm">Apa yang menyalurkan ke peringkat seterusnya</span>
+                </div>
+                <div class="loop-section-prose">
+                  <span class="en">${data.feedsInto.en}</span><span class="bm">${data.feedsInto.bm}</span>
+                </div>
+              </div>
+            `;
+        }
+
+        function initLoopSimulator() {
+            const grid = document.getElementById('loop-grid');
+            if (!grid) return;
+            const tiles = grid.querySelectorAll('.loop-tile');
+
+            const activate = (stage) => {
+                tiles.forEach(t => t.setAttribute('data-active',
+                    String(t.dataset.stage === stage)));
+                renderLoopPanel(stage);
+            };
+
+            tiles.forEach(tile => {
+                tile.addEventListener('click', () => activate(tile.dataset.stage));
+                tile.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        activate(tile.dataset.stage);
+                    }
+                });
+            });
+
+            const initial = grid.querySelector('.loop-tile[data-active="true"]') || tiles[0];
+            if (initial) activate(initial.dataset.stage);
+        }
+
         // --- Initialization on Page Load ---
         document.addEventListener('DOMContentLoaded', () => {
             // Restore the learner's previously-entered name so their leaderboard row
@@ -5474,6 +6528,8 @@ METRIK SEMASA: [tampal]`
             initReasoningSelector();
             // Wire up the new Format Prescription Builder (4.6)
             initFormatBuilder();
+            // Wire up the new Iteration Loop Simulator (5.6)
+            initLoopSimulator();
 
             // Seed leaderboard preview
             try {
