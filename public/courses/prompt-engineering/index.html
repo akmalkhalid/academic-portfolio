@@ -643,6 +643,179 @@
             line-height: 1.55;
         }
         .dark .loop-section-prose { color: #e7e5e4; }
+
+        /* ===== Module 6: Cognitive Topology Explorer ===== */
+        .topology-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+        @media (min-width: 640px) {
+            .topology-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+        }
+        .topology-tile {
+            padding: 14px 10px;
+            border-radius: 10px;
+            border: 1px solid rgba(0,0,0,0.08);
+            background: #fff;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+            user-select: none;
+        }
+        .dark .topology-tile { background: #1e293b; border-color: rgba(255,255,255,0.08); }
+        .topology-tile:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px -2px rgba(0,0,0,0.08);
+        }
+        .topology-tile[data-active="true"] {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(79,70,229,0.15);
+        }
+        .topology-svg {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 8px;
+            color: var(--color-primary);
+        }
+        .topology-svg svg {
+            width: 80px;
+            height: 40px;
+        }
+        .topology-tile[data-active="true"] .topology-svg { color: var(--color-primary); }
+        .topology-name {
+            font-weight: 700;
+            font-size: 13px;
+            line-height: 1.2;
+            margin-bottom: 3px;
+        }
+        .topology-hint {
+            font-size: 11px;
+            color: #64748b;
+            line-height: 1.3;
+        }
+        .dark .topology-hint { color: #94a3b8; }
+
+        /* Topology detail panel — distinctive teal-cyan palette */
+        .topology-panel {
+            margin-top: 16px;
+            padding: 18px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #cffafe 0%, #ddd6fe 100%);
+            border: 1px solid rgba(14,165,233,0.2);
+        }
+        .dark .topology-panel {
+            background: linear-gradient(135deg, rgba(8,51,68,0.4) 0%, rgba(76,29,149,0.25) 100%);
+            border-color: rgba(125,211,252,0.2);
+        }
+        .topology-panel-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed rgba(0,0,0,0.08);
+        }
+        .dark .topology-panel-header { border-bottom-color: rgba(255,255,255,0.1); }
+        .topology-panel-svg {
+            display: inline-flex;
+            color: var(--color-primary);
+            flex-shrink: 0;
+        }
+        .topology-panel-svg svg {
+            width: 64px;
+            height: 32px;
+        }
+        .topology-panel-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #155e75;
+        }
+        .dark .topology-panel-title { color: #a5f3fc; }
+        .topology-panel-tag {
+            display: inline-block;
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 999px;
+            background: rgba(14,165,233,0.15);
+            color: #155e75;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+        .dark .topology-panel-tag {
+            background: rgba(125,211,252,0.2);
+            color: #a5f3fc;
+        }
+        .topology-section {
+            margin-bottom: 12px;
+        }
+        .topology-section:last-child { margin-bottom: 0; }
+        .topology-section-label {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #0c4a6e;
+            margin-bottom: 4px;
+        }
+        .dark .topology-section-label { color: #7dd3fc; }
+        .topology-section-prose {
+            font-size: 13px;
+            color: #164e63;
+            line-height: 1.55;
+        }
+        .dark .topology-section-prose { color: #e0f2fe; }
+        .topology-section-example {
+            font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+            font-size: 12px;
+            line-height: 1.55;
+            white-space: pre-wrap;
+            padding: 10px 12px;
+            background: rgba(255,255,255,0.6);
+            border-radius: 6px;
+            color: #164e63;
+            border: 1px solid rgba(0,0,0,0.04);
+        }
+        .dark .topology-section-example {
+            background: rgba(2,6,23,0.4);
+            color: #e0f2fe;
+            border-color: rgba(255,255,255,0.06);
+        }
+        .topology-cost {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 4px;
+        }
+        .topology-cost-item {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            min-width: 90px;
+        }
+        .topology-cost-label {
+            font-size: 10px;
+            font-weight: 600;
+            color: #0c4a6e;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .dark .topology-cost-label { color: #7dd3fc; }
+        .topology-cost-bar {
+            display: flex;
+            gap: 2px;
+        }
+        .topology-cost-pip {
+            width: 12px;
+            height: 6px;
+            border-radius: 1px;
+            background: rgba(14,165,233,0.15);
+        }
+        .dark .topology-cost-pip { background: rgba(125,211,252,0.2); }
+        .topology-cost-pip.filled {
+            background: var(--color-primary);
+        }
     </style>
 
     <!-- Chart.js for Analytics -->
@@ -3928,39 +4101,153 @@ DIFF PR: """{{DIFF}}"""</span></span><button onclick="copyToClipboard(this)" cla
                 </h2></div>
                 
                 <div class="prose dark:prose-invert max-w-none text-slate-700 dark:text-slate-300 mb-8">
-                    <p class="en">Prompting is evolving beyond simple inputs into complex "topologies"—structural networks of reasoning. We explore advanced frameworks that orchestrate AI intelligence.</p>
-                    <p class="bm">Prompting kini berkembang melangkaui input mudah kepada "topologi" kompleks—rangkaian penaakulan berstruktur. Kita meneroka kerangka canggih yang menyusun kecerdasan AI.</p>
+                    <p class="en">So far you've worked with reasoning as a <strong>line</strong> — Chain-of-Thought, prompt chains, iteration loops. This module introduces reasoning as a <strong>shape</strong>. Every problem has a natural topology: some are lines, some are trees with branches to evaluate, some are graphs where ideas merge, some are loops where reasoning interleaves with action. Choosing the right topology matters more than tuning the prompt — a problem that wants a tree will resist any amount of clever linear prompting.</p>
+                    <p class="en">The evolution roughly tracks the field's understanding: <strong>Zero-shot (single token chain)</strong> → <strong>Chain-of-Thought (linear sequence)</strong> → <strong>Tree of Thoughts (branching + evaluation + pruning)</strong> → <strong>Graph of Thoughts (merging + synthesis)</strong>. Each step up gives the model more expressive power, but also costs more tokens, more latency, and more orchestration effort. Match the topology to the problem; don't apply the strongest tool to every task by default.</p>
+                    <p class="bm">Setakat ini anda telah bekerja dengan penaakulan sebagai <strong>garisan</strong> — Chain-of-Thought, rantaian prompt, gelung lelaran. Modul ini memperkenalkan penaakulan sebagai <strong>bentuk</strong>. Setiap masalah mempunyai topologi semula jadi: ada yang garisan, ada yang pokok dengan cabang untuk dinilai, ada yang graf di mana idea bergabung, ada yang gelung di mana penaakulan berselang-seli dengan tindakan. Memilih topologi yang betul lebih penting daripada menala prompt — masalah yang mahu pokok akan menentang sebarang prompting linear berapa pun bijaknya.</p>
+                    <p class="bm">Evolusinya secara kasar mengikut pemahaman bidang ini: <strong>Zero-shot (rantai token tunggal)</strong> → <strong>Chain-of-Thought (urutan linear)</strong> → <strong>Tree of Thoughts (bercabang + penilaian + pemangkasan)</strong> → <strong>Graph of Thoughts (penggabungan + sintesis)</strong>. Setiap langkah ke atas memberi model lebih kuasa ekspresif, tetapi juga lebih kos token, lebih latensi, dan lebih usaha orkestrasi. Padankan topologi dengan masalah; jangan terapkan alat terkuat pada setiap tugas secara lalai.</p>
                 </div>
 
                 <!-- 6.1 ToT -->
                 <div class="mb-8 border-l-4 border-primary pl-4">
                     <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2"><span class="en">6.1 Tree of Thoughts (ToT)</span><span class="bm">6.1 Pokok Pemikiran (ToT)</span></h3>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-3">
+                        <span class="en">CoT walks one path. ToT spawns several paths from each decision point, evaluates them, and either continues down the most promising or backtracks. The Fun Fact at the bottom of this module is real: ToT lifted GPT-4 on Game-of-24 from 4% to 74%. The performance gain isn't free — you're paying for the branching factor in tokens. Use ToT when the cost of going down a wrong path far exceeds the cost of evaluating several.</span>
+                        <span class="bm">CoT berjalan satu laluan. ToT menjana beberapa laluan dari setiap titik keputusan, menilainya, dan sama ada meneruskan ke yang paling menjanjikan atau berundur. Fakta Menarik di bawah modul ini adalah benar: ToT mengangkat GPT-4 pada Game-of-24 dari 4% kepada 74%. Pulangan prestasi tidak percuma — anda membayar faktor percabangan dalam token. Gunakan ToT apabila kos turun ke laluan salah jauh melebihi kos menilai beberapa.</span>
+                    </p>
                     <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
-                        <span class="en">Generalizes CoT by generating multiple lines of reasoning in parallel as a decision tree, allowing the model to evaluate states, backtrack, or explore different branches.</span>
-                        <span class="bm">Mengembangkan CoT dengan menghasilkan pelbagai laluan penaakulan secara selari sebagai pepokok keputusan, membolehkan model menilai, berundur, atau meneroka cabang berbeza.</span>
+                        <span class="en">A good ToT prompt specifies <strong>three things</strong>: <strong>(1) the branching factor</strong> (how many candidates at each level — typically 3–5), <strong>(2) the evaluation criterion</strong> (what makes one branch better than another — quantified if possible), <strong>(3) the pruning rule</strong> (when to abandon a branch). Without all three, the model often generates branches but doesn't actually evaluate them, reducing ToT to a fancier brainstorm.</span>
+                        <span class="bm">Prompt ToT yang baik menyatakan <strong>tiga perkara</strong>: <strong>(1) faktor percabangan</strong> (berapa banyak calon pada setiap aras — biasanya 3–5), <strong>(2) kriteria penilaian</strong> (apa yang menjadikan satu cabang lebih baik daripada yang lain — dikuantifikasi jika boleh), <strong>(3) peraturan pemangkasan</strong> (bila untuk meninggalkan cabang). Tanpa ketiga-tiganya, model selalu menjana cabang tetapi tidak benar-benar menilainya, mengurangkan ToT kepada sumbangsaran yang lebih mewah.</span>
                     </p>
                     <div class="path-content path-academic space-y-3">
-                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-blue-600 block mb-1">Ex:</strong> <span class="prompt-text font-mono text-sm"><span class="en">Brainstorm 3 distinct approaches to solve this problem. Evaluate pros and cons of each, then select the best.</span><span class="bm">Sumbangsaran 3 pendekatan berbeza untuk menyelesaikan masalah ini. Nilai kebaikan dan keburukan setiap satu.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-blue-600 block mb-1">Ex 1:</strong> <span class="prompt-text font-mono text-sm"><span class="en">Brainstorm 3 distinct approaches to solve this problem. Evaluate pros and cons of each, then select the best.</span><span class="bm">Sumbangsaran 3 pendekatan berbeza untuk menyelesaikan masalah ini. Nilai kebaikan dan keburukan setiap satu.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-blue-600 block mb-1">Ex 2 (explicit tree spec):</strong> <span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">For my research question, run a Tree of Thoughts with:
+
+BRANCHING FACTOR: 4 candidate methodologies at level 1; for the top 2, generate 3 sub-approaches each at level 2.
+
+EVALUATION CRITERION: Score each candidate 1–10 on:
+  - Feasibility (sample access, instruments, IRB) — weight 40%
+  - Internal validity (control of confounders) — weight 30%
+  - Generalisability to the target population — weight 30%
+
+PRUNING RULE: Drop any level-1 branch scoring below 6. Drop any level-2 branch scoring below the average of its siblings.
+
+OUTPUT: The surviving branches as a Markdown tree, with score per node. Then recommend ONE path with a 2-paragraph justification.
+
+RESEARCH QUESTION: [paste]</span><span class="bm">Untuk soalan penyelidikan saya, jalankan Tree of Thoughts dengan:
+
+FAKTOR PERCABANGAN: 4 calon metodologi pada tahap 1; untuk 2 terbaik, hasilkan 3 sub-pendekatan setiap satu pada tahap 2.
+
+KRITERIA PENILAIAN: Skor setiap calon 1–10 pada:
+  - Kebolehlaksanaan (akses sampel, instrumen, IRB) — pemberat 40%
+  - Kesahihan dalaman (kawalan pengeliru) — pemberat 30%
+  - Boleh-generalisasi kepada populasi sasaran — pemberat 30%
+
+PERATURAN PEMANGKASAN: Gugurkan mana-mana cabang tahap-1 yang skor di bawah 6. Gugurkan mana-mana cabang tahap-2 yang skor di bawah purata adik-beradiknya.
+
+OUTPUT: Cabang yang terselamat sebagai pokok Markdown, dengan skor setiap nod. Kemudian cadangkan SATU laluan dengan justifikasi 2-perenggan.
+
+SOALAN PENYELIDIKAN: [tampal]</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
                     </div>
                     <div class="path-content path-business space-y-3">
-                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-emerald-600 block mb-1">Ex:</strong> <span class="prompt-text font-mono text-sm"><span class="en">Generate 3 distinct marketing angles. Evaluate the cost-to-acquisition for each. Proceed with the cheapest.</span><span class="bm">Hasilkan 3 sudut pemasaran. Nilai kos kepada pemerolehan. Teruskan dengan yang paling murah.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-emerald-600 block mb-1">Ex 1:</strong> <span class="prompt-text font-mono text-sm"><span class="en">Generate 3 distinct marketing angles. Evaluate the cost-to-acquisition for each. Proceed with the cheapest.</span><span class="bm">Hasilkan 3 sudut pemasaran. Nilai kos kepada pemerolehan. Teruskan dengan yang paling murah.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-emerald-600 block mb-1">Ex 2 (go-to-market tree):</strong> <span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">Run a Tree of Thoughts for our Indonesian market-entry decision:
+
+BRANCHING FACTOR: 4 distinct entry strategies at level 1 (direct sales / channel partner / local subsidiary / acquisition). For the top 2, generate 3 sub-strategies each at level 2 (timing variations, segment focus).
+
+EVALUATION CRITERION: Each candidate scored 1–10 on:
+  - Time-to-first-revenue (faster = higher) — weight 30%
+  - Capital required for first 18 months — weight 30%
+  - Reversibility if it fails — weight 20%
+  - Strategic learning value — weight 20%
+
+PRUNING RULE: Drop any level-1 branch requiring &gt; RM 5M of upfront capital. Drop any level-2 branch with reversibility score &lt; 4.
+
+OUTPUT: Surviving branches as a Markdown table with score per node + a 1-paragraph recommendation including the SINGLE assumption most likely to flip the decision.</span><span class="bm">Jalankan Tree of Thoughts untuk keputusan kemasukan pasaran Indonesia kami:
+
+FAKTOR PERCABANGAN: 4 strategi kemasukan berbeza pada tahap 1 (jualan langsung / rakan saluran / anak syarikat tempatan / pengambilalihan). Untuk 2 terbaik, hasilkan 3 sub-strategi setiap satu pada tahap 2 (variasi pemasaan, tumpuan segmen).
+
+KRITERIA PENILAIAN: Setiap calon diskor 1–10 pada:
+  - Masa-ke-hasil-pertama (lebih cepat = lebih tinggi) — pemberat 30%
+  - Modal diperlukan untuk 18 bulan pertama — pemberat 30%
+  - Boleh-balik jika gagal — pemberat 20%
+  - Nilai pembelajaran strategik — pemberat 20%
+
+PERATURAN PEMANGKASAN: Gugurkan mana-mana cabang tahap-1 yang memerlukan &gt; RM 5J modal di hadapan. Gugurkan mana-mana cabang tahap-2 dengan skor boleh-balik &lt; 4.
+
+OUTPUT: Cabang terselamat sebagai jadual Markdown dengan skor setiap nod + cadangan 1-perenggan termasuk SATU andaian yang paling mungkin menterbalikkan keputusan.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
                     </div>
                     <div class="path-content path-creative space-y-3">
-                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-purple-600 block mb-1">Ex:</strong> <span class="prompt-text font-mono text-sm"><span class="en">Write 3 different ending scenarios. Evaluate the emotional impact of each. Develop the most tragic one.</span><span class="bm">Tulis 3 senario penamat. Nilai kesan emosi setiap satu. Kembangkan yang paling tragis.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-purple-600 block mb-1">Ex 1:</strong> <span class="prompt-text font-mono text-sm"><span class="en">Write 3 different ending scenarios. Evaluate the emotional impact of each. Develop the most tragic one.</span><span class="bm">Tulis 3 senario penamat. Nilai kesan emosi setiap satu. Kembangkan yang paling tragis.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-purple-600 block mb-1">Ex 2 (story-architecture tree):</strong> <span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">For my novel's act-2 reveal, run a Tree of Thoughts:
+
+BRANCHING FACTOR: 4 different things the reveal could BE at level 1 (a lie / a missing fact / a misidentification / an inverted motive). For the top 2, generate 3 ways to plant the setup chapters earlier (level 2).
+
+EVALUATION CRITERION: Score each candidate 1–10 on:
+  - Earned-ness (does the reveal feel inevitable in hindsight?) — weight 40%
+  - Re-readability (does it improve the book on a second read?) — weight 30%
+  - Fairness to the reader (can they have guessed?) — weight 30%
+
+PRUNING RULE: Drop any level-1 branch where earned-ness &lt; 7. Drop any level-2 branch that requires more than 3 chapters of new setup.
+
+OUTPUT: The surviving tree with per-node scores, then write the candidate reveal scene (250 words) for the highest-scoring path.
+
+PREMISE + CURRENT OUTLINE: [paste]</span><span class="bm">Untuk pendedahan akta-2 novel saya, jalankan Tree of Thoughts:
+
+FAKTOR PERCABANGAN: 4 perkara berbeza yang pendedahan boleh JADI pada tahap 1 (pembohongan / fakta hilang / salah cam / motif terbalik). Untuk 2 terbaik, hasilkan 3 cara menanam bab persediaan lebih awal (tahap 2).
+
+KRITERIA PENILAIAN: Skor setiap calon 1–10 pada:
+  - Berbaloi (adakah pendedahan terasa tidak dapat dielak apabila dilihat semula?) — pemberat 40%
+  - Boleh-baca-semula (adakah ia meningkatkan buku pada bacaan kedua?) — pemberat 30%
+  - Keadilan kepada pembaca (bolehkah mereka meneka?) — pemberat 30%
+
+PERATURAN PEMANGKASAN: Gugurkan mana-mana cabang tahap-1 di mana berbaloi &lt; 7. Gugurkan mana-mana cabang tahap-2 yang memerlukan lebih daripada 3 bab persediaan baharu.
+
+OUTPUT: Pokok terselamat dengan skor setiap nod, kemudian tulis adegan pendedahan calon (250 patah kata) untuk laluan skor tertinggi.
+
+PREMIS + RANGKA SEMASA: [tampal]</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
                     </div>
                     <div class="path-content path-it space-y-3">
-                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-amber-600 block mb-1">Ex:</strong> <span class="prompt-text font-mono text-sm"><span class="en">Propose 3 different DB architectures. Evaluate the query latency for each. Output the fastest one.</span><span class="bm">Cadangkan 3 senibina DB berbeza. Nilaikan kependaman pertanyaan untuk setiap satu. Hasil yang terpantas.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-amber-600 block mb-1">Ex 1:</strong> <span class="prompt-text font-mono text-sm"><span class="en">Propose 3 different DB architectures. Evaluate the query latency for each. Output the fastest one.</span><span class="bm">Cadangkan 3 senibina DB berbeza. Nilaikan kependaman pertanyaan untuk setiap satu. Hasil yang terpantas.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-amber-600 block mb-1">Ex 2 (architecture-choice tree):</strong> <span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">For our payment-service rewrite, run a Tree of Thoughts:
+
+BRANCHING FACTOR: 5 candidate architectures at level 1 (monolith / modular monolith / event-driven microservices / actor-model / serverless). For the top 2, generate 3 deployment topology variations each at level 2.
+
+EVALUATION CRITERION: Each candidate scored 1–10 on:
+  - p99 latency at 5× current peak load — weight 25%
+  - On-call burden for a 4-person SRE team — weight 25%
+  - Migration risk from current monolith — weight 25%
+  - Hiring market availability of relevant skills in Malaysia — weight 25%
+
+PRUNING RULE: Drop any level-1 branch scoring &lt; 5 on migration risk. Drop any level-2 branch scoring &lt; 6 on on-call burden.
+
+OUTPUT: A Markdown tree with score per node, the surviving recommendation, and one specific load-test we should run before committing.</span><span class="bm">Untuk penulisan semula perkhidmatan pembayaran kami, jalankan Tree of Thoughts:
+
+FAKTOR PERCABANGAN: 5 calon seni bina pada tahap 1 (monolit / monolit bermodul / mikroperkhidmatan dipacu-acara / model-aktor / serverless). Untuk 2 terbaik, hasilkan 3 variasi topologi penempatan setiap satu pada tahap 2.
+
+KRITERIA PENILAIAN: Setiap calon diskor 1–10 pada:
+  - Latensi p99 pada beban puncak semasa 5× — pemberat 25%
+  - Beban on-call untuk pasukan SRE 4-orang — pemberat 25%
+  - Risiko migrasi dari monolit semasa — pemberat 25%
+  - Ketersediaan pasaran upah untuk kemahiran relevan di Malaysia — pemberat 25%
+
+PERATURAN PEMANGKASAN: Gugurkan mana-mana cabang tahap-1 yang skor &lt; 5 pada risiko migrasi. Gugurkan mana-mana cabang tahap-2 yang skor &lt; 6 pada beban on-call.
+
+OUTPUT: Pokok Markdown dengan skor setiap nod, cadangan terselamat, dan satu ujian beban khusus yang patut kami jalankan sebelum komit.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
                     </div>
                 </div>
 
                 <!-- 6.2 ReAct -->
                 <div class="mb-8 border-l-4 border-primary pl-4">
                     <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2"><span class="en">6.2 ReAct (Reason & Act)</span><span class="bm">6.2 ReAct (Taakul & Bertindak)</span></h3>
-                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
-                        <span class="en">Synergizes reasoning and acting by prompting the LLM to generate reasoning traces and task-specific actions (e.g., search or tool use) in an interleaved loop.</span>
-                        <span class="bm">Mensinergikan penaakulan dan tindakan dengan menggesa LLM untuk menghasilkan jejak penaakulan dan tindakan khusus tugas secara berselang-seli.</span>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-3">
+                        <span class="en">CoT keeps reasoning inside the model. ReAct lets reasoning <strong>interleave with external action</strong>: the model thinks, then asks for a tool call (search, calculator, API, database query), reads the result, and continues thinking with the new information. This is the topology behind every "AI agent" you've heard of — Cursor, Devin, AutoGPT, Claude Code. They're all running variations of the same Thought → Action → Observation → Thought loop.</span>
+                        <span class="bm">CoT mengekalkan penaakulan dalam model. ReAct membenarkan penaakulan <strong>berselang-seli dengan tindakan luaran</strong>: model berfikir, kemudian meminta panggilan alat (carian, kalkulator, API, pertanyaan pangkalan data), membaca hasil, dan meneruskan berfikir dengan maklumat baharu. Ini topologi di sebalik setiap "ejen AI" yang anda dengar — Cursor, Devin, AutoGPT, Claude Code. Mereka semua menjalankan variasi gelung Fikir → Tindakan → Pemerhatian → Fikir yang sama.</span>
                     </p>
-                    <div class="bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm font-mono text-xs whitespace-pre-wrap"><span class="text-primary font-bold font-sans text-sm block mb-1"><span class="en">Loop Example:</span><span class="bm">Contoh Kitaran:</span></span><span class="en">Thought: I need to find out the current CEO of Apple.
+                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
+                        <span class="en">A robust ReAct prompt specifies four things: <strong>(1) the available tools and their input/output shape</strong>, <strong>(2) the format for action requests</strong> (a fixed parseable syntax so your runtime can dispatch them), <strong>(3) a stopping condition</strong> (success criteria + a max-iterations safeguard), <strong>(4) a fallback if a tool fails</strong>. Skip the last one and a single broken API call can derail an entire agent run.</span>
+                        <span class="bm">Prompt ReAct yang teguh menyatakan empat perkara: <strong>(1) alat yang tersedia dan bentuk input/output mereka</strong>, <strong>(2) format untuk permintaan tindakan</strong> (sintaks tetap boleh-dihuraikan supaya runtime anda boleh menghantarnya), <strong>(3) syarat berhenti</strong> (kriteria kejayaan + perlindungan maks-lelaran), <strong>(4) sandaran jika alat gagal</strong>. Langkau yang terakhir dan satu panggilan API yang rosak boleh menggelincirkan keseluruhan run ejen.</span>
+                    </p>
+                    <div class="bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm font-mono text-xs whitespace-pre-wrap mb-3"><span class="text-primary font-bold font-sans text-sm block mb-1"><span class="en">Generic loop shape:</span><span class="bm">Bentuk gelung generik:</span></span><span class="en">Thought: I need to find out the current CEO of Apple.
 Action: Search[Apple CEO]
 Observation: Tim Cook is the CEO of Apple.
 Thought: Now I need to find his age.
@@ -3969,37 +4256,519 @@ Tindakan: Cari[CEO Apple]
 Pemerhatian: Tim Cook ialah CEO Apple.
 Fikir: Sekarang saya perlu cari umurnya.
 Tindakan: Cari[umur Tim Cook]...</span></div>
+                    <div class="path-content path-academic space-y-3">
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-blue-600 block mb-1">Ex 1 — Citation lookup agent:</strong> <span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">You are a research-assistant agent. Available tools:
+  Search[query] → top 5 search results
+  GetPaper[doi] → full abstract + references
+  Year[paper_title] → publication year or NULL
+
+GOAL: For each claim in the user's draft below, find at least one supporting citation published in the last 10 years. Use the Thought / Action / Observation loop.
+
+STOP WHEN: every claim has a citation OR you've made 15 actions OR a claim has been searched 3 times without a result (then mark it UNVERIFIED).
+
+DRAFT: [paste]</span><span class="bm">Anda ejen pembantu-penyelidikan. Alat tersedia:
+  Search[query] → 5 hasil carian teratas
+  GetPaper[doi] → abstrak penuh + rujukan
+  Year[tajuk_kertas] → tahun penerbitan atau NULL
+
+MATLAMAT: Untuk setiap dakwaan dalam draf pengguna di bawah, cari sekurang-kurangnya satu petikan menyokong yang diterbitkan dalam 10 tahun lalu. Gunakan gelung Fikir / Tindakan / Pemerhatian.
+
+BERHENTI APABILA: setiap dakwaan ada petikan ATAU anda telah membuat 15 tindakan ATAU dakwaan telah dicari 3 kali tanpa hasil (kemudian tanda UNVERIFIED).
+
+DRAF: [tampal]</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                    </div>
+                    <div class="path-content path-business space-y-3">
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-emerald-600 block mb-1">Ex 1 — Customer-data agent:</strong> <span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">You are a customer-success agent investigating a churn risk. Available tools:
+  QueryCRM[customer_id, field] → field value or NULL
+  QueryUsage[customer_id, metric, days] → array of daily values
+  RecentTickets[customer_id, n] → last n support tickets
+
+GOAL: For customer_id={{ID}}, decide whether they are at high / medium / low churn risk in the next 60 days. Use the Thought / Action / Observation loop.
+
+STOP WHEN: you have evidence from at least 2 of the 3 tools AND a confidence level, OR you've made 8 actions.
+
+OUTPUT (after stopping): JSON { risk: "high"|"med"|"low", confidence: 0.0-1.0, evidence: [string], one_intervention: string }</span><span class="bm">Anda ejen kejayaan-pelanggan menyiasat risiko churn. Alat tersedia:
+  QueryCRM[customer_id, field] → nilai medan atau NULL
+  QueryUsage[customer_id, metric, hari] → tatasusunan nilai harian
+  RecentTickets[customer_id, n] → n tiket sokongan terakhir
+
+MATLAMAT: Untuk customer_id={{ID}}, putuskan sama ada mereka berisiko churn tinggi / sederhana / rendah dalam 60 hari akan datang. Gunakan gelung Fikir / Tindakan / Pemerhatian.
+
+BERHENTI APABILA: anda mempunyai bukti daripada sekurang-kurangnya 2 daripada 3 alat DAN tahap keyakinan, ATAU anda telah membuat 8 tindakan.
+
+OUTPUT (selepas berhenti): JSON { risk: "high"|"med"|"low", confidence: 0.0-1.0, evidence: [string], one_intervention: string }</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                    </div>
+                    <div class="path-content path-creative space-y-3">
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-purple-600 block mb-1">Ex 1 — Research-the-setting agent:</strong> <span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">You are a research assistant for a historical fiction writer. Available tools:
+  Search[query] → top 5 search snippets
+  GetPage[url] → readable text of one source
+  Image[query] → description of one historical image
+
+GOAL: My next chapter is set in Kuala Lumpur during the 1957 Merdeka eve. For each scene below, identify three concrete, period-accurate sensory details (sounds, smells, textures, items in shops) that the writer can drop in.
+
+STOP WHEN: every scene has 3 details with at least one source URL each, OR you've made 12 actions.
+
+SCENES: [paste]</span><span class="bm">Anda pembantu penyelidikan untuk penulis fiksyen sejarah. Alat tersedia:
+  Search[query] → 5 cuplikan carian teratas
+  GetPage[url] → teks boleh dibaca satu sumber
+  Image[query] → penerangan satu imej sejarah
+
+MATLAMAT: Bab seterusnya saya berlatarbelakang Kuala Lumpur semasa malam Merdeka 1957. Untuk setiap babak di bawah, kenal pasti tiga butiran deria konkrit, tepat-zaman (bunyi, bau, tekstur, item di kedai) yang penulis boleh masukkan.
+
+BERHENTI APABILA: setiap babak ada 3 butiran dengan sekurang-kurangnya satu URL sumber setiap satu, ATAU anda telah membuat 12 tindakan.
+
+BABAK: [tampal]</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                    </div>
+                    <div class="path-content path-it space-y-3">
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-amber-600 block mb-1">Ex 1 — Incident-investigation agent:</strong> <span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">You are an SRE agent investigating an incident. Available tools:
+  Logs[service, time_range, level] → matching log lines
+  Metrics[service, metric, time_range] → time-series data
+  GitBlame[file, line] → last commit that touched a line
+  Deploys[service, time_range] → deploys in window
+
+GOAL: Find the most likely root cause of the 5xx spike on payment-api between 14:32–14:46 UTC today. Use the Thought / Action / Observation loop.
+
+STOP WHEN: you can name a single most-likely cause with at least 3 corroborating observations, OR you've made 15 actions, OR no tool returns useful data twice in a row (declare INCONCLUSIVE).
+
+FALLBACK ON TOOL FAILURE: if any tool returns an error, log it as an Observation and continue with the remaining tools.
+
+OUTPUT: JSON { root_cause: string|null, confidence: 0.0-1.0, observations: [string], suggested_action: string, status: "RESOLVED"|"INCONCLUSIVE" }</span><span class="bm">Anda ejen SRE menyiasat insiden. Alat tersedia:
+  Logs[service, time_range, level] → baris log yang sepadan
+  Metrics[service, metric, time_range] → data siri-masa
+  GitBlame[file, line] → commit terakhir yang menyentuh baris
+  Deploys[service, time_range] → deploys dalam tetingkap
+
+MATLAMAT: Cari punca utama paling mungkin untuk lonjakan 5xx pada payment-api antara 14:32–14:46 UTC hari ini. Gunakan gelung Fikir / Tindakan / Pemerhatian.
+
+BERHENTI APABILA: anda boleh menamakan satu punca paling-mungkin dengan sekurang-kurangnya 3 pemerhatian menyokong, ATAU anda telah membuat 15 tindakan, ATAU tiada alat memulangkan data berguna dua kali berturut-turut (isytihar INCONCLUSIVE).
+
+SANDARAN JIKA ALAT GAGAL: jika mana-mana alat memulangkan ralat, log sebagai Pemerhatian dan teruskan dengan alat baki.
+
+OUTPUT: JSON { root_cause: string|null, confidence: 0.0-1.0, observations: [string], suggested_action: string, status: "RESOLVED"|"INCONCLUSIVE" }</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                    </div>
                 </div>
 
                 <!-- 6.3 GoT -->
                 <div class="mb-8 border-l-4 border-primary pl-4">
                     <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2"><span class="en">6.3 Graph of Thoughts (GoT)</span><span class="bm">6.3 Graf Pemikiran (GoT)</span></h3>
-                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
-                        <span class="en">Models information as a graph where arbitrary thoughts can merge (synergize) and branch, mimicking complex human problem-solving networks.</span>
-                        <span class="bm">Memodelkan maklumat sebagai graf di mana pemikiran boleh bergabung (bersinergi) dan bercabang, meniru rangkaian penyelesaian masalah manusia yang kompleks.</span>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-3">
+                        <span class="en">ToT branches forward, then <em>selects</em> the best path. GoT goes further: it allows branches to <strong>merge</strong> into new ideas that combine elements of multiple parents. This is the difference between a tournament (one winner) and a synthesis (a new artifact built from pieces of several inputs). GoT shines when the right answer is unlikely to be any individual candidate — it's a recombination of several.</span>
+                        <span class="bm">ToT bercabang ke hadapan, kemudian <em>memilih</em> laluan terbaik. GoT pergi lebih jauh: ia membenarkan cabang <strong>bergabung</strong> menjadi idea baharu yang menggabungkan elemen daripada beberapa induk. Ini perbezaan antara kejohanan (satu pemenang) dan sintesis (artifak baharu dibina daripada kepingan beberapa input). GoT bersinar apabila jawapan yang betul tidak mungkin mana-mana calon individu — ia gabungan beberapa.</span>
                     </p>
-                    <div class="bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm">
-                        <strong class="text-primary"><span class="en">Example:</span><span class="bm">Contoh:</span></strong>
-                        <span class="en">"Generate 4 independent concepts. Merge concept 1 and 3 into a new idea. Merge concept 2 and 4 into another. Then evaluate which merged idea is stronger."</span>
-                        <span class="bm">"Jana 4 konsep bebas. Gabungkan konsep 1 dan 3 ke dalam idea baru. Gabung konsep 2 dan 4. Kemudian nilai idea gabungan mana yang lebih kukuh."</span>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
+                        <span class="en">A GoT prompt specifies three things: <strong>(1) the generation step</strong> (how many independent candidates to produce), <strong>(2) the merge rule</strong> (which pairs/groups of candidates can be combined and what each merge inherits from each parent), <strong>(3) the scoring step</strong> (how to compare originals against merged versions). Without the merge rule, you've just built a ToT with extra steps.</span>
+                        <span class="bm">Prompt GoT menyatakan tiga perkara: <strong>(1) langkah penjanaan</strong> (berapa banyak calon bebas untuk dihasilkan), <strong>(2) peraturan gabungan</strong> (pasangan/kumpulan calon mana boleh digabung dan apa yang setiap gabungan warisi daripada setiap induk), <strong>(3) langkah pemarkahan</strong> (cara membandingkan yang asal terhadap versi yang digabung). Tanpa peraturan gabungan, anda hanya membina ToT dengan langkah tambahan.</span>
+                    </p>
+                    <div class="bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm mb-3">
+                        <strong class="text-primary"><span class="en">Generic merge example:</span><span class="bm">Contoh gabungan generik:</span></strong>
+                        <div class="font-mono text-xs whitespace-pre-wrap mt-2 text-slate-700 dark:text-slate-300"><span class="en">"Generate 4 independent concepts. Merge concept 1 and 3 into a new idea (inheriting concept 1's structure and concept 3's tone). Merge concept 2 and 4 into another. Then evaluate which merged idea is stronger."</span><span class="bm">"Hasilkan 4 konsep bebas. Gabung konsep 1 dan 3 menjadi idea baru (mewarisi struktur konsep 1 dan nada konsep 3). Gabung konsep 2 dan 4 menjadi satu lagi. Kemudian nilai idea gabungan mana yang lebih kuat."</span></div>
+                    </div>
+                    <div class="path-content path-academic space-y-3">
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-blue-600 block mb-1">Ex 1 — Hybrid methodology synthesis:</strong> <span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">For my research question, run a Graph of Thoughts:
+
+GENERATION: 4 candidate methodologies (e.g., longitudinal quantitative / ethnographic / quasi-experimental / mixed-methods design science).
+
+MERGE: For each pair (1,2), (1,3), (1,4), (2,3), (2,4), (3,4), describe what a hybrid methodology inheriting (a) sampling strategy from the first and (b) measurement strategy from the second would look like. Output as a Markdown table.
+
+SCORE: Rate all 4 originals + 6 merges on (a) internal validity, (b) feasibility within a 2-year PhD timeline, (c) novelty contribution. Recommend ONE design with the merge lineage stated.</span><span class="bm">Untuk soalan penyelidikan saya, jalankan Graph of Thoughts:
+
+PENJANAAN: 4 calon metodologi (cth., kuantitatif memanjang / etnografi / kuasi-eksperimen / reka bentuk sains kaedah campuran).
+
+GABUNG: Untuk setiap pasangan (1,2), (1,3), (1,4), (2,3), (2,4), (3,4), terangkan rupa metodologi hibrid yang mewarisi (a) strategi persampelan daripada yang pertama dan (b) strategi pengukuran daripada yang kedua. Hasilkan sebagai jadual Markdown.
+
+SKOR: Nilai semua 4 asal + 6 gabungan pada (a) kesahihan dalaman, (b) kebolehlaksanaan dalam garis masa PhD 2-tahun, (c) sumbangan kebaruan. Cadangkan SATU reka bentuk dengan keturunan gabungan dinyatakan.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                    </div>
+                    <div class="path-content path-business space-y-3">
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-emerald-600 block mb-1">Ex 1 — Brand-positioning synthesis:</strong> <span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">For our new fintech brand launch, run a Graph of Thoughts:
+
+GENERATION: 5 distinct brand positions (e.g., trusted incumbent / scrappy challenger / boring-but-reliable / community-first / tech-forward).
+
+MERGE: Combine any 2 positions into 5 hybrid positions, each inheriting (a) the visual tone of the first parent and (b) the messaging substance of the second. Reject any merge that produces an internal contradiction (e.g., "scrappy" + "trusted incumbent" — flag as INCOMPATIBLE).
+
+SCORE: Rate the 5 originals + the surviving merges on (a) differentiation in Malaysian fintech, (b) cost to execute (visual, copy, PR), (c) durability past first 18 months. Output the top 3 with merge lineage stated and one recommended tagline per position.</span><span class="bm">Untuk pelancaran jenama fintech baharu kami, jalankan Graph of Thoughts:
+
+PENJANAAN: 5 kedudukan jenama berbeza (cth., petahana dipercayai / penantang gigih / membosankan-tapi-boleh-dipercayai / komuniti-dahulu / tech-ke-hadapan).
+
+GABUNG: Gabungkan mana-mana 2 kedudukan menjadi 5 kedudukan hibrid, setiap satu mewarisi (a) nada visual induk pertama dan (b) bahan mesej induk kedua. Tolak mana-mana gabungan yang menghasilkan percanggahan dalaman (cth., "gigih" + "petahana dipercayai" — tanda INCOMPATIBLE).
+
+SKOR: Nilai 5 asal + gabungan terselamat pada (a) pembezaan dalam fintech Malaysia, (b) kos untuk dilaksanakan (visual, salinan, PR), (c) ketahanan melebihi 18 bulan pertama. Hasilkan 3 teratas dengan keturunan gabungan dinyatakan dan satu tagline disyorkan setiap kedudukan.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                    </div>
+                    <div class="path-content path-creative space-y-3">
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-purple-600 block mb-1">Ex 1 — Character-fusion synthesis:</strong> <span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">For my novel's antagonist, run a Graph of Thoughts:
+
+GENERATION: 4 distinct antagonist archetypes (e.g., the rival / the institution / the past-self / the lover).
+
+MERGE: For each pair, build a single antagonist that operates externally as the first archetype but internally embodies the wound of the second. Describe how the reveal of the inner identity would land.
+
+SCORE: Rate all 4 originals + 6 merges on (a) dramatic tension across a 3-act arc, (b) thematic resonance with the protagonist's lie-they-believe, (c) potential for a satisfying confrontation. Recommend ONE antagonist; write their first scene of menace (150 words).</span><span class="bm">Untuk antagonis novel saya, jalankan Graph of Thoughts:
+
+PENJANAAN: 4 arketaip antagonis berbeza (cth., saingan / institusi / diri-lampau / kekasih).
+
+GABUNG: Untuk setiap pasangan, bina antagonis tunggal yang beroperasi secara luaran sebagai arketaip pertama tetapi secara dalaman menjelmakan luka yang kedua. Terangkan bagaimana pendedahan identiti dalaman akan mendarat.
+
+SKOR: Nilai semua 4 asal + 6 gabungan pada (a) ketegangan dramatik merentas lengkok 3-akta, (b) resonan tematik dengan kebohongan-yang-mereka-percaya protagonis, (c) potensi konfrontasi memuaskan. Cadangkan SATU antagonis; tulis adegan ancaman pertama mereka (150 patah kata).</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                    </div>
+                    <div class="path-content path-it space-y-3">
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-amber-600 block mb-1">Ex 1 — Caching-strategy synthesis:</strong> <span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">For our read-heavy service, run a Graph of Thoughts:
+
+GENERATION: 4 candidate caching strategies (Redis cluster / CDN edge cache / read replicas / application-level memoisation).
+
+MERGE: For each pair, design a 2-tier hybrid where the first cache layer comes from one strategy and the fallback layer from the other. Describe the consistency contract (eventual / strong / read-your-writes) for each hybrid. Reject any merge with a broken consistency contract — flag INVALID.
+
+SCORE: Rate all 4 originals + surviving merges on (a) p99 latency at peak load, (b) operational complexity for a 4-person SRE team, (c) cost-per-million-requests. Recommend ONE strategy; specify the migration path from current state.</span><span class="bm">Untuk perkhidmatan baca-berat kami, jalankan Graph of Thoughts:
+
+PENJANAAN: 4 calon strategi caching (kluster Redis / cache tepi CDN / replika baca / memoisasi peringkat-aplikasi).
+
+GABUNG: Untuk setiap pasangan, reka hibrid 2-tier di mana lapisan cache pertama datang daripada satu strategi dan lapisan sandaran daripada yang lain. Terangkan kontrak konsistensi (akhirnya / kuat / baca-tulisan-anda-sendiri) untuk setiap hibrid. Tolak mana-mana gabungan dengan kontrak konsistensi rosak — tanda INVALID.
+
+SKOR: Nilai semua 4 asal + gabungan terselamat pada (a) latensi p99 pada beban puncak, (b) kerumitan operasi untuk pasukan SRE 4-orang, (c) kos-setiap-juta-permintaan. Cadangkan SATU strategi; nyatakan laluan migrasi dari keadaan semasa.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
                     </div>
                 </div>
 
                 <!-- 6.4 LLM as Evaluator -->
                 <div class="mb-8 border-l-4 border-primary pl-4">
                     <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2"><span class="en">6.4 LLM as an Evaluator</span><span class="bm">6.4 LLM sebagai Penilai</span></h3>
-                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
-                        <span class="en">Using a separate LLM prompt to grade, evaluate, or score the output of another prompt based on a specific rubric.</span>
-                        <span class="bm">Menggunakan prompt LLM yang berasingan untuk menggred, menilai atau menskor output prompt lain berdasarkan rubrik tertentu.</span>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-3">
+                        <span class="en">A topology pattern that uses <strong>two prompts</strong> instead of one: <em>Generator</em> produces candidate outputs, <em>Evaluator</em> scores them against a rubric. They run in separate calls (often on separate models), which gives you two crucial properties: (1) the evaluator has no allegiance to the candidates it's scoring, and (2) the rubric can be far more rigorous than the generation prompt would be.</span>
+                        <span class="bm">Corak topologi yang menggunakan <strong>dua prompt</strong> bukannya satu: <em>Penjana</em> menghasilkan output calon, <em>Penilai</em> menskor mereka berdasarkan rubrik. Mereka berjalan dalam panggilan berasingan (selalu pada model berasingan), yang memberi anda dua sifat penting: (1) penilai tidak ada kesetiaan kepada calon yang diberi skor, dan (2) rubrik boleh jauh lebih ketat daripada prompt penjanaan.</span>
                     </p>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
+                        <span class="en">A reliable evaluator prompt has four properties: <strong>(1) a specific rubric</strong> with weighted criteria, <strong>(2) numeric scores</strong> per criterion (not "good/bad"), <strong>(3) required justification</strong> (the evaluator must quote evidence from the candidate), <strong>(4) explicit ties-broken rule</strong>. The most common failure: an evaluator that scores everything 7/10 because it has no instruction to differentiate. Asking it to <em>rank</em> rather than <em>score</em> often surfaces the differentiation you need.</span>
+                        <span class="bm">Prompt penilai yang boleh dipercayai mempunyai empat sifat: <strong>(1) rubrik khusus</strong> dengan kriteria berpemberat, <strong>(2) skor angka</strong> setiap kriteria (bukan "baik/buruk"), <strong>(3) justifikasi diperlukan</strong> (penilai mesti memetik bukti daripada calon), <strong>(4) peraturan pecah-seri eksplisit</strong>. Kegagalan paling biasa: penilai yang menskor semuanya 7/10 kerana tiada arahan untuk membezakan. Memintanya <em>menyusun</em> bukannya <em>menskor</em> selalu mendedahkan pembezaan yang anda perlukan.</span>
+                    </p>
+                    <div class="path-content path-academic space-y-3">
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-blue-600 block mb-1">Ex 1 — Two-prompt abstract grading:</strong> <span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">[GENERATOR PROMPT, called 5 times with temperature 0.7]
+Write a 150-word abstract for the paper below. Audience: [your field's flagship journal]. PAPER: [paste]
+
+[EVALUATOR PROMPT, called once with all 5 candidates]
+You are evaluating 5 candidate abstracts. Rubric (each 1–10):
+  Clarity of contribution (40%) — can a reviewer state the contribution in one sentence?
+  Specificity of methods (30%) — are sample, instrument, and analysis named?
+  Hedging discipline (15%) — claims are calibrated to evidence?
+  Word economy (15%) — under 150 words AND no filler?
+
+For each candidate, output JSON: { id, scores, weighted_total, justification (quoted evidence) }.
+Then RANK 1–5 (no ties allowed; break ties by Clarity score).</span><span class="bm">[PROMPT PENJANA, dipanggil 5 kali dengan temperature 0.7]
+Tulis abstrak 150-patah-kata untuk kertas di bawah. Khalayak: [jurnal kemuncak bidang anda]. KERTAS: [tampal]
+
+[PROMPT PENILAI, dipanggil sekali dengan semua 5 calon]
+Anda menilai 5 abstrak calon. Rubrik (setiap 1–10):
+  Kejelasan sumbangan (40%) — bolehkah pengulas menyatakan sumbangan dalam satu ayat?
+  Kekhususan kaedah (30%) — adakah sampel, instrumen, dan analisis dinamakan?
+  Disiplin berpagari (15%) — dakwaan dikalibrasi kepada bukti?
+  Ekonomi perkataan (15%) — di bawah 150 patah kata DAN tiada pengisi?
+
+Untuk setiap calon, hasilkan JSON: { id, scores, weighted_total, justification (bukti dipetik) }.
+Kemudian SUSUN 1–5 (tiada seri dibenarkan; pecahkan seri dengan skor Kejelasan).</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                    </div>
+                    <div class="path-content path-business space-y-3">
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-emerald-600 block mb-1">Ex 1 — Tagline tournament:</strong> <span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">[GENERATOR PROMPT, called 3 times]
+Write 5 taglines for our new fintech product launching in Malaysia. Each tagline must be under 8 words, work in EN and BM, avoid corporate jargon.
+
+[EVALUATOR PROMPT, with all 15 candidates pooled]
+You are evaluating 15 taglines. Rubric (each 1–10):
+  Memorability (35%) — would a non-marketer remember it 24 hours later?
+  Brand fit (25%) — does it imply "honest, simple, Malaysian-first"?
+  EN ↔ BM parallelism (20%) — does the line work equally well in both languages?
+  Differentiation (20%) — could a competitor use the exact same line?
+
+For each, output JSON: { id, tagline, scores, weighted_total, justification }.
+Pick TOP 3 and write a one-sentence explanation per pick.</span><span class="bm">[PROMPT PENJANA, dipanggil 3 kali]
+Tulis 5 tagline untuk produk fintech baharu kami yang melancarkan di Malaysia. Setiap tagline mesti di bawah 8 patah kata, berfungsi dalam BI dan BM, elak jargon korporat.
+
+[PROMPT PENILAI, dengan semua 15 calon dikumpul]
+Anda menilai 15 tagline. Rubrik (setiap 1–10):
+  Kebolehingatan (35%) — adakah bukan-pemasar akan ingat 24 jam kemudian?
+  Padanan jenama (25%) — adakah ia menyiratkan "jujur, ringkas, Malaysia-dahulu"?
+  Keselarian BI ↔ BM (20%) — adakah baris berfungsi sama baik dalam kedua-dua bahasa?
+  Pembezaan (20%) — bolehkah pesaing guna baris yang sama tepat?
+
+Untuk setiap satu, hasilkan JSON: { id, tagline, scores, weighted_total, justification }.
+Pilih TOP 3 dan tulis penjelasan satu-ayat setiap pilihan.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                    </div>
+                    <div class="path-content path-creative space-y-3">
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-purple-600 block mb-1">Ex 1 — Opening-paragraph evaluator:</strong> <span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">[GENERATOR PROMPT, called 4 times with temperature 0.8]
+Write the opening paragraph of my short story. Premise: [paste]. Voice: terse, sensory, no exposition.
+
+[EVALUATOR PROMPT, all 4 candidates]
+You are evaluating 4 candidate openings. Rubric (each 1–10):
+  Hook strength (35%) — does the reader want to continue past the first sentence?
+  Voice consistency (25%) — does the candidate honour the brief?
+  Sensory anchoring (20%) — is there at least one concrete sensory image?
+  Information economy (20%) — does it earn every word, or stuff in setup?
+
+For each, output JSON: { id, scores, weighted_total, justification (quote one phrase from the candidate as evidence per criterion) }.
+RANK 1–4. The winner is the one I'll send to the editor.</span><span class="bm">[PROMPT PENJANA, dipanggil 4 kali dengan temperature 0.8]
+Tulis perenggan pembukaan cerpen saya. Premis: [tampal]. Suara: ringkas, deria, tiada ekspositori.
+
+[PROMPT PENILAI, semua 4 calon]
+Anda menilai 4 pembukaan calon. Rubrik (setiap 1–10):
+  Kekuatan kail (35%) — adakah pembaca mahu teruskan melepasi ayat pertama?
+  Konsistensi suara (25%) — adakah calon menepati taklimat?
+  Penambatan deria (20%) — adakah ada sekurang-kurangnya satu imej deria konkrit?
+  Ekonomi maklumat (20%) — adakah ia mendapat setiap perkataan, atau memasukkan persediaan?
+
+Untuk setiap satu, hasilkan JSON: { id, scores, weighted_total, justification (petik satu frasa daripada calon sebagai bukti setiap kriteria) }.
+SUSUN 1–4. Pemenang ialah yang akan saya hantar kepada editor.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                    </div>
+                    <div class="path-content path-it space-y-3">
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-amber-600 block mb-1">Ex 1 — Code-solution evaluator:</strong> <span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">[GENERATOR PROMPT, called 3 times with temperature 0.5]
+Implement the function below per the spec. SPEC: [paste]
+
+[EVALUATOR PROMPT, all 3 implementations + the original spec]
+You are evaluating 3 implementations of the same spec. Rubric (each 1–10):
+  Correctness (40%) — does it handle every example + edge case in the spec?
+  Time complexity (20%) — Big-O at the boundary of the input size in the spec?
+  Readability (20%) — would a code reviewer ask for fewer than 3 changes?
+  Test surface (20%) — how easy is it to write a unit test against this code?
+
+For each, output JSON: { id, scores, weighted_total, justification (quote one line from the candidate per criterion) }.
+RANK 1–3. If two are tied on correctness, prefer the one with higher readability.</span><span class="bm">[PROMPT PENJANA, dipanggil 3 kali dengan temperature 0.5]
+Laksanakan fungsi di bawah mengikut spesifikasi. SPEC: [tampal]
+
+[PROMPT PENILAI, semua 3 pelaksanaan + spec asal]
+Anda menilai 3 pelaksanaan spec yang sama. Rubrik (setiap 1–10):
+  Ketepatan (40%) — adakah ia mengendalikan setiap contoh + kes tepi dalam spec?
+  Kompleksiti masa (20%) — Big-O pada sempadan saiz input dalam spec?
+  Kebolehbacaan (20%) — adakah pengulas kod akan minta kurang daripada 3 perubahan?
+  Permukaan ujian (20%) — betapa mudahnya menulis ujian unit terhadap kod ini?
+
+Untuk setiap satu, hasilkan JSON: { id, scores, weighted_total, justification (petik satu baris daripada calon setiap kriteria) }.
+SUSUN 1–3. Jika dua seri pada ketepatan, utamakan yang lebih tinggi kebolehbacaan.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                    </div>
                 </div>
                 
                 <!-- 6.5 Cumulative Reasoning -->
                 <div class="mb-8 border-l-4 border-primary pl-4">
                     <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2"><span class="en">6.5 Cumulative Reasoning</span><span class="bm">6.5 Penaakulan Kumulatif</span></h3>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-3">
+                        <span class="en">In multi-turn conversations, the model's effective memory of earlier reasoning degrades — facts established at turn 3 quietly disappear by turn 20. Cumulative Reasoning fixes this with a <strong>verified-facts log</strong>: a persistent block of confirmed propositions that gets re-injected into every subsequent prompt. The model is forbidden from contradicting items in the log without first marking them DISPUTED.</span>
+                        <span class="bm">Dalam perbualan berbilang giliran, memori berkesan model untuk penaakulan awal merosot — fakta yang ditubuhkan pada giliran 3 hilang secara senyap menjelang giliran 20. Penaakulan Kumulatif menyelesaikan ini dengan <strong>log fakta-disahkan</strong>: blok berterusan proposisi yang disahkan yang disuntik semula ke dalam setiap prompt berikutnya. Model dilarang daripada bercanggah dengan item dalam log tanpa terlebih dahulu menandakannya DISPUTED.</span>
+                    </p>
                     <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
-                        <span class="en">Storing verified facts in a persistent memory structure during a multi-turn prompt so the LLM doesn't forget foundational logic steps.</span>
-                        <span class="bm">Menyimpan fakta yang disahkan dalam struktur memori berterusan supaya LLM tidak melupakan langkah logik asas.</span>
+                        <span class="en">The discipline has three rules: <strong>(1) every fact in the log carries a source</strong> (which turn it was established in, or which document supports it), <strong>(2) facts must be atomic</strong> (one proposition each, not compound), <strong>(3) any candidate fact that contradicts an existing one is held aside as DISPUTED</strong> — never silently overwritten. This is essentially version-controlled state management for a conversation.</span>
+                        <span class="bm">Disiplin mempunyai tiga peraturan: <strong>(1) setiap fakta dalam log membawa sumber</strong> (giliran mana ia ditubuhkan, atau dokumen mana yang menyokongnya), <strong>(2) fakta mesti atomik</strong> (satu proposisi setiap satu, bukan sebatian), <strong>(3) mana-mana fakta calon yang bercanggah dengan yang sedia ada ditahan sebagai DISPUTED</strong> — tidak pernah ditulis ganti secara senyap. Ini pada dasarnya pengurusan keadaan dikawal-versi untuk perbualan.</span>
+                    </p>
+                    <div class="path-content path-academic space-y-3">
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-blue-600 block mb-1">Ex 1 — Systematic-review fact log:</strong> <span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">You are conducting a systematic review. Maintain a VERIFIED_FACTS log at the bottom of every response, in this format:
+
+VERIFIED_FACTS:
+[F1] {claim} — source: {paper-id or "turn N"}
+[F2] ...
+
+RULES:
+1. Every numeric claim or methodological detail must be tagged with a source.
+2. Before adding a new fact, check whether it contradicts any existing F#.
+3. If it contradicts, do NOT overwrite. Add it as F#-DISPUTED and surface both versions.
+4. If the user asks anything that depends on a fact in the log, cite the F# inline.
+
+Begin with this paper: [paste]</span><span class="bm">Anda mengendalikan tinjauan sistematik. Kekalkan log VERIFIED_FACTS di bahagian bawah setiap respons, dalam format ini:
+
+VERIFIED_FACTS:
+[F1] {dakwaan} — sumber: {id-kertas atau "giliran N"}
+[F2] ...
+
+PERATURAN:
+1. Setiap dakwaan angka atau butiran metodologi mesti ditag dengan sumber.
+2. Sebelum menambah fakta baharu, semak sama ada ia bercanggah dengan mana-mana F# sedia ada.
+3. Jika bercanggah, JANGAN tulis ganti. Tambah sebagai F#-DISPUTED dan dedahkan kedua-dua versi.
+4. Jika pengguna bertanya apa-apa yang bergantung pada fakta dalam log, petik F# inline.
+
+Mulakan dengan kertas ini: [tampal]</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                    </div>
+                    <div class="path-content path-business space-y-3">
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-emerald-600 block mb-1">Ex 1 — Deal-room briefing memory:</strong> <span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">You are my M&amp;A research assistant tracking facts about the target company. Maintain a TARGET_FACTS log at the bottom of every reply:
+
+TARGET_FACTS:
+[F1] revenue 2023 = RM 24M — source: audited financial, p.12
+[F2] employee count = 142 (as of Q3 2024) — source: LinkedIn count, turn 4
+[F3] CEO since = 2019 — source: bio page, turn 7
+...
+
+RULES:
+1. Atomic facts only — never combine "revenue + growth rate" in one F#.
+2. Source-required: a numeric or named-entity claim without a source is rejected.
+3. Any new fact that contradicts an existing F# is added as F#-DISPUTED, with both versions surfaced.
+4. End each reply by listing any DISPUTED entries still unresolved.
+
+Add facts as I share documents. Today's question: [paste]</span><span class="bm">Anda pembantu penyelidikan M&amp;A saya menjejaki fakta tentang syarikat sasaran. Kekalkan log TARGET_FACTS di bahagian bawah setiap balasan:
+
+TARGET_FACTS:
+[F1] hasil 2023 = RM 24J — sumber: kewangan diaudit, hlm.12
+[F2] kiraan pekerja = 142 (setakat Q3 2024) — sumber: kiraan LinkedIn, giliran 4
+[F3] CEO sejak = 2019 — sumber: halaman bio, giliran 7
+...
+
+PERATURAN:
+1. Fakta atomik sahaja — jangan sesekali gabungkan "hasil + kadar pertumbuhan" dalam satu F#.
+2. Sumber-diperlukan: dakwaan angka atau entiti-bernama tanpa sumber ditolak.
+3. Mana-mana fakta baharu yang bercanggah dengan F# sedia ada ditambah sebagai F#-DISPUTED, dengan kedua-dua versi didedahkan.
+4. Tamatkan setiap balasan dengan menyenaraikan mana-mana entri DISPUTED yang masih belum diselesaikan.
+
+Tambah fakta semasa saya kongsi dokumen. Soalan hari ini: [tampal]</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                    </div>
+                    <div class="path-content path-creative space-y-3">
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-purple-600 block mb-1">Ex 1 — Novel-bible memory:</strong> <span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">You are helping me draft my novel. Maintain a STORY_BIBLE log at the end of every reply:
+
+STORY_BIBLE:
+[F1] Maya has a scar on her left wrist — source: ch.2 draft, turn 3
+[F2] The cafe is in George Town, opens at 7am — source: ch.1 establishing, turn 1
+[F3] Daniel and Maya last spoke in November 2019 — source: ch.4 conversation, turn 8
+...
+
+RULES:
+1. Atomic facts — never combine character + setting in one F#.
+2. Any new line I draft that contradicts an existing F# must be flagged before you write the rest of the scene.
+3. If I want to retcon, I'll say "RETCON F#=&lt;new value&gt;" — only then do you update; otherwise hold both as F#-DISPUTED.
+4. At any moment, I can ask "list bible" and you output the full current log.
+
+Today's task: continue drafting chapter 5. [paste current state]</span><span class="bm">Anda membantu saya mendraf novel saya. Kekalkan log STORY_BIBLE di hujung setiap balasan:
+
+STORY_BIBLE:
+[F1] Maya ada parut di pergelangan tangan kiri — sumber: draf bab 2, giliran 3
+[F2] Kafe di George Town, buka pukul 7 pagi — sumber: bab 1 pengenalan, giliran 1
+[F3] Daniel dan Maya terakhir bercakap pada November 2019 — sumber: perbualan bab 4, giliran 8
+...
+
+PERATURAN:
+1. Fakta atomik — jangan gabungkan watak + latar dalam satu F#.
+2. Mana-mana baris baharu yang saya draf yang bercanggah dengan F# sedia ada mesti ditanda sebelum anda menulis selebihnya babak.
+3. Jika saya mahu retcon, saya akan kata "RETCON F#=&lt;nilai baharu&gt;" — hanya kemudian anda kemas kini; jika tidak tahan kedua-dua sebagai F#-DISPUTED.
+4. Pada bila-bila masa, saya boleh tanya "list bible" dan anda hasilkan log semasa penuh.
+
+Tugas hari ini: teruskan mendraf bab 5. [tampal keadaan semasa]</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                    </div>
+                    <div class="path-content path-it space-y-3">
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-amber-600 block mb-1">Ex 1 — Architecture-decision memory:</strong> <span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">You are helping me design a service. Maintain an ARCH_DECISIONS log at the end of every reply:
+
+ARCH_DECISIONS:
+[D1] storage: PostgreSQL (not DynamoDB) — rationale: relational queries, turn 2
+[D2] auth: JWT with 15-min expiry + refresh tokens — rationale: stateless services, turn 5
+[D3] queue: SQS standard (not FIFO) — rationale: throughput &gt; ordering, turn 7
+...
+
+RULES:
+1. Atomic decisions only — never bundle storage + caching in one D#.
+2. Every D# has a rationale phrase explaining the trade-off accepted.
+3. If a new requirement I introduce contradicts an existing D#, do NOT silently revise. Output "CONFLICT: requirement X invalidates D#" and stop until I confirm.
+4. At any time, I can ask "list decisions" and you output the full log.
+
+Today's task: continue the design. Constraint to add: [paste]</span><span class="bm">Anda membantu saya mereka perkhidmatan. Kekalkan log ARCH_DECISIONS di hujung setiap balasan:
+
+ARCH_DECISIONS:
+[D1] penyimpanan: PostgreSQL (bukan DynamoDB) — rasional: pertanyaan relasi, giliran 2
+[D2] auth: JWT dengan tamat 15-minit + token refresh — rasional: perkhidmatan stateless, giliran 5
+[D3] baris gilir: SQS standard (bukan FIFO) — rasional: throughput &gt; pesanan, giliran 7
+...
+
+PERATURAN:
+1. Keputusan atomik sahaja — jangan sesekali bundle penyimpanan + caching dalam satu D#.
+2. Setiap D# mempunyai frasa rasional menerangkan trade-off diterima.
+3. Jika keperluan baharu yang saya perkenalkan bercanggah dengan D# sedia ada, JANGAN semak secara senyap. Hasilkan "CONFLICT: keperluan X membatalkan D#" dan berhenti sehingga saya sahkan.
+4. Pada bila-bila masa, saya boleh tanya "list decisions" dan anda hasilkan log penuh.
+
+Tugas hari ini: teruskan reka bentuk. Kekangan untuk ditambah: [tampal]</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                    </div>
+                </div>
+
+                <!-- 6.6 NEW: Interactive Cognitive Topology Explorer -->
+                <div class="mb-8 border-l-4 border-primary pl-4">
+                    <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">
+                        <span class="en">6.6 Interactive Cognitive Topology Explorer</span><span class="bm">6.6 Penjelajah Topologi Kognitif Interaktif</span>
+                    </h3>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-3">
+                        <span class="en">Reading about topologies is not the same as seeing them. Click any of the five reasoning shapes below to see (a) what the shape <em>looks like</em> as a node-and-edge diagram, (b) when to reach for it, (c) what it costs, and (d) a worked example. Notice how each shape literally pictures the cost-benefit trade-off — more nodes and edges = more capability but more tokens, latency, and orchestration risk.</span>
+                        <span class="bm">Membaca tentang topologi tidak sama dengan melihatnya. Klik mana-mana lima bentuk penaakulan di bawah untuk melihat (a) bentuk apa <em>rupanya</em> sebagai diagram nod-dan-tepi, (b) bila untuk mencapainya, (c) apa kosnya, dan (d) contoh terkerja. Perhatikan bagaimana setiap bentuk benar-benar menggambarkan trade-off kos-faedah — lebih banyak nod dan tepi = lebih banyak keupayaan tetapi lebih banyak token, latensi, dan risiko orkestrasi.</span>
+                    </p>
+
+                    <!-- Topology tiles -->
+                    <div id="topology-grid" class="topology-grid mb-2" role="tablist">
+                        <div class="topology-tile" role="tab" data-topology="linear" data-active="true" tabindex="0">
+                            <div class="topology-svg">
+                                <svg viewBox="0 0 80 40" xmlns="http://www.w3.org/2000/svg">
+                                    <line x1="10" y1="20" x2="25" y2="20" stroke="currentColor" stroke-width="1.5"/>
+                                    <line x1="35" y1="20" x2="45" y2="20" stroke="currentColor" stroke-width="1.5"/>
+                                    <line x1="55" y1="20" x2="65" y2="20" stroke="currentColor" stroke-width="1.5"/>
+                                    <circle cx="10" cy="20" r="4" fill="currentColor"/>
+                                    <circle cx="30" cy="20" r="4" fill="currentColor"/>
+                                    <circle cx="50" cy="20" r="4" fill="currentColor"/>
+                                    <circle cx="70" cy="20" r="4" fill="currentColor"/>
+                                </svg>
+                            </div>
+                            <div class="topology-name"><span class="en">Linear</span><span class="bm">Linear</span></div>
+                            <div class="topology-hint"><span class="en">Chain-of-Thought</span><span class="bm">Chain-of-Thought</span></div>
+                        </div>
+                        <div class="topology-tile" role="tab" data-topology="tree" tabindex="0">
+                            <div class="topology-svg">
+                                <svg viewBox="0 0 80 40" xmlns="http://www.w3.org/2000/svg">
+                                    <line x1="40" y1="8" x2="15" y2="32" stroke="currentColor" stroke-width="1.5"/>
+                                    <line x1="40" y1="8" x2="40" y2="32" stroke="currentColor" stroke-width="1.5"/>
+                                    <line x1="40" y1="8" x2="65" y2="32" stroke="currentColor" stroke-width="1.5"/>
+                                    <circle cx="40" cy="8" r="4" fill="currentColor"/>
+                                    <circle cx="15" cy="32" r="4" fill="currentColor"/>
+                                    <circle cx="40" cy="32" r="4" fill="currentColor"/>
+                                    <circle cx="65" cy="32" r="4" fill="currentColor"/>
+                                </svg>
+                            </div>
+                            <div class="topology-name"><span class="en">Tree</span><span class="bm">Pokok</span></div>
+                            <div class="topology-hint"><span class="en">Tree of Thoughts</span><span class="bm">Tree of Thoughts</span></div>
+                        </div>
+                        <div class="topology-tile" role="tab" data-topology="graph" tabindex="0">
+                            <div class="topology-svg">
+                                <svg viewBox="0 0 80 40" xmlns="http://www.w3.org/2000/svg">
+                                    <line x1="15" y1="10" x2="40" y2="20" stroke="currentColor" stroke-width="1.5"/>
+                                    <line x1="65" y1="10" x2="40" y2="20" stroke="currentColor" stroke-width="1.5"/>
+                                    <line x1="15" y1="30" x2="40" y2="20" stroke="currentColor" stroke-width="1.5"/>
+                                    <line x1="65" y1="30" x2="40" y2="20" stroke="currentColor" stroke-width="1.5"/>
+                                    <line x1="15" y1="10" x2="15" y2="30" stroke="currentColor" stroke-width="1" opacity="0.5"/>
+                                    <line x1="65" y1="10" x2="65" y2="30" stroke="currentColor" stroke-width="1" opacity="0.5"/>
+                                    <circle cx="15" cy="10" r="4" fill="currentColor"/>
+                                    <circle cx="65" cy="10" r="4" fill="currentColor"/>
+                                    <circle cx="15" cy="30" r="4" fill="currentColor"/>
+                                    <circle cx="65" cy="30" r="4" fill="currentColor"/>
+                                    <circle cx="40" cy="20" r="5" fill="currentColor"/>
+                                </svg>
+                            </div>
+                            <div class="topology-name"><span class="en">Graph</span><span class="bm">Graf</span></div>
+                            <div class="topology-hint"><span class="en">Graph of Thoughts</span><span class="bm">Graph of Thoughts</span></div>
+                        </div>
+                        <div class="topology-tile" role="tab" data-topology="loop" tabindex="0">
+                            <div class="topology-svg">
+                                <svg viewBox="0 0 80 40" xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="40" cy="20" r="14" fill="none" stroke="currentColor" stroke-width="1.5"/>
+                                    <polygon points="52,14 56,20 52,26" fill="currentColor"/>
+                                    <circle cx="25" cy="20" r="4" fill="currentColor"/>
+                                    <circle cx="55" cy="20" r="4" fill="currentColor"/>
+                                </svg>
+                            </div>
+                            <div class="topology-name"><span class="en">Loop</span><span class="bm">Gelung</span></div>
+                            <div class="topology-hint"><span class="en">ReAct / Agent</span><span class="bm">ReAct / Ejen</span></div>
+                        </div>
+                        <div class="topology-tile" role="tab" data-topology="memory" tabindex="0">
+                            <div class="topology-svg">
+                                <svg viewBox="0 0 80 40" xmlns="http://www.w3.org/2000/svg">
+                                    <rect x="8" y="6" width="32" height="6" fill="currentColor" opacity="0.4"/>
+                                    <rect x="8" y="16" width="32" height="6" fill="currentColor" opacity="0.6"/>
+                                    <rect x="8" y="26" width="32" height="6" fill="currentColor" opacity="0.8"/>
+                                    <line x1="44" y1="20" x2="55" y2="20" stroke="currentColor" stroke-width="1.5"/>
+                                    <line x1="55" y1="20" x2="44" y2="9" stroke="currentColor" stroke-width="1" opacity="0.5" stroke-dasharray="2,2"/>
+                                    <line x1="55" y1="20" x2="44" y2="19" stroke="currentColor" stroke-width="1" opacity="0.5" stroke-dasharray="2,2"/>
+                                    <line x1="55" y1="20" x2="44" y2="29" stroke="currentColor" stroke-width="1" opacity="0.5" stroke-dasharray="2,2"/>
+                                    <circle cx="60" cy="20" r="5" fill="currentColor"/>
+                                </svg>
+                            </div>
+                            <div class="topology-name"><span class="en">Memory</span><span class="bm">Memori</span></div>
+                            <div class="topology-hint"><span class="en">Cumulative Reasoning</span><span class="bm">Penaakulan Kumulatif</span></div>
+                        </div>
+                    </div>
+
+                    <!-- Topology detail panel -->
+                    <div id="topology-panel" class="topology-panel" aria-live="polite"></div>
+
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-3">
+                        <i class="fa-solid fa-info-circle mr-1"></i>
+                        <span class="en">Tip: when in doubt, start with the simplest topology that could plausibly work. A Linear shape with 30 tokens of CoT beats a Graph shape with 3,000 tokens of orchestration on 80% of real tasks. The expensive topologies are insurance against specific failure modes — pay for them only when those failure modes are likely.</span>
+                        <span class="bm">Petua: apabila ragu-ragu, mulakan dengan topologi paling ringkas yang munasabah boleh berfungsi. Bentuk Linear dengan 30 token CoT mengalahkan bentuk Graf dengan 3,000 token orkestrasi pada 80% tugas sebenar. Topologi mahal ialah insurans terhadap mod kegagalan tertentu — bayar untuknya hanya apabila mod kegagalan itu mungkin.</span>
                     </p>
                 </div>
 
@@ -6507,6 +7276,355 @@ KEPUTUSAN: NEEDS_ONE_VERIFICATION
             if (initial) activate(initial.dataset.stage);
         }
 
+        // --- 6.6 Cognitive Topology Explorer ---
+        // Five reasoning shapes. Each carries: a richer SVG diagram for the detail
+        // panel, a short tagline, a "when to use" rule, a cost profile (tokens /
+        // latency / orchestration risk on 1-5 scale), and a runnable example.
+        const TOPOLOGIES = {
+            linear: {
+                title:   { en: 'Linear (Chain-of-Thought)',  bm: 'Linear (Chain-of-Thought)' },
+                tag:     { en: 'O(1) calls · token-cheap',   bm: 'O(1) panggilan · murah token' },
+                svg: `<svg viewBox="0 0 200 60" xmlns="http://www.w3.org/2000/svg">
+                        <line x1="15" y1="30" x2="55" y2="30" stroke="currentColor" stroke-width="2"/>
+                        <line x1="65" y1="30" x2="105" y2="30" stroke="currentColor" stroke-width="2"/>
+                        <line x1="115" y1="30" x2="155" y2="30" stroke="currentColor" stroke-width="2"/>
+                        <polygon points="155,26 165,30 155,34" fill="currentColor"/>
+                        <circle cx="15" cy="30" r="6" fill="currentColor"/>
+                        <circle cx="60" cy="30" r="6" fill="currentColor"/>
+                        <circle cx="110" cy="30" r="6" fill="currentColor"/>
+                        <circle cx="155" cy="30" r="6" fill="currentColor"/>
+                        <text x="15"  y="52" text-anchor="middle" font-size="9" fill="currentColor" opacity="0.7">step 1</text>
+                        <text x="60"  y="52" text-anchor="middle" font-size="9" fill="currentColor" opacity="0.7">step 2</text>
+                        <text x="110" y="52" text-anchor="middle" font-size="9" fill="currentColor" opacity="0.7">step 3</text>
+                        <text x="155" y="52" text-anchor="middle" font-size="9" fill="currentColor" opacity="0.7">answer</text>
+                      </svg>`,
+                cost: { tokens: 1, latency: 1, orchestration: 1 },
+                whenToUse: {
+                    en: 'Use Linear when there is a single correct path from question to answer. Arithmetic, deterministic reasoning, well-specified extractions. If a single thoughtful person could solve it on paper in one pass, the topology should be Linear too.',
+                    bm: 'Gunakan Linear apabila ada satu laluan betul dari soalan ke jawapan. Aritmetik, penaakulan deterministik, ekstraksi yang dispesifikasi dengan baik. Jika seorang yang berfikir boleh menyelesaikannya di atas kertas dalam satu pas, topologi juga sepatutnya Linear.'
+                },
+                avoid: {
+                    en: 'Avoid Linear when (a) the question has multiple plausible answers depending on assumptions, (b) early mistakes silently corrupt later steps, or (c) the answer requires recombining ideas from independent sources.',
+                    bm: 'Elak Linear apabila (a) soalan mempunyai beberapa jawapan munasabah bergantung pada andaian, (b) kesilapan awal merosakkan langkah lewat secara senyap, atau (c) jawapan memerlukan penggabungan idea daripada sumber bebas.'
+                },
+                example: {
+                    en: `Let's think step by step.
+
+A bookshop has 240 books. They sell 30% in the first week and another 25 books in the second week. What fraction of the original stock remains?`,
+                    bm: `Mari kita fikir langkah demi langkah.
+
+Sebuah kedai buku ada 240 buah buku. Mereka menjual 30% pada minggu pertama dan 25 buah lagi pada minggu kedua. Apakah pecahan stok asal yang masih tinggal?`
+                }
+            },
+            tree: {
+                title:   { en: 'Tree (Tree of Thoughts)',     bm: 'Pokok (Tree of Thoughts)' },
+                tag:     { en: 'O(N) candidates · medium cost',bm: 'O(N) calon · kos sederhana' },
+                svg: `<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+                        <line x1="100" y1="15" x2="40"  y2="55" stroke="currentColor" stroke-width="2"/>
+                        <line x1="100" y1="15" x2="100" y2="55" stroke="currentColor" stroke-width="2"/>
+                        <line x1="100" y1="15" x2="160" y2="55" stroke="currentColor" stroke-width="2"/>
+                        <line x1="40"  y1="55" x2="25"  y2="85" stroke="currentColor" stroke-width="1.5" opacity="0.5"/>
+                        <line x1="40"  y1="55" x2="55"  y2="85" stroke="currentColor" stroke-width="1.5" opacity="0.5"/>
+                        <line x1="160" y1="55" x2="145" y2="85" stroke="currentColor" stroke-width="1.5"/>
+                        <line x1="160" y1="55" x2="175" y2="85" stroke="currentColor" stroke-width="1.5"/>
+                        <circle cx="100" cy="15" r="6" fill="currentColor"/>
+                        <circle cx="40"  cy="55" r="5" fill="currentColor" opacity="0.5"/>
+                        <circle cx="100" cy="55" r="5" fill="currentColor" opacity="0.4"/>
+                        <circle cx="160" cy="55" r="6" fill="currentColor"/>
+                        <circle cx="25"  cy="85" r="4" fill="currentColor" opacity="0.4"/>
+                        <circle cx="55"  cy="85" r="4" fill="currentColor" opacity="0.4"/>
+                        <circle cx="145" cy="85" r="5" fill="currentColor"/>
+                        <circle cx="175" cy="85" r="5" fill="currentColor"/>
+                        <text x="40"  y="48" text-anchor="middle" font-size="8" fill="currentColor" opacity="0.5">pruned</text>
+                        <text x="160" y="48" text-anchor="middle" font-size="8" fill="currentColor">kept</text>
+                      </svg>`,
+                cost: { tokens: 3, latency: 3, orchestration: 3 },
+                whenToUse: {
+                    en: 'Use Tree when you face an irreversible decision among several plausible options, AND you can specify a quantifiable evaluation criterion. Strategy decisions, design choices, methodology selection — any case where the cost of going down the wrong branch dwarfs the cost of evaluating several.',
+                    bm: 'Gunakan Pokok apabila anda berdepan keputusan tidak boleh balik antara beberapa pilihan munasabah, DAN anda boleh menentukan kriteria penilaian yang boleh dikuantifikasi. Keputusan strategi, pilihan reka bentuk, pemilihan metodologi — sebarang kes di mana kos turun ke cabang yang salah jauh mengatasi kos menilai beberapa.'
+                },
+                avoid: {
+                    en: 'Avoid Tree when (a) there is no clear evaluation criterion (you\'ll generate branches and rank them arbitrarily), (b) the candidates are not actually competing (e.g., they could all be tried in parallel cheaply), or (c) the problem has a known answer.',
+                    bm: 'Elak Pokok apabila (a) tiada kriteria penilaian jelas (anda akan menjana cabang dan menyusunnya secara sewenang-wenang), (b) calon tidak benar-benar bersaing (cth., semuanya boleh dicuba secara selari dengan murah), atau (c) masalah mempunyai jawapan yang diketahui.'
+                },
+                example: {
+                    en: `Run a Tree of Thoughts on my Q4 budget allocation.
+
+BRANCHING FACTOR: 4 candidate allocations at level 1; for the top 2, generate 3 sub-allocations each at level 2.
+
+EVALUATION CRITERION: Score each on (a) revenue-per-RM in the last 4 quarters, (b) leading indicators improving, (c) team capacity to execute. Each 1–10, equal weights.
+
+PRUNING RULE: Drop any branch scoring < 6 on any single criterion.
+
+OUTPUT: Tree as Markdown, then one recommendation paragraph.`,
+                    bm: `Jalankan Tree of Thoughts pada peruntukan bajet S4 saya.
+
+FAKTOR PERCABANGAN: 4 calon peruntukan pada tahap 1; untuk 2 teratas, hasilkan 3 sub-peruntukan setiap satu pada tahap 2.
+
+KRITERIA PENILAIAN: Skor setiap satu pada (a) hasil-per-RM dalam 4 suku tahun terakhir, (b) penunjuk utama bertambah baik, (c) kapasiti pasukan untuk laksana. Setiap 1–10, pemberat sama.
+
+PERATURAN PEMANGKASAN: Gugurkan mana-mana cabang yang skor < 6 pada mana-mana kriteria tunggal.
+
+OUTPUT: Pokok sebagai Markdown, kemudian satu perenggan cadangan.`
+                }
+            },
+            graph: {
+                title:   { en: 'Graph (Graph of Thoughts)',  bm: 'Graf (Graph of Thoughts)' },
+                tag:     { en: 'O(N²) merges · token-heavy', bm: 'O(N²) gabungan · banyak token' },
+                svg: `<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+                        <line x1="30"  y1="20"  x2="100" y2="50" stroke="currentColor" stroke-width="1.5"/>
+                        <line x1="170" y1="20"  x2="100" y2="50" stroke="currentColor" stroke-width="1.5"/>
+                        <line x1="30"  y1="80"  x2="100" y2="50" stroke="currentColor" stroke-width="1.5"/>
+                        <line x1="170" y1="80"  x2="100" y2="50" stroke="currentColor" stroke-width="1.5"/>
+                        <line x1="30"  y1="20"  x2="30"  y2="80" stroke="currentColor" stroke-width="1" opacity="0.4"/>
+                        <line x1="170" y1="20"  x2="170" y2="80" stroke="currentColor" stroke-width="1" opacity="0.4"/>
+                        <line x1="30"  y1="20"  x2="170" y2="20" stroke="currentColor" stroke-width="1" opacity="0.4"/>
+                        <line x1="30"  y1="80"  x2="170" y2="80" stroke="currentColor" stroke-width="1" opacity="0.4"/>
+                        <circle cx="30"  cy="20" r="6" fill="currentColor"/>
+                        <circle cx="170" cy="20" r="6" fill="currentColor"/>
+                        <circle cx="30"  cy="80" r="6" fill="currentColor"/>
+                        <circle cx="170" cy="80" r="6" fill="currentColor"/>
+                        <circle cx="100" cy="50" r="8" fill="currentColor"/>
+                        <text x="100" y="32" text-anchor="middle" font-size="9" fill="currentColor" opacity="0.7">synthesis</text>
+                      </svg>`,
+                cost: { tokens: 5, latency: 4, orchestration: 5 },
+                whenToUse: {
+                    en: 'Use Graph when the right answer is unlikely to be any single candidate — when you genuinely expect the winning idea to be a recombination of pieces from several. Brand positioning, hybrid methodologies, novel character archetypes, multi-tier system architectures.',
+                    bm: 'Gunakan Graf apabila jawapan betul tidak mungkin mana-mana calon tunggal — apabila anda benar-benar mengharapkan idea pemenang menjadi penggabungan kepingan daripada beberapa. Kedudukan jenama, metodologi hibrid, arketaip watak novel, seni bina sistem berbilang-tier.'
+                },
+                avoid: {
+                    en: 'Avoid Graph when (a) one candidate is obviously the strongest (no merge will improve on it), (b) merges would produce internal contradictions you cannot resolve, or (c) the budget cannot afford the quadratic blow-up in candidates.',
+                    bm: 'Elak Graf apabila (a) satu calon jelas yang terkuat (tiada gabungan akan memperbaikinya), (b) gabungan akan menghasilkan percanggahan dalaman yang anda tidak boleh selesaikan, atau (c) bajet tidak mampu menampung peningkatan kuadratik dalam calon.'
+                },
+                example: {
+                    en: `Run a Graph of Thoughts for our brand position:
+
+GENERATION: 4 distinct positions (e.g., trusted incumbent / scrappy challenger / boring-but-reliable / community-first).
+
+MERGE: For each pair, build a hybrid inheriting visual tone from the first and messaging substance from the second. Reject merges with internal contradictions (flag INVALID).
+
+SCORE: Rate the originals + surviving merges on (a) differentiation, (b) execution cost, (c) durability past 18 months. Output the top 3 with merge lineage stated.`,
+                    bm: `Jalankan Graph of Thoughts untuk kedudukan jenama kami:
+
+PENJANAAN: 4 kedudukan berbeza (cth., petahana dipercayai / penantang gigih / membosankan-tapi-boleh-dipercayai / komuniti-dahulu).
+
+GABUNG: Untuk setiap pasangan, bina hibrid yang mewarisi nada visual daripada yang pertama dan bahan mesej daripada yang kedua. Tolak gabungan dengan percanggahan dalaman (tanda INVALID).
+
+SKOR: Nilai yang asal + gabungan terselamat pada (a) pembezaan, (b) kos pelaksanaan, (c) ketahanan melebihi 18 bulan. Hasilkan 3 teratas dengan keturunan gabungan dinyatakan.`
+                }
+            },
+            loop: {
+                title:   { en: 'Loop (ReAct / Agentic)',  bm: 'Gelung (ReAct / Ejen)' },
+                tag:     { en: 'iterative tool-use · variable cost', bm: 'guna-alat berulang · kos berubah' },
+                svg: `<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M 50 50 Q 100 15 150 50 Q 100 85 50 50 Z" fill="none" stroke="currentColor" stroke-width="2"/>
+                        <polygon points="148,40 158,50 148,60" fill="currentColor"/>
+                        <circle cx="50" cy="50" r="7" fill="currentColor"/>
+                        <text x="50" y="52" text-anchor="middle" font-size="8" fill="#fff" font-weight="bold">T</text>
+                        <circle cx="100" cy="22" r="7" fill="currentColor"/>
+                        <text x="100" y="24" text-anchor="middle" font-size="8" fill="#fff" font-weight="bold">A</text>
+                        <circle cx="150" cy="50" r="7" fill="currentColor"/>
+                        <text x="150" y="52" text-anchor="middle" font-size="8" fill="#fff" font-weight="bold">O</text>
+                        <text x="50"  y="78" text-anchor="middle" font-size="9" fill="currentColor" opacity="0.7">Thought</text>
+                        <text x="100" y="9"  text-anchor="middle" font-size="9" fill="currentColor" opacity="0.7">Action</text>
+                        <text x="150" y="78" text-anchor="middle" font-size="9" fill="currentColor" opacity="0.7">Observation</text>
+                      </svg>`,
+                cost: { tokens: 4, latency: 5, orchestration: 5 },
+                whenToUse: {
+                    en: 'Use Loop when the model cannot answer from internal knowledge alone — it needs to call out to a search index, a database, an API, a calculator, or a code execution sandbox. Every "agent" you have heard of is some specialisation of this topology. The model decides what to do next based on what it just observed.',
+                    bm: 'Gunakan Gelung apabila model tidak boleh menjawab daripada pengetahuan dalaman sahaja — ia perlu memanggil indeks carian, pangkalan data, API, kalkulator, atau kotak pasir pelaksanaan kod. Setiap "ejen" yang anda pernah dengar ialah pengkhususan topologi ini. Model memutuskan apa yang perlu dilakukan seterusnya berdasarkan apa yang baru saja diperhatikannya.'
+                },
+                avoid: {
+                    en: 'Avoid Loop when (a) the model already has all needed facts in its training data, (b) you cannot define a robust stopping condition (you will burn through your budget on circular reasoning), or (c) the cost of a wrong action is high but you cannot validate observations before the next thought.',
+                    bm: 'Elak Gelung apabila (a) model sudah mempunyai semua fakta yang diperlukan dalam data latihannya, (b) anda tidak boleh menentukan syarat berhenti yang teguh (anda akan habiskan bajet pada penaakulan bulat), atau (c) kos tindakan salah tinggi tetapi anda tidak boleh mengesahkan pemerhatian sebelum pemikiran seterusnya.'
+                },
+                example: {
+                    en: `You are an SRE agent. Available tools:
+  Logs[service, time_range] → matching log lines
+  Metrics[service, metric, time_range] → time-series data
+  Deploys[service, time_range] → deploys in window
+
+GOAL: Find the root cause of the 5xx spike on payment-api at 14:32 UTC.
+LOOP: Thought → Action → Observation → Thought, until you have 3 corroborating observations.
+STOP IF: 15 actions made OR two tools fail in a row (declare INCONCLUSIVE).
+ON TOOL FAILURE: log it as an Observation and continue with the rest.`,
+                    bm: `Anda ejen SRE. Alat tersedia:
+  Logs[service, time_range] → baris log padanan
+  Metrics[service, metric, time_range] → data siri-masa
+  Deploys[service, time_range] → deploys dalam tetingkap
+
+MATLAMAT: Cari punca utama lonjakan 5xx pada payment-api pada 14:32 UTC.
+GELUNG: Fikir → Tindakan → Pemerhatian → Fikir, sehingga anda ada 3 pemerhatian menyokong.
+BERHENTI JIKA: 15 tindakan dibuat ATAU dua alat gagal berturut-turut (isytihar INCONCLUSIVE).
+JIKA ALAT GAGAL: log sebagai Pemerhatian dan teruskan dengan yang lain.`
+                }
+            },
+            memory: {
+                title:   { en: 'Memory (Cumulative Reasoning)', bm: 'Memori (Penaakulan Kumulatif)' },
+                tag:     { en: 'persistent state · low per-turn cost', bm: 'keadaan berterusan · kos rendah setiap giliran' },
+                svg: `<svg viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="20"  y="15" width="60" height="10" rx="2" fill="currentColor" opacity="0.4"/>
+                        <rect x="20"  y="30" width="60" height="10" rx="2" fill="currentColor" opacity="0.55"/>
+                        <rect x="20"  y="45" width="60" height="10" rx="2" fill="currentColor" opacity="0.7"/>
+                        <rect x="20"  y="60" width="60" height="10" rx="2" fill="currentColor" opacity="0.85"/>
+                        <rect x="20"  y="75" width="60" height="10" rx="2" fill="currentColor"/>
+                        <text x="50" y="22" text-anchor="middle" font-size="8" fill="#fff" font-weight="bold">F1</text>
+                        <text x="50" y="37" text-anchor="middle" font-size="8" fill="#fff" font-weight="bold">F2</text>
+                        <text x="50" y="52" text-anchor="middle" font-size="8" fill="#fff" font-weight="bold">F3</text>
+                        <text x="50" y="67" text-anchor="middle" font-size="8" fill="#fff" font-weight="bold">F4</text>
+                        <text x="50" y="82" text-anchor="middle" font-size="8" fill="#fff" font-weight="bold">F5</text>
+                        <line x1="85" y1="50" x2="135" y2="50" stroke="currentColor" stroke-width="2"/>
+                        <polygon points="135,46 145,50 135,54" fill="currentColor"/>
+                        <line x1="135" y1="50" x2="115" y2="20" stroke="currentColor" stroke-width="1" opacity="0.4" stroke-dasharray="3,2"/>
+                        <line x1="135" y1="50" x2="115" y2="80" stroke="currentColor" stroke-width="1" opacity="0.4" stroke-dasharray="3,2"/>
+                        <circle cx="160" cy="50" r="9" fill="currentColor"/>
+                        <text x="160" y="53" text-anchor="middle" font-size="9" fill="#fff" font-weight="bold">N+1</text>
+                      </svg>`,
+                cost: { tokens: 2, latency: 1, orchestration: 4 },
+                whenToUse: {
+                    en: 'Use Memory when a single conversation will span many turns AND earlier facts matter for later reasoning. Long M&A research sessions, novel drafting across many chapters, multi-document literature reviews, architectural decision logs. Memory is the discipline that keeps the model from quietly forgetting what was established 30 turns ago.',
+                    bm: 'Gunakan Memori apabila satu perbualan akan merentas banyak giliran DAN fakta awal penting untuk penaakulan lewat. Sesi penyelidikan M&A panjang, mendraf novel merentas banyak bab, tinjauan literatur berbilang dokumen, log keputusan seni bina. Memori ialah disiplin yang menghalang model daripada lupa secara senyap apa yang ditubuhkan 30 giliran yang lalu.'
+                },
+                avoid: {
+                    en: 'Avoid Memory when (a) the conversation is short enough that the context window holds it all reliably, (b) you cannot police atomicity (compound facts in the log defeat its purpose), or (c) you are not willing to re-inject the log every turn (without re-injection it is just a hope, not a guarantee).',
+                    bm: 'Elak Memori apabila (a) perbualan cukup pendek supaya tetingkap konteks memegangnya dengan boleh dipercayai, (b) anda tidak boleh menguatkuasakan keatomikan (fakta sebatian dalam log mengalahkan tujuannya), atau (c) anda tidak sanggup menyuntik semula log setiap giliran (tanpa suntikan-semula ia hanya harapan, bukan jaminan).'
+                },
+                example: {
+                    en: `You are my novel-drafting partner. Maintain a STORY_BIBLE log at the end of every reply:
+
+STORY_BIBLE:
+[F1] Maya has a scar on her left wrist — source: ch.2, turn 3
+[F2] The cafe is in George Town, opens at 7am — source: ch.1, turn 1
+...
+
+RULES:
+1. Atomic facts only — never combine character + setting in one F#.
+2. Any line that contradicts an existing F# must be flagged BEFORE you write the rest of the scene.
+3. If I say "RETCON F#=<value>", update; otherwise hold both as F#-DISPUTED.
+4. On request "list bible", output the full current log.`,
+                    bm: `Anda rakan mendraf novel saya. Kekalkan log STORY_BIBLE di hujung setiap balasan:
+
+STORY_BIBLE:
+[F1] Maya ada parut di pergelangan tangan kiri — sumber: bab 2, giliran 3
+[F2] Kafe di George Town, buka 7 pagi — sumber: bab 1, giliran 1
+...
+
+PERATURAN:
+1. Fakta atomik sahaja — jangan gabungkan watak + latar dalam satu F#.
+2. Mana-mana baris yang bercanggah dengan F# sedia ada mesti ditanda SEBELUM anda tulis selebihnya babak.
+3. Jika saya kata "RETCON F#=<nilai>", kemas kini; jika tidak tahan kedua-dua sebagai F#-DISPUTED.
+4. Atas permintaan "list bible", hasilkan log semasa penuh.`
+                }
+            }
+        };
+
+        function renderCostBar(level) {
+            // level is 1..5; render 5 pips with the first `level` filled
+            const pips = [];
+            for (let i = 1; i <= 5; i++) {
+                pips.push(`<div class="topology-cost-pip${i <= level ? ' filled' : ''}"></div>`);
+            }
+            return pips.join('');
+        }
+
+        function renderTopologyPanel(key) {
+            const data = TOPOLOGIES[key];
+            if (!data) return;
+            const panel = document.getElementById('topology-panel');
+            if (!panel) return;
+            panel.innerHTML = `
+              <div class="topology-panel-header">
+                <div class="topology-panel-svg">${data.svg}</div>
+                <div>
+                  <div class="topology-panel-title">
+                    <span class="en">${data.title.en}</span><span class="bm">${data.title.bm}</span>
+                  </div>
+                  <span class="topology-panel-tag">
+                    <span class="en">${data.tag.en}</span><span class="bm">${data.tag.bm}</span>
+                  </span>
+                </div>
+              </div>
+
+              <div class="topology-section">
+                <div class="topology-section-label">
+                  <span class="en">Cost profile</span><span class="bm">Profil kos</span>
+                </div>
+                <div class="topology-cost">
+                  <div class="topology-cost-item">
+                    <div class="topology-cost-label">
+                      <span class="en">Tokens</span><span class="bm">Token</span>
+                    </div>
+                    <div class="topology-cost-bar">${renderCostBar(data.cost.tokens)}</div>
+                  </div>
+                  <div class="topology-cost-item">
+                    <div class="topology-cost-label">
+                      <span class="en">Latency</span><span class="bm">Latensi</span>
+                    </div>
+                    <div class="topology-cost-bar">${renderCostBar(data.cost.latency)}</div>
+                  </div>
+                  <div class="topology-cost-item">
+                    <div class="topology-cost-label">
+                      <span class="en">Orchestration</span><span class="bm">Orkestrasi</span>
+                    </div>
+                    <div class="topology-cost-bar">${renderCostBar(data.cost.orchestration)}</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="topology-section">
+                <div class="topology-section-label">
+                  <span class="en">When to use it</span><span class="bm">Bila digunakan</span>
+                </div>
+                <div class="topology-section-prose">
+                  <span class="en">${data.whenToUse.en}</span><span class="bm">${data.whenToUse.bm}</span>
+                </div>
+              </div>
+
+              <div class="topology-section">
+                <div class="topology-section-label">
+                  <span class="en">When NOT to use it</span><span class="bm">Bila JANGAN guna</span>
+                </div>
+                <div class="topology-section-prose">
+                  <span class="en">${data.avoid.en}</span><span class="bm">${data.avoid.bm}</span>
+                </div>
+              </div>
+
+              <div class="topology-section">
+                <div class="topology-section-label">
+                  <span class="en">Runnable example</span><span class="bm">Contoh boleh-jalan</span>
+                </div>
+                <div class="topology-section-example">
+                  <span class="en">${data.example.en}</span><span class="bm">${data.example.bm}</span>
+                </div>
+              </div>
+            `;
+        }
+
+        function initTopologyExplorer() {
+            const grid = document.getElementById('topology-grid');
+            if (!grid) return;
+            const tiles = grid.querySelectorAll('.topology-tile');
+
+            const activate = (key) => {
+                tiles.forEach(t => t.setAttribute('data-active',
+                    String(t.dataset.topology === key)));
+                renderTopologyPanel(key);
+            };
+
+            tiles.forEach(tile => {
+                tile.addEventListener('click', () => activate(tile.dataset.topology));
+                tile.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        activate(tile.dataset.topology);
+                    }
+                });
+            });
+
+            const initial = grid.querySelector('.topology-tile[data-active="true"]') || tiles[0];
+            if (initial) activate(initial.dataset.topology);
+        }
+
         // --- Initialization on Page Load ---
         document.addEventListener('DOMContentLoaded', () => {
             // Restore the learner's previously-entered name so their leaderboard row
@@ -6530,6 +7648,8 @@ KEPUTUSAN: NEEDS_ONE_VERIFICATION
             initFormatBuilder();
             // Wire up the new Iteration Loop Simulator (5.6)
             initLoopSimulator();
+            // Wire up the new Cognitive Topology Explorer (6.6)
+            initTopologyExplorer();
 
             // Seed leaderboard preview
             try {
