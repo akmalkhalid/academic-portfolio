@@ -397,6 +397,108 @@
             background: rgba(2,6,23,0.5);
             color: #cbd5e1;
         }
+
+        /* ===== Module 4: Format Prescription Builder ===== */
+        .format-builder { display: flex; flex-direction: column; gap: 12px; }
+        .format-row {
+            background: #fff;
+            border: 1px solid rgba(0,0,0,0.06);
+            border-radius: 10px;
+            padding: 12px 14px;
+        }
+        .dark .format-row { background: #1e293b; border-color: rgba(255,255,255,0.08); }
+        .format-row-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+        .format-row-tag {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            padding: 3px 8px;
+            border-radius: 999px;
+        }
+        .format-row-tag.syntax    { background: #cffafe; color: #155e75; }
+        .format-row-tag.length    { background: #ecfccb; color: #3f6212; }
+        .format-row-tag.exclusion { background: #fee2e2; color: #991b1b; }
+        .dark .format-row-tag.syntax    { background: rgba(21,94,117,0.4);  color: #a5f3fc; }
+        .dark .format-row-tag.length    { background: rgba(63,98,18,0.4);   color: #d9f99d; }
+        .dark .format-row-tag.exclusion { background: rgba(153,27,27,0.4);  color: #fecaca; }
+
+        .format-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .format-chip {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 500;
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            user-select: none;
+        }
+        .format-chip:hover {
+            background: #e2e8f0;
+        }
+        .dark .format-chip {
+            background: #334155;
+            color: #cbd5e1;
+        }
+        .dark .format-chip:hover { background: #475569; }
+        .format-chip[data-active="true"] {
+            background: var(--color-primary);
+            color: #fff;
+            border-color: var(--color-primary);
+        }
+        .dark .format-chip[data-active="true"] {
+            background: var(--color-primary);
+            color: #fff;
+        }
+
+        /* Live preview — same dark panel as stack-preview but with format-coloured placeholders */
+        .format-preview {
+            margin-top: 14px;
+            padding: 14px;
+            border-radius: 12px;
+            background: #0f172a;
+            color: #e2e8f0;
+        }
+        .dark .format-preview { background: #020617; }
+        .format-preview-section { margin-bottom: 14px; position: relative; }
+        .format-preview-section:last-child { margin-bottom: 0; }
+        .format-preview-label {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #94a3b8;
+            margin-bottom: 6px;
+        }
+        .format-preview-prompt {
+            font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+            font-size: 12px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            color: #e2e8f0;
+        }
+        .format-preview-prompt .ph-syntax    { color: #67e8f9; }
+        .format-preview-prompt .ph-length    { color: #bef264; }
+        .format-preview-prompt .ph-exclusion { color: #fca5a5; }
+        .format-preview-shape {
+            font-size: 13px;
+            color: #cbd5e1;
+            line-height: 1.55;
+            font-style: italic;
+        }
     </style>
 
     <!-- Chart.js for Analytics -->
@@ -2258,92 +2360,629 @@ LOG INSIDEN + GARIS MASA: [tampal]</span></span><button onclick="copyToClipboard
                 </h2></div>
                 
                 <div class="prose dark:prose-invert max-w-none text-slate-700 dark:text-slate-300 mb-8">
-                    <p class="en">Constraints define exactly what the model *should* do, and explicitly what it *should not* do. This lowers the cognitive load of editing the output later.</p>
-                    <p class="bm">Kekangan menentukan dengan tepat apa yang model *perlu* buat, dan secara eksplisit apa yang *tidak patut* dilakukan.</p>
+                    <p class="en">Without constraints, an LLM defaults to a wall of helpful prose — opening pleasantries, three paragraphs of context, hedged conclusions, then maybe the thing you actually wanted, buried in the middle. <strong>Constraints don't restrict the model; they restrict the response shape</strong>, which is what you usually wanted to control all along. Every minute you spend post-editing AI output is usually a minute you could have saved by adding two lines of constraints upfront.</p>
+                    <p class="en">There are <strong>four levers</strong> that shape output reliably: (1) <em>structure</em> — what container holds the answer (table, JSON, XML, bullets); (2) <em>length</em> — exact word, sentence, or item count; (3) <em>exclusions</em> — what the answer must NOT contain; (4) <em>syntax</em> — machine-readable format with a defined schema. Used together, they turn the model from a chatty assistant into a reliable transformer of structured information.</p>
+                    <p class="bm">Tanpa kekangan, LLM beralih kepada dinding prosa bermanfaat — kata-kata pembukaan, tiga perenggan konteks, kesimpulan berpagari, kemudian mungkin perkara yang anda mahu, ditanam di tengah. <strong>Kekangan tidak menyekat model; ia menyekat bentuk respons</strong>, yang biasanya anda mahu kawal sejak awal. Setiap minit anda habiskan menyunting output AI biasanya minit yang anda boleh selamatkan dengan menambah dua baris kekangan di hadapan.</p>
+                    <p class="bm">Terdapat <strong>empat tuil</strong> yang membentuk output dengan boleh dipercayai: (1) <em>struktur</em> — bekas apa yang memegang jawapan (jadual, JSON, XML, bullet); (2) <em>panjang</em> — kiraan perkataan, ayat, atau item yang tepat; (3) <em>pengecualian</em> — apa yang jawapan TIDAK boleh mengandungi; (4) <em>sintaks</em> — format boleh-dibaca-mesin dengan skema yang ditakrifkan. Digunakan bersama, ia menukar model daripada pembantu yang banyak bercakap kepada pengubah maklumat berstruktur yang boleh dipercayai.</p>
                 </div>
 
                 <!-- 4.1 -->
                 <div class="mb-8 border-l-4 border-primary pl-4">
                     <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2"><span class="en">4.1 Structural Constraints</span><span class="bm">4.1 Kekangan Struktur</span></h3>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-3">
+                        <span class="en">The most underused lever in prompt engineering. Asking for output as a <strong>table</strong> instead of paragraphs forces the model to commit to specific values for each column — no wiggle room for vague qualifiers. Asking for <strong>numbered lists</strong> forces enumeration to a stated count. Asking for <strong>JSON</strong> forces every field to have an explicit value (or null), which surfaces ambiguity the model would otherwise hide in adjectives.</span>
+                        <span class="bm">Tuil paling kurang digunakan dalam kejuruteraan prompt. Meminta output sebagai <strong>jadual</strong> bukan perenggan memaksa model komit kepada nilai khusus untuk setiap lajur — tiada ruang untuk pengelas kabur. Meminta <strong>senarai bernombor</strong> memaksa enumerasi kepada kiraan dinyatakan. Meminta <strong>JSON</strong> memaksa setiap medan ada nilai eksplisit (atau null), yang mendedahkan kekaburan yang model akan sembunyikan dalam kata sifat.</span>
+                    </p>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
+                        <span class="en">A useful mental ladder: <strong>prose</strong> (loosest) → <strong>bullets</strong> → <strong>numbered list</strong> → <strong>Markdown table</strong> → <strong>JSON</strong> (strictest). Pick the lowest rung that gives you what you need; over-structuring trivial tasks adds friction without value.</span>
+                        <span class="bm">Tangga mental berguna: <strong>prosa</strong> (paling longgar) → <strong>bullet</strong> → <strong>senarai bernombor</strong> → <strong>jadual Markdown</strong> → <strong>JSON</strong> (paling ketat). Pilih anak tangga paling rendah yang memberi anda apa yang diperlukan; struktur berlebihan untuk tugas remeh menambah geseran tanpa nilai.</span>
+                    </p>
                     <div class="path-content path-academic space-y-3">
                         <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-blue-600 block mb-1">Ex 1:</strong><span class="prompt-text font-mono text-sm"><span class="en">Output the literature review matrix as a Markdown table with columns: Author, Year, Findings.</span><span class="bm">Hasilkan matriks tinjauan literatur sebagai jadual Markdown dengan lajur: Pengarang, Tahun, Penemuan.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-blue-600 block mb-1">Ex 2 (one rung up — explicit schema):</strong><span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">Output the literature comparison as a Markdown table with EXACTLY these columns:
+| Author (Year) | Methodology | Sample Size | Key Finding | Limitation |
+
+One row per paper. Use "Not reported" if a field is missing — never invent values.</span><span class="bm">Hasilkan perbandingan literatur sebagai jadual Markdown dengan lajur TEPAT seperti ini:
+| Pengarang (Tahun) | Metodologi | Saiz Sampel | Penemuan Utama | Had |
+
+Satu baris setiap kertas. Gunakan "Tidak dilaporkan" jika medan tiada — jangan reka nilai.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
                     </div>
                     <div class="path-content path-business space-y-3">
                         <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-emerald-600 block mb-1">Ex 1:</strong><span class="prompt-text font-mono text-sm"><span class="en">Return the extracted invoice data strictly in valid JSON format.</span><span class="bm">Kembalikan data invois yang diekstrak dengan tegas dalam format JSON yang sah.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-emerald-600 block mb-1">Ex 2 (one rung up — explicit schema):</strong><span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">Return the invoice data as JSON matching this schema exactly:
+{
+  "invoice_number": string,
+  "issue_date": "YYYY-MM-DD",
+  "vendor": { "name": string, "tax_id": string|null },
+  "line_items": [{ "description": string, "qty": number, "unit_price_myr": number }],
+  "total_myr": number
+}
+If a field cannot be confidently extracted, use null. Never invent values.</span><span class="bm">Kembalikan data invois sebagai JSON yang menepati skema ini:
+{
+  "invoice_number": string,
+  "issue_date": "YYYY-MM-DD",
+  "vendor": { "name": string, "tax_id": string|null },
+  "line_items": [{ "description": string, "qty": number, "unit_price_myr": number }],
+  "total_myr": number
+}
+Jika medan tidak dapat diekstrak dengan yakin, guna null. Jangan reka nilai.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
                     </div>
                     <div class="path-content path-creative space-y-3">
                         <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-purple-600 block mb-1">Ex 1:</strong><span class="prompt-text font-mono text-sm"><span class="en">Output the character profile as a Markdown table: Name, Motivations, Flaws.</span><span class="bm">Hasilkan profil watak sebagai jadual Markdown: Nama, Motivasi, Kelemahan.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-purple-600 block mb-1">Ex 2 (one rung up — multi-section structure):</strong><span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">Output each character as a YAML block, in this exact structure:
+
+- name: ...
+  age: ...
+  wants_externally: ...     # what they say they want
+  wants_internally: ...     # what they actually want
+  fears: ...
+  contradictions: [..., ...] # two specific contradictions in their behaviour
+  voice_sample: |
+    A two-line dialogue snippet that shows their voice.
+
+YAML keys must appear in this order. Do not add extra fields.</span><span class="bm">Hasilkan setiap watak sebagai blok YAML, dalam struktur ini:
+
+- name: ...
+  age: ...
+  wants_externally: ...     # apa yang mereka katakan mereka mahu
+  wants_internally: ...     # apa yang mereka sebenarnya mahu
+  fears: ...
+  contradictions: [..., ...] # dua percanggahan spesifik dalam kelakuan
+  voice_sample: |
+    Petikan dialog dua baris yang menunjukkan suara mereka.
+
+Kunci YAML mesti muncul dalam susunan ini. Jangan tambah medan tambahan.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
                     </div>
                     <div class="path-content path-it space-y-3">
                         <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-amber-600 block mb-1">Ex 1:</strong><span class="prompt-text font-mono text-sm"><span class="en">Return the parsed log data strictly as a valid JSON array of objects.</span><span class="bm">Kembalikan data log yang dihuraikan dengan tegas sebagai tatasusunan objek JSON.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-amber-600 block mb-1">Ex 2 (one rung up — strict JSON Schema):</strong><span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">Parse the log lines below. Output strictly as JSON conforming to this schema:
+{
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["timestamp", "level", "service", "message"],
+    "properties": {
+      "timestamp": { "type": "string", "format": "date-time" },
+      "level":     { "enum": ["DEBUG", "INFO", "WARN", "ERROR", "FATAL"] },
+      "service":   { "type": "string" },
+      "message":   { "type": "string" },
+      "trace_id":  { "type": ["string", "null"] }
+    }
+  }
+}
+No wrapping prose. No code-fence markers. Output JSON ONLY.</span><span class="bm">Huraikan baris log di bawah. Hasilkan secara ketat sebagai JSON yang mematuhi skema ini:
+{
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["timestamp", "level", "service", "message"],
+    "properties": {
+      "timestamp": { "type": "string", "format": "date-time" },
+      "level":     { "enum": ["DEBUG", "INFO", "WARN", "ERROR", "FATAL"] },
+      "service":   { "type": "string" },
+      "message":   { "type": "string" },
+      "trace_id":  { "type": ["string", "null"] }
+    }
+  }
+}
+Tiada prosa pembungkus. Tiada penanda code-fence. Hasilkan JSON SAHAJA.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
                     </div>
                 </div>
 
                 <!-- 4.2 -->
                 <div class="mb-8 border-l-4 border-primary pl-4">
                     <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2"><span class="en">4.2 Length Constraints</span><span class="bm">4.2 Kekangan Panjang</span></h3>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-3">
+                        <span class="en">LLMs treat "be brief" as a polite suggestion; they treat "exactly 3 sentences" as an instruction. Use <strong>specific units of measurement</strong>: words, sentences, characters, bullets, lines, or items. Vague targets ("short", "concise", "comprehensive") will be ignored or interpreted however the model feels.</span>
+                        <span class="bm">LLM menganggap "ringkas" sebagai cadangan sopan; mereka menganggap "tepat 3 ayat" sebagai arahan. Gunakan <strong>unit pengukuran khusus</strong>: perkataan, ayat, aksara, bullet, baris, atau item. Sasaran kabur ("pendek", "ringkas", "komprehensif") akan diabaikan atau ditafsir sesuka hati model.</span>
+                    </p>
                     <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
-                        <span class="en">LLMs tend to be verbose. Strict length constraints keep them focused.</span>
-                        <span class="bm">LLM cenderung bertele-tele. Kekangan panjang yang ketat memastikan ia fokus.</span>
+                        <span class="en">For tight budgets, the "<strong>tell-and-show</strong>" trick works better than a single instruction: state the limit, AND provide a one-sentence example of the right length. The example anchors the model's notion of "sentence" or "bullet". This is especially valuable when targeting social-media character limits, where the model often miscounts by 10–30%.</span>
+                        <span class="bm">Untuk bajet ketat, helah "<strong>beritahu-dan-tunjuk</strong>" berfungsi lebih baik daripada arahan tunggal: nyatakan had, DAN sediakan satu ayat contoh panjang yang betul. Contoh menambat tanggapan model tentang "ayat" atau "bullet". Ini terutama berharga apabila mensasarkan had aksara media sosial, di mana model selalunya tersilap kira sebanyak 10–30%.</span>
                     </p>
                     <div class="path-content path-academic space-y-3">
                         <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-blue-600 block mb-1">Ex 1:</strong><span class="prompt-text font-mono text-sm"><span class="en">The abstract summary must be exactly 3 sentences long and under 150 words.</span><span class="bm">Ringkasan abstrak mestilah tepat 3 ayat panjangnya dan di bawah 150 patah perkataan.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-blue-600 block mb-1">Ex 2 (tell-and-show):</strong><span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">Write a research-question-style summary for the article below. Constraints:
+- Exactly 2 sentences
+- Sentence 1 states the empirical puzzle
+- Sentence 2 states the methodological approach
+- Total length under 60 words
+
+GOOD LENGTH EXAMPLE (use this as the target):
+"Despite three decades of intervention research, urban-rural literacy gaps in Malaysian primary schools remain stable at 18 percentage points. We use a difference-in-differences design across 240 schools to identify which classroom-level mechanisms account for the persistence."
+
+ARTICLE: [paste]</span><span class="bm">Tulis ringkasan gaya soalan-penyelidikan untuk artikel di bawah. Kekangan:
+- Tepat 2 ayat
+- Ayat 1 menyatakan teka-teki empirik
+- Ayat 2 menyatakan pendekatan metodologi
+- Jumlah panjang di bawah 60 patah kata
+
+CONTOH PANJANG YANG BAIK (guna ini sebagai sasaran):
+"Walaupun tiga dekad penyelidikan intervensi, jurang literasi bandar-luar bandar di sekolah rendah Malaysia kekal stabil pada 18 mata peratusan. Kami menggunakan reka bentuk perbezaan-dalam-perbezaan merentas 240 sekolah untuk mengenal pasti mekanisme peringkat-kelas yang menyumbang kepada kebertahanan ini."
+
+ARTIKEL: [tampal]</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
                     </div>
                     <div class="path-content path-business space-y-3">
                         <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-emerald-600 block mb-1">Ex 1:</strong><span class="prompt-text font-mono text-sm"><span class="en">The elevator pitch must fit within a 280-character limit for Twitter.</span><span class="bm">Paduan persembahan mestilah dalam had 280 aksara untuk Twitter.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-emerald-600 block mb-1">Ex 2 (tell-and-show):</strong><span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">Rewrite the announcement below as a LinkedIn post. Constraints:
+- 3 short paragraphs, blank line between
+- Paragraph 1: hook in under 20 words
+- Paragraph 2: one concrete number + one customer name
+- Paragraph 3: single-line call to action
+- Total under 600 characters
+
+GOOD STRUCTURE EXAMPLE:
+"We just hit our first 10,000 customers in Indonesia.
+
+CIMB Niaga signed last week. Faster on-ramp than we modelled.
+
+Try the free tier — link in profile."
+
+ORIGINAL ANNOUNCEMENT: [paste]</span><span class="bm">Tulis semula pengumuman di bawah sebagai hantaran LinkedIn. Kekangan:
+- 3 perenggan pendek, baris kosong antara
+- Perenggan 1: kail di bawah 20 patah kata
+- Perenggan 2: satu nombor konkrit + satu nama pelanggan
+- Perenggan 3: panggilan-tindakan satu-baris
+- Jumlah di bawah 600 aksara
+
+CONTOH STRUKTUR BAIK:
+"Kami baru sahaja mencapai 10,000 pelanggan pertama kami di Indonesia.
+
+CIMB Niaga menandatangani minggu lepas. Permulaan lebih cepat daripada yang kami modelkan.
+
+Cuba tier percuma — pautan di profil."
+
+PENGUMUMAN ASAL: [tampal]</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
                     </div>
                     <div class="path-content path-creative space-y-3">
                         <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-purple-600 block mb-1">Ex 1:</strong><span class="prompt-text font-mono text-sm"><span class="en">The dialogue exchange must be exactly 4 lines long.</span><span class="bm">Pertukaran dialog mestilah tepat 4 baris panjangnya.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-purple-600 block mb-1">Ex 2 (tell-and-show):</strong><span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">Write the opening scene of the story. Constraints:
+- Exactly 8 paragraphs
+- Paragraph 1: a single sentence, under 12 words
+- Paragraphs 2–7: 2–4 sentences each
+- Paragraph 8: a single sentence, under 12 words (echoes paragraph 1)
+- No paragraph exceeds 80 words
+
+OPENING/CLOSING LENGTH EXAMPLE:
+"The phone had been ringing for an hour before she noticed."
+
+(Then) Six middle paragraphs, each a tight beat.
+
+CLOSING EXAMPLE: "She let it ring."
+
+PREMISE: [paste]</span><span class="bm">Tulis adegan pembukaan cerita. Kekangan:
+- Tepat 8 perenggan
+- Perenggan 1: ayat tunggal, di bawah 12 patah kata
+- Perenggan 2–7: 2–4 ayat setiap satu
+- Perenggan 8: ayat tunggal, di bawah 12 patah kata (mengulang perenggan 1)
+- Tiada perenggan melebihi 80 patah kata
+
+CONTOH PANJANG PEMBUKAAN/PENUTUP:
+"Telefon telah berdering selama sejam sebelum dia menyedarinya."
+
+(Kemudian) Enam perenggan tengah, setiap satu rentak ketat.
+
+CONTOH PENUTUP: "Dia biarkan ia berdering."
+
+PREMIS: [tampal]</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
                     </div>
                     <div class="path-content path-it space-y-3">
                         <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-amber-600 block mb-1">Ex 1:</strong><span class="prompt-text font-mono text-sm"><span class="en">Write the bash command in exactly one line using pipes.</span><span class="bm">Tulis arahan bash dalam tepat satu baris menggunakan paip.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-amber-600 block mb-1">Ex 2 (tell-and-show):</strong><span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">Write the commit message for the diff below. Constraints (follow Conventional Commits):
+- Line 1: type(scope): summary — max 72 chars
+- Blank line
+- Body: 2–4 short lines, each max 80 chars, explaining the WHY (not the what)
+- No bullets, no markdown
+
+GOOD LENGTH/SHAPE EXAMPLE:
+"fix(auth): clear stale JWT cookies after password reset
+
+Users who reset password were still seeing old session for ~30 min
+because we only invalidated server-side tokens. This clears the
+cookie immediately on the success redirect."
+
+DIFF: [paste]</span><span class="bm">Tulis mesej commit untuk diff di bawah. Kekangan (ikut Conventional Commits):
+- Baris 1: type(scope): ringkasan — maks 72 aksara
+- Baris kosong
+- Badan: 2–4 baris pendek, setiap satu maks 80 aksara, menerangkan MENGAPA (bukan apa)
+- Tiada bullet, tiada markdown
+
+CONTOH PANJANG/BENTUK BAIK:
+"fix(auth): clear stale JWT cookies after password reset
+
+Users who reset password were still seeing old session for ~30 min
+because we only invalidated server-side tokens. This clears the
+cookie immediately on the success redirect."
+
+DIFF: [tampal]</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
                     </div>
                 </div>
 
                 <!-- 4.3 -->
                 <div class="mb-8 border-l-4 border-primary pl-4">
                     <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2"><span class="en">4.3 Negative Constraints</span><span class="bm">4.3 Kekangan Negatif</span></h3>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-3">
+                        <span class="en">Negative constraints have a counter-intuitive failure mode: <strong>the model's attention focuses on the forbidden words themselves</strong>, sometimes producing more of them. "Don't think of a pink elephant" works the same way on LLMs as it does on you. The Fun Fact at the bottom of this module covers the mechanism.</span>
+                        <span class="bm">Kekangan negatif mempunyai mod kegagalan yang berlawanan dengan intuisi: <strong>perhatian model tertumpu pada perkataan terlarang itu sendiri</strong>, kadang-kadang menghasilkan lebih banyak. "Jangan fikirkan gajah merah jambu" berfungsi cara yang sama pada LLM seperti pada anda. Fakta Menarik di bawah modul ini meliputi mekanismenya.</span>
+                    </p>
                     <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
-                        <span class="en">Telling the AI what to exclude. This is a common failure point for beginners.</span>
-                        <span class="bm">Memberitahu AI apa yang perlu dikecualikan. Ini adalah kegagalan biasa bagi pemula.</span>
+                        <span class="en">Two strategies work: <strong>(1) Use negative constraints sparingly and bluntly</strong> ("NEVER use the word 'leverage'") — short and specific beats long and explanatory. <strong>(2) Better still — <em>redirect, don't forbid</em></strong>: replace "don't be vague" with "be specific: include a number, a date, and a named person." Positive instructions are what the attention mechanism is good at executing.</span>
+                        <span class="bm">Dua strategi berfungsi: <strong>(1) Gunakan kekangan negatif dengan jimat dan tegas</strong> ("JANGAN SEKALI-KALI guna perkataan 'leverage'") — pendek dan khusus mengalahkan panjang dan menerangkan. <strong>(2) Lebih baik lagi — <em>halakan semula, jangan haramkan</em></strong>: gantikan "jangan kabur" dengan "jadilah khusus: sertakan satu nombor, satu tarikh, dan satu nama orang." Arahan positif ialah apa yang mekanisme perhatian pandai laksanakan.</span>
                     </p>
                     <div class="path-content path-academic space-y-3">
-                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-blue-600 block mb-1">Ex 1:</strong><span class="prompt-text font-mono text-sm"><span class="en">Do NOT include an introduction or conclusion. Do NOT use passive voice.</span><span class="bm">JANGAN masukkan pengenalan atau kesimpulan. JANGAN guna ayat pasif.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
-                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-blue-600 block mb-1">Ex 2:</strong><span class="prompt-text font-mono text-sm"><span class="en">Never invent citations. Only use the references provided in the text.</span><span class="bm">Jangan sekali-kali mencipta petikan. Hanya gunakan rujukan yang diberikan.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-blue-600 block mb-1">Ex 1 (forbid):</strong><span class="prompt-text font-mono text-sm"><span class="en">Do NOT include an introduction or conclusion. Do NOT use passive voice.</span><span class="bm">JANGAN masukkan pengenalan atau kesimpulan. JANGAN guna ayat pasif.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-blue-600 block mb-1">Ex 2 (forbid):</strong><span class="prompt-text font-mono text-sm"><span class="en">Never invent citations. Only use the references provided in the text.</span><span class="bm">Jangan sekali-kali mencipta petikan. Hanya gunakan rujukan yang diberikan.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-blue-600 block mb-1">Ex 3 (redirect, don't forbid):</strong><span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">Instead of: "Don't make vague claims about effectiveness"
+Use: "Every claim about effectiveness must include (a) the effect size, (b) the study population, and (c) one named limitation. If you cannot supply all three, drop the claim."</span><span class="bm">Bukannya: "Jangan buat tuntutan kabur tentang keberkesanan"
+Guna: "Setiap tuntutan tentang keberkesanan mesti termasuk (a) saiz kesan, (b) populasi kajian, dan (c) satu had bernama. Jika anda tidak boleh sediakan ketiga-tiganya, gugurkan tuntutan."</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
                     </div>
                     <div class="path-content path-business space-y-3">
-                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-emerald-600 block mb-1">Ex 1:</strong><span class="prompt-text font-mono text-sm"><span class="en">Never use corporate jargon like 'synergy' or 'bandwidth'.</span><span class="bm">Jangan sesekali gunakan jargon korporat seperti 'sinergi'.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
-                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-emerald-600 block mb-1">Ex 2:</strong><span class="prompt-text font-mono text-sm"><span class="en">Do not include conversational filler (e.g., 'Sure, here is the text').</span><span class="bm">Jangan sertakan pengisi perbualan (cth., 'Pasti, ini teksnya').</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-emerald-600 block mb-1">Ex 1 (forbid):</strong><span class="prompt-text font-mono text-sm"><span class="en">Never use corporate jargon like 'synergy' or 'bandwidth'.</span><span class="bm">Jangan sesekali gunakan jargon korporat seperti 'sinergi'.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-emerald-600 block mb-1">Ex 2 (forbid):</strong><span class="prompt-text font-mono text-sm"><span class="en">Do not include conversational filler (e.g., 'Sure, here is the text').</span><span class="bm">Jangan sertakan pengisi perbualan (cth., 'Pasti, ini teksnya').</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-emerald-600 block mb-1">Ex 3 (redirect, don't forbid):</strong><span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">Instead of: "Don't be overly optimistic about the forecast"
+Use: "For each forecast figure, also state (a) the assumption it depends on, (b) the historical base rate, and (c) one scenario where this number would be 20% lower. Lead with the pessimistic scenario."</span><span class="bm">Bukannya: "Jangan terlalu optimistik tentang ramalan"
+Guna: "Untuk setiap angka ramalan, juga nyatakan (a) andaian yang bergantung kepadanya, (b) kadar asas sejarah, dan (c) satu senario di mana nombor ini akan 20% lebih rendah. Mulakan dengan senario pesimis."</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
                     </div>
                     <div class="path-content path-creative space-y-3">
-                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-purple-600 block mb-1">Ex 1:</strong><span class="prompt-text font-mono text-sm"><span class="en">Do NOT use adverbs. Do NOT use the word 'suddenly'.</span><span class="bm">JANGAN gunakan kata keterangan. JANGAN gunakan perkataan 'tiba-tiba'.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
-                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-purple-600 block mb-1">Ex 2:</strong><span class="prompt-text font-mono text-sm"><span class="en">Never use fantasy cliches like chosen ones or ancient prophecies.</span><span class="bm">Jangan guna klise fantasi seperti orang yang terpilih.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-purple-600 block mb-1">Ex 1 (forbid):</strong><span class="prompt-text font-mono text-sm"><span class="en">Do NOT use adverbs. Do NOT use the word 'suddenly'.</span><span class="bm">JANGAN gunakan kata keterangan. JANGAN gunakan perkataan 'tiba-tiba'.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-purple-600 block mb-1">Ex 2 (forbid):</strong><span class="prompt-text font-mono text-sm"><span class="en">Never use fantasy cliches like chosen ones or ancient prophecies.</span><span class="bm">Jangan guna klise fantasi seperti orang yang terpilih.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-purple-600 block mb-1">Ex 3 (redirect, don't forbid):</strong><span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">Instead of: "Don't tell the reader what the character feels"
+Use: "Show emotion through (a) a physical action the character can't quite control, (b) something they notice that they wouldn't normally notice, or (c) a sentence they cut off halfway. Pick one per scene; don't combine."</span><span class="bm">Bukannya: "Jangan beritahu pembaca apa yang watak rasa"
+Guna: "Tunjukkan emosi melalui (a) tindakan fizikal yang watak tidak boleh kawal sepenuhnya, (b) sesuatu yang mereka perasan yang biasanya tidak mereka perasan, atau (c) ayat yang mereka potong separuh jalan. Pilih satu setiap babak; jangan campur."</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
                     </div>
                     <div class="path-content path-it space-y-3">
-                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-amber-600 block mb-1">Ex 1:</strong><span class="prompt-text font-mono text-sm"><span class="en">Never use the 'eval()' function. Do not import third-party packages.</span><span class="bm">Jangan sekali-kali gunakan fungsi 'eval()'. Jangan import pakej pihak ketiga.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
-                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-amber-600 block mb-1">Ex 2:</strong><span class="prompt-text font-mono text-sm"><span class="en">Do not output any explanation. Output ONLY the raw code.</span><span class="bm">Jangan berikan sebarang penjelasan. Hanya hasilkan kod mentah sahaja.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-amber-600 block mb-1">Ex 1 (forbid):</strong><span class="prompt-text font-mono text-sm"><span class="en">Never use the 'eval()' function. Do not import third-party packages.</span><span class="bm">Jangan sekali-kali gunakan fungsi 'eval()'. Jangan import pakej pihak ketiga.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-amber-600 block mb-1">Ex 2 (forbid):</strong><span class="prompt-text font-mono text-sm"><span class="en">Do not output any explanation. Output ONLY the raw code.</span><span class="bm">Jangan berikan sebarang penjelasan. Hanya hasilkan kod mentah sahaja.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-amber-600 block mb-1">Ex 3 (redirect, don't forbid):</strong><span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">Instead of: "Don't use any external libraries"
+Use: "Implement this using only the Python 3.11 standard library. If a task seems to require a third-party package, instead (a) note which package would be conventional, (b) provide a stdlib implementation, and (c) flag any quality trade-off in a `# NOTE:` comment."</span><span class="bm">Bukannya: "Jangan guna pustaka luaran"
+Guna: "Laksanakan ini menggunakan hanya pustaka standard Python 3.11. Jika tugas kelihatan memerlukan pakej pihak ketiga, sebaliknya (a) nyatakan pakej mana yang konvensional, (b) sediakan pelaksanaan stdlib, dan (c) bendera mana-mana trade-off kualiti dalam komen `# NOTE:`."</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
                     </div>
                 </div>
 
                 <!-- 4.4 -->
                 <div class="mb-8 border-l-4 border-primary pl-4">
                     <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2"><span class="en">4.4 Output Syntax (JSON, Markdown, XML)</span><span class="bm">4.4 Sintaks Output (JSON, Markdown, XML)</span></h3>
-                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
-                        <span class="en">Forcing the LLM into a syntax makes it easier for other software to consume the output automatically.</span>
-                        <span class="bm">Memaksa LLM ke dalam sintaks menjadikannya lebih mudah bagi perisian lain untuk memproses output secara automatik.</span>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-3">
+                        <span class="en">When the next step is software, not a human reader, the output must be <strong>parseable</strong>. The three workhorses are <strong>JSON</strong> (best for nested data, native to almost every language), <strong>Markdown</strong> (best for human-and-machine readable tables, headings, lists), and <strong>XML</strong> (best when you need typed attributes or mixed content like tagged text). Pick by who consumes the output next.</span>
+                        <span class="bm">Apabila langkah seterusnya ialah perisian, bukan pembaca manusia, output mesti <strong>boleh dihuraikan</strong>. Tiga kuda kerja ialah <strong>JSON</strong> (terbaik untuk data bersarang, asli kepada hampir setiap bahasa), <strong>Markdown</strong> (terbaik untuk jadual, tajuk, senarai yang boleh dibaca manusia-dan-mesin), dan <strong>XML</strong> (terbaik apabila anda perlukan atribut bertaip atau kandungan campuran seperti teks bertag). Pilih berdasarkan siapa yang mengkonsumsi output seterusnya.</span>
                     </p>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
+                        <span class="en">For machine-consumed output, always state <strong>three things</strong>: (1) the syntax name explicitly, (2) the exact schema/shape, (3) what to do when a field cannot be filled (typically: use <code>null</code>, never invent). Add the instruction "<strong>Output ONLY the [syntax] — no prose, no code fences, no commentary</strong>." LLMs love to wrap valid JSON in conversational prose; this single sentence prevents it.</span>
+                        <span class="bm">Untuk output yang dimakan mesin, sentiasa nyatakan <strong>tiga perkara</strong>: (1) nama sintaks secara eksplisit, (2) skema/bentuk yang tepat, (3) apa yang perlu dilakukan apabila medan tidak dapat diisi (biasanya: guna <code>null</code>, jangan reka). Tambah arahan "<strong>Hasilkan [sintaks] SAHAJA — tiada prosa, tiada code fence, tiada komen</strong>." LLM gemar membungkus JSON sah dalam prosa perbualan; ayat tunggal ini mencegahnya.</span>
+                    </p>
+                    <div class="path-content path-academic space-y-3">
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-blue-600 block mb-1">Ex 1 — Markdown for a comparative table:</strong><span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">Compare the three papers I'm about to provide. Output ONLY a Markdown table — no prose before or after, no code fences.
+
+Columns: Author (Year) | Research Question | Method | Sample N | Key Finding
+
+PAPERS: [paste]</span><span class="bm">Bandingkan tiga kertas yang akan saya berikan. Hasilkan jadual Markdown SAHAJA — tiada prosa sebelum atau selepas, tiada code fence.
+
+Lajur: Pengarang (Tahun) | Soalan Penyelidikan | Kaedah | Sampel N | Penemuan Utama
+
+KERTAS: [tampal]</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-blue-600 block mb-1">Ex 2 — BibTeX for citation extraction:</strong><span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">Extract every cited reference from the text below as BibTeX entries. Output ONLY the BibTeX — no surrounding prose, no commentary.
+
+For any required field (author, title, year, journal) that cannot be confidently extracted, use the placeholder "TODO". Never invent values.
+
+TEXT: [paste]</span><span class="bm">Ekstrak setiap rujukan yang dipetik daripada teks di bawah sebagai entri BibTeX. Hasilkan BibTeX SAHAJA — tiada prosa sekeliling, tiada komen.
+
+Untuk mana-mana medan diperlukan (pengarang, tajuk, tahun, jurnal) yang tidak dapat diekstrak dengan yakin, guna penanda "TODO". Jangan reka nilai.
+
+TEKS: [tampal]</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                    </div>
+                    <div class="path-content path-business space-y-3">
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-emerald-600 block mb-1">Ex 1 — JSON for CRM ingestion:</strong><span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">Extract contact details from the email signature below as JSON. Output ONLY the JSON — no markdown, no code fences, no commentary.
+
+Schema:
+{
+  "full_name": string,
+  "title": string|null,
+  "company": string|null,
+  "email": string,
+  "phone_e164": string|null,    // E.164 format only, else null
+  "linkedin_url": string|null
+}
+
+SIGNATURE: [paste]</span><span class="bm">Ekstrak butiran kontak daripada tandatangan e-mel di bawah sebagai JSON. Hasilkan JSON SAHAJA — tiada markdown, tiada code fence, tiada komen.
+
+Skema:
+{
+  "full_name": string,
+  "title": string|null,
+  "company": string|null,
+  "email": string,
+  "phone_e164": string|null,    // Format E.164 sahaja, jika tidak null
+  "linkedin_url": string|null
+}
+
+TANDATANGAN: [tampal]</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-emerald-600 block mb-1">Ex 2 — Markdown for a meeting summary:</strong><span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">Summarise the meeting transcript below. Output ONLY this Markdown structure — no prose before or after:
+
+## Decisions
+- (bullet list, one decision per line)
+
+## Action items
+| Owner | Action | Due |
+|---|---|---|
+(one row per item)
+
+## Risks raised
+- (bullet list, one risk per line)
+
+TRANSCRIPT: [paste]</span><span class="bm">Ringkaskan transkrip mesyuarat di bawah. Hasilkan struktur Markdown ini SAHAJA — tiada prosa sebelum atau selepas:
+
+## Keputusan
+- (senarai bullet, satu keputusan per baris)
+
+## Item tindakan
+| Pemilik | Tindakan | Tarikh akhir |
+|---|---|---|
+(satu baris per item)
+
+## Risiko dibangkitkan
+- (senarai bullet, satu risiko per baris)
+
+TRANSKRIP: [tampal]</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                    </div>
+                    <div class="path-content path-creative space-y-3">
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-purple-600 block mb-1">Ex 1 — YAML for scene cards:</strong><span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">Output each scene as a YAML document separated by `---`. Output ONLY YAML — no surrounding prose, no code fences.
+
+Keys per scene, in this exact order:
+  scene_number: int
+  pov_character: string
+  goal: string             # what the POV character wants this scene
+  conflict: string         # what stands in the way
+  outcome: string          # one of: win | loss | partial | reversal
+  word_target: int
+
+SCENES TO OUTLINE: [paste premise + scene list]</span><span class="bm">Hasilkan setiap babak sebagai dokumen YAML yang dipisahkan dengan `---`. Hasilkan YAML SAHAJA — tiada prosa sekeliling, tiada code fence.
+
+Kunci setiap babak, dalam susunan ini:
+  scene_number: int
+  pov_character: string
+  goal: string             # apa yang watak POV mahu babak ini
+  conflict: string         # apa yang menghalang
+  outcome: string          # salah satu: win | loss | partial | reversal
+  word_target: int
+
+BABAK UNTUK DIRANGKA: [tampal premis + senarai babak]</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-purple-600 block mb-1">Ex 2 — JSON for character bibles:</strong><span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">Output a character bible as JSON. Output ONLY the JSON — no preamble, no code fences.
+
+Schema:
+{
+  "name": string,
+  "age": int,
+  "physical": { "height_cm": int, "distinguishing_features": [string] },
+  "voice": { "vocabulary_level": "plain|literary|technical", "verbal_tics": [string] },
+  "relationships": [{ "with": string, "type": string, "tension": string }],
+  "arc": { "start_state": string, "midpoint_shift": string, "end_state": string }
+}
+
+CHARACTER NOTES: [paste]</span><span class="bm">Hasilkan kitab watak sebagai JSON. Hasilkan JSON SAHAJA — tiada mukadimah, tiada code fence.
+
+Skema:
+{
+  "name": string,
+  "age": int,
+  "physical": { "height_cm": int, "distinguishing_features": [string] },
+  "voice": { "vocabulary_level": "plain|literary|technical", "verbal_tics": [string] },
+  "relationships": [{ "with": string, "type": string, "tension": string }],
+  "arc": { "start_state": string, "midpoint_shift": string, "end_state": string }
+}
+
+NOTA WATAK: [tampal]</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                    </div>
+                    <div class="path-content path-it space-y-3">
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-amber-600 block mb-1">Ex 1 — JSON for API error catalog:</strong><span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">Convert the error catalogue below into JSON. Output ONLY JSON — no code fences, no surrounding text.
+
+Schema:
+{
+  "errors": [{
+    "code": string,             // e.g. "ERR_AUTH_001"
+    "http_status": int,
+    "category": "auth|validation|rate_limit|server|external",
+    "message_user": string,     // safe to display to end user
+    "message_internal": string, // detailed; for logs only
+    "retryable": boolean
+  }]
+}
+
+ERROR DOC: [paste]</span><span class="bm">Tukar katalog ralat di bawah kepada JSON. Hasilkan JSON SAHAJA — tiada code fence, tiada teks sekeliling.
+
+Skema:
+{
+  "errors": [{
+    "code": string,             // contoh "ERR_AUTH_001"
+    "http_status": int,
+    "category": "auth|validation|rate_limit|server|external",
+    "message_user": string,     // selamat untuk dipaparkan kepada pengguna akhir
+    "message_internal": string, // terperinci; untuk log sahaja
+    "retryable": boolean
+  }]
+}
+
+DOKUMEN RALAT: [tampal]</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-amber-600 block mb-1">Ex 2 — XML for typed configuration:</strong><span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">Convert the deployment notes below into XML. Output ONLY XML — no commentary, no code fences.
+
+Schema:
+&lt;deployment env="prod|staging|dev" version="x.y.z"&gt;
+  &lt;service name="..." replicas="N" image="..."&gt;
+    &lt;env key="..." value="..." secret="true|false" /&gt;
+  &lt;/service&gt;
+&lt;/deployment&gt;
+
+For any value not present in the source text, use the attribute value "TBD".
+
+DEPLOYMENT NOTES: [paste]</span><span class="bm">Tukar nota penempatan di bawah kepada XML. Hasilkan XML SAHAJA — tiada komen, tiada code fence.
+
+Skema:
+&lt;deployment env="prod|staging|dev" version="x.y.z"&gt;
+  &lt;service name="..." replicas="N" image="..."&gt;
+    &lt;env key="..." value="..." secret="true|false" /&gt;
+  &lt;/service&gt;
+&lt;/deployment&gt;
+
+Untuk mana-mana nilai yang tidak hadir dalam teks sumber, guna nilai atribut "TBD".
+
+NOTA PENEMPATAN: [tampal]</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                    </div>
                 </div>
 
                 <!-- 4.5 -->
                 <div class="mb-8 border-l-4 border-primary pl-4">
                     <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2"><span class="en">4.5 LPML (LLM Prompting Markup Language)</span><span class="bm">4.5 LPML (Bahasa Penanda Prompting LLM)</span></h3>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-3">
+                        <span class="en">XML-like tags inside your prompt do two jobs simultaneously: (1) they <strong>section the prompt</strong> for the model so different parts (context vs. task vs. format) cannot bleed into each other, and (2) they <strong>section the response</strong> so you can extract just the part you want, leaving the model's reasoning intact for audit. Tags like <code>&lt;THINK&gt;</code>, <code>&lt;OUTPUT&gt;</code>, <code>&lt;DRAFT&gt;</code>, <code>&lt;FINAL&gt;</code> are conventions, not magic — the model treats them as strong structural cues because XML-like patterns are dense in its training data.</span>
+                        <span class="bm">Tag seperti XML dalam prompt anda melakukan dua tugas serentak: (1) ia <strong>membahagikan prompt</strong> untuk model supaya bahagian berbeza (konteks vs. tugas vs. format) tidak boleh berdarah ke satu sama lain, dan (2) ia <strong>membahagikan respons</strong> supaya anda boleh ekstrak hanya bahagian yang anda mahu, meninggalkan penaakulan model utuh untuk audit. Tag seperti <code>&lt;THINK&gt;</code>, <code>&lt;OUTPUT&gt;</code>, <code>&lt;DRAFT&gt;</code>, <code>&lt;FINAL&gt;</code> ialah konvensi, bukan ajaib — model menganggapnya sebagai isyarat struktur kuat kerana corak seperti XML padat dalam data latihannya.</span>
+                    </p>
                     <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
-                        <span class="en">Using XML-like tags (e.g., &lt;THINK&gt;, &lt;OUTPUT&gt;) inside your prompt to strictly section the AI's internal scratchpad from its final deliverable.</span>
-                        <span class="bm">Menggunakan tag seperti XML (cth., &lt;THINK&gt;) di dalam prompt anda untuk memisahkan pad conteng dalaman AI dengan hasil akhirnya secara tegas.</span>
+                        <span class="en">The most useful pattern: ask for reasoning in <code>&lt;THINK&gt;</code> and the deliverable in <code>&lt;OUTPUT&gt;</code>. You get CoT-quality reasoning without the reasoning polluting your final answer. Programmatic post-processing then extracts just the <code>&lt;OUTPUT&gt;</code> content for downstream use, while a human auditor can read <code>&lt;THINK&gt;</code> when they need to debug the answer.</span>
+                        <span class="bm">Corak paling berguna: minta penaakulan dalam <code>&lt;THINK&gt;</code> dan deliverable dalam <code>&lt;OUTPUT&gt;</code>. Anda mendapat penaakulan berkualiti CoT tanpa penaakulan mencemarkan jawapan akhir anda. Pemprosesan-pasca berprogram kemudian mengekstrak hanya kandungan <code>&lt;OUTPUT&gt;</code> untuk kegunaan hiliran, manakala pengaudit manusia boleh membaca <code>&lt;THINK&gt;</code> apabila mereka perlu menyahpepijat jawapan.</span>
                     </p>
                     <div class="path-content path-academic space-y-3">
                         <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-blue-600 block mb-1">Ex 1:</strong><span class="prompt-text font-mono text-sm"><span class="en">Put your reasoning inside &lt;THINK&gt; tags, and the final equation inside &lt;MATH&gt; tags.</span><span class="bm">Letakkan alasan anda di dalam tag &lt;THINK&gt;, dan persamaan akhir di dalam tag &lt;MATH&gt;.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-blue-600 block mb-1">Ex 2 (separated draft / final):</strong><span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">Write inside the following tags:
+&lt;CONTEXT&gt;...restate my prompt in your own words to confirm understanding...&lt;/CONTEXT&gt;
+&lt;THINK&gt;...your private reasoning, including which framings you considered and rejected...&lt;/THINK&gt;
+&lt;DRAFT&gt;...your first attempt at the answer...&lt;/DRAFT&gt;
+&lt;CRITIQUE&gt;...two specific weaknesses in the draft...&lt;/CRITIQUE&gt;
+&lt;FINAL&gt;...the revised answer addressing the critique. This is the only section I will submit.&lt;/FINAL&gt;</span><span class="bm">Tulis di dalam tag berikut:
+&lt;CONTEXT&gt;...nyatakan semula prompt saya dalam perkataan anda sendiri untuk mengesahkan pemahaman...&lt;/CONTEXT&gt;
+&lt;THINK&gt;...penaakulan persendirian anda, termasuk yang anda pertimbangkan dan tolak...&lt;/THINK&gt;
+&lt;DRAFT&gt;...percubaan pertama anda...&lt;/DRAFT&gt;
+&lt;CRITIQUE&gt;...dua kelemahan khusus dalam draf...&lt;/CRITIQUE&gt;
+&lt;FINAL&gt;...jawapan disemak yang menangani kritikan. Ini sahaja yang akan saya serahkan.&lt;/FINAL&gt;</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
                     </div>
+                    <div class="path-content path-business space-y-3">
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-emerald-600 block mb-1">Ex 1:</strong><span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">Put your analysis in &lt;ANALYSIS&gt; tags and the customer-facing email in &lt;EMAIL&gt; tags. Only the &lt;EMAIL&gt; content will be sent; the &lt;ANALYSIS&gt; is for my own audit.
+
+SITUATION: A customer is asking for a refund outside our 14-day policy.</span><span class="bm">Letakkan analisis anda dalam tag &lt;ANALYSIS&gt; dan e-mel berhadapan-pelanggan dalam tag &lt;EMAIL&gt;. Hanya kandungan &lt;EMAIL&gt; akan dihantar; &lt;ANALYSIS&gt; untuk audit saya sendiri.
+
+SITUASI: Pelanggan meminta bayaran balik di luar dasar 14-hari kami.</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-emerald-600 block mb-1">Ex 2 (multi-stage analysis):</strong><span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">Use these tags in order:
+&lt;DATA_INTERP&gt;...what the numbers say, in 4 bullets...&lt;/DATA_INTERP&gt;
+&lt;DATA_GAPS&gt;...what's missing from the data that would change the story...&lt;/DATA_GAPS&gt;
+&lt;RECOMMENDATION&gt;...the action you recommend, 1 sentence...&lt;/RECOMMENDATION&gt;
+&lt;EXEC_BRIEF&gt;...the 3-bullet brief I'll send to the CEO. No jargon. Lead with the action.&lt;/EXEC_BRIEF&gt;
+
+QUARTERLY DATA: [paste]</span><span class="bm">Gunakan tag ini mengikut susunan:
+&lt;DATA_INTERP&gt;...apa yang nombor katakan, dalam 4 bullet...&lt;/DATA_INTERP&gt;
+&lt;DATA_GAPS&gt;...apa yang hilang daripada data yang akan menukar cerita...&lt;/DATA_GAPS&gt;
+&lt;RECOMMENDATION&gt;...tindakan yang anda cadangkan, 1 ayat...&lt;/RECOMMENDATION&gt;
+&lt;EXEC_BRIEF&gt;...taklimat 3-bullet yang saya akan hantar kepada CEO. Tiada jargon. Mulakan dengan tindakan.&lt;/EXEC_BRIEF&gt;
+
+DATA SUKU-TAHUNAN: [tampal]</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                    </div>
+                    <div class="path-content path-creative space-y-3">
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-purple-600 block mb-1">Ex 1:</strong><span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">Put your story-craft reasoning in &lt;CRAFT_NOTES&gt; tags and the prose itself in &lt;PROSE&gt; tags. Only &lt;PROSE&gt; goes into the manuscript.
+
+SCENE BRIEF: [paste]</span><span class="bm">Letakkan penaakulan kraf cerita anda dalam tag &lt;CRAFT_NOTES&gt; dan prosa itu sendiri dalam tag &lt;PROSE&gt;. Hanya &lt;PROSE&gt; masuk ke manuskrip.
+
+TAKLIMAT BABAK: [tampal]</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-purple-600 block mb-1">Ex 2 (draft + revision pass):</strong><span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">Use these tags in order:
+&lt;BEATS&gt;...the 4 narrative beats this scene must hit...&lt;/BEATS&gt;
+&lt;DRAFT&gt;...the scene, written fast and loose, 250-300 words...&lt;/DRAFT&gt;
+&lt;REVISION_NOTES&gt;...3 specific changes that would sharpen the draft (point to specific lines)...&lt;/REVISION_NOTES&gt;
+&lt;FINAL&gt;...the revised scene applying the revision notes...&lt;/FINAL&gt;
+
+PREMISE: [paste]</span><span class="bm">Gunakan tag ini mengikut susunan:
+&lt;BEATS&gt;...4 rentak naratif yang babak ini mesti hadir...&lt;/BEATS&gt;
+&lt;DRAFT&gt;...babak, ditulis pantas dan longgar, 250-300 patah kata...&lt;/DRAFT&gt;
+&lt;REVISION_NOTES&gt;...3 perubahan khusus yang akan menajamkan draf (rujuk baris khusus)...&lt;/REVISION_NOTES&gt;
+&lt;FINAL&gt;...babak disemak menerapkan nota semakan...&lt;/FINAL&gt;
+
+PREMIS: [tampal]</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                    </div>
+                    <div class="path-content path-it space-y-3">
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-amber-600 block mb-1">Ex 1:</strong><span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">Put your reasoning in &lt;THINK&gt; tags and the final SQL inside &lt;SQL&gt; tags. My script will extract only the contents of &lt;SQL&gt; for execution.
+
+TASK: [paste]</span><span class="bm">Letakkan penaakulan anda dalam tag &lt;THINK&gt; dan SQL akhir di dalam tag &lt;SQL&gt;. Skrip saya akan mengekstrak hanya kandungan &lt;SQL&gt; untuk pelaksanaan.
+
+TUGAS: [tampal]</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                        <div class="group relative bg-white dark:bg-darkCard p-4 rounded-lg border shadow-sm pr-12"><strong class="text-amber-600 block mb-1">Ex 2 (multi-tag code review):</strong><span class="prompt-text font-mono text-sm whitespace-pre-wrap"><span class="en">Use these tags in order:
+&lt;SUMMARY&gt;...one paragraph: what does this PR do?...&lt;/SUMMARY&gt;
+&lt;CORRECTNESS&gt;...bugs or logic errors. Quote the line. If none, write "None found."...&lt;/CORRECTNESS&gt;
+&lt;SECURITY&gt;...security concerns. Quote the line. If none, write "None found."...&lt;/SECURITY&gt;
+&lt;STYLE&gt;...style issues (low priority). Quote the line. If none, write "None found."...&lt;/STYLE&gt;
+&lt;BLOCKING&gt;...one of: NONE | NIT | SHOULD_FIX | MUST_FIX&lt;/BLOCKING&gt;
+
+PR DIFF: [paste]</span><span class="bm">Gunakan tag ini mengikut susunan:
+&lt;SUMMARY&gt;...satu perenggan: apa yang dilakukan oleh PR ini?...&lt;/SUMMARY&gt;
+&lt;CORRECTNESS&gt;...pepijat atau ralat logik. Petik baris. Jika tiada, tulis "Tiada dijumpai."...&lt;/CORRECTNESS&gt;
+&lt;SECURITY&gt;...kebimbangan keselamatan. Petik baris. Jika tiada, tulis "Tiada dijumpai."...&lt;/SECURITY&gt;
+&lt;STYLE&gt;...isu gaya (keutamaan rendah). Petik baris. Jika tiada, tulis "Tiada dijumpai."...&lt;/STYLE&gt;
+&lt;BLOCKING&gt;...salah satu: NONE | NIT | SHOULD_FIX | MUST_FIX&lt;/BLOCKING&gt;
+
+DIFF PR: [tampal]</span></span><button onclick="copyToClipboard(this)" class="copy-btn absolute top-4 right-4 text-slate-400 hover:text-primary"><i class="fa-solid fa-copy text-lg"></i></button></div>
+                    </div>
+                </div>
+
+                <!-- 4.6 NEW: Interactive Format Prescription Builder -->
+                <div class="mb-8 border-l-4 border-primary pl-4">
+                    <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2">
+                        <span class="en">4.6 Interactive Format Prescription Builder</span><span class="bm">4.6 Pembina Preskripsi Format Interaktif</span>
+                    </h3>
+                    <p class="text-sm text-slate-600 dark:text-slate-400 mb-3">
+                        <span class="en">Module 2.6 stacked persona dimensions. This sandbox stacks <em>format</em> dimensions. Pick a syntax, a length unit, and an exclusion. The assembled format prescription updates live below, along with a preview of what the response shape will actually look like. Try the same task across very different format prescriptions to see how dramatically the model's output changes.</span>
+                        <span class="bm">Modul 2.6 menindan dimensi persona. Sandbox ini menindan dimensi <em>format</em>. Pilih sintaks, unit panjang, dan pengecualian. Preskripsi format tersusun dikemas kini di bawah secara langsung, bersama dengan pratonton bentuk respons yang akan dihasilkan. Cuba tugas yang sama merentas preskripsi format yang sangat berbeza untuk melihat betapa dramatik output model berubah.</span>
+                    </p>
+
+                    <!-- Format chips -->
+                    <div class="format-builder mt-4 mb-2">
+                        <div class="format-row" data-format-row="syntax">
+                            <div class="format-row-label">
+                                <span class="format-row-tag syntax"><span class="en">SYNTAX</span><span class="bm">SINTAKS</span></span>
+                                <span class="text-xs text-slate-500 dark:text-slate-400">
+                                    <span class="en">what shape holds the answer</span><span class="bm">bentuk apa yang memegang jawapan</span>
+                                </span>
+                            </div>
+                            <div class="format-chips" id="format-chips-syntax"></div>
+                        </div>
+                        <div class="format-row" data-format-row="length">
+                            <div class="format-row-label">
+                                <span class="format-row-tag length"><span class="en">LENGTH</span><span class="bm">PANJANG</span></span>
+                                <span class="text-xs text-slate-500 dark:text-slate-400">
+                                    <span class="en">how much, in concrete units</span><span class="bm">berapa banyak, dalam unit konkrit</span>
+                                </span>
+                            </div>
+                            <div class="format-chips" id="format-chips-length"></div>
+                        </div>
+                        <div class="format-row" data-format-row="exclusion">
+                            <div class="format-row-label">
+                                <span class="format-row-tag exclusion"><span class="en">EXCLUSION</span><span class="bm">PENGECUALIAN</span></span>
+                                <span class="text-xs text-slate-500 dark:text-slate-400">
+                                    <span class="en">what must NOT appear</span><span class="bm">apa yang TIDAK BOLEH muncul</span>
+                                </span>
+                            </div>
+                            <div class="format-chips" id="format-chips-exclusion"></div>
+                        </div>
+                    </div>
+
+                    <!-- Live preview -->
+                    <div class="format-preview" id="format-preview">
+                        <div class="format-preview-section">
+                            <div class="format-preview-label">
+                                <span class="en">Assembled format prescription</span><span class="bm">Preskripsi format tersusun</span>
+                            </div>
+                            <div class="format-preview-prompt" id="format-prompt"></div>
+                            <button id="format-copy" class="stack-copy-btn">
+                                <i class="fa-solid fa-copy"></i>
+                                <span class="en">Copy</span><span class="bm">Salin</span>
+                            </button>
+                        </div>
+                        <div class="format-preview-section">
+                            <div class="format-preview-label">
+                                <span class="en">Predicted response shape</span><span class="bm">Bentuk respons diramalkan</span>
+                            </div>
+                            <div class="format-preview-shape" id="format-shape"></div>
+                        </div>
+                    </div>
+
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-3">
+                        <i class="fa-solid fa-info-circle mr-1"></i>
+                        <span class="en">Tip: try switching only the Syntax chip with the same Length and Exclusion. Notice how "JSON + 5 fields + no preamble" produces a parseable artefact, while "Prose + 5 sentences + no preamble" produces something a human reads, and "Markdown table + 5 rows + no preamble" produces something a human reads <em>and</em> a script can extract.</span>
+                        <span class="bm">Petua: cuba tukar hanya chip Sintaks dengan Panjang dan Pengecualian yang sama. Perhatikan bagaimana "JSON + 5 medan + tiada mukadimah" menghasilkan artifak boleh-dihuraikan, sementara "Prosa + 5 ayat + tiada mukadimah" menghasilkan sesuatu yang manusia baca, dan "Jadual Markdown + 5 baris + tiada mukadimah" menghasilkan sesuatu yang manusia baca <em>dan</em> skrip boleh ekstrak.</span>
+                    </p>
                 </div>
 
                 <!-- Fun Fact & Summary -->
@@ -4621,6 +5260,199 @@ METRIK SEMASA: [tampal]`
             if (initial) activate(initial.dataset.pattern);
         }
 
+        // --- 4.6 Format Prescription Builder ---
+        // Three rows of format dimensions. Each chip carries a `prescription` string
+        // (the line that goes into the assembled prompt) and a `shape` hint (what
+        // kind of response to expect). All bilingual.
+        const FORMAT_OPTIONS = {
+            syntax: [
+                { id: 'json', label: { en: 'JSON', bm: 'JSON' },
+                  prescription: { en: 'Output as JSON only. No prose, no code fences, no commentary.',
+                                  bm: 'Hasilkan sebagai JSON sahaja. Tiada prosa, tiada code fence, tiada komen.' },
+                  shape: { en: 'a parseable JSON object/array your code can JSON.parse() directly',
+                           bm: 'objek/tatasusunan JSON boleh-dihuraikan yang kod anda boleh JSON.parse() terus' } },
+                { id: 'markdown_table', label: { en: 'Markdown table', bm: 'Jadual Markdown' },
+                  prescription: { en: 'Output as a Markdown table only. No prose before or after. No code fences.',
+                                  bm: 'Hasilkan sebagai jadual Markdown sahaja. Tiada prosa sebelum atau selepas. Tiada code fence.' },
+                  shape: { en: 'a pipe-delimited table — human-readable AND script-extractable',
+                           bm: 'jadual berpemisah-paip — boleh dibaca manusia DAN boleh diekstrak skrip' } },
+                { id: 'xml', label: { en: 'XML / LPML', bm: 'XML / LPML' },
+                  prescription: { en: 'Output using these tags only: <REASONING>...</REASONING> and <ANSWER>...</ANSWER>. No text outside the tags.',
+                                  bm: 'Hasilkan menggunakan tag ini sahaja: <REASONING>...</REASONING> dan <ANSWER>...</ANSWER>. Tiada teks di luar tag.' },
+                  shape: { en: 'two cleanly-sectioned blocks; a regex/parser can extract just <ANSWER>',
+                           bm: 'dua blok bersih dipisah; regex/parser boleh ekstrak hanya <ANSWER>' } },
+                { id: 'yaml', label: { en: 'YAML', bm: 'YAML' },
+                  prescription: { en: 'Output as YAML only. No prose, no code fences.',
+                                  bm: 'Hasilkan sebagai YAML sahaja. Tiada prosa, tiada code fence.' },
+                  shape: { en: 'indented key:value blocks; human-friendly to read AND machine-parseable',
+                           bm: 'blok kunci:nilai berindentasi; mesra-manusia untuk dibaca DAN boleh-dihuraikan-mesin' } },
+                { id: 'prose', label: { en: 'Prose', bm: 'Prosa' },
+                  prescription: { en: 'Output as flowing prose paragraphs. No bullets, no headings.',
+                                  bm: 'Hasilkan sebagai perenggan prosa mengalir. Tiada bullet, tiada tajuk.' },
+                  shape: { en: 'continuous narrative — best for human reading, worst for downstream parsing',
+                           bm: 'naratif berterusan — terbaik untuk bacaan manusia, terburuk untuk huraian hiliran' } }
+            ],
+            length: [
+                { id: 'sentences', label: { en: 'Exactly 3 sentences', bm: 'Tepat 3 ayat' },
+                  prescription: { en: 'Length: exactly 3 sentences. No more, no fewer.',
+                                  bm: 'Panjang: tepat 3 ayat. Tidak lebih, tidak kurang.' },
+                  shape: { en: '3-sentence response, tight and committed',
+                           bm: 'respons 3-ayat, ketat dan komited' } },
+                { id: 'words', label: { en: 'Under 100 words', bm: 'Di bawah 100 patah kata' },
+                  prescription: { en: 'Length: strictly under 100 words total.',
+                                  bm: 'Panjang: secara ketat di bawah 100 patah kata kesemuanya.' },
+                  shape: { en: 'compact answer, ~80–95 words once the model self-rounds',
+                           bm: 'jawapan padat, ~80–95 patah kata sebaik model membundarkan sendiri' } },
+                { id: 'fields', label: { en: 'Exactly 5 fields/rows', bm: 'Tepat 5 medan/baris' },
+                  prescription: { en: 'Include exactly 5 fields (or 5 rows if a table). Not 4, not 6.',
+                                  bm: 'Sertakan tepat 5 medan (atau 5 baris jika jadual). Bukan 4, bukan 6.' },
+                  shape: { en: 'enumerable structure with exactly 5 entries — easy to validate programmatically',
+                           bm: 'struktur boleh-dihitung dengan tepat 5 entri — mudah disahkan secara berprogram' } },
+                { id: 'bullets', label: { en: '3 bullets, ≤15 words each', bm: '3 bullet, ≤15 patah kata setiap satu' },
+                  prescription: { en: 'Output exactly 3 bullets. Each bullet must be 15 words or fewer.',
+                                  bm: 'Hasilkan tepat 3 bullet. Setiap bullet mestilah 15 patah kata atau kurang.' },
+                  shape: { en: 'three crisp bullets — scannable, no padding',
+                           bm: 'tiga bullet tajam — boleh diimbas, tiada pengisi' } },
+                { id: 'one_line', label: { en: 'Single line', bm: 'Satu baris' },
+                  prescription: { en: 'Output a single line. No line breaks. Maximum 72 characters.',
+                                  bm: 'Hasilkan satu baris. Tiada pemecahan baris. Maksimum 72 aksara.' },
+                  shape: { en: 'a one-liner — commit message, headline, or summary tag',
+                           bm: 'satu baris — mesej commit, tajuk utama, atau tag ringkasan' } }
+            ],
+            exclusion: [
+                { id: 'no_preamble', label: { en: 'No preamble', bm: 'Tiada mukadimah' },
+                  prescription: { en: 'Do NOT begin with phrases like "Sure," "Of course," or "Here is". Start directly with the content.',
+                                  bm: 'JANGAN mulakan dengan frasa seperti "Tentu sekali," "Sudah tentu," atau "Berikut ialah". Mulakan terus dengan kandungan.' },
+                  shape: { en: 'response that starts with the substance — no chatty wrapper',
+                           bm: 'respons yang mulakan dengan bahan — tiada pembungkus berborak' } },
+                { id: 'no_jargon', label: { en: 'No jargon', bm: 'Tiada jargon' },
+                  prescription: { en: 'Use plain language only. Avoid domain-specific jargon, acronyms, and corporate clichés.',
+                                  bm: 'Gunakan bahasa biasa sahaja. Elak jargon khusus-domain, akronim, dan klise korporat.' },
+                  shape: { en: 'accessible to a non-specialist reader — no insider terminology',
+                           bm: 'boleh diakses oleh pembaca bukan pakar — tiada terminologi orang dalam' } },
+                { id: 'no_markdown', label: { en: 'No markdown', bm: 'Tiada markdown' },
+                  prescription: { en: 'Do NOT use markdown formatting: no **bold**, no *italics*, no headings, no bullets.',
+                                  bm: 'JANGAN gunakan format markdown: tiada **tebal**, tiada *condong*, tiada tajuk, tiada bullet.' },
+                  shape: { en: 'plain text only — ready to paste into a CRM, email, or terminal',
+                           bm: 'teks biasa sahaja — sedia untuk ditampal ke CRM, e-mel, atau terminal' } },
+                { id: 'no_hedging', label: { en: 'No hedging', bm: 'Tiada pengelakan' },
+                  prescription: { en: 'Do NOT hedge. Avoid "might", "could", "potentially", "it depends". Commit to a position.',
+                                  bm: 'JANGAN berpagari. Elak "mungkin", "boleh jadi", "berpotensi", "ia bergantung". Komit kepada satu kedudukan.' },
+                  shape: { en: 'committed, opinionated answer — good for decisions, risky for unknowns',
+                           bm: 'jawapan komited, beropinion — baik untuk keputusan, berisiko untuk perkara tidak diketahui' } },
+                { id: 'no_invention', label: { en: 'No invented data', bm: 'Tiada data direka' },
+                  prescription: { en: 'Use ONLY information present in the source text. If a field is missing, write "Not specified". Never invent.',
+                                  bm: 'Gunakan HANYA maklumat yang ada dalam teks sumber. Jika medan hilang, tulis "Tidak dinyatakan". Jangan reka.' },
+                  shape: { en: 'faithful extraction — gaps surface as explicit nulls instead of plausible-sounding fakes',
+                           bm: 'ekstraksi setia — jurang muncul sebagai null eksplisit bukannya palsu kedengaran munasabah' } }
+            ]
+        };
+
+        // Default selections
+        const formatState = { syntax: 'json', length: 'fields', exclusion: 'no_preamble' };
+
+        function findFormatOption(row, id) {
+            return FORMAT_OPTIONS[row].find(o => o.id === id) || FORMAT_OPTIONS[row][0];
+        }
+
+        function renderFormatChips() {
+            Object.keys(FORMAT_OPTIONS).forEach(row => {
+                const container = document.getElementById(`format-chips-${row}`);
+                if (!container) return;
+                container.innerHTML = FORMAT_OPTIONS[row].map(opt => {
+                    const active = formatState[row] === opt.id;
+                    return `<span class="format-chip" role="button" tabindex="0"
+                                  data-row="${row}" data-id="${opt.id}"
+                                  data-active="${active}">
+                                <span class="en">${opt.label.en}</span><span class="bm">${opt.label.bm}</span>
+                            </span>`;
+                }).join('');
+            });
+        }
+
+        function renderFormatPreview() {
+            const syntax    = findFormatOption('syntax',    formatState.syntax);
+            const length    = findFormatOption('length',    formatState.length);
+            const exclusion = findFormatOption('exclusion', formatState.exclusion);
+
+            const promptEl = document.getElementById('format-prompt');
+            const shapeEl  = document.getElementById('format-shape');
+            if (!promptEl || !shapeEl) return;
+
+            const lines = [
+                {
+                    en: `TASK: [your task here]`,
+                    bm: `TUGAS: [tugas anda di sini]`
+                },
+                {
+                    en: `\nFORMAT:\n• <span class="ph-syntax">${syntax.prescription.en}</span>`,
+                    bm: `\nFORMAT:\n• <span class="ph-syntax">${syntax.prescription.bm}</span>`
+                },
+                {
+                    en: `• <span class="ph-length">${length.prescription.en}</span>`,
+                    bm: `• <span class="ph-length">${length.prescription.bm}</span>`
+                },
+                {
+                    en: `• <span class="ph-exclusion">${exclusion.prescription.en}</span>`,
+                    bm: `• <span class="ph-exclusion">${exclusion.prescription.bm}</span>`
+                }
+            ];
+            promptEl.innerHTML =
+                '<span class="en">' + lines.map(l => l.en).join('\n') + '</span>' +
+                '<span class="bm">' + lines.map(l => l.bm).join('\n') + '</span>';
+
+            const shapeBits = [syntax.shape, length.shape, exclusion.shape];
+            shapeEl.innerHTML =
+                '<span class="en">Expect: ' +
+                    shapeBits.map(s => s.en).join(' · ') + '.</span>' +
+                '<span class="bm">Jangka: ' +
+                    shapeBits.map(s => s.bm).join(' · ') + '.</span>';
+        }
+
+        function initFormatBuilder() {
+            const builder = document.querySelector('.format-builder');
+            if (!builder) return;
+
+            renderFormatChips();
+            renderFormatPreview();
+
+            builder.addEventListener('click', (e) => {
+                const chip = e.target.closest('.format-chip');
+                if (!chip) return;
+                formatState[chip.dataset.row] = chip.dataset.id;
+                renderFormatChips();
+                renderFormatPreview();
+            });
+            builder.addEventListener('keydown', (e) => {
+                if (e.key !== 'Enter' && e.key !== ' ') return;
+                const chip = e.target.closest('.format-chip');
+                if (!chip) return;
+                e.preventDefault();
+                formatState[chip.dataset.row] = chip.dataset.id;
+                renderFormatChips();
+                renderFormatPreview();
+            });
+
+            // Copy button — same behaviour as the stack builder's copy button
+            const copyBtn = document.getElementById('format-copy');
+            if (copyBtn) {
+                copyBtn.addEventListener('click', () => {
+                    const lang = getLang();
+                    const promptEl = document.getElementById('format-prompt');
+                    if (!promptEl) return;
+                    const langSpan = promptEl.querySelector(`.${lang}`);
+                    const text = (langSpan?.innerText || '').trim();
+                    if (!text) return;
+                    if (navigator.clipboard && navigator.clipboard.writeText) {
+                        navigator.clipboard.writeText(text).then(() => {
+                            copyBtn.classList.add('copied');
+                            setTimeout(() => copyBtn.classList.remove('copied'), 1200);
+                        });
+                    }
+                });
+            }
+        }
+
         // --- Initialization on Page Load ---
         document.addEventListener('DOMContentLoaded', () => {
             // Restore the learner's previously-entered name so their leaderboard row
@@ -4640,6 +5472,8 @@ METRIK SEMASA: [tampal]`
             initStackBuilder();
             // Wire up the new Reasoning Pattern Selector (3.6)
             initReasoningSelector();
+            // Wire up the new Format Prescription Builder (4.6)
+            initFormatBuilder();
 
             // Seed leaderboard preview
             try {
