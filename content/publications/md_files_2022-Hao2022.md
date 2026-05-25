@@ -6,7 +6,10 @@ venue: "Journal of Creative Industry and Sustainable Culture"
 category: "Journal"
 volume: "1"
 pages: "203–223"
-doi: "https://doi.org/10.32890/jcisc2022.1.9"
 isFirstAuthor: false
+quartile: "NA"
+doi: "https://doi.org/10.32890/jcisc2022.1.9"
+featured: false
+topicTags: ["games-informatics", "simulation"]
 ---
 

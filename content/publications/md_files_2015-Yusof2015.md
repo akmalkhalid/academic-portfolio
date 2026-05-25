@@ -8,5 +8,9 @@ volume: "83"
 issue: "1"
 pages: "012008"
 isFirstAuthor: false
+quartile: "NA"
+doi: "https://doi.org/10.1088/1757-899X/83/1/012008"
+featured: false
+topicTags: ["evolutionary-computing", "optimization", "simulation"]
 ---
 

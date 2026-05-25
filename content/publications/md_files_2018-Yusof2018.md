@@ -6,5 +6,9 @@ venue: "Big Data Summit 2: HPC and AI Empowering Data Analytics (co-locate with 
 category: "Journal"
 pages: "1"
 isFirstAuthor: false
+quartile: "NA"
+doi: "NA"
+featured: false
+topicTags: ["optimization", "simulation"]
 ---
 

@@ -6,7 +6,10 @@ venue: "{IEEE} Access"
 category: "Journal"
 volume: "9"
 pages: "117832--117844"
-doi: "https://doi.org/10.1109/ACCESS.2021.3106321"
 isFirstAuthor: true
+quartile: "Q1"
+doi: "https://doi.org/10.1109/ACCESS.2021.3106321"
+featured: false
+topicTags: ["evolutionary-computing", "optimization"]
 ---
 

@@ -6,7 +6,10 @@ venue: "JMIR Serious Games"
 category: "Journal"
 volume: "12"
 pages: "e45546"
-doi: "https://doi.org/10.2196/45546"
 isFirstAuthor: false
+quartile: "Q1"
+doi: "https://doi.org/10.2196/45546"
+featured: false
+topicTags: ["games-informatics", "simulation"]
 ---
 

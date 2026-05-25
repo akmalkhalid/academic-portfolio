@@ -6,7 +6,10 @@ venue: "IEEE Access"
 category: "Journal"
 volume: "13"
 pages: "103264-103281"
-doi: "https://doi.org/10.1109/ACCESS.2025.3580196"
 isFirstAuthor: false
+quartile: "Q1"
+doi: "https://doi.org/10.1109/ACCESS.2025.3580196"
+featured: false
+topicTags: ["games-informatics", "simulation"]
 ---
 

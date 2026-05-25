@@ -6,5 +6,9 @@ venue: "2016 International Conference On Advanced Informatics: Concepts, Theory 
 category: "Conference"
 pages: "1--6"
 isFirstAuthor: true
+quartile: "Q4"
+doi: "https://doi.org/10.1109/ICAICTA.2016.7803116"
+featured: false
+topicTags: ["expert-systems", "simulation"]
 ---
 

@@ -5,7 +5,10 @@ year: 2015
 venue: "Lecture Notes in Computer Science"
 category: "Book Chapter"
 pages: "100--127"
-doi: "https://doi.org/10.1007/978-3-319-27947-3_6"
 isFirstAuthor: true
+quartile: "NA"
+doi: "https://doi.org/10.1007/978-3-319-27947-3_6"
+featured: false
+topicTags: ["games-informatics", "simulation"]
 ---
 

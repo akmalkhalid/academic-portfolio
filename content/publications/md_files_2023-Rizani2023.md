@@ -6,7 +6,10 @@ venue: "Information"
 category: "Journal"
 volume: "14"
 issue: "2"
-doi: "https://doi.org/10.3390/info14020110"
 isFirstAuthor: false
+quartile: "NA"
+doi: "https://doi.org/10.3390/info14020110"
+featured: false
+topicTags: ["games-informatics", "simulation"]
 ---
 

@@ -6,7 +6,10 @@ venue: "International Journal of Advanced Computer Science and Applications"
 category: "Journal"
 volume: "16"
 pages: "538–553"
-doi: "https://dx.doi.org/10.14569/IJACSA.2025.0160354"
 isFirstAuthor: false
+quartile: "NA"
+doi: "https://dx.doi.org/10.14569/IJACSA.2025.0160354"
+featured: false
+topicTags: ["evolutionary-computing", "optimization"]
 ---
 

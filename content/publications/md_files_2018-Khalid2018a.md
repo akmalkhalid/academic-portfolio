@@ -7,7 +7,10 @@ category: "Journal"
 volume: "7"
 issue: "4"
 pages: "220--227"
-doi: "https://doi.org/10.14419/ijet.v7i4.31.23371"
 isFirstAuthor: true
+quartile: "NA"
+doi: "https://doi.org/10.14419/ijet.v7i4.31.23371"
+featured: false
+topicTags: ["evolutionary-computing", "optimization"]
 ---
 

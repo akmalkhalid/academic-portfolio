@@ -8,5 +8,9 @@ volume: "8"
 issue: "1"
 pages: "19--30"
 isFirstAuthor: true
+quartile: "NA"
+doi: "https://scholar.google.com/scholar?oi=bibs&cluster=14306372768590650465&btnI=1&hl=en"
+featured: false
+topicTags: ["evolutionary-computing", "optimization"]
 ---
 

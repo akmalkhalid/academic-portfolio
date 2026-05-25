@@ -6,7 +6,10 @@ venue: "Entertainment Computing"
 category: "Journal"
 volume: "41"
 pages: "100469"
-doi: "https://doi.org/10.1016/j.entcom.2021.100469"
 isFirstAuthor: false
+quartile: "Q2"
+doi: "https://doi.org/10.1016/j.entcom.2021.100469"
+featured: false
+topicTags: ["games-informatics", "simulation"]
 ---
 

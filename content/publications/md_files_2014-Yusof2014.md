@@ -8,5 +8,9 @@ volume: "8"
 issue: "3"
 pages: "709--716"
 isFirstAuthor: false
+quartile: "NA"
+doi: "NA"
+featured: false
+topicTags: ["expert-systems", "optimization"]
 ---
 

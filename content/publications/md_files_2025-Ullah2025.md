@@ -8,5 +8,7 @@ volume: "632"
 pages: "129767"
 doi: "https://doi.org/10.1016/j.neucom.2025.129767"
 isFirstAuthor: false
+topicTags: ["generative-ai", "optimization"]
+featured: false
 ---
 

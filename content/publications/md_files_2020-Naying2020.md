@@ -4,7 +4,10 @@ authors: "Naying, Gao and Primanita, Anggina and Khalid, M. N. A. and Iida, Hiro
 year: 2020
 venue: "Proceedings of the Sriwijaya International Conference on Information Technology and Its Applications"
 category: "Conference"
-doi: "https://doi.org/10.2991/aisr.k.200424.076"
 isFirstAuthor: false
+quartile: "NA"
+doi: "https://doi.org/10.2991/aisr.k.200424.076"
+featured: false
+topicTags: ["games-informatics", "simulation"]
 ---
 

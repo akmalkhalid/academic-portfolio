@@ -5,7 +5,10 @@ year: 2020
 venue: "Computational Science and Technology"
 category: "Book Chapter"
 pages: "301--310"
-doi: "https://doi.org/10.1007/978-981-15-0058-9_29"
 isFirstAuthor: false
+quartile: "NA"
+doi: "https://doi.org/10.1007/978-981-15-0058-9_29"
+featured: false
+topicTags: ["games-informatics", "simulation"]
 ---
 

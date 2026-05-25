@@ -8,5 +8,9 @@ volume: "10"
 issue: "1"
 pages: "1--7"
 isFirstAuthor: true
+quartile: "Q4"
+doi: "NA"
+featured: false
+topicTags: ["evolutionary-computing", "optimization"]
 ---
 

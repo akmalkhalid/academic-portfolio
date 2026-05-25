@@ -6,7 +6,10 @@ venue: "Mathematics"
 category: "Journal"
 volume: "11"
 issue: "6"
+isFirstAuthor: false
+quartile: "Q2"
 doi: "https://doi.org/10.3390/math11061353"
-isFirstAuthor: true
+featured: false
+topicTags: ["expert-systems", "simulation"]
 ---
 

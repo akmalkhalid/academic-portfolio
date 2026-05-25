@@ -4,7 +4,10 @@ authors: "Shamsudin, Haziqah and Yusof, Umi Kalsom and Jayalakshmi, Andal and Kh
 year: 2020
 venue: "2020 IEEE 16th International Conference on Control and Automation (ICCA)"
 category: "Conference"
-doi: "https://doi.org/10.1109/icca51439.2020.9264517"
 isFirstAuthor: false
+quartile: "NA"
+doi: "https://doi.org/10.1109/icca51439.2020.9264517"
+featured: false
+topicTags: ["expert-systems", "optimization"]
 ---
 

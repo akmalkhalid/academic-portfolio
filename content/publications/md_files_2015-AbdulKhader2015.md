@@ -6,5 +6,9 @@ venue: "International Workshop on Graph Algorithms 2015 (IWGA2015)"
 category: "Conference"
 pages: "275--281"
 isFirstAuthor: false
+quartile: "NA"
+doi: "NA"
+featured: false
+topicTags: ["expert-systems", "simulation"]
 ---
 

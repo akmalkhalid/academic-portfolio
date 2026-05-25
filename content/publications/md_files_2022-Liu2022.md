@@ -6,7 +6,10 @@ venue: "Knowledge-Based Systems"
 category: "Journal"
 volume: "246"
 pages: "108630"
-doi: "https://doi.org/10.1016/j.knosys.2022.108630"
 isFirstAuthor: false
+quartile: "Q1"
+doi: "https://doi.org/10.1016/j.knosys.2022.108630"
+featured: false
+topicTags: ["games-informatics", "simulation"]
 ---
 

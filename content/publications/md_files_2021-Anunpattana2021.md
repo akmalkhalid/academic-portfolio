@@ -6,7 +6,10 @@ venue: "Heliyon"
 category: "Journal"
 volume: "7"
 pages: "e08637"
-doi: "https://doi.org/10.1016/j.heliyon.2021.e08637"
 isFirstAuthor: false
+quartile: "Q1"
+doi: "https://doi.org/10.1016/j.heliyon.2021.e08637"
+featured: false
+topicTags: ["games-informatics", "simulation"]
 ---
 

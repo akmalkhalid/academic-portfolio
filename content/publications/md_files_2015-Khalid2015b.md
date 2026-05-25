@@ -8,5 +8,9 @@ volume: "9"
 issue: "12"
 pages: "3291--3298"
 isFirstAuthor: true
+quartile: "NA"
+doi: "https://scholar.google.com/scholar?oi=bibs&cluster=15314613329168065390&btnI=1&hl=en"
+featured: false
+topicTags: ["evolutionary-computing", "simulation"]
 ---
 

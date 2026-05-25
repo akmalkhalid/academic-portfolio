@@ -7,5 +7,10 @@ category: "Journal"
 volume: "7"
 issue: "3"
 isFirstAuthor: true
+quartile: "NA"
+doi: "https://scholar.google.com/scholar?oi=bibs&cluster=3970680858223996715&btnI=1&hl=en"
+isFirstAuthor: false
+featured: false
+topicTags: ["evolutionary-computing", "optimization"]
 ---
 

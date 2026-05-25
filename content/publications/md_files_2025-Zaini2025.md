@@ -5,7 +5,10 @@ year: 2025
 venue: "International Journal of Advanced Computer Science and Applications"
 category: "Journal"
 volume: "16"
-doi: "https://doi.org/10.14569/IJACSA.2025.0160919"
 isFirstAuthor: false
+quartile: "NA"
+doi: "https://doi.org/10.14569/IJACSA.2025.0160919"
+featured: false
+topicTags: ["simulation"]
 ---
 

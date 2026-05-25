@@ -7,5 +7,9 @@ category: "Journal"
 volume: "2"
 pages: "503--508"
 isFirstAuthor: true
+quartile: "NA"
+doi: "https://doi.org/10.5220/0005275305030508"
+featured: false
+topicTags: ["evolutionary-computing", "optimization", "simulation"]
 ---
 

@@ -5,7 +5,10 @@ year: 2023
 venue: ""
 category: "Journal"
 pages: "12--21"
-doi: "https://doi.org/10.1007/978-3-031-20429-6_2"
 isFirstAuthor: false
+quartile: "Q1"
+doi: "https://doi.org/10.1007/978-3-031-20429-6_2"
+featured: false
+topicTags: ["expert-systems", "simulation"]
 ---
 

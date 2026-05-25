@@ -7,5 +7,9 @@ category: "Journal"
 volume: "2"
 pages: "38--45"
 isFirstAuthor: true
+quartile: "NA"
+doi: "http://dx.doi.org/10.5220/0005179900380045"
+featured: false
+topicTags: ["games-informatics", "optimization", "simulation"]
 ---
 

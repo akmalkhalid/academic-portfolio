@@ -6,7 +6,10 @@ venue: "IEEE Access"
 category: "Journal"
 volume: "12"
 pages: "142241–142264"
-doi: "https://doi.org/10.1109/access.2024.3467253"
 isFirstAuthor: false
+quartile: "Q1"
+doi: "https://doi.org/10.1109/access.2024.3467253"
+featured: false
+topicTags: ["generative-ai", "simulation"]
 ---
 

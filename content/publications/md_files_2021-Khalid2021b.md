@@ -1,10 +1,13 @@
 ---
 title: "Incorporating shifting bottleneck identification in assembly line balancing problem using an artificial immune system approach"
 authors: "Khalid, M. N. A. and Yusof, Umi Kalsom"
-year: 2020
+year: 2021
 venue: "Flexible Services and Manufacturing Journal"
 category: "Journal"
-doi: "https://doi.org/10.1007/s10696-020-09389-1"
 isFirstAuthor: true
+quartile: "NA"
+doi: "https://doi.org/10.1007/s10696-020-09389-1"
+featured: false
+topicTags: ["evolutionary-computing", "optimization"]
 ---
 

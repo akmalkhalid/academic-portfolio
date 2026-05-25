@@ -4,7 +4,10 @@ authors: "Xiaohan, Kang and Zhang, Zeliang and Primanita, Anggina and Khalid, M.
 year: 2019
 venue: "2019 International Conference on Technologies and Applications of Artificial Intelligence ({TAAI})"
 category: "Conference"
-doi: "https://doi.org/10.1109/taai48200.2019.8959853"
 isFirstAuthor: false
+quartile: "NA"
+doi: "https://doi.org/10.1109/taai48200.2019.8959853"
+featured: false
+topicTags: ["games-informatics", "simulation"]
 ---
 

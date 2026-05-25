@@ -5,7 +5,10 @@ year: 2019
 venue: "Proceedings of the 11th International Conference on Agents and Artificial Intelligence - Volume 2: ICAART,"
 category: "Conference"
 pages: "539-546"
-doi: "https://doi.org/10.5220/0007344005390546"
 isFirstAuthor: false
+quartile: "NA"
+doi: "https://doi.org/10.5220/0007344005390546"
+featured: false
+topicTags: ["games-informatics", "simulation"]
 ---
 

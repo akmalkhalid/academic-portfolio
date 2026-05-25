@@ -4,7 +4,10 @@ authors: "Tingting, Wu and Shunqi, Huang and Aung, Htung Pa Pa and Khalid, M. N.
 year: 2020
 venue: "2020 International Conference on Advanced Information Technologies ({ICAIT})"
 category: "Conference"
-doi: "https://doi.org/10.1109/icait51105.2020.9261782"
 isFirstAuthor: false
+quartile: "NA"
+doi: "https://doi.org/10.1109/icait51105.2020.9261782"
+featured: false
+topicTags: ["games-informatics", "simulation"]
 ---
 

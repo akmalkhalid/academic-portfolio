@@ -6,7 +6,10 @@ venue: "Asia-Pacific Journal of Information Technology and Multimedia"
 category: "Journal"
 volume: "14"
 pages: "61--71"
-doi: "https://doi.org/10.17576/apjitm-2025-1401-04"
 isFirstAuthor: false
+quartile: "Q3"
+doi: "https://doi.org/10.17576/apjitm-2025-1401-04"
+featured: false
+topicTags: ["games-informatics", "simulation"]
 ---
 

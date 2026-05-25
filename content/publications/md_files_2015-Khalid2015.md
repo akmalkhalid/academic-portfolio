@@ -8,5 +8,9 @@ volume: "11"
 issue: "1"
 pages: "213--229"
 isFirstAuthor: true
+quartile: "NA"
+doi: "https://doi.org/10.24507/ijicic.11.01.213"
+featured: false
+topicTags: ["evolutionary-computing", "expert-systems", "simulation"]
 ---
 

@@ -7,5 +7,9 @@ category: "Journal"
 volume: "2"
 pages: "166--177"
 isFirstAuthor: true
+quartile: "NA"
+doi: "https://cspub-jnic.org/index.php/jnic/article/view/66"
+featured: false
+topicTags: ["evolutionary-computing", "optimization"]
 ---
 

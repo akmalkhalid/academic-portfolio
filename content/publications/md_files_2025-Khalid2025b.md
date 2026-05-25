@@ -5,7 +5,10 @@ year: 2025
 venue: "2025 IEEE 15th International Conference on Control System, Computing and Engineering (ICCSCE)"
 category: "Conference"
 pages: "12-17"
-doi: "https://doi.org/10.1109/ICCSCE65566.2025.11182666"
 isFirstAuthor: true
+quartile: "NA"
+doi: "https://doi.org/10.1109/ICCSCE65566.2025.11182666"
+featured: false
+topicTags: ["evolutionary-computing", "optimization"]
 ---
 

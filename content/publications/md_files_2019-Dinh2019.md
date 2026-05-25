@@ -6,7 +6,10 @@ venue: "International Journal of Information Technology"
 category: "Journal"
 volume: "12"
 pages: "1--18"
-doi: "https://doi.org/10.1007/s41870-019-00397-5"
 isFirstAuthor: false
+quartile: "Q1"
+doi: "https://doi.org/10.1007/s41870-019-00397-5"
+featured: false
+topicTags: ["games-informatics", "simulation"]
 ---
 
