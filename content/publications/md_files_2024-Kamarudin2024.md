@@ -7,6 +7,7 @@ category: "Journal"
 volume: "16"
 issue: "2"
 pages: "171"
+doi:"https://doi.org/10.3390/sym16020171"
 isFirstAuthor: false
 ---
 
