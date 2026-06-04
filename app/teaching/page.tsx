@@ -58,6 +58,83 @@ export default function TeachingPage() {
             </div>
           </div>
         </a>
+
+        {/* Companion lab tools for TTTC6544 Advanced AI */}
+        <h3 className="text-sm font-medium text-stone-500 uppercase tracking-wider mt-8 mb-3">
+          Companion lab tools for TTTC6544 — Advanced Artificial Intelligence
+        </h3>
+        <p className="text-stone-600 mb-4 max-w-2xl text-sm">
+          Interactive sandboxes I built to teach core AI techniques in my postgraduate
+          Advanced AI course. Drag the inputs, watch the system think — the visual answers
+          to questions the textbook only describes.
+        </p>
+        <div className="grid md:grid-cols-2 gap-4">
+          <a
+            href="/courses/fuzzy-logic-playground/"
+            className="block p-6 bg-gradient-to-br from-amber-50 via-white to-orange-50 border border-stone-200 rounded-lg hover:border-stone-400 hover:shadow-md transition group"
+          >
+            <div className="flex items-start gap-4">
+              <div className="text-3xl">🎚️</div>
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-2 flex-wrap">
+                  <span className="font-mono bg-stone-100 text-stone-700 text-[10px] px-1.5 py-0.5 rounded-md font-medium">
+                    TTTC6544
+                  </span>
+                  <span className="bg-stone-100 text-stone-600 text-[10px] px-1.5 py-0.5 rounded-md font-medium uppercase tracking-wider">
+                    Lab tool
+                  </span>
+                  <span className="tag-green text-[10px] px-1.5 py-0.5 rounded-md font-medium">
+                    Free
+                  </span>
+                </div>
+                <h3 className="text-base font-medium mb-1 group-hover:text-amber-700 transition">
+                  The Fuzzy Logic Playground
+                </h3>
+                <p className="text-sm text-stone-600 mb-3">
+                  Drag the weather, watch the whole pipeline think. Fuzzify inputs, fire the rules,
+                  infer an output, defuzzify to one crisp driving speed — then see the car actually go.
+                  Seven guided missions cover overlap, certainty, rule conflict, and defuzzification spread.
+                </p>
+                <p className="text-xs text-stone-500">
+                  Authored at CAIT, FTSM, UKM · Opens in this tab →
+                </p>
+              </div>
+            </div>
+          </a>
+
+          <a
+            href="/courses/synapse-lab/"
+            className="block p-6 bg-gradient-to-br from-violet-50 via-white to-cyan-50 border border-stone-200 rounded-lg hover:border-stone-400 hover:shadow-md transition group"
+          >
+            <div className="flex items-start gap-4">
+              <div className="text-3xl">⚡</div>
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-2 flex-wrap">
+                  <span className="font-mono bg-stone-100 text-stone-700 text-[10px] px-1.5 py-0.5 rounded-md font-medium">
+                    TTTC6544
+                  </span>
+                  <span className="bg-stone-100 text-stone-600 text-[10px] px-1.5 py-0.5 rounded-md font-medium uppercase tracking-wider">
+                    Lab tool
+                  </span>
+                  <span className="tag-green text-[10px] px-1.5 py-0.5 rounded-md font-medium">
+                    Free
+                  </span>
+                </div>
+                <h3 className="text-base font-medium mb-1 group-hover:text-violet-700 transition">
+                  Synapse Lab — Feel a Neuron Think
+                </h3>
+                <p className="text-sm text-stone-600 mb-3">
+                  A single neuron can draw only one straight line — so it nails AND and OR but fails XOR.
+                  Toggle the inputs and watch a 2-2-1 hidden-layer network solve what one neuron can't.
+                  The visual answer to "why do we need hidden layers?"
+                </p>
+                <p className="text-xs text-stone-500">
+                  Authored at CAIT, FTSM, UKM · Opens in this tab →
+                </p>
+              </div>
+            </div>
+          </a>
+        </div>
       </section>
 
       {/* Courses */}

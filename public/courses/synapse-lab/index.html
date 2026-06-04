@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Synapse Lab — Feel a Neuron Think</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0d1a; --bg2:#0e1224; --panel:#121732; --panel2:#161d3e;
+  --ink:#e9edfb; --muted:#8b93b8; --faint:#5b6a99;
+  --cyan:#1fd9e3; --cyan-d:#13a7b0; --coral:#ff5c7a; --coral-d:#d63f5c;
+  --gold:#ffc23d; --line:rgba(120,140,200,.16);
+  --mono:"Space Mono",monospace; --disp:"Syne",sans-serif; --body:"DM Sans",sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--body); color:var(--ink); background:var(--bg);
+  background-image:
+    radial-gradient(1200px 700px at 12% -10%, rgba(31,217,227,.10), transparent 60%),
+    radial-gradient(1100px 700px at 110% 10%, rgba(255,92,122,.09), transparent 55%),
+    linear-gradient(rgba(120,140,200,.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(120,140,200,.04) 1px, transparent 1px);
+  background-size:auto,auto,38px 38px,38px 38px;
+  min-height:100vh; line-height:1.5; overflow-x:hidden;
+}
+.wrap{max-width:1180px;margin:0 auto;padding:26px 22px 80px}
+/* header */
+header{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;flex-wrap:wrap;margin-bottom:8px}
+.brand{display:flex;align-items:center;gap:14px}
+.logo{width:46px;height:46px;flex:none}
+h1{font-family:var(--disp);font-weight:800;font-size:30px;letter-spacing:-.5px;line-height:1}
+h1 .spark{color:var(--cyan)}
+.tag{color:var(--muted);font-size:13.5px;margin-top:4px;max-width:520px}
+.modeswitch{display:flex;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:4px;gap:4px}
+.modeswitch button{font-family:var(--body);font-weight:600;font-size:13px;color:var(--muted);background:none;border:none;padding:9px 16px;border-radius:999px;cursor:pointer;transition:.2s}
+.modeswitch button.on{background:linear-gradient(135deg,var(--cyan),var(--cyan-d));color:#04141a;box-shadow:0 4px 18px rgba(31,217,227,.35)}
+/* layout */
+.lab{display:grid;grid-template-columns:300px minmax(0,1fr) 300px;gap:18px;margin-top:22px}
+.lab>*{min-width:0}
+.lab svg{max-width:100%}
+@media(max-width:980px){.lab{grid-template-columns:1fr}}
+.panel{background:linear-gradient(180deg,var(--panel),var(--panel2));border:1px solid var(--line);border-radius:18px;padding:18px;position:relative}
+.panel h2{font-family:var(--disp);font-weight:700;font-size:13px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.panel h2 .dot{width:9px;height:9px;border-radius:50%;background:var(--cyan);box-shadow:0 0 10px var(--cyan)}
+/* controls */
+.ctrl{margin-bottom:16px}
+.ctrl .row{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
+.ctrl label{font-weight:600;font-size:13.5px}
+.ctrl .val{font-family:var(--mono);font-size:13px;color:var(--cyan);font-weight:700}
+.ctrl.neg .val{color:var(--coral)}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:6px;background:rgba(120,140,200,.18);outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--ink);border:3px solid var(--cyan);cursor:pointer;box-shadow:0 0 12px rgba(31,217,227,.6);transition:transform .1s}
+input[type=range]::-webkit-slider-thumb:active{transform:scale(1.25)}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--ink);border:3px solid var(--cyan);cursor:pointer}
+.neg input[type=range]::-webkit-slider-thumb{border-color:var(--coral);box-shadow:0 0 12px rgba(255,92,122,.6)}
+.toggles{display:flex;gap:6px;margin-top:8px}
+.toggles button{flex:1;font-family:var(--mono);font-size:12px;background:rgba(120,140,200,.1);border:1px solid var(--line);color:var(--muted);padding:6px;border-radius:9px;cursor:pointer;transition:.15s}
+.toggles button.on{background:rgba(31,217,227,.16);border-color:var(--cyan);color:var(--cyan)}
+.actsel{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.actsel button{font-family:var(--body);font-weight:600;font-size:12.5px;padding:9px 6px;border-radius:11px;border:1px solid var(--line);background:rgba(120,140,200,.08);color:var(--muted);cursor:pointer;transition:.15s}
+.actsel button.on{background:linear-gradient(135deg,rgba(31,217,227,.2),rgba(31,217,227,.05));border-color:var(--cyan);color:var(--cyan)}
+.actcurve{margin-top:12px;background:rgba(8,11,22,.55);border:1px solid var(--line);border-radius:12px;padding:8px}
+/* stage */
+.stage{display:flex;flex-direction:column}
+.stagebox{flex:1;background:radial-gradient(700px 380px at 50% 40%,rgba(31,217,227,.06),transparent 70%),rgba(8,11,22,.45);border:1px solid var(--line);border-radius:18px;padding:8px;position:relative;overflow:hidden;min-height:340px;display:flex;align-items:center;justify-content:center}
+.stagebox svg{width:100%;height:auto;display:block}
+.verdict{position:absolute;top:14px;left:50%;transform:translateX(-50%);font-family:var(--disp);font-weight:800;font-size:15px;letter-spacing:1px;padding:8px 18px;border-radius:999px;transition:.25s;white-space:nowrap}
+.verdict.fire{background:linear-gradient(135deg,var(--gold),#ff9b3d);color:#2a1a00;box-shadow:0 0 26px rgba(255,194,61,.55)}
+.verdict.quiet{background:rgba(120,140,200,.12);color:var(--muted);border:1px solid var(--line)}
+.hintbar{display:flex;gap:10px;align-items:center;margin-top:12px;flex-wrap:wrap}
+.chip{font-size:12px;color:var(--muted);background:var(--panel);border:1px solid var(--line);padding:7px 12px;border-radius:999px}
+.chip b{color:var(--ink)}
+/* math readout */
+.math{font-family:var(--mono);font-size:13px;line-height:1.95;background:rgba(8,11,22,.55);border:1px solid var(--line);border-radius:12px;padding:14px;color:#cdd6f6;word-break:break-word}
+.math .k{color:var(--cyan)}
+.math .kn{color:var(--coral)}
+.math .b{color:var(--gold)}
+.math .z{font-size:18px;font-weight:700;color:var(--ink)}
+/* truth table */
+.tt{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:6px}
+.cell{background:rgba(8,11,22,.5);border:1px solid var(--line);border-radius:12px;padding:11px;text-align:center;transition:.18s}
+.cell .in{font-family:var(--mono);font-size:13px;color:var(--muted)}
+.cell .out{font-family:var(--disp);font-weight:800;font-size:16px;margin-top:5px}
+.cell.fire{border-color:var(--gold);box-shadow:0 0 16px rgba(255,194,61,.18) inset}
+.cell.fire .out{color:var(--gold)}
+.cell.quiet .out{color:var(--muted)}
+.cell.ok{outline:2px solid var(--cyan);outline-offset:-1px}
+.cell.bad{outline:2px solid var(--coral);outline-offset:-1px}
+.cell .tgt{font-size:10.5px;letter-spacing:.5px;margin-top:4px;color:var(--faint)}
+/* challenge */
+.challenge{margin-top:22px}
+.cwrap{display:grid;grid-template-columns:1fr 320px;gap:18px}
+@media(max-width:980px){.cwrap{grid-template-columns:1fr}}
+.quest{background:linear-gradient(135deg,rgba(31,217,227,.1),rgba(255,92,122,.06));border:1px solid var(--line);border-radius:18px;padding:20px}
+.quest .lvl{font-family:var(--mono);font-size:12px;color:var(--cyan);letter-spacing:1px}
+.quest h3{font-family:var(--disp);font-weight:800;font-size:22px;margin:6px 0 8px}
+.quest p{font-size:14px;color:var(--muted);max-width:540px}
+.stars{display:flex;gap:8px;margin:16px 0}
+.star{width:30px;height:30px;border-radius:9px;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;background:rgba(8,11,22,.4);transition:.2s}
+.star svg{width:16px;height:16px}
+.star.done{background:linear-gradient(135deg,var(--gold),#ff9b3d);border-color:transparent;box-shadow:0 0 16px rgba(255,194,61,.4)}
+.star.active{border-color:var(--cyan)}
+.cbtns{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+.btn{font-family:var(--body);font-weight:700;font-size:14px;border:none;border-radius:12px;padding:12px 20px;cursor:pointer;transition:.18s}
+.btn.primary{background:linear-gradient(135deg,var(--cyan),var(--cyan-d));color:#04141a;box-shadow:0 6px 22px rgba(31,217,227,.3)}
+.btn.primary:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(31,217,227,.45)}
+.btn.ghost{background:rgba(120,140,200,.1);border:1px solid var(--line);color:var(--ink)}
+.btn.ghost:hover{border-color:var(--cyan);color:var(--cyan)}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none!important;box-shadow:none}
+.feedback{margin-top:14px;font-size:14px;min-height:24px;font-weight:600}
+.feedback.good{color:var(--gold)}
+.feedback.bad{color:var(--coral)}
+.feedback.info{color:var(--cyan)}
+.target{background:rgba(8,11,22,.5);border:1px solid var(--line);border-radius:18px;padding:18px}
+.target h4{font-family:var(--disp);font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
+/* reveal / xor */
+.reveal{margin-top:18px;background:linear-gradient(135deg,rgba(255,92,122,.12),rgba(31,217,227,.06));border:1px solid var(--line);border-radius:18px;padding:22px;display:none}
+.reveal.show{display:block;animation:pop .4s ease}
+@keyframes pop{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.reveal h3{font-family:var(--disp);font-weight:800;font-size:20px;margin-bottom:8px}
+.reveal p{font-size:14px;color:var(--muted);max-width:680px;margin-bottom:8px}
+.xorbox{margin-top:14px;background:rgba(8,11,22,.45);border:1px solid var(--line);border-radius:14px;padding:10px;position:relative}
+.foot{text-align:center;color:var(--faint);font-size:12px;margin-top:40px;font-family:var(--mono)}
+.foot a{color:var(--cyan-d);text-decoration:none}
+#fx{position:fixed;inset:0;pointer-events:none;z-index:90}
+.hidden{display:none!important}
+.note{font-size:12px;color:var(--faint);margin-top:10px}
+.kbd{font-family:var(--mono);background:rgba(120,140,200,.14);border:1px solid var(--line);border-radius:6px;padding:1px 6px;font-size:11px}
+.sound{background:none;border:1px solid var(--line);border-radius:999px;color:var(--muted);font-size:11px;font-family:var(--mono);padding:6px 12px;cursor:pointer}
+.sound.on{color:var(--cyan);border-color:var(--cyan)}
+/* deep net */
+.dnrow{display:grid;grid-template-columns:290px minmax(0,1fr) 300px;gap:18px;align-items:start}
+.dnrow>div{min-width:0}
+#deepnet svg,#deepnet canvas{max-width:100%}
+@media(max-width:1120px){.dnrow{grid-template-columns:1fr}}
+.flowchip{display:inline-flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);background:rgba(8,11,22,.45);border:1px solid var(--line);padding:7px 12px;border-radius:999px}
+.flowline{width:34px;border-top:2px dashed var(--cyan)}
+.flowline.b{border-color:var(--coral)}
+.bars{padding:10px 12px;background:rgba(8,11,22,.5);border:1px solid var(--line);border-radius:12px}
+.bar{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:6px;height:100%}
+.bar .fill{width:100%;border-radius:6px 6px 0 0;min-height:2px;transition:height .25s ease}
+.bar .lab{font-size:9.5px;color:var(--muted);font-family:var(--mono);white-space:nowrap}
+.verdictbig{font-family:var(--disp);font-weight:800;font-size:22px;padding:12px 18px;border-radius:14px;display:inline-block}
+.vb-ok{background:rgba(31,217,227,.16);color:var(--cyan)}
+.vb-van{background:rgba(120,140,200,.16);color:#aeb8da}
+.vb-exp{background:rgba(255,92,122,.16);color:var(--coral)}
+.preset{font-size:12.5px;padding:9px 12px}
+.btn.on{border-color:var(--cyan);color:var(--cyan);background:rgba(31,217,227,.12)}
+</style>
+</head>
+<body>
+<canvas id="fx"></canvas>
+<div class="wrap">
+
+  <header>
+    <div class="brand">
+      <svg class="logo" viewBox="0 0 60 60" fill="none">
+        <circle cx="12" cy="16" r="5" fill="#1fd9e3"/>
+        <circle cx="12" cy="44" r="5" fill="#ff5c7a"/>
+        <circle cx="34" cy="30" r="7" fill="#e9edfb"/>
+        <circle cx="52" cy="30" r="5" fill="#ffc23d"/>
+        <path d="M16 17 L28 28 M16 43 L28 32 M41 30 L47 30" stroke="#8b93b8" stroke-width="2.2" stroke-linecap="round"/>
+      </svg>
+      <div>
+        <h1>Synapse<span class="spark">·</span>Lab</h1>
+        <div class="tag">Turn the dials, watch a single neuron think. Signals flow, the sum builds, and the neuron decides to fire — or stay quiet.</div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:10px">
+      <div class="modeswitch">
+        <button id="m-play" class="on">Free Play</button>
+        <button id="m-chal">Guided Challenge</button>
+        <button id="m-deep">Deep Net</button>
+      </div>
+      <button id="soundBtn" class="sound">♪ sound: off</button>
+    </div>
+  </header>
+
+  <!-- ===================== LAB ===================== -->
+  <div class="lab" id="neuronLab">
+    <!-- controls -->
+    <div class="panel">
+      <h2><span class="dot"></span>Inputs &amp; Weights</h2>
+
+      <div class="ctrl" id="c-x1">
+        <div class="row"><label>Input x₁</label><span class="val" id="v-x1">1.00</span></div>
+        <input type="range" id="x1" min="0" max="1" step="0.01" value="1">
+        <div class="toggles"><button data-set="x1,0">0</button><button data-set="x1,1" class="on">1</button></div>
+      </div>
+      <div class="ctrl" id="c-x2">
+        <div class="row"><label>Input x₂</label><span class="val" id="v-x2">1.00</span></div>
+        <input type="range" id="x2" min="0" max="1" step="0.01" value="1">
+        <div class="toggles"><button data-set="x2,0">0</button><button data-set="x2,1" class="on">1</button></div>
+      </div>
+
+      <div class="ctrl" id="c-w1">
+        <div class="row"><label>Weight w₁</label><span class="val" id="v-w1">0.50</span></div>
+        <input type="range" id="w1" min="-2" max="2" step="0.05" value="0.5">
+      </div>
+      <div class="ctrl" id="c-w2">
+        <div class="row"><label>Weight w₂</label><span class="val" id="v-w2">0.50</span></div>
+        <input type="range" id="w2" min="-2" max="2" step="0.05" value="0.5">
+      </div>
+      <div class="ctrl" id="c-b">
+        <div class="row"><label>Bias b <span style="color:var(--faint);font-weight:400">(= −threshold)</span></label><span class="val" id="v-b">-0.70</span></div>
+        <input type="range" id="b" min="-2" max="2" step="0.05" value="-0.7">
+      </div>
+    </div>
+
+    <!-- stage -->
+    <div class="stage">
+      <div class="panel" style="padding:14px">
+        <h2><span class="dot"></span>The Neuron</h2>
+        <div class="stagebox">
+          <div class="verdict quiet" id="verdict">· quiet ·</div>
+          <svg id="net" viewBox="0 0 720 380" aria-label="neuron diagram">
+            <defs>
+              <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+                <feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+            </defs>
+            <!-- edges -->
+            <line id="e1" x1="120" y1="110" x2="320" y2="190" stroke="#888" stroke-width="3"/>
+            <line id="e2" x1="120" y1="270" x2="320" y2="190" stroke="#888" stroke-width="3"/>
+            <line id="e3" x1="380" y1="190" x2="470" y2="190" stroke="#1fd9e3" stroke-width="3"/>
+            <line id="e4" x1="540" y1="190" x2="630" y2="190" stroke="#1fd9e3" stroke-width="3"/>
+            <!-- pulses get injected -->
+            <g id="pulses"></g>
+            <!-- input nodes -->
+            <g>
+              <circle cx="120" cy="110" r="30" fill="#0e1430" stroke="#1fd9e3" stroke-width="2.5"/>
+              <text x="120" y="104" text-anchor="middle" fill="#8b93b8" font-size="13" font-family="Space Mono">x₁</text>
+              <text id="nx1" x="120" y="124" text-anchor="middle" fill="#e9edfb" font-size="16" font-weight="700" font-family="Space Mono">1.0</text>
+              <circle cx="120" cy="270" r="30" fill="#0e1430" stroke="#1fd9e3" stroke-width="2.5"/>
+              <text x="120" y="264" text-anchor="middle" fill="#8b93b8" font-size="13" font-family="Space Mono">x₂</text>
+              <text id="nx2" x="120" y="284" text-anchor="middle" fill="#e9edfb" font-size="16" font-weight="700" font-family="Space Mono">1.0</text>
+            </g>
+            <!-- contribution labels -->
+            <text id="ce1" x="230" y="135" text-anchor="middle" fill="#8b93b8" font-size="12" font-family="Space Mono">+0.50</text>
+            <text id="ce2" x="230" y="248" text-anchor="middle" fill="#8b93b8" font-size="12" font-family="Space Mono">+0.50</text>
+            <!-- sum node -->
+            <circle cx="350" cy="190" r="34" fill="#0e1430" stroke="#e9edfb" stroke-width="2.5"/>
+            <text x="350" y="184" text-anchor="middle" fill="#8b93b8" font-size="12" font-family="Space Mono">Σ + b</text>
+            <text id="nsum" x="350" y="206" text-anchor="middle" fill="#e9edfb" font-size="17" font-weight="700" font-family="Space Mono">0.3</text>
+            <!-- activation node -->
+            <rect x="470" y="158" width="70" height="64" rx="12" fill="#0e1430" stroke="#1fd9e3" stroke-width="2.5"/>
+            <text x="505" y="186" text-anchor="middle" fill="#8b93b8" font-size="11" font-family="Space Mono">f(z)</text>
+            <text id="nact" x="505" y="206" text-anchor="middle" fill="#1fd9e3" font-size="15" font-weight="700" font-family="Space Mono">step</text>
+            <!-- output node + firing ring -->
+            <circle id="ring" cx="660" cy="190" r="30" fill="none" stroke="#ffc23d" stroke-width="3" opacity="0"/>
+            <circle id="outNode" cx="660" cy="190" r="30" fill="#0e1430" stroke="#8b93b8" stroke-width="2.5"/>
+            <text x="660" y="184" text-anchor="middle" fill="#8b93b8" font-size="12" font-family="Space Mono">y</text>
+            <text id="nout" x="660" y="206" text-anchor="middle" fill="#e9edfb" font-size="16" font-weight="700" font-family="Space Mono">0</text>
+            <!-- captions -->
+            <text x="120" y="330" text-anchor="middle" fill="#5b6a99" font-size="11" font-family="DM Sans">inputs</text>
+            <text x="350" y="252" text-anchor="middle" fill="#5b6a99" font-size="11" font-family="DM Sans">weighted sum</text>
+            <text x="505" y="248" text-anchor="middle" fill="#5b6a99" font-size="11" font-family="DM Sans">firing rule</text>
+            <text x="660" y="248" text-anchor="middle" fill="#5b6a99" font-size="11" font-family="DM Sans">output</text>
+          </svg>
+        </div>
+        <div class="hintbar">
+          <span class="chip">Edge <b>thickness</b> = weight size</span>
+          <span class="chip"><b style="color:var(--cyan)">cyan</b> = positive · <b style="color:var(--coral)">coral</b> = negative</span>
+          <span class="chip">Pulses speed up with stronger signal</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- right: math + activation + truth -->
+    <div class="panel">
+      <h2><span class="dot"></span>Firing Rule</h2>
+      <div class="actsel" id="acts">
+        <button data-act="step" class="on">Step</button>
+        <button data-act="sign">Sign</button>
+        <button data-act="sigmoid">Sigmoid</button>
+        <button data-act="tanh">Tanh</button>
+        <button data-act="relu">ReLU</button>
+        <button style="visibility:hidden" aria-hidden="true"></button>
+      </div>
+      <div class="actcurve"><svg id="curve" viewBox="0 0 240 110" style="width:100%;height:auto"></svg></div>
+
+      <h2 style="margin-top:18px"><span class="dot"></span>Live Math</h2>
+      <div class="math" id="math"></div>
+    </div>
+  </div>
+
+  <!-- truth table strip -->
+  <div class="panel" id="truthPanel" style="margin-top:18px">
+    <h2><span class="dot"></span>What it does for every 0/1 combo <span style="color:var(--faint);font-weight:400;text-transform:none;letter-spacing:0">— the neuron's "truth table", updating live</span></h2>
+    <div class="tt" id="tt"></div>
+  </div>
+
+  <!-- ===================== CHALLENGE ===================== -->
+  <div class="challenge hidden" id="challenge">
+    <div class="cwrap">
+      <div class="quest">
+        <div class="lvl" id="c-lvl">CHALLENGE 1 OF 4</div>
+        <h3 id="c-title">Build an AND gate</h3>
+        <p id="c-desc"></p>
+        <div class="stars" id="stars"></div>
+        <div class="cbtns">
+          <button class="btn primary" id="checkBtn">Check my neuron ⚡</button>
+          <button class="btn ghost" id="hintBtn">Need a hint</button>
+          <button class="btn ghost" id="nextBtn" disabled>Next challenge →</button>
+        </div>
+        <div class="feedback info" id="feedback">Set the dials so the live truth table matches the target on the right, then hit Check.</div>
+      </div>
+      <div class="target">
+        <h4>Target — fire (⚡) exactly here</h4>
+        <div class="tt" id="ttTarget"></div>
+        <div class="note">The panels above are your live neuron. Match it to this.</div>
+      </div>
+    </div>
+
+    <!-- XOR reveal -->
+    <div class="reveal" id="reveal">
+      <h3>That's the XOR wall — and it's not your fault.</h3>
+      <p>One neuron can only draw <b>one straight line</b> to split "fire" from "quiet". AND and OR are splittable by a line. XOR is not — the two "fire" cases sit on opposite corners. No weights can fix it.</p>
+      <p>The fix from the slides: add a <b>hidden layer</b>. Two neurons each draw a line; a third combines them. Toggle the inputs below and watch a 2‑2‑1 network nail XOR.</p>
+      <div class="xorbox">
+        <svg id="xornet" viewBox="0 0 720 320" style="width:100%;height:auto"></svg>
+      </div>
+      <div class="cbtns" style="margin-top:14px">
+        <button class="btn ghost" id="xx00">x = (0,0)</button>
+        <button class="btn ghost" id="xx01">x = (0,1)</button>
+        <button class="btn ghost" id="xx10">x = (1,0)</button>
+        <button class="btn ghost" id="xx11">x = (1,1)</button>
+        <button class="btn primary" id="finishBtn">Finish — I get it ✓</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== DEEP NET ===================== -->
+  <div id="deepnet" class="hidden" style="margin-top:22px">
+
+    <!-- BACKPROP TRAINER -->
+    <div class="panel">
+      <h2><span class="dot"></span>Backprop Trainer — teach a 2-layer net to solve XOR</h2>
+      <div class="dnrow">
+        <div>
+          <div class="ctrl"><div class="row"><label>Hidden neurons</label><span class="val" id="t-hv">4</span></div>
+            <input type="range" id="t-h" min="2" max="8" step="1" value="4"></div>
+          <div class="ctrl"><div class="row"><label>Learning rate α</label><span class="val" id="t-lrv">0.80</span></div>
+            <input type="range" id="t-lr" min="0.05" max="3" step="0.05" value="0.8"></div>
+          <div style="font-weight:600;font-size:13.5px;margin:6px 0 8px">Hidden activation</div>
+          <div class="actsel" id="t-acts" style="grid-template-columns:1fr 1fr 1fr">
+            <button data-tact="tanh" class="on">Tanh</button>
+            <button data-tact="sigmoid">Sigmoid</button>
+            <button data-tact="relu">ReLU</button>
+          </div>
+          <div class="cbtns" style="margin-top:14px">
+            <button class="btn primary" id="t-train">Train ▶</button>
+            <button class="btn ghost" id="t-step">Step ×200</button>
+            <button class="btn ghost" id="t-reset">Reset</button>
+          </div>
+          <div class="hintbar" style="margin-top:14px">
+            <span class="flowchip"><span class="flowline"></span> forward pass</span>
+            <span class="flowchip"><span class="flowline b"></span> backward pass</span>
+          </div>
+          <div class="note" id="t-status">Press Train and watch the loss fall as backprop nudges every weight toward the answer.</div>
+        </div>
+        <div class="stagebox" style="min-height:280px">
+          <svg id="trainNet" viewBox="0 0 560 300" style="width:100%;height:auto"></svg>
+        </div>
+        <div>
+          <div style="display:flex;justify-content:space-between;align-items:baseline">
+            <span style="font-family:var(--mono);font-size:12px;color:var(--muted)">epoch <b id="t-epoch" style="color:var(--ink)">0</b></span>
+            <span style="font-family:var(--mono);font-size:12px;color:var(--muted)">loss <b id="t-loss" style="color:var(--gold)">—</b></span>
+          </div>
+          <canvas id="lossChart" width="280" height="120" style="width:100%;height:120px;background:rgba(8,11,22,.5);border:1px solid var(--line);border-radius:12px;margin-top:6px"></canvas>
+          <div class="note" style="margin:10px 0 5px">Decision boundary <span style="color:var(--faint)">(prediction across the whole input square)</span></div>
+          <canvas id="boundary" width="220" height="220" style="width:100%;max-width:230px;aspect-ratio:1;display:block;margin:0 auto;border:1px solid var(--line);border-radius:12px;background:#0e1430"></canvas>
+          <div class="note" style="margin:8px 0 5px">Predictions <span style="color:var(--faint)">(click a row to view it in the net)</span></div>
+          <div class="tt" id="t-preds" style="grid-template-columns:1fr 1fr"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- GRADIENT X-RAY -->
+    <div class="panel" style="margin-top:18px">
+      <h2><span class="dot"></span>Gradient-flow X-ray — vanishing &amp; exploding gradients</h2>
+      <div class="dnrow">
+        <div>
+          <div class="ctrl"><div class="row"><label>Network depth</label><span class="val" id="g-dv">6 layers</span></div>
+            <input type="range" id="g-depth" min="2" max="9" step="1" value="6"></div>
+          <div class="ctrl"><div class="row"><label>Weight-init scale</label><span class="val" id="g-sv">0.60</span></div>
+            <input type="range" id="g-scale" min="0.1" max="3" step="0.1" value="0.6"></div>
+          <div style="font-weight:600;font-size:13.5px;margin:6px 0 8px">Hidden activation</div>
+          <div class="actsel" id="g-acts" style="grid-template-columns:1fr 1fr 1fr">
+            <button data-gact="sigmoid" class="on">Sigmoid</button>
+            <button data-gact="tanh">Tanh</button>
+            <button data-gact="relu">ReLU</button>
+          </div>
+          <div class="cbtns" style="margin-top:12px">
+            <button class="btn ghost preset" id="g-van">Make it vanish</button>
+            <button class="btn ghost preset" id="g-exp">Make it explode</button>
+          </div>
+          <div class="cbtns" style="margin-top:8px">
+            <button class="btn ghost preset" id="g-heal">Heal it (ReLU)</button>
+            <button class="btn ghost" id="g-reroll">↻ Re-roll</button>
+          </div>
+          <button class="btn ghost" id="g-clip" style="margin-top:10px;width:100%">Gradient clipping: off</button>
+        </div>
+        <div>
+          <div class="bars" id="g-bars"></div>
+          <div class="note">Each bar = how strong the gradient still is when it reaches that layer during backprop (output = tallest). Watch it fade toward the input — or blow up.</div>
+          <div class="xorbox" style="margin-top:10px"><svg id="g-chain" viewBox="0 0 560 90" style="width:100%;height:auto"></svg></div>
+        </div>
+        <div>
+          <div id="g-verdict" class="verdictbig vb-ok">Healthy</div>
+          <div class="note" id="g-explain" style="margin-top:10px"></div>
+          <div class="note" style="margin-top:14px;color:var(--muted)">
+            <b style="color:var(--ink)">From the slides:</b> a vanishing gradient is a whisper down a long line — too faint by the time it reaches the front. Exploding is a tap on full blast, overflowing the cup. Fixes: ReLU, careful initialisation, gradient clipping, batch-norm, and skip-connections.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot">Built as a companion to “A Soft Introduction to Artificial Neural Networks”. Tweak any dial — nothing here is fixed in stone. <span class="kbd">no install needed</span></div>
+</div>
+
+<script>
+"use strict";
+/* ---------- state ---------- */
+const S = { x1:1, x2:1, w1:0.5, w2:0.5, b:-0.7, act:"step", sound:false };
+const $ = id => document.getElementById(id);
+
+/* ---------- activations ---------- */
+const ACT = {
+  step:   { fn:z=> z>=0?1:0,            fires:z=> z>=0,  label:"step",   range:[0,1]   },
+  sign:   { fn:z=> z>=0?1:-1,           fires:z=> z>=0,  label:"sign",   range:[-1,1]  },
+  sigmoid:{ fn:z=> 1/(1+Math.exp(-z)),  fires:z=> z>=0,  label:"sigmoid",range:[0,1]   },
+  tanh:   { fn:z=> Math.tanh(z),        fires:z=> z>=0,  label:"tanh",   range:[-1,1]  },
+  relu:   { fn:z=> Math.max(0,z),       fires:z=> z>0,   label:"ReLU",   range:[0,1]   },
+};
+const zOf = (x1,x2)=> S.w1*x1 + S.w2*x2 + S.b;
+const fmt = n => (n>=0?"+":"") + n.toFixed(2);
+const fmt1 = n => n.toFixed(2);
+
+/* ---------- sound ---------- */
+let actx=null;
+function blip(freq=520){
+  if(!S.sound) return;
+  try{
+    actx = actx || new (window.AudioContext||window.webkitAudioContext)();
+    const o=actx.createOscillator(), g=actx.createGain();
+    o.frequency.value=freq; o.type="triangle";
+    g.gain.setValueAtTime(0.0001,actx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.12,actx.currentTime+0.01);
+    g.gain.exponentialRampToValueAtTime(0.0001,actx.currentTime+0.22);
+    o.connect(g).connect(actx.destination); o.start(); o.stop(actx.currentTime+0.24);
+  }catch(e){}
+}
+
+/* ---------- main neuron diagram update ---------- */
+let lastFiring=null;
+function render(){
+  const z = zOf(S.x1,S.x2);
+  const a = ACT[S.act].fn(z);
+  const firing = ACT[S.act].fires(z);
+  const c1 = S.w1*S.x1, c2 = S.w2*S.x2;
+
+  // control labels
+  $("v-x1").textContent=fmt1(S.x1); $("v-x2").textContent=fmt1(S.x2);
+  $("v-w1").textContent=fmt(S.w1);  $("v-w2").textContent=fmt(S.w2); $("v-b").textContent=fmt(S.b);
+  $("c-w1").classList.toggle("neg",S.w1<0); $("c-w2").classList.toggle("neg",S.w2<0); $("c-b").classList.toggle("neg",S.b<0);
+
+  // node texts
+  $("nx1").textContent=fmt1(S.x1); $("nx2").textContent=fmt1(S.x2);
+  $("nsum").textContent=fmt1(z);
+  $("nact").textContent=ACT[S.act].label;
+  $("nout").textContent = (S.act==="sigmoid"||S.act==="tanh"||S.act==="relu") ? a.toFixed(2) : (a===0?"0":(a>0?"+"+a:""+a));
+  $("ce1").textContent=fmt(c1); $("ce2").textContent=fmt(c2);
+  $("ce1").setAttribute("fill", c1>=0?"#1fd9e3":"#ff5c7a");
+  $("ce2").setAttribute("fill", c2>=0?"#1fd9e3":"#ff5c7a");
+
+  // edge styling by weight
+  styleEdge("e1",S.w1,c1); styleEdge("e2",S.w2,c2);
+  const aMag = Math.min(1,Math.abs(a)||(firing?1:0));
+  $("e3").setAttribute("stroke-width", 2+aMag*5);
+  $("e4").setAttribute("stroke", firing?"#ffc23d":"#39406b");
+  $("e4").setAttribute("stroke-width", firing?6:2.5);
+
+  // output node + verdict
+  const out=$("outNode"), ring=$("ring"), v=$("verdict");
+  if(firing){
+    out.setAttribute("fill","#ffc23d"); out.setAttribute("stroke","#ffc23d"); out.setAttribute("filter","url(#glow)");
+    v.className="verdict fire"; v.textContent="⚡ FIRES";
+    ring.classList.add("ringing");
+  }else{
+    out.setAttribute("fill","#0e1430"); out.setAttribute("stroke","#39406b"); out.removeAttribute("filter");
+    v.className="verdict quiet"; v.textContent="· quiet ·";
+    ring.classList.remove("ringing");
+  }
+  if(lastFiring!==null && firing!==lastFiring && firing){ blip(620); spark(); }
+  lastFiring=firing;
+
+  // math readout
+  const k1=`(<span class="${S.w1<0?'kn':'k'}">${fmt(S.w1)}</span>·${fmt1(S.x1)})`;
+  const k2=`(<span class="${S.w2<0?'kn':'k'}">${fmt(S.w2)}</span>·${fmt1(S.x2)})`;
+  const kb=`(<span class="b">${fmt(S.b)}</span>)`;
+  let aExpr;
+  if(S.act==="step") aExpr=`step(${fmt1(z)}) = <span class="b">${z>=0?1:0}</span>`;
+  else if(S.act==="sign") aExpr=`sign(${fmt1(z)}) = <span class="b">${z>=0?'+1':'−1'}</span>`;
+  else if(S.act==="sigmoid") aExpr=`σ(${fmt1(z)}) = <span class="b">${a.toFixed(3)}</span>`;
+  else if(S.act==="tanh") aExpr=`tanh(${fmt1(z)}) = <span class="b">${a.toFixed(3)}</span>`;
+  else aExpr=`max(0, ${fmt1(z)}) = <span class="b">${a.toFixed(2)}</span>`;
+  $("math").innerHTML =
+    `z = w₁·x₁ + w₂·x₂ + b<br>`+
+    `&nbsp;&nbsp;= ${k1} + ${k2} + ${kb}<br>`+
+    `&nbsp;&nbsp;= <span class="z">${fmt1(z)}</span><br><br>`+
+    `a = f(z) = ${aExpr}<br><br>`+
+    `decision: <b style="color:${firing?'var(--gold)':'var(--muted)'}">${firing?'FIRES ⚡':'stays quiet'}</b>`;
+
+  drawCurve(z,a);
+  updateTruth();
+  if(challengeOn) refreshChallengeLive();
+}
+function styleEdge(id,w,contrib){
+  const e=$(id), mag=Math.abs(w);
+  e.setAttribute("stroke", w>=0?"#1fd9e3":"#ff5c7a");
+  e.setAttribute("stroke-width", 1.5+mag*3);
+  e.setAttribute("stroke-opacity", 0.35+Math.min(0.65,mag*0.4));
+}
+
+/* ---------- pulses ---------- */
+const EDGES=[
+  {id:"e1",x1:120,y1:110,x2:320,y2:190,kind:"in",which:1},
+  {id:"e2",x1:120,y1:270,x2:320,y2:190,kind:"in",which:2},
+  {id:"e3",x1:380,y1:190,x2:470,y2:190,kind:"mid"},
+  {id:"e4",x1:540,y1:190,x2:630,y2:190,kind:"out"},
+];
+const pulses=[];
+const PG=$("pulses");
+EDGES.forEach((e,ei)=>{ for(let i=0;i<3;i++){
+  const c=document.createElementNS("http://www.w3.org/2000/svg","circle");
+  c.setAttribute("r","4"); PG.appendChild(c);
+  pulses.push({el:c,e:ei,t:i/3});
+}});
+const reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+let last=performance.now();
+function animate(now){
+  const dt=Math.min(0.05,(now-last)/1000); last=now;
+  const z=zOf(S.x1,S.x2), a=ACT[S.act].fn(z), firing=ACT[S.act].fires(z);
+  const c1=Math.abs(S.w1*S.x1), c2=Math.abs(S.w2*S.x2);
+  pulses.forEach(p=>{
+    const e=EDGES[p.e]; let mag, col, on;
+    if(e.kind==="in"){ const c=e.which===1?c1:c2; mag=c; col=(e.which===1?S.w1:S.w2)>=0?"#1fd9e3":"#ff5c7a"; on=c>0.04; }
+    else if(e.kind==="mid"){ mag=Math.min(1,Math.abs(a)||(firing?0.8:0)); col="#1fd9e3"; on=mag>0.04; }
+    else { mag=firing?1:0; col="#ffc23d"; on=firing; }
+    const speed = reduceMotion?0:(0.25+Math.min(1.6,mag*0.9));
+    p.t += speed*dt; if(p.t>=1)p.t-=1;
+    if(on){
+      const x=e.x1+(e.x2-e.x1)*p.t, y=e.y1+(e.y2-e.y1)*p.t;
+      p.el.setAttribute("cx",x); p.el.setAttribute("cy",y);
+      p.el.setAttribute("fill",col);
+      p.el.setAttribute("opacity", (0.5+Math.min(0.5,mag*0.5)).toFixed(2));
+      p.el.setAttribute("r", (3+Math.min(3,mag*2)).toFixed(1));
+    } else { p.el.setAttribute("opacity","0"); }
+  });
+  requestAnimationFrame(animate);
+}
+requestAnimationFrame(animate);
+
+/* firing ring CSS animation via attribute toggling */
+const ringStyle=document.createElement("style");
+ringStyle.textContent="@keyframes ring{0%{r:30px;opacity:.7}100%{r:52px;opacity:0}} #ring.ringing{animation:ring 1.1s ease-out infinite}";
+document.head.appendChild(ringStyle);
+
+/* ---------- activation curve ---------- */
+function drawCurve(z,a){
+  const svg=$("curve"); const W=240,H=110,pad=14;
+  const rng=ACT[S.act].range; const ymin=rng[0],ymax=rng[1];
+  const X=zz=> pad+( (zz+4)/8 )*(W-2*pad);
+  const Y=yy=> (H-pad) - ((yy-ymin)/(ymax-ymin))*(H-2*pad);
+  let d="";
+  for(let i=0;i<=60;i++){ const zz=-4+8*i/60; const yy=Math.max(ymin,Math.min(ymax,ACT[S.act].fn(zz)));
+    d+=(i?"L":"M")+X(zz).toFixed(1)+" "+Y(yy).toFixed(1)+" "; }
+  const cx=X(Math.max(-4,Math.min(4,z))), cy=Y(Math.max(ymin,Math.min(ymax,a)));
+  svg.innerHTML=
+    `<line x1="${X(0)}" y1="${pad-4}" x2="${X(0)}" y2="${H-pad+4}" stroke="#39406b" stroke-width="1"/>`+
+    `<line x1="${pad-4}" y1="${Y(0)}" x2="${W-pad+4}" y2="${Y(0)}" stroke="#39406b" stroke-width="1"/>`+
+    `<path d="${d}" fill="none" stroke="#1fd9e3" stroke-width="2.4"/>`+
+    `<circle cx="${cx.toFixed(1)}" cy="${cy.toFixed(1)}" r="5" fill="#ffc23d"/>`+
+    `<text x="${W-pad}" y="${H-2}" text-anchor="end" fill="#5b6a99" font-size="9" font-family="Space Mono">z →</text>`;
+}
+
+/* ---------- truth table ---------- */
+const COMBOS=[[0,0],[0,1],[1,0],[1,1]];
+function firesAt(x1,x2){ return ACT[S.act].fires(S.w1*x1+S.w2*x2+S.b); }
+function updateTruth(){
+  const tt=$("tt"); if(tt.children.length===0){ COMBOS.forEach(()=>{ const d=document.createElement("div"); d.className="cell"; tt.appendChild(d); }); }
+  COMBOS.forEach((c,i)=>{
+    const z=S.w1*c[0]+S.w2*c[1]+S.b; const f=firesAt(c[0],c[1]);
+    const cell=tt.children[i];
+    cell.className="cell "+(f?"fire":"quiet")+(challengeOn?(f===!!CUR.target[i]?" ok":" bad"):"");
+    cell.innerHTML=`<div class="in">(${c[0]}, ${c[1]})</div><div class="out">${f?"⚡":"·"}</div><div class="tgt">z=${z.toFixed(2)}</div>`;
+  });
+}
+
+/* ---------- challenge ---------- */
+const CHALLENGES=[
+  {name:"AND gate",  target:[0,0,0,1], desc:"Fire ONLY when both inputs are 1. (Hint: each input alone shouldn't be enough — they must team up to clear the bias.)", hint:"Try w₁ = w₂ ≈ +1.0 and a bias around −1.5 so one input alone can't reach 0."},
+  {name:"OR gate",   target:[0,1,1,1], desc:"Fire when AT LEAST ONE input is 1.", hint:"Keep positive weights, but make the bias gentler (≈ −0.5) so a single input can already push z above 0."},
+  {name:"NAND gate", target:[1,1,1,0], desc:"Fire EXCEPT when both inputs are 1. (This one needs negative weights.)", hint:"Flip the AND idea: w₁ = w₂ ≈ −1.0 with a bias around +1.5."},
+  {name:"XOR gate",  target:[0,1,1,0], desc:"Fire when EXACTLY ONE input is 1 (not both, not neither). Give it an honest try…", hint:"Go ahead and experiment — but notice you can never get all four cells right at once. There's a reason.", xor:true},
+];
+let challengeOn=false, curIdx=0, CUR=CHALLENGES[0], xorAttempts=0, done=[false,false,false,false];
+
+function buildStars(){
+  const s=$("stars"); s.innerHTML="";
+  CHALLENGES.forEach((c,i)=>{ const d=document.createElement("div");
+    d.className="star"+(done[i]?" done":"")+(i===curIdx?" active":"");
+    d.innerHTML='<svg viewBox="0 0 24 24" fill="'+(done[i]?'#2a1a00':'#5b6a99')+'"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.8 5.9 20.4l1.4-6.8L2.2 9l6.9-.7z"/></svg>';
+    s.appendChild(d);
+  });
+}
+function buildTargetTable(){
+  const tt=$("ttTarget"); tt.innerHTML="";
+  COMBOS.forEach((c,i)=>{ const d=document.createElement("div");
+    const f=!!CUR.target[i]; d.className="cell "+(f?"fire":"quiet");
+    d.innerHTML=`<div class="in">(${c[0]}, ${c[1]})</div><div class="out">${f?"⚡":"·"}</div>`;
+    tt.appendChild(d);
+  });
+}
+function loadChallenge(i){
+  curIdx=i; CUR=CHALLENGES[i]; xorAttempts=0;
+  $("c-lvl").textContent="CHALLENGE "+(i+1)+" OF "+CHALLENGES.length;
+  $("c-title").textContent="Build "+(CUR.name.includes("gate")?"an ":"")+CUR.name.replace(" gate","")+(CUR.name.includes("gate")?" gate":"");
+  $("c-desc").textContent=CUR.desc;
+  $("feedback").className="feedback info";
+  $("feedback").textContent="Set the dials so your live truth table matches the target, then hit Check.";
+  $("nextBtn").disabled = !done[i];
+  $("reveal").classList.remove("show");
+  buildStars(); buildTargetTable(); updateTruth();
+}
+function refreshChallengeLive(){ /* keeps target outline fresh */ }
+
+function checkChallenge(){
+  const got=COMBOS.map(c=>firesAt(c[0],c[1])?1:0);
+  const ok=got.every((g,i)=>g===CUR.target[i]);
+  if(ok){
+    done[curIdx]=true; buildStars();
+    $("feedback").className="feedback good";
+    $("feedback").textContent="Nailed it! That's a working "+CUR.name+". "+(curIdx<3?"On to the next one.":"");
+    $("nextBtn").disabled=false; blip(720); burst();
+  } else {
+    if(CUR.xor){
+      xorAttempts++;
+      if(xorAttempts>=2){
+        $("feedback").className="feedback info";
+        $("feedback").textContent="Still no luck? You're not missing a trick — look just below.";
+        $("reveal").classList.add("show"); $("reveal").scrollIntoView({behavior:"smooth",block:"center"});
+        done[3]=true; buildStars(); $("nextBtn").disabled=false; setXor(0,1);
+      } else {
+        const wrong=got.filter((g,i)=>g!==CUR.target[i]).length;
+        $("feedback").className="feedback bad";
+        $("feedback").textContent=wrong+" cell(s) off. Try again — get as close as you can.";
+      }
+    } else {
+      const wrong=got.filter((g,i)=>g!==CUR.target[i]).length;
+      $("feedback").className="feedback bad";
+      $("feedback").textContent=wrong+" cell(s) don't match yet. Adjust the weights/bias and check again.";
+      blip(240);
+    }
+  }
+}
+
+/* ---------- hidden-layer XOR demo ---------- */
+const XW={ h:[[1,1],[1,1]], hb:[-0.5,-1.5], o:[1,-1], ob:-0.5 };
+let XIN=[0,1];
+function xstep(z){return z>=0?1:0;}
+function drawXor(){
+  const x1=XIN[0],x2=XIN[1];
+  const h1=xstep(XW.h[0][0]*x1+XW.h[0][1]*x2+XW.hb[0]);
+  const h2=xstep(XW.h[1][0]*x1+XW.h[1][1]*x2+XW.hb[1]);
+  const y =xstep(XW.o[0]*h1+XW.o[1]*h2+XW.ob);
+  const N=(cx,cy,val,lab,on)=>`
+    <circle cx="${cx}" cy="${cy}" r="26" fill="${on?'#ffc23d':'#0e1430'}" stroke="${on?'#ffc23d':'#39406b'}" stroke-width="2.5" ${on?'filter="url(#glow2)"':''}/>
+    <text x="${cx}" y="${cy-4}" text-anchor="middle" fill="${on?'#2a1a00':'#8b93b8'}" font-size="11" font-family="Space Mono">${lab}</text>
+    <text x="${cx}" y="${cy+12}" text-anchor="middle" fill="${on?'#2a1a00':'#e9edfb'}" font-size="14" font-weight="700" font-family="Space Mono">${val}</text>`;
+  const L=(a,b,c,d,col,w)=>`<line x1="${a}" y1="${b}" x2="${c}" y2="${d}" stroke="${col}" stroke-width="${w}" stroke-opacity="0.8"/>`;
+  const xorY = (x1!==x2)?1:0;
+  $("xornet").innerHTML=`
+    <defs><filter id="glow2" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+    ${L(110,90,300,110,'#1fd9e3',2)}${L(110,90,300,230,'#1fd9e3',2)}
+    ${L(110,230,300,110,'#1fd9e3',2)}${L(110,230,300,230,'#1fd9e3',2)}
+    ${L(326,110,560,170,h1?'#ffc23d':'#39406b',h1?4:2)}
+    ${L(326,230,560,170,'#ff5c7a',h2?4:2)}
+    ${N(110,90,x1,'x₁',x1===1)}
+    ${N(110,230,x2,'x₂',x2===1)}
+    ${N(313,110,h1,'h₁ (OR)',h1===1)}
+    ${N(313,230,h2,'h₂ (AND)',h2===1)}
+    ${N(586,170,y,'y (XOR)',y===1)}
+    <text x="313" y="290" text-anchor="middle" fill="#5b6a99" font-size="11" font-family="DM Sans">hidden layer</text>
+    <text x="586" y="225" text-anchor="middle" fill="#5b6a99" font-size="11" font-family="DM Sans">output</text>
+    <text x="110" y="290" text-anchor="middle" fill="#5b6a99" font-size="11" font-family="DM Sans">inputs</text>
+    <text x="360" y="36" text-anchor="middle" fill="${y===xorY?'#1fd9e3':'#ff5c7a'}" font-size="13" font-weight="700" font-family="Space Mono">XOR(${x1},${x2}) should be ${xorY} → network says ${y} ${y===xorY?'✓':'✗'}</text>`;
+}
+function setXor(a,b){ XIN=[a,b]; drawXor(); blip(560); }
+
+/* ---------- fx: confetti + spark ---------- */
+const fx=$("fx"), fxc=fx.getContext("2d"); let parts=[];
+function sizeFx(){ fx.width=innerWidth; fx.height=innerHeight; }
+sizeFx(); addEventListener("resize",sizeFx);
+function burst(){
+  const cx=innerWidth*0.5, cy=innerHeight*0.42, cols=["#1fd9e3","#ffc23d","#ff5c7a","#e9edfb"];
+  for(let i=0;i<120;i++){ const a=Math.random()*Math.PI*2, sp=4+Math.random()*9;
+    parts.push({x:cx,y:cy,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-4,life:1,col:cols[i%cols.length],s:3+Math.random()*4,rot:Math.random()*6}); }
+}
+function spark(){ const o=$("outNode"); /* lightweight: confetti-less micro burst near output */
+  const r=fx.getBoundingClientRect(); const cx=innerWidth*0.62, cy=innerHeight*0.42;
+  for(let i=0;i<16;i++){ const a=Math.random()*Math.PI*2, sp=2+Math.random()*5;
+    parts.push({x:cx,y:cy,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,life:1,col:"#ffc23d",s:2+Math.random()*2,rot:0}); }
+}
+function fxLoop(){
+  fxc.clearRect(0,0,fx.width,fx.height);
+  parts=parts.filter(p=>p.life>0);
+  parts.forEach(p=>{ p.vy+=0.22; p.x+=p.vx; p.y+=p.vy; p.life-=0.016; p.rot+=0.2;
+    fxc.globalAlpha=Math.max(0,p.life); fxc.fillStyle=p.col;
+    fxc.save(); fxc.translate(p.x,p.y); fxc.rotate(p.rot); fxc.fillRect(-p.s/2,-p.s/2,p.s,p.s*1.6); fxc.restore();
+  });
+  fxc.globalAlpha=1; requestAnimationFrame(fxLoop);
+}
+fxLoop();
+
+/* ---------- wiring ---------- */
+["x1","x2","w1","w2","b"].forEach(id=>{
+  $(id).addEventListener("input",e=>{ S[id]=parseFloat(e.target.value); syncToggles(); render(); });
+});
+function syncToggles(){
+  document.querySelectorAll(".toggles button").forEach(btn=>{
+    const [k,vv]=btn.dataset.set.split(","); btn.classList.toggle("on", Math.abs(S[k]-parseFloat(vv))<0.001);
+  });
+}
+document.querySelectorAll(".toggles button").forEach(btn=>{
+  btn.addEventListener("click",()=>{ const [k,vv]=btn.dataset.set.split(","); S[k]=parseFloat(vv); $(k).value=S[k]; syncToggles(); render(); });
+});
+document.querySelectorAll("#acts button[data-act]").forEach(btn=>{
+  btn.addEventListener("click",()=>{ S.act=btn.dataset.act;
+    document.querySelectorAll("#acts button").forEach(b=>b.classList.remove("on")); btn.classList.add("on"); render(); });
+});
+$("soundBtn").addEventListener("click",()=>{ S.sound=!S.sound; $("soundBtn").classList.toggle("on",S.sound);
+  $("soundBtn").textContent="♪ sound: "+(S.sound?"on":"off"); if(S.sound) blip(700); });
+
+/* mode switch */
+$("m-play").addEventListener("click",()=>setMode('play'));
+$("m-chal").addEventListener("click",()=>setMode('challenge'));
+$("m-deep").addEventListener("click",()=>setMode('deep'));
+function setMode(mode){
+  challengeOn=(mode==='challenge'); deepActive=(mode==='deep');
+  $("m-play").classList.toggle("on",mode==='play');
+  $("m-chal").classList.toggle("on",mode==='challenge');
+  $("m-deep").classList.toggle("on",mode==='deep');
+  $("neuronLab").classList.toggle("hidden",mode==='deep');
+  $("truthPanel").classList.toggle("hidden",mode==='deep');
+  $("challenge").classList.toggle("hidden",mode!=='challenge');
+  $("deepnet").classList.toggle("hidden",mode!=='deep');
+  if(mode==='challenge'){ loadChallenge(curIdx); $("challenge").scrollIntoView({behavior:"smooth",block:"start"}); }
+  if(mode==='deep'){ if(!trainer.net) initTrainer(); if(!xray.net) buildXray(); $("deepnet").scrollIntoView({behavior:"smooth",block:"start"}); }
+  else { trainer.running=false; const tb=$("t-train"); if(tb) tb.textContent="Train ▶"; }
+  render();
+}
+$("checkBtn").addEventListener("click",checkChallenge);
+$("hintBtn").addEventListener("click",()=>{ $("feedback").className="feedback info"; $("feedback").textContent="Hint — "+CUR.hint; });
+$("nextBtn").addEventListener("click",()=>{ if(curIdx<CHALLENGES.length-1) loadChallenge(curIdx+1); });
+$("xx00").addEventListener("click",()=>setXor(0,0));
+$("xx01").addEventListener("click",()=>setXor(0,1));
+$("xx10").addEventListener("click",()=>setXor(1,0));
+$("xx11").addEventListener("click",()=>setXor(1,1));
+$("finishBtn").addEventListener("click",()=>{ burst(); $("feedback").className="feedback good";
+  $("feedback").textContent="Nice — you've felt every part of a neuron, and seen why depth matters. That's the whole pipeline."; });
+
+/* ===================== DEEP NET: real backprop engine ===================== */
+function randn(){let u=0,v=0;while(!u)u=Math.random();while(!v)v=Math.random();return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}
+const ACTF={
+  sigmoid:{f:z=>1/(1+Math.exp(-z)), df:z=>{const s=1/(1+Math.exp(-z));return s*(1-s);}},
+  tanh:{f:z=>Math.tanh(z),         df:z=>{const t=Math.tanh(z);return 1-t*t;}},
+  relu:{f:z=>z>0?z:0,              df:z=>z>0?1:0},
+};
+const sig=z=>1/(1+Math.exp(-z)), sigP=z=>{const s=sig(z);return s*(1-s);};
+function makeNet(sizes,act,scale){
+  const W=[],b=[];
+  for(let l=1;l<sizes.length;l++){const r=sizes[l],c=sizes[l-1];
+    const s=(scale==null)?(act==='relu'?Math.sqrt(2/c):Math.sqrt(1/c)):scale;
+    const Wl=[];for(let i=0;i<r;i++){const row=[];for(let j=0;j<c;j++)row.push(randn()*s);Wl.push(row);}
+    W.push(Wl); b.push(new Array(r).fill(0));}
+  return {sizes,act,W,b,A:null,Z:null};
+}
+function forward(net,x){let a=x;const A=[x],Z=[];
+  for(let l=0;l<net.W.length;l++){const isOut=l===net.W.length-1;
+    const z=net.W[l].map((row,i)=>{let s=net.b[l][i];for(let j=0;j<row.length;j++)s+=row[j]*a[j];return s;});
+    Z.push(z); const fn=isOut?sig:ACTF[net.act].f; a=z.map(fn); A.push(a);}
+  net.A=A; net.Z=Z; return a;
+}
+function backward(net,y){const L=net.W.length,dW=new Array(L),db=new Array(L);
+  let delta=net.A[L].map((ai,i)=>(ai-y[i])*sigP(net.Z[L-1][i]));
+  for(let l=L-1;l>=0;l--){const aPrev=net.A[l];
+    dW[l]=delta.map(d=>aPrev.map(aj=>d*aj)); db[l]=delta.slice();
+    if(l>0){const zprev=net.Z[l-1],dfp=ACTF[net.act].df;
+      delta=aPrev.map((_,j)=>{let s=0;for(let i=0;i<delta.length;i++)s+=net.W[l][i][j]*delta[i];return s*dfp(zprev[j]);});}
+  }
+  return {dW,db};
+}
+function makeStack(D,act,scale){ // pure hidden stack: input(2) -> D layers of width 4, no sigmoid output
+  const sizes=[2,...Array(D).fill(4)],W=[],b=[];
+  for(let l=1;l<sizes.length;l++){const r=sizes[l],c=sizes[l-1],Wl=[];
+    for(let i=0;i<r;i++){const row=[];for(let j=0;j<c;j++)row.push(randn()*scale);Wl.push(row);}
+    W.push(Wl); b.push(new Array(r).fill(0));}
+  return {sizes,act,W,b};
+}
+function xrayProfile(net,x,clip){ // inject a unit error at the top, propagate back; ||delta|| per layer
+  const Ws=net.W,D=Ws.length,Z=new Array(D+1); let a=x;
+  for(let k=0;k<D;k++){const z=Ws[k].map((row,i)=>{let s=net.b[k][i];for(let j=0;j<row.length;j++)s+=row[j]*a[j];return s;});Z[k+1]=z;a=z.map(ACTF[net.act].f);}
+  const nrm=d=>Math.sqrt(d.reduce((s,v)=>s+v*v,0)/d.length)+1e-12, norms=new Array(D);
+  let delta=new Array(net.sizes[D]).fill(1); norms[D-1]=nrm(delta);
+  for(let m=D;m>=2;m--){const Wm=Ws[m-1],zprev=Z[m-1],dfp=ACTF[net.act].df,nprev=net.sizes[m-1],nd=new Array(nprev).fill(0);
+    for(let j=0;j<nprev;j++){let s=0;for(let i=0;i<delta.length;i++)s+=Wm[i][j]*delta[i];nd[j]=s*dfp(zprev[j]);}
+    if(clip){const nn=nrm(nd); if(nn>1){for(let j=0;j<nd.length;j++)nd[j]/=nn;}} // clip each layer's gradient norm to 1
+    delta=nd; norms[m-2]=nrm(delta);}
+  return norms; // index 0 = first hidden (near input) ... last = top
+}
+
+/* ---- trainer (XOR) ---- */
+const DATA=[{x:[0,0],y:[0]},{x:[0,1],y:[1]},{x:[1,0],y:[1]},{x:[1,1],y:[0]}];
+const VIZ=[[0,0],[0,1],[1,0],[1,1]];
+const trainer={net:null,running:false,epoch:0,loss:1,losses:[],H:4,act:'tanh',lr:0.8,vizPt:[1,0]};
+let deepActive=false;
+function trainEpoch(net,lr){const L=net.W.length;
+  const gW=net.W.map(Wl=>Wl.map(r=>r.map(()=>0))), gB=net.b.map(bl=>bl.map(()=>0));
+  let loss=0;
+  for(const d of DATA){const a=forward(net,d.x); loss+=0.5*(a[0]-d.y[0])*(a[0]-d.y[0]);
+    const g=backward(net,d.y);
+    for(let l=0;l<L;l++){for(let i=0;i<gW[l].length;i++){for(let j=0;j<gW[l][i].length;j++)gW[l][i][j]+=g.dW[l][i][j];gB[l][i]+=g.db[l][i];}}}
+  const n=DATA.length;
+  for(let l=0;l<L;l++){for(let i=0;i<net.W[l].length;i++){for(let j=0;j<net.W[l][i].length;j++)net.W[l][i][j]-=lr*gW[l][i][j]/n;net.b[l][i]-=lr*gB[l][i]/n;}}
+  return loss/n;
+}
+function initTrainer(){ trainer.net=makeNet([2,trainer.H,1],trainer.act,null);
+  trainer.epoch=0; trainer.loss=1; trainer.losses=[]; trainer.running=false;
+  $("t-train").textContent="Train ▶"; $("t-epoch").textContent="0"; $("t-loss").textContent="—";
+  $("t-status").textContent="Press Train and watch the loss fall as backprop nudges every weight toward the answer.";
+  drawTrainerNet(); drawPreds(); drawLoss(); drawBoundary();
+}
+function drawTrainerNet(){const net=trainer.net; if(!net)return;
+  const sizes=net.sizes,L=sizes.length,x=trainer.vizPt; forward(net,x); const A=net.A;
+  const Wd=560,Hd=300,X=l=>50+(Wd-100)*(L<=1?0.5:l/(L-1));
+  const pos=sizes.map((cnt,l)=>{const xx=X(l),sp=Hd/(cnt+1);return Array.from({length:cnt},(_,i)=>({x:xx,y:sp*(i+1)}));});
+  let s="";
+  for(let l=1;l<L;l++){const Wl=net.W[l-1];
+    for(let i=0;i<sizes[l];i++)for(let j=0;j<sizes[l-1];j++){const w=Wl[i][j];
+      const col=w>=0?"#1fd9e3":"#ff5c7a",wd=(0.4+Math.min(3.2,Math.abs(w)*1.1)).toFixed(2),op=(0.16+Math.min(0.6,Math.abs(w)*0.3)).toFixed(2);
+      const a=pos[l-1][j],b=pos[l][i];
+      s+=`<line x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}" stroke="${col}" stroke-width="${wd}" stroke-opacity="${op}"/>`;}}
+  pos.forEach((cArr,l)=>cArr.forEach((p,i)=>{
+    let br = l===0? (0.25+0.75*x[i]) : (net.act==='tanh'?(A[l][i]+1)/2:Math.min(1,A[l][i]));
+    if(l===L-1) br=A[l][i]; br=Math.max(0.07,Math.min(1,br));
+    const fill=l===L-1?`rgba(255,194,61,${br.toFixed(2)})`:`rgba(31,217,227,${br.toFixed(2)})`;
+    const r=(l===0||l===L-1)?15:12;
+    s+=`<circle cx="${p.x}" cy="${p.y}" r="${r}" fill="${fill}" stroke="#0e1430" stroke-width="2"/>`;
+    if(l===0) s+=`<text x="${p.x}" y="${p.y+4}" text-anchor="middle" font-size="11" font-family="Space Mono" fill="#04141a">${x[i]}</text>`;
+    if(l===L-1) s+=`<text x="${p.x}" y="${p.y+4}" text-anchor="middle" font-size="10" font-family="Space Mono" fill="#2a1a00">${A[l][i].toFixed(1)}</text>`;
+  }));
+  s+=`<text x="${X(0)}" y="294" text-anchor="middle" font-size="10" fill="#5b6a99" font-family="DM Sans">inputs</text>`;
+  s+=`<text x="${X(1)}" y="294" text-anchor="middle" font-size="10" fill="#5b6a99" font-family="DM Sans">hidden</text>`;
+  s+=`<text x="${X(L-1)}" y="294" text-anchor="middle" font-size="10" fill="#5b6a99" font-family="DM Sans">output</text>`;
+  $("trainNet").innerHTML=s;
+}
+function drawLoss(){const cv=$("lossChart"),ctx=cv.getContext("2d"),w=cv.width,h=cv.height;
+  ctx.clearRect(0,0,w,h); const ls=trainer.losses; if(ls.length<2)return;
+  const mx=Math.max(1e-4,Math.max(...ls));
+  ctx.strokeStyle="#1fd9e3"; ctx.lineWidth=2; ctx.beginPath();
+  ls.forEach((v,i)=>{const xx=(i/(ls.length-1))*(w-8)+4, yy=h-6-(v/mx)*(h-14); i?ctx.lineTo(xx,yy):ctx.moveTo(xx,yy);});
+  ctx.stroke();
+  ctx.fillStyle="#5b6a99"; ctx.font="10px monospace"; ctx.fillText("loss vs epoch",6,12);
+}
+function drawPreds(){const tt=$("t-preds");
+  if(tt.children.length===0){VIZ.forEach((_,i)=>{const d=document.createElement("div");d.className="cell";d.style.cursor="pointer";
+    d.addEventListener("click",()=>{trainer.vizPt=VIZ[i];drawTrainerNet();drawPreds();});tt.appendChild(d);});}
+  VIZ.forEach((x,i)=>{const p=forward(trainer.net,x)[0],pred=p>=0.5?1:0,tgt=DATA[i].y[0],ok=pred===tgt;
+    const sel=(x[0]===trainer.vizPt[0]&&x[1]===trainer.vizPt[1]);
+    const c=tt.children[i]; c.className="cell "+(pred?"fire":"quiet")+(ok?" ok":" bad");
+    c.style.boxShadow=sel?"0 0 0 2px var(--gold) inset":"none";
+    c.innerHTML=`<div class="in">(${x[0]},${x[1]}) want ${tgt}</div><div class="out" style="font-size:15px">${p.toFixed(2)}</div><div class="tgt">${ok?'correct':'wrong'}</div>`;});
+}
+
+function drawBoundary(){const net=trainer.net; if(!net)return;
+  const cv=$("boundary"),ctx=cv.getContext("2d"),W=cv.width,H=cv.height,G=44;
+  if(!drawBoundary.off){drawBoundary.off=document.createElement("canvas");drawBoundary.off.width=G;drawBoundary.off.height=G;}
+  const off=drawBoundary.off,octx=off.getContext("2d"),img=octx.createImageData(G,G);
+  for(let yy=0;yy<G;yy++)for(let xx=0;xx<G;xx++){const x1=xx/(G-1),x2=1-yy/(G-1);const p=forward(net,[x1,x2])[0];
+    let r,g,b; if(p<0.5){const t=p/0.5;r=14+(31-14)*t;g=20+(80-20)*t;b=48+(90-48)*t;}else{const t=(p-0.5)/0.5;r=31+(255-31)*t;g=80+(194-80)*t;b=90+(61-90)*t;}
+    const idx=(yy*G+xx)*4;img.data[idx]=r;img.data[idx+1]=g;img.data[idx+2]=b;img.data[idx+3]=255;}
+  octx.putImageData(img,0,0); ctx.imageSmoothingEnabled=true; ctx.clearRect(0,0,W,H); ctx.drawImage(off,0,0,G,G,0,0,W,H);
+  VIZ.forEach((pt,i)=>{const px=pt[0]*(W-1),py=(1-pt[1])*(H-1),tgt=DATA[i].y[0];
+    const pr=forward(net,pt)[0],ok=(pr>=0.5?1:0)===tgt;
+    ctx.beginPath();ctx.arc(px,py,7,0,Math.PI*2);ctx.fillStyle=tgt?"#ffc23d":"#0e1430";ctx.fill();
+    ctx.lineWidth=2.5;ctx.strokeStyle=ok?"#1fd9e3":"#ff5c7a";ctx.stroke();});
+}
+/* ---- gradient x-ray ---- */
+const xray={net:null,depth:6,act:'sigmoid',scale:0.6,clip:false,norm:[],verdict:"Vanishing",cls:"vb-van",chainX:null,t:0};
+function profileVerdict(net){
+  const p=xrayProfile(net,[0.7,0.5],xray.clip); const out=p[p.length-1]; const norm=p.map(v=>v/out); const r=p[0]/out;
+  let verdict,cls,exp;
+  if(r<0.2){verdict="Vanishing";cls="vb-van";const pct=r*100;exp=`The gradient reaching the first layer is only ${pct<0.1?'under 0.1':pct.toFixed(1)}% of the top layer's — those early layers barely learn.`;}
+  else if(r>5){verdict="Exploding";cls="vb-exp";exp=`The first layer's gradient is ${r.toFixed(1)}× the top layer's — updates overshoot and training blows up.`;}
+  else{verdict="Healthy";cls="vb-ok";exp=`The gradient stays a similar size across layers (first ≈ ${r.toFixed(2)}× the top). Every layer can learn.`;}
+  if(xray.clip) exp+=" Clipping is capping each layer's gradient — it can stop an explosion, but it can't revive a vanished one.";
+  return {norm,verdict,cls,exp};
+}
+function buildXray(force){
+  let res,net;
+  for(let t=0;t<90;t++){ net=makeStack(xray.depth,xray.act,xray.scale); res=profileVerdict(net); if(!force||res.verdict===force) break; }
+  xray.net=net; xray.norm=res.norm; xray.verdict=res.verdict; xray.cls=res.cls;
+  $("g-verdict").className="verdictbig "+res.cls; $("g-verdict").textContent=res.verdict; $("g-explain").textContent=res.exp;
+  drawBars(res.cls); drawChain();
+}
+function recomputeXray(){ if(!xray.net)return; const res=profileVerdict(xray.net);
+  xray.norm=res.norm; xray.verdict=res.verdict; xray.cls=res.cls;
+  $("g-verdict").className="verdictbig "+res.cls; $("g-verdict").textContent=res.verdict; $("g-explain").textContent=res.exp;
+  drawBars(res.cls); drawChain();
+}
+function drawBars(cls){
+  const norm=xray.norm,n=norm.length,mx=Math.max(...norm);
+  const c1=cls==="vb-exp"?"#ff5c7a":cls==="vb-van"?"#9aa8db":"#1fd9e3";
+  const c2=cls==="vb-exp"?"#d63f5c":cls==="vb-van"?"#5b6a99":"#13a7b0";
+  const VW=520,VH=200,mL=28,mR=28,mB=28,mT=12,pw=VW-mL-mR,base=VH-mB,top=mT,slot=pw/n;
+  let s=`<defs><linearGradient id="barg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${c1}"/><stop offset="1" stop-color="${c2}"/></linearGradient></defs>`;
+  s+=`<line x1="${mL}" y1="${base}" x2="${VW-mR}" y2="${base}" stroke="#39406b" stroke-width="1"/>`;
+  norm.forEach((v,i)=>{const isOut=i===n-1,h=Math.max(2,(v/mx)*(base-top)),bw=Math.min(46,slot*0.62),cx=mL+slot*(i+0.5),x=cx-bw/2;
+    s+=`<rect x="${x.toFixed(1)}" y="${(base-h).toFixed(1)}" width="${bw.toFixed(1)}" height="${h.toFixed(1)}" rx="3" fill="url(#barg)"/>`;
+    s+=`<text x="${cx.toFixed(1)}" y="${(base+16).toFixed(0)}" text-anchor="middle" font-size="11" font-family="Space Mono" fill="#8b93b8">${isOut?'out':'L'+(i+1)}</text>`;});
+  $("g-bars").innerHTML=`<svg viewBox="0 0 ${VW} ${VH}" preserveAspectRatio="xMidYMid meet" style="width:100%;height:auto;display:block">${s}</svg>`;
+}
+function drawChain(){const L=xray.norm.length+1,w=560,padX=30,X=l=>padX+(w-2*padX)*(L<=1?0.5:l/(L-1));
+  let s=`<line x1="${X(0)}" y1="48" x2="${X(L-1)}" y2="48" stroke="#39406b" stroke-width="2"/>`;
+  for(let l=0;l<L;l++) s+=`<circle cx="${X(l)}" cy="48" r="8" fill="#0e1430" stroke="#1fd9e3" stroke-width="2"/>`;
+  s+=`<text x="${X(0)}" y="80" text-anchor="middle" font-size="10" fill="#5b6a99" font-family="DM Sans">input</text>`;
+  s+=`<text x="${X(L-1)}" y="80" text-anchor="middle" font-size="10" fill="#5b6a99" font-family="DM Sans">output</text>`;
+  s+=`<text x="${X(L-1)}" y="22" text-anchor="end" font-size="10" fill="#ff5c7a" font-family="DM Sans">◀ gradient travels back this way</text>`;
+  s+=`<circle id="gdot" cx="${X(L-1)}" cy="48" r="6" fill="#ffc23d"/>`;
+  $("g-chain").innerHTML=s; xray.chainX=Array.from({length:L},(_,l)=>X(l)); xray.t=0;
+}
+
+/* ---- deep loop ---- */
+function deepLoop(){
+  if(deepActive){
+    if(trainer.running&&trainer.net){
+      for(let k=0;k<40&&trainer.loss>0.0015&&trainer.epoch<60000;k++){
+        trainer.loss=trainEpoch(trainer.net,trainer.lr); trainer.epoch++;
+        if(trainer.epoch%4===0) trainer.losses.push(trainer.loss);
+      }
+      if(trainer.loss<=0.0015||trainer.epoch>=60000){trainer.running=false;$("t-train").textContent="Train ▶";
+        $("t-status").textContent=trainer.loss<=0.0015?"Converged — it learned XOR! Every prediction is now correct.":"Plateaued (a local minimum). Hit Reset for a fresh random start, or try a higher α / Tanh.";
+        if(trainer.loss<=0.0015) burst();}
+      $("t-epoch").textContent=trainer.epoch; $("t-loss").textContent=trainer.loss.toFixed(4);
+      drawLoss(); drawPreds();
+    }
+    if(trainer.net) drawTrainerNet();
+    if(trainer.net){const tn=performance.now(); if(tn-(deepLoop.bt||0)>120){deepLoop.bt=tn; drawBoundary();}}
+    if(xray.chainX){ xray.t+=reduceMotion?0:0.006; if(xray.t>1)xray.t-=1;
+      const L=xray.chainX.length,u=xray.t,pos=(L-1)*(1-u);
+      const xpix=xray.chainX[L-1]+(xray.chainX[0]-xray.chainX[L-1])*u;
+      const mag=l=> l===0?xray.norm[0]:xray.norm[l-1];
+      const lo=Math.floor(pos),hi=Math.min(L-1,Math.ceil(pos)),fr=pos-lo;
+      const m=mag(lo)*(1-fr)+mag(hi)*fr;
+      const dot=document.getElementById("gdot");
+      if(dot){dot.setAttribute("cx",xpix.toFixed(1)); dot.setAttribute("r",(4+Math.min(1.4,m)*14).toFixed(1));
+        dot.setAttribute("fill",xray.verdict==="Exploding"?"#ff5c7a":xray.verdict==="Vanishing"?"#8b93b8":"#ffc23d");
+        dot.setAttribute("opacity",(0.35+Math.min(1,m)*0.65).toFixed(2));}
+    }
+  }
+  requestAnimationFrame(deepLoop);
+}
+requestAnimationFrame(deepLoop);
+
+/* ---- deep controls ---- */
+$("t-h").addEventListener("input",e=>{trainer.H=+e.target.value;$("t-hv").textContent=trainer.H;initTrainer();});
+$("t-lr").addEventListener("input",e=>{trainer.lr=+e.target.value;$("t-lrv").textContent=trainer.lr.toFixed(2);});
+document.querySelectorAll("#t-acts button").forEach(b=>b.addEventListener("click",()=>{
+  trainer.act=b.dataset.tact; document.querySelectorAll("#t-acts button").forEach(x=>x.classList.remove("on")); b.classList.add("on"); initTrainer();}));
+$("t-train").addEventListener("click",()=>{ if(trainer.loss<=0.0015||trainer.epoch>=60000) initTrainer();
+  trainer.running=!trainer.running; $("t-train").textContent=trainer.running?"Pause ❚❚":"Train ▶";
+  if(trainer.running)$("t-status").textContent="Training… every epoch = forward pass → measure loss → backprop → nudge weights.";});
+$("t-step").addEventListener("click",()=>{ if(!trainer.net)return; trainer.running=false;$("t-train").textContent="Train ▶";
+  for(let k=0;k<200&&trainer.loss>0.0015;k++){trainer.loss=trainEpoch(trainer.net,trainer.lr);trainer.epoch++;if(trainer.epoch%4===0)trainer.losses.push(trainer.loss);}
+  $("t-epoch").textContent=trainer.epoch;$("t-loss").textContent=trainer.loss.toFixed(4);drawLoss();drawPreds();drawTrainerNet();drawBoundary();});
+$("t-reset").addEventListener("click",initTrainer);
+
+$("g-depth").addEventListener("input",e=>{xray.depth=+e.target.value;$("g-dv").textContent=xray.depth+" layers";buildXray();});
+$("g-scale").addEventListener("input",e=>{xray.scale=+e.target.value;$("g-sv").textContent=xray.scale.toFixed(2);buildXray();});
+document.querySelectorAll("#g-acts button").forEach(b=>b.addEventListener("click",()=>{
+  xray.act=b.dataset.gact; document.querySelectorAll("#g-acts button").forEach(x=>x.classList.remove("on")); b.classList.add("on"); buildXray();}));
+function applyXray(act,depth,scale,force){ xray.act=act;xray.depth=depth;xray.scale=scale;xray.clip=false;
+  $("g-clip").textContent="Gradient clipping: off"; $("g-clip").classList.remove("on");
+  $("g-depth").value=depth;$("g-dv").textContent=depth+" layers"; $("g-scale").value=scale;$("g-sv").textContent=scale.toFixed(2);
+  document.querySelectorAll("#g-acts button").forEach(x=>x.classList.toggle("on",x.dataset.gact===act)); buildXray(force); }
+$("g-van").addEventListener("click",()=>applyXray('sigmoid',9,0.6,'Vanishing'));
+$("g-exp").addEventListener("click",()=>applyXray('relu',8,2.4,'Exploding'));
+$("g-heal").addEventListener("click",()=>applyXray('relu',7,1.3,'Healthy'));
+$("g-reroll").addEventListener("click",()=>buildXray());
+$("g-clip").addEventListener("click",()=>{ xray.clip=!xray.clip; $("g-clip").textContent="Gradient clipping: "+(xray.clip?"on":"off"); $("g-clip").classList.toggle("on",xray.clip); recomputeXray(); });
+
+/* init */
+drawXor(); syncToggles(); render();
+</script>
+</body>
+</html>
