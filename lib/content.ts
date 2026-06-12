@@ -110,6 +110,7 @@ export type Course = {
   courseCode: string; courseTitle: string; level: string; program?: string
   semestersTaught?: string[]; isCurrentlyTeaching?: boolean
   syllabusLink?: string; topicTags?: string[]
+  labs?: { title: string; href: string; blurb?: string; emoji?: string }[]
   _slug: string; _body: string
 }
 
