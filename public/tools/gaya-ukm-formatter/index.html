@@ -1,0 +1,1347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gaya UKM Reference Formatter</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Spectral:ital,wght@0,400;0,500;0,600;1,400;1,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#E6E9F0;          /* page background, cool pale grey-blue */
+    --panel:#FBFCFD;          /* cards */
+    --panel-2:#F2F4F8;        /* inset fields */
+    --ink:#151C2C;            /* primary text, deep blue-black */
+    --ink-soft:#535D72;       /* secondary */
+    --ink-faint:#8A93A6;      /* hints */
+    --rule:#D3DAE6;           /* hairlines */
+    --rule-strong:#BFC8D8;
+    --mark:#C83A2E;           /* proof red — primary action / correction */
+    --mark-deep:#A52C22;
+    --blue:#21409A;           /* UKM-ish blue — links / active / focus */
+    --blue-soft:#E4E9F8;
+    --galley:#FDFDFB;         /* the proof page */
+    --ok:#2E7D52;
+    --shadow:0 1px 2px rgba(21,28,44,.06), 0 8px 24px rgba(21,28,44,.07);
+    --radius:10px;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:"Space Grotesk",system-ui,sans-serif;
+    font-size:15px; line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1180px; margin:0 auto; padding:28px 20px 80px}
+
+  /* ---------- Masthead ---------- */
+  header.masthead{
+    display:flex; flex-wrap:wrap; align-items:flex-end; justify-content:space-between;
+    gap:16px; padding-bottom:18px; margin-bottom:22px;
+    border-bottom:2px solid var(--ink);
+  }
+  .brand h1{
+    font-size:clamp(26px,4.4vw,40px); line-height:1.02; margin:0; letter-spacing:-.02em;
+    font-weight:700;
+  }
+  .brand h1 .em{ font-family:"Spectral",serif; font-style:italic; font-weight:500; }
+  .brand p{ margin:7px 0 0; color:var(--ink-soft); font-size:14px; max-width:52ch; }
+  .lang{
+    display:inline-flex; border:1.5px solid var(--ink); border-radius:999px;
+    overflow:hidden; background:var(--panel); flex-shrink:0;
+  }
+  .lang button{
+    appearance:none; border:0; background:transparent; cursor:pointer;
+    font-family:inherit; font-size:12.5px; font-weight:600; letter-spacing:.02em;
+    padding:8px 15px; color:var(--ink-soft);
+  }
+  .lang button[aria-pressed="true"]{ background:var(--ink); color:#fff; }
+
+  /* ---------- About strip ---------- */
+  details.about{ margin:0 0 22px; }
+  details.about > summary{
+    cursor:pointer; list-style:none; display:inline-flex; align-items:center; gap:8px;
+    font-size:12.5px; font-weight:600; color:var(--blue);
+    letter-spacing:.04em; text-transform:uppercase;
+  }
+  details.about > summary::-webkit-details-marker{display:none}
+  details.about > summary::before{ content:"§"; font-family:"Spectral",serif; font-size:16px; }
+  details.about[open] > summary{ margin-bottom:10px; }
+  .about-body{
+    background:var(--panel); border:1px solid var(--rule); border-radius:var(--radius);
+    padding:16px 18px; font-size:13.5px; color:var(--ink-soft); line-height:1.62;
+    box-shadow:var(--shadow);
+  }
+  .about-body p{margin:0 0 9px}
+  .about-body p:last-child{margin-bottom:0}
+  .about-body strong{color:var(--ink); font-weight:600}
+  .about-body code{
+    font-family:"JetBrains Mono",monospace; font-size:12px; background:var(--panel-2);
+    padding:1px 5px; border-radius:4px; color:var(--ink);
+  }
+
+  /* ---------- Layout ---------- */
+  .grid{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.05fr); gap:22px; align-items:start; }
+  @media (max-width:880px){ .grid{ grid-template-columns:1fr; } }
+
+  .card{
+    background:var(--panel); border:1px solid var(--rule); border-radius:var(--radius);
+    box-shadow:var(--shadow); overflow:hidden;
+  }
+  .card-head{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    padding:13px 16px; border-bottom:1px solid var(--rule);
+  }
+  .card-head h2{
+    font-size:12px; font-weight:700; letter-spacing:.12em; text-transform:uppercase;
+    margin:0; color:var(--ink);
+  }
+  .card-head .count{
+    font-family:"JetBrains Mono",monospace; font-size:12px; color:var(--ink-faint);
+  }
+
+  /* ---------- Tabs ---------- */
+  .tabs{ display:flex; gap:2px; padding:10px 12px 0; border-bottom:1px solid var(--rule); flex-wrap:wrap; }
+  .tab{
+    appearance:none; border:1px solid transparent; border-bottom:0; background:transparent;
+    font-family:inherit; font-size:13px; font-weight:600; cursor:pointer; color:var(--ink-soft);
+    padding:9px 14px; border-radius:8px 8px 0 0; position:relative; top:1px;
+  }
+  .tab[aria-selected="true"]{
+    color:var(--blue); background:var(--panel); border-color:var(--rule);
+    border-bottom:2px solid var(--panel);
+  }
+  .tabpanel{ padding:18px 16px; }
+  .tabpanel[hidden]{display:none}
+
+  /* ---------- Form ---------- */
+  .field{ margin-bottom:14px; }
+  .field:last-child{margin-bottom:0}
+  label.lbl{
+    display:block; font-size:11.5px; font-weight:600; letter-spacing:.06em; text-transform:uppercase;
+    color:var(--ink-soft); margin-bottom:6px;
+  }
+  .lbl .opt{ color:var(--ink-faint); font-weight:500; text-transform:none; letter-spacing:0; }
+  input[type=text], input[type=url], select, textarea{
+    width:100%; font-family:inherit; font-size:14px; color:var(--ink);
+    background:var(--panel-2); border:1px solid var(--rule-strong); border-radius:8px;
+    padding:9px 11px;
+  }
+  textarea{ resize:vertical; min-height:120px; font-family:"JetBrains Mono",monospace; font-size:12.5px; line-height:1.55; }
+  input:focus, select:focus, textarea:focus, button:focus-visible, .tab:focus-visible, .lang button:focus-visible{
+    outline:2px solid var(--blue); outline-offset:1px;
+  }
+  .row2{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .row3{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; }
+  @media (max-width:520px){ .row2,.row3{ grid-template-columns:1fr; } }
+  .hint{ font-size:11.5px; color:var(--ink-faint); margin-top:5px; line-height:1.45; }
+
+  /* author repeater */
+  .person{ display:flex; gap:8px; align-items:center; margin-bottom:8px; }
+  .person input{ flex:1; }
+  .person .chk{
+    display:inline-flex; align-items:center; gap:5px; font-size:11px; color:var(--ink-soft);
+    white-space:nowrap; cursor:pointer; user-select:none;
+  }
+  .person .chk input{width:14px;height:14px;accent-color:var(--blue);}
+  .iconbtn{
+    appearance:none; border:1px solid var(--rule-strong); background:var(--panel);
+    width:34px; height:34px; border-radius:8px; cursor:pointer; color:var(--ink-soft);
+    font-size:17px; line-height:1; flex-shrink:0; font-family:"Spectral",serif;
+  }
+  .iconbtn:hover{ border-color:var(--mark); color:var(--mark); }
+  .addperson{
+    appearance:none; background:transparent; border:1px dashed var(--rule-strong); border-radius:8px;
+    color:var(--blue); font-family:inherit; font-weight:600; font-size:12.5px; cursor:pointer;
+    padding:7px 12px; margin-top:2px;
+  }
+  .addperson:hover{ border-color:var(--blue); background:var(--blue-soft); }
+
+  /* buttons */
+  .actions{ display:flex; gap:10px; flex-wrap:wrap; margin-top:18px; }
+  .btn{
+    appearance:none; font-family:inherit; font-weight:600; font-size:13.5px; cursor:pointer;
+    border-radius:8px; padding:10px 16px; border:1.5px solid transparent;
+  }
+  .btn-primary{ background:var(--mark); color:#fff; }
+  .btn-primary:hover{ background:var(--mark-deep); }
+  .btn-ghost{ background:transparent; border-color:var(--rule-strong); color:var(--ink); }
+  .btn-ghost:hover{ border-color:var(--ink); }
+  .btn:disabled{ opacity:.5; cursor:not-allowed; }
+
+  /* file drop */
+  .drop{
+    border:1.5px dashed var(--rule-strong); border-radius:var(--radius); padding:22px 16px;
+    text-align:center; color:var(--ink-soft); font-size:13px; cursor:pointer; background:var(--panel-2);
+    transition:border-color .15s, background .15s;
+  }
+  .drop.drag{ border-color:var(--blue); background:var(--blue-soft); }
+  .drop strong{ color:var(--blue); }
+  .parsemsg{ font-size:12.5px; margin-top:10px; min-height:1.2em; }
+  .parsemsg.ok{ color:var(--ok); } .parsemsg.err{ color:var(--mark-deep); }
+
+  /* ---------- Disclaimer on the list ---------- */
+  .disclaimer{ border-bottom:1px solid var(--rule); background:#FBF6EC; }
+  .disclaimer > summary{
+    cursor:pointer; list-style:none; padding:10px 16px; font-size:11.5px; font-weight:700;
+    letter-spacing:.06em; text-transform:uppercase; color:#8A5A1B; display:flex; align-items:center; gap:8px;
+  }
+  .disclaimer > summary::-webkit-details-marker{display:none}
+  .disclaimer > summary::before{ content:"!"; display:inline-flex; align-items:center; justify-content:center;
+    width:16px; height:16px; border-radius:50%; background:#C8852B; color:#fff; font-size:11px; flex-shrink:0; font-weight:700; }
+  .disclaimer > summary::after{ content:"▾"; margin-left:auto; font-size:11px; color:#B07A28; }
+  .disclaimer[open] > summary::after{ content:"▴"; }
+  .disclaimer-body{ padding:2px 16px 14px; font-size:12.5px; line-height:1.6; color:#6B5126; }
+  .disclaimer-body p{ margin:0 0 8px; }
+  .disclaimer-body p:last-child{ margin-bottom:0; }
+  .disclaimer-body strong{ color:#5A4220; }
+
+  .galley-toolbar{
+    display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+    padding:10px 16px; border-bottom:1px solid var(--rule); background:var(--panel-2);
+  }
+  .seg{ display:inline-flex; border:1px solid var(--rule-strong); border-radius:7px; overflow:hidden; }
+  .seg button{
+    appearance:none; border:0; background:var(--panel); cursor:pointer; font-family:inherit;
+    font-size:12px; font-weight:600; color:var(--ink-soft); padding:6px 11px;
+  }
+  .seg button[aria-pressed="true"]{ background:var(--ink); color:#fff; }
+  .galley-toolbar .spacer{ flex:1; }
+  .tinybtn{
+    appearance:none; border:1px solid var(--rule-strong); background:var(--panel); cursor:pointer;
+    font-family:inherit; font-size:12px; font-weight:600; color:var(--ink); padding:6px 11px; border-radius:7px;
+  }
+  .tinybtn:hover{ border-color:var(--ink); }
+  .tinybtn.danger:hover{ border-color:var(--mark); color:var(--mark); }
+
+  .galley{ padding:6px 0 4px; max-height:640px; overflow:auto; background:var(--galley); }
+  .empty{
+    padding:46px 28px; text-align:center; color:var(--ink-faint); font-size:13.5px; line-height:1.6;
+  }
+  .empty .big{ font-family:"Spectral",serif; font-style:italic; font-size:19px; color:var(--ink-soft); display:block; margin-bottom:8px; }
+
+  .ref{
+    position:relative; padding:14px 16px 14px 50px; border-bottom:1px solid var(--rule);
+  }
+  .ref:last-child{ border-bottom:0; }
+  .ref .num{
+    position:absolute; left:14px; top:14px; font-family:"JetBrains Mono",monospace;
+    font-size:11px; color:var(--ink-faint); width:26px; text-align:right;
+  }
+  .ref-text{
+    font-family:"Spectral",serif; font-size:15.5px; line-height:1.5; color:var(--ink);
+    padding-left:2.1em; text-indent:-2.1em;   /* hanging indent, ~12.5mm feel */
+  }
+  .ref-text em{ font-style:italic; }
+  .ref-text.plain{ font-family:"JetBrains Mono",monospace; font-size:12.5px; line-height:1.6; text-indent:0; padding-left:0; }
+  .ref-text.plain em{ font-style:normal; }
+  .ref-meta{
+    display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-top:9px;
+    padding-left:2.1em;
+  }
+  .intext{
+    font-family:"JetBrains Mono",monospace; font-size:11px; color:var(--blue);
+    background:var(--blue-soft); border-radius:5px; padding:2px 7px;
+  }
+  .ref-actions{ display:flex; gap:6px; margin-left:auto; }
+  .ref-actions button{
+    appearance:none; border:0; background:transparent; cursor:pointer; font-family:inherit;
+    font-size:11px; font-weight:600; color:var(--ink-faint); padding:2px 4px;
+  }
+  .ref-actions button:hover{ color:var(--blue); }
+  .ref-actions button.del:hover{ color:var(--mark); }
+
+  /* live preview block in Fields tab */
+  .preview{
+    margin-top:16px; border:1px solid var(--rule); border-radius:var(--radius);
+    background:var(--galley); padding:14px 16px;
+  }
+  .preview .plabel{ font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-faint); margin-bottom:8px; font-weight:600; }
+  .preview .ref-text{ padding-left:2.1em; text-indent:-2.1em; }
+
+  .toast{
+    position:fixed; left:50%; bottom:26px; transform:translateX(-50%) translateY(20px);
+    background:var(--ink); color:#fff; font-size:13px; font-weight:500; padding:10px 18px;
+    border-radius:999px; box-shadow:var(--shadow); opacity:0; pointer-events:none;
+    transition:opacity .2s, transform .2s; z-index:50;
+  }
+  .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+
+  footer.foot{ margin-top:30px; font-size:11.5px; color:var(--ink-faint); line-height:1.6; }
+  footer.foot a{ color:var(--blue); }
+
+  @media (prefers-reduced-motion:reduce){ *{transition:none!important} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a href="/" style="display:inline-flex;align-items:center;gap:6px;
+   font-size:12.5px;font-weight:600;color:var(--blue);
+   text-decoration:none;margin-bottom:18px;">← Back to portfolio</a>
+  <header class="masthead">
+    <div class="brand">
+      <h1>Gaya UKM <span class="em">reference</span> formatter</h1>
+      <p>Turn a book, journal article, thesis, proceeding, or web source — from a form, raw BibTeX, a <code style="font-family:'JetBrains Mono',monospace;font-size:12px">.bib</code> file, or a DOI — into a clean Gaya UKM reference list.</p>
+    </div>
+    <div class="lang" role="group" aria-label="Output language">
+      <button id="langBM" aria-pressed="true">Bahasa Melayu</button>
+      <button id="langEN" aria-pressed="false">English</button>
+    </div>
+  </header>
+
+  <details class="about">
+    <summary>About this style</summary>
+    <div class="about-body">
+      <p>UKM theses use a single <strong>reference list (Rujukan)</strong> — never a separate bibliography — in an <strong>author–date</strong> system. It resembles Harvard/Chicago but has its own rules worth knowing:</p>
+      <p>• The year is <strong>not</strong> in parentheses in the list (<code>Smith, M. 2008. …</code>, not <code>(2008)</code>). &nbsp;• Use <strong>&amp;</strong> before the final author, never "dan/and", in the list. &nbsp;• <code>et al.</code> is <strong>not</strong> italicised. &nbsp;• Book/journal/proceeding <em>titles</em> are italic; an <em>article</em> title is not. &nbsp;• Editors are <code>(pnyt.)</code> not "eds.", "in" is <code>Dlm.</code>, pages are <code>hlm.</code> &nbsp;• Second lines get a 12.5&nbsp;mm hanging indent. &nbsp;• Online sources need an access date in <code>[ ]</code>.</p>
+      <p style="margin-top:11px;border-top:1px solid var(--rule);padding-top:9px;font-size:12.5px">Formats here follow UKM Pusat Siswazah guidance (<em>Panduan Penulisan Tesis Gaya UKM</em>) and the faculty "common mistakes" handouts. The printed guide is the final authority — verify edge cases against your faculty's current copy. <strong>Malay/organisation names are kept whole, not inverted to initials</strong> — toggle that per author below.</p>
+    </div>
+  </details>
+
+  <div class="grid">
+
+    <!-- ============ INPUT ============ -->
+    <section class="card" aria-label="Add a reference">
+      <div class="tabs" role="tablist" aria-label="Input method">
+        <button class="tab" role="tab" id="t-fields" aria-selected="true" aria-controls="p-fields">Fields</button>
+        <button class="tab" role="tab" id="t-bibtex" aria-selected="false" aria-controls="p-bibtex">BibTeX / .bib</button>
+        <button class="tab" role="tab" id="t-doi" aria-selected="false" aria-controls="p-doi">DOI</button>
+        <button class="tab" role="tab" id="t-paste" aria-selected="false" aria-controls="p-paste">Paste list</button>
+      </div>
+
+      <!-- Fields -->
+      <div class="tabpanel" id="p-fields" role="tabpanel" aria-labelledby="t-fields">
+        <div class="field">
+          <label class="lbl" for="type">Source type</label>
+          <select id="type">
+            <option value="book">Book — Buku</option>
+            <option value="chapter">Chapter in a book — Bab dalam buku</option>
+            <option value="journal">Journal article — Artikel jurnal</option>
+            <option value="proceedings">Conference proceeding — Prosiding</option>
+            <option value="thesis">Thesis / dissertation — Tesis</option>
+            <option value="online">Online article (with journal) — Artikel dalam talian</option>
+            <option value="website">Website / web page — Sumber sesawang</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label class="lbl">Authors <span class="opt">— in order; tick "whole name" for Malay or organisation names</span></label>
+          <div id="authors"></div>
+          <button class="addperson" id="addAuthor" type="button">+ Add author</button>
+        </div>
+
+        <div class="row2">
+          <div class="field">
+            <label class="lbl" for="year">Year</label>
+            <input type="text" id="year" inputmode="numeric" placeholder="2024">
+          </div>
+          <div class="field" id="wrap-edition" data-types="book chapter">
+            <label class="lbl" for="edition">Edition <span class="opt">— optional, e.g. 2</span></label>
+            <input type="text" id="edition" placeholder="2">
+          </div>
+        </div>
+
+        <div class="field" id="wrap-title">
+          <label class="lbl" for="title" id="lbl-title">Title</label>
+          <input type="text" id="title" placeholder="Title of the work">
+        </div>
+
+        <!-- editors (chapter) -->
+        <div class="field" id="wrap-editors" data-types="chapter" hidden>
+          <label class="lbl">Editors <span class="opt">— of the book</span></label>
+          <div id="editors"></div>
+          <button class="addperson" id="addEditor" type="button">+ Add editor</button>
+        </div>
+
+        <div class="field" id="wrap-container" data-types="chapter journal proceedings online" hidden>
+          <label class="lbl" for="container" id="lbl-container">Container title</label>
+          <input type="text" id="container" placeholder="">
+        </div>
+
+        <div class="row3">
+          <div class="field" id="wrap-volume" data-types="journal online" hidden>
+            <label class="lbl" for="volume">Volume</label>
+            <input type="text" id="volume" placeholder="72">
+          </div>
+          <div class="field" id="wrap-issue" data-types="journal online" hidden>
+            <label class="lbl" for="issue">Issue <span class="opt">opt.</span></label>
+            <input type="text" id="issue" placeholder="2">
+          </div>
+          <div class="field" id="wrap-pages" data-types="chapter journal proceedings online" hidden>
+            <label class="lbl" for="pages">Pages</label>
+            <input type="text" id="pages" placeholder="113-123">
+          </div>
+        </div>
+
+        <div class="row2">
+          <div class="field" id="wrap-place" data-types="book chapter" hidden>
+            <label class="lbl" for="place">Place of publication</label>
+            <input type="text" id="place" placeholder="London">
+          </div>
+          <div class="field" id="wrap-publisher" data-types="book chapter website" hidden>
+            <label class="lbl" for="publisher" id="lbl-publisher">Publisher</label>
+            <input type="text" id="publisher" placeholder="MacMillan">
+          </div>
+        </div>
+
+        <!-- thesis -->
+        <div class="row3" id="wrap-thesis" data-types="thesis" hidden>
+          <div class="field">
+            <label class="lbl" for="degree">Degree</label>
+            <input type="text" id="degree" placeholder="Tesis Dr. Falsafah">
+          </div>
+          <div class="field">
+            <label class="lbl" for="department">Department</label>
+            <input type="text" id="department" placeholder="Jabatan Sejarah">
+          </div>
+          <div class="field">
+            <label class="lbl" for="institution">Institution</label>
+            <input type="text" id="institution" placeholder="Universiti Kebangsaan Malaysia">
+          </div>
+        </div>
+
+        <!-- online / website -->
+        <div class="field" id="wrap-url" data-types="online website" hidden>
+          <label class="lbl" for="url">URL</label>
+          <input type="url" id="url" placeholder="https://…">
+        </div>
+        <div class="field" id="wrap-access" data-types="online website" hidden>
+          <label class="lbl" for="access">Access date <span class="opt">— as it should print, e.g. 4 Julai 2024</span></label>
+          <input type="text" id="access" placeholder="4 Julai 2024">
+        </div>
+
+        <div class="preview" aria-live="polite">
+          <div class="plabel">Live preview</div>
+          <div class="ref-text" id="preview"><span style="color:var(--ink-faint);font-style:italic">Fill the fields to see the formatted reference…</span></div>
+        </div>
+
+        <div class="actions">
+          <button class="btn btn-primary" id="addToList" type="button">Add to list</button>
+          <button class="btn btn-ghost" id="clearFields" type="button">Clear fields</button>
+        </div>
+      </div>
+
+      <!-- BibTeX -->
+      <div class="tabpanel" id="p-bibtex" role="tabpanel" aria-labelledby="t-bibtex" hidden>
+        <div class="field">
+          <label class="lbl" for="bib">Paste BibTeX</label>
+          <textarea id="bib" placeholder="@article{key,&#10;  author = {Brown, N. and Bowen, A. and Hussain, A.},&#10;  title  = {A new approach to locate the voltage sag source},&#10;  journal= {Journal of Electric Power System Research},&#10;  year   = {2004}, volume = {72}, number = {2}, pages = {113-123}&#10;}"></textarea>
+          <div class="hint">Handles <code>@article</code>, <code>@book</code>, <code>@incollection</code>/<code>@inbook</code>, <code>@inproceedings</code>, <code>@phdthesis</code>/<code>@mastersthesis</code>, <code>@misc</code>/<code>@online</code>. Multiple entries at once are fine.</div>
+        </div>
+        <div class="drop" id="drop" tabindex="0" role="button" aria-label="Upload a .bib file">
+          Drop a <strong>.bib</strong> file here, or <strong>browse</strong>
+          <input type="file" id="file" accept=".bib,.txt,text/plain" hidden>
+        </div>
+        <div class="parsemsg" id="bibmsg" aria-live="polite"></div>
+        <div class="actions">
+          <button class="btn btn-primary" id="parseBib" type="button">Parse &amp; add all</button>
+          <button class="btn btn-ghost" id="clearBib" type="button">Clear</button>
+        </div>
+      </div>
+
+      <!-- DOI -->
+      <div class="tabpanel" id="p-doi" role="tabpanel" aria-labelledby="t-doi" hidden>
+        <div class="field">
+          <label class="lbl" for="doi">DOI</label>
+          <input type="text" id="doi" placeholder="10.1016/j.epsr.2004.04.001">
+          <div class="hint">Looks the work up via Crossref and fills it in. Needs an internet connection — if your sandbox blocks it, it'll still work once the page is live on your site. Review the result; Malay names may need the "whole name" toggle.</div>
+        </div>
+        <div class="parsemsg" id="doimsg" aria-live="polite"></div>
+        <div class="actions">
+          <button class="btn btn-primary" id="fetchDoi" type="button">Fetch &amp; load into fields</button>
+        </div>
+      </div>
+
+      <!-- Paste list -->
+      <div class="tabpanel" id="p-paste" role="tabpanel" aria-labelledby="t-paste" hidden>
+        <div class="field">
+          <label class="lbl" for="paste">Paste a reference list <span class="opt">— any format: APA, MLA, numbered, one per line, or blank-line separated</span></label>
+          <textarea id="paste" placeholder="Brown, N., Bowen, A., &amp; Hussain, A. (2004). A new approach to locate the voltage sag source using real current component. Journal of Electric Power System Research, 72(2), 113-123.&#10;&#10;Smith, M., Beck, J., &amp; Cooper, C. L. (2008). Introducing organizational behaviour. London: MacMillan."></textarea>
+          <div class="hint">Each reference becomes an entry in your list — convert, then review and tidy any that need it via <strong>Edit</strong>.</div>
+        </div>
+        <label class="person chk" style="margin-bottom:14px">
+          <input type="checkbox" id="usecrossref" checked style="width:15px;height:15px;accent-color:var(--blue)">
+          <span style="font-size:12.5px;color:var(--ink-soft)">Match each against Crossref for accurate data <span style="color:var(--ink-faint)">(needs internet; off = local best-guess only)</span></span>
+        </label>
+        <div class="parsemsg" id="pastemsg" aria-live="polite"></div>
+        <div class="actions">
+          <button class="btn btn-primary" id="convertList" type="button">Convert &amp; add all</button>
+          <button class="btn btn-ghost" id="clearPaste" type="button">Clear</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ OUTPUT ============ -->
+    <section class="card" aria-label="Reference list">
+      <div class="card-head">
+        <h2 id="listTitle">Rujukan</h2>
+        <span class="count" id="count">0 entries</span>
+      </div>
+      <details class="disclaimer" open>
+        <summary>Please verify before submitting</summary>
+        <div class="disclaimer-body">
+          <p>This is an <strong>unofficial helper</strong>, not affiliated with or endorsed by Universiti Kebangsaan Malaysia. It follows publicly documented Gaya UKM conventions, but the printed <em>Panduan Penulisan Tesis Gaya UKM</em> from your faculty is the final authority.</p>
+          <p>Auto-conversion (paste / BibTeX / DOI) is <strong>best-effort</strong> and can misread unusual formats. Before you submit, please check each entry — especially:</p>
+          <p>• <strong>Author names</strong> — Malay and organisation names should keep their full form (use the “whole name” toggle via <strong>Edit</strong>); they aren’t inverted to initials.<br>
+          • <strong>Source type</strong> — confirm a book, chapter, proceeding or thesis wasn’t read as a journal article.<br>
+          • <strong>Titles & journal names</strong>, page ranges, and access dates for online sources.</p>
+        </div>
+      </details>
+      <div class="galley-toolbar">
+        <div class="seg" role="group" aria-label="Display mode">
+          <button id="viewTypeset" aria-pressed="true">Typeset</button>
+          <button id="viewPlain" aria-pressed="false">Plain text</button>
+        </div>
+        <span class="spacer"></span>
+        <button class="tinybtn" id="copyAll" type="button">Copy list</button>
+        <button class="tinybtn" id="download" type="button" title="Downloads a .txt file. If your browser or an embed blocks downloads, the list is copied to your clipboard instead.">Download .txt</button>
+        <button class="tinybtn danger" id="clearAll" type="button">Clear</button>
+      </div>
+      <div class="galley" id="galley">
+        <div class="empty" id="emptyState">
+          <span class="big">An empty reference list.</span>
+          Build a reference on the left and add it here.<br>Entries sort themselves alphabetically, the way the list should print.
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <footer class="foot">
+    Output is generated locally in your browser — nothing is uploaded. Formats follow UKM Pusat Siswazah's <em>Panduan Penulisan Tesis Gaya UKM</em> and faculty guidance; always check edge cases against your faculty's current printed guide.
+  </footer>
+</div>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+"use strict";
+
+/* ---------------- State ---------------- */
+let LANG = "bm";          // "bm" | "en"
+let VIEW = "typeset";     // "typeset" | "plain"
+let editingId = null;     // id of list entry currently loaded into Fields
+const list = [];          // array of models
+let uid = 1;
+
+const T = {
+  bm:{ ref:"Rujukan", in:"Dlm.", eds:"pnyt.", ed1:"pnyt.", pp:"hlm.", and:"dan",
+       edition:n=>`Ed. ke-${n}.`, },
+  en:{ ref:"References", in:"In:", eds:"eds.", ed1:"ed.", pp:"pp.", and:"and",
+       edition:n=>`Ed. ${n}.`, }
+};
+
+/* ---------------- Helpers ---------------- */
+const $ = id => document.getElementById(id);
+const esc = s => (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+
+function toast(msg){
+  const t=$("toast"); t.textContent=msg; t.classList.add("show");
+  clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove("show"),1800);
+}
+
+/* Build a person's display name.
+   full=true  -> use the name verbatim (Malay names, organisations)
+   full=false -> invert Western name to "Surname, I.M." */
+function formatName(p){
+  const raw=(p.name||"").trim();
+  if(!raw) return "";
+  if(p.full) return raw;
+  let last, given;
+  if(raw.includes(",")){
+    const parts=raw.split(",");
+    last=parts[0].trim();
+    given=parts.slice(1).join(",").trim();
+  } else {
+    const toks=raw.split(/\s+/);
+    last=toks.pop();
+    given=toks.join(" ");
+  }
+  const initials=given.split(/[\s.\-]+/).filter(Boolean)
+    .map(w=>w[0].toUpperCase()+".").join("");
+  return initials ? `${last}, ${initials}` : last;
+}
+
+function joinPeople(people){
+  const names=people.map(formatName).filter(Boolean);
+  if(names.length===0) return "";
+  if(names.length===1) return names[0];
+  return names.slice(0,-1).join(", ") + " & " + names[names.length-1];
+}
+
+/* surname-ish token for in-text use */
+function intextName(p){
+  const raw=(p.name||"").trim();
+  if(!raw) return "";
+  if(p.full) return raw;
+  if(raw.includes(",")) return raw.split(",")[0].trim();
+  const toks=raw.split(/\s+/);
+  return toks[toks.length-1];
+}
+
+function inText(m){
+  const ppl=(m.authors||[]).filter(p=>(p.name||"").trim());
+  const yr=m.year||"t.t.";
+  if(ppl.length===0) return "";
+  let names;
+  if(ppl.length===1) names=intextName(ppl[0]);
+  else if(ppl.length<=3){
+    const ns=ppl.map(intextName);
+    names=ns.slice(0,-1).join(", ")+" & "+ns[ns.length-1];
+  } else {
+    names=intextName(ppl[0])+" et al.";
+  }
+  return `(${names} ${yr})`;
+}
+
+/* ---------- The formatter: returns {html, text} ---------- */
+function formatRef(m){
+  const t=T[LANG];
+  const seg=[]; // {i:bool, s:str}
+  const push=(s,i=false)=>{ if(s!=null && s!=="") seg.push({i,s:String(s)}); };
+
+  const authors=joinPeople((m.authors||[]).filter(p=>(p.name||"").trim()));
+  const yr=(m.year||"").trim();
+  const lead = authors ? authors+". " : "";
+  const yrtxt = yr ? yr+". " : "";
+
+  const ed = m.edition && (m.type==="book"||m.type==="chapter")
+      ? " "+t.edition(m.edition.trim()) : "";
+
+  switch(m.type){
+    case "book":
+      push(lead+yrtxt);
+      push(m.title, true); push(".");
+      if(ed){ push(ed); }
+      if(m.place||m.publisher){
+        push(" "+(m.place||"")+ (m.place&&m.publisher?": ":(m.publisher?": ":"")) + (m.publisher||"") + ".");
+      }
+      break;
+
+    case "chapter":{
+      push(lead+yrtxt);
+      push((m.title||"")+". ");
+      const editors=joinPeople((m.editors||[]).filter(p=>(p.name||"").trim()));
+      const edLabel=((m.editors||[]).filter(p=>(p.name||"").trim()).length>1)?t.eds:t.ed1;
+      if(editors) push(t.in+" "+editors+" ("+edLabel+"). ");
+      push(m.container, true);
+      push(". ");
+      if(m.pages) push(t.pp+" "+m.pages+". ");
+      if(m.place||m.publisher) push((m.place||"")+(m.place&&m.publisher?": ":(m.publisher?": ":""))+(m.publisher||"")+".");
+      break;
+    }
+
+    case "journal":
+      push(lead+yrtxt);
+      push((m.title||"")+". ");
+      push(m.container, true);
+      push(" "+(m.volume||"")+(m.issue?`(${m.issue})`:"")+(m.pages?`: ${m.pages}`:"")+".");
+      break;
+
+    case "proceedings":
+      push(lead+yrtxt);
+      push((m.title||"")+". ");
+      push(m.container, true);
+      if(m.pages) push(", "+t.pp+" "+m.pages+".");
+      else push(".");
+      break;
+
+    case "thesis":
+      push(lead+yrtxt);
+      push(m.title, true); push(". ");
+      push([m.degree,m.department,m.institution].filter(Boolean).join(", ")+".");
+      break;
+
+    case "online":
+      if(lead||yrtxt) push(lead+yrtxt);
+      if(m.title) push(m.title+". ");
+      if(m.container){
+        push(m.container, true);
+        push(" "+(m.volume||"")+(m.issue?`(${m.issue})`:"")+(m.pages?`: ${m.pages}`:"")+". ");
+      }
+      if(m.url) push(m.url+(m.access?" ["+m.access+"]":"")+".");
+      break;
+
+    case "website":
+      if(lead||yrtxt) push(lead+yrtxt);
+      if(m.title) push(m.title+". ");
+      if(m.publisher) push(m.publisher+". ");
+      if(m.url) push(m.url+(m.access?" ["+m.access+"]":"")+".");
+      break;
+  }
+
+  // collapse and tidy
+  let html="", text="";
+  seg.forEach(p=>{
+    if(p.i){ html+="<em>"+esc(p.s)+"</em>"; text+=p.s; }
+    else { html+=esc(p.s); text+=p.s; }
+  });
+  // tidy doubled spaces / stray " . "
+  const tidy=s=>s.replace(/\s+\./g,".").replace(/\s{2,}/g," ").replace(/\.\./g,".").trim();
+  return { html:tidy(html), text:tidy(text) };
+}
+
+/* ---------------- Fields tab ---------------- */
+const FIELD_IDS=["year","edition","title","container","volume","issue","pages","place","publisher","degree","department","institution","url","access"];
+
+function makePersonRow(container, person){
+  const row=document.createElement("div"); row.className="person";
+  const inp=document.createElement("input");
+  inp.type="text"; inp.placeholder="Surname, Given  OR  whole name";
+  inp.value=person?.name||"";
+  const lab=document.createElement("label"); lab.className="chk";
+  const cb=document.createElement("input"); cb.type="checkbox"; cb.checked=!!person?.full;
+  lab.appendChild(cb); lab.appendChild(document.createTextNode("whole name"));
+  const del=document.createElement("button"); del.className="iconbtn"; del.type="button";
+  del.innerHTML="&times;"; del.setAttribute("aria-label","Remove");
+  del.onclick=()=>{ row.remove(); livePreview(); };
+  inp.oninput=livePreview; cb.onchange=livePreview;
+  row.append(inp,lab,del);
+  container.appendChild(row);
+}
+function readPeople(container){
+  return [...container.querySelectorAll(".person")].map(r=>({
+    name:r.querySelector("input[type=text]").value,
+    full:r.querySelector("input[type=checkbox]").checked
+  }));
+}
+
+function showFieldsFor(type){
+  document.querySelectorAll("[data-types]").forEach(el=>{
+    const ok=el.getAttribute("data-types").split(" ").includes(type);
+    el.hidden=!ok;
+  });
+  // dynamic labels
+  const titleLbl={book:"Book title",chapter:"Chapter title",journal:"Article title",
+    proceedings:"Paper title",thesis:"Thesis title",online:"Article title",website:"Page title"}[type]||"Title";
+  $("lbl-title").textContent=titleLbl;
+  const contLbl={chapter:"Book title",journal:"Journal title",proceedings:"Proceedings title",online:"Journal title (optional)"}[type]||"Container";
+  if($("lbl-container")) $("lbl-container").textContent=contLbl;
+  const pubLbl=type==="website"?"Site / publisher (optional)":"Publisher";
+  if($("lbl-publisher")) $("lbl-publisher").textContent=pubLbl;
+}
+
+function readModel(){
+  const m={ type:$("type").value, authors:readPeople($("authors")) };
+  FIELD_IDS.forEach(k=>{ const el=$(k); if(el) m[k]=el.value.trim(); });
+  m.editors=readPeople($("editors"));
+  return m;
+}
+
+function loadModel(m){
+  $("type").value=m.type||"book";
+  showFieldsFor($("type").value);
+  $("authors").innerHTML="";
+  (m.authors&&m.authors.length?m.authors:[{name:"",full:false}]).forEach(p=>makePersonRow($("authors"),p));
+  $("editors").innerHTML="";
+  (m.editors&&m.editors.length?m.editors:[{name:"",full:false}]).forEach(p=>makePersonRow($("editors"),p));
+  FIELD_IDS.forEach(k=>{ if($(k)) $(k).value=m[k]||""; });
+  livePreview();
+}
+
+function clearFields(){
+  loadModel({type:$("type").value, authors:[{name:"",full:false}], editors:[{name:"",full:false}]});
+  editingId=null;
+  $("addToList").textContent="Add to list";
+}
+
+function livePreview(){
+  const m=readModel();
+  const hasAny=m.authors.some(p=>p.name.trim())||m.title;
+  const out=formatRef(m);
+  $("preview").innerHTML= hasAny && out.html
+    ? out.html
+    : '<span style="color:var(--ink-faint);font-style:italic">Fill the fields to see the formatted reference…</span>';
+}
+
+/* ---------------- List / galley ---------------- */
+function sortKey(m){
+  const p=(m.authors||[]).find(x=>(x.name||"").trim());
+  return (formatName(p||{name:""})+" "+(m.year||"")).toLowerCase();
+}
+function renderList(){
+  const g=$("galley");
+  $("listTitle").textContent=T[LANG].ref;
+  $("count").textContent=list.length+(list.length===1?" entry":" entries");
+  if(list.length===0){
+    g.innerHTML='<div class="empty"><span class="big">An empty reference list.</span>Build a reference on the left and add it here.<br>Entries sort themselves alphabetically, the way the list should print.</div>';
+    return;
+  }
+  const sorted=[...list].sort((a,b)=>sortKey(a).localeCompare(sortKey(b)));
+  g.innerHTML="";
+  sorted.forEach((m,i)=>{
+    const out=formatRef(m);
+    const it=inText(m);
+    const div=document.createElement("div"); div.className="ref";
+    div.innerHTML=
+      `<span class="num">${i+1}.</span>`+
+      `<div class="ref-text ${VIEW==='plain'?'plain':''}">${VIEW==='plain'?esc(out.text):out.html}</div>`+
+      `<div class="ref-meta">`+
+        (it?`<span class="intext" title="In-text citation">${esc(it)}</span>`:"")+
+        `<span class="ref-actions">`+
+          `<button data-act="edit">Edit</button>`+
+          `<button data-act="copy">Copy</button>`+
+          `<button class="del" data-act="del">Remove</button>`+
+        `</span>`+
+      `</div>`;
+    div.querySelector('[data-act=copy]').onclick=()=>copyOne(m);
+    div.querySelector('[data-act=edit]').onclick=()=>{
+      loadModel(JSON.parse(JSON.stringify(m)));
+      editingId=m.id; $("addToList").textContent="Update entry";
+      selectTab("fields"); window.scrollTo({top:0,behavior:"smooth"});
+    };
+    div.querySelector('[data-act=del]').onclick=()=>{
+      const idx=list.findIndex(x=>x.id===m.id);
+      if(idx>-1) list.splice(idx,1);
+      if(editingId===m.id) clearFields();
+      renderList();
+    };
+    g.appendChild(div);
+  });
+}
+
+async function copyText(text){
+  try{ await navigator.clipboard.writeText(text); return true; }
+  catch(e){
+    const ta=document.createElement("textarea"); ta.value=text;
+    ta.style.position="fixed"; ta.style.opacity="0"; document.body.appendChild(ta);
+    ta.select(); let ok=false; try{ ok=document.execCommand("copy"); }catch(_){}
+    document.body.removeChild(ta); return ok;
+  }
+}
+async function copyRich(html, text){
+  if(navigator.clipboard && window.ClipboardItem){
+    try{
+      await navigator.clipboard.write([ new ClipboardItem({
+        "text/html": new Blob([html],{type:"text/html"}),
+        "text/plain": new Blob([text],{type:"text/plain"})
+      })]);
+      return true;
+    }catch(e){ /* fall through */ }
+  }
+  return copyText(text);
+}
+function copyOne(m){
+  const out=formatRef(m);
+  if(VIEW==="plain") copyText(out.text).then(ok=>toast(ok?"Copied as plain text":"Copy failed"));
+  else copyRich(out.html,out.text).then(ok=>toast(ok?"Copied (italics preserved)":"Copy failed"));
+}
+
+function addOrUpdate(){
+  const m=readModel();
+  if(!m.authors.some(p=>p.name.trim()) && !m.title){
+    toast("Add at least an author or a title"); return;
+  }
+  if(editingId){
+    const e=list.find(x=>x.id===editingId);
+    if(e){ Object.assign(e, m, {id:editingId}); }
+    editingId=null; $("addToList").textContent="Add to list";
+    toast("Entry updated");
+  } else {
+    m.id=uid++; list.push(m); toast("Added to the list");
+  }
+  renderList();
+  clearFields();
+}
+
+/* ---------------- BibTeX parser ---------------- */
+function deLatex(s){
+  return (s||"")
+    .replace(/\{\\&\}|\\&/g,"&")
+    .replace(/[{}]/g,"")
+    .replace(/\\['"`^~=.]/g,"")
+    .replace(/\\([a-zA-Z]+)\s?/g,"$1")
+    .replace(/~/g," ")
+    .replace(/\s+/g," ")
+    .trim();
+}
+function parseAuthorsBib(field){
+  // "Last, First and Last, First"  or  "First Last and First Last"
+  return field.split(/\s+and\s+/i).map(a=>{
+    a=a.trim();
+    // heuristic: looks Western? has comma or 1-2 simple tokens with capitalised surname.
+    return { name:a, full:false };
+  }).filter(p=>p.name);
+}
+function parseBibtex(src){
+  const entries=[]; let i=0; const s=src;
+  while(i<s.length){
+    const at=s.indexOf("@",i); if(at<0) break;
+    const brace=s.indexOf("{",at); if(brace<0) break;
+    const type=s.slice(at+1,brace).trim().toLowerCase();
+    // find matching close brace
+    let depth=0, j=brace, end=-1;
+    for(; j<s.length; j++){ const c=s[j]; if(c==="{")depth++; else if(c==="}"){depth--; if(depth===0){end=j;break;}} }
+    if(end<0) break;
+    const body=s.slice(brace+1,end);
+    i=end+1;
+    if(type==="comment"||type==="preamble"||type==="string") continue;
+    // first token before first comma is the key
+    const fc=body.indexOf(",");
+    const fieldsStr=fc<0?"":body.slice(fc+1);
+    const fields={};
+    // scan field = value
+    let k=0;
+    while(k<fieldsStr.length){
+      const eq=fieldsStr.indexOf("=",k); if(eq<0) break;
+      const name=fieldsStr.slice(k,eq).trim().toLowerCase().replace(/[^a-z]/g,"");
+      let p=eq+1; while(p<fieldsStr.length && /\s/.test(fieldsStr[p])) p++;
+      let val="";
+      if(fieldsStr[p]==="{"){
+        let d=0,q=p;
+        for(; q<fieldsStr.length; q++){ const c=fieldsStr[q]; if(c==="{")d++; else if(c==="}"){d--; if(d===0){q++;break;}} }
+        val=fieldsStr.slice(p+1,q-1); k=q;
+      } else if(fieldsStr[p]==='"'){
+        let q=p+1; while(q<fieldsStr.length && fieldsStr[q]!=='"') q++;
+        val=fieldsStr.slice(p+1,q); k=q+1;
+      } else {
+        let q=p; while(q<fieldsStr.length && fieldsStr[q]!=="," ) q++;
+        val=fieldsStr.slice(p,q); k=q;
+      }
+      const comma=fieldsStr.indexOf(",",k); k=comma<0?fieldsStr.length:comma+1;
+      if(name) fields[name]=val;
+    }
+    entries.push({type, fields});
+  }
+  return entries.map(bibToModel).filter(Boolean);
+}
+function bibToModel(e){
+  const f=e.fields; const g=k=>deLatex(f[k]||"");
+  const yr=(f.year||"").replace(/\D/g,"");
+  const base={ year:yr, authors:parseAuthorsBib(g("author")) };
+  const url=(f.url||f.howpublished||"").replace(/\\url|[{}]/g,"").trim();
+  const access=g("urldate")||g("note")||"";
+  switch(e.type){
+    case "article":
+      return {...base, type:f.journal? "journal":"website", title:g("title"),
+        container:g("journal"), volume:g("volume"), issue:g("number"), pages:g("pages").replace(/--/g,"-"),
+        url:url, access:access };
+    case "book": case "booklet":
+      return {...base, type:"book", title:g("title"), edition:g("edition").replace(/\D/g,""),
+        place:g("address"), publisher:g("publisher") };
+    case "inbook": case "incollection":
+      return {...base, type:"chapter", title:g("title")||g("chapter"),
+        container:g("booktitle"), editors:parseAuthorsBib(g("editor")),
+        pages:g("pages").replace(/--/g,"-"), edition:g("edition").replace(/\D/g,""),
+        place:g("address"), publisher:g("publisher") };
+    case "inproceedings": case "conference": case "proceedings":
+      return {...base, type:"proceedings", title:g("title"),
+        container:g("booktitle"), pages:g("pages").replace(/--/g,"-") };
+    case "phdthesis":
+      return {...base, type:"thesis", title:g("title"),
+        degree:LANG==="bm"?"Tesis Dr. Falsafah":"PhD Thesis",
+        department:g("school")? "":"", institution:g("school") };
+    case "mastersthesis":
+      return {...base, type:"thesis", title:g("title"),
+        degree:LANG==="bm"?"Tesis Sarjana":"Master's Thesis",
+        institution:g("school") };
+    case "misc": case "online": case "electronic": case "webpage":
+      return {...base, type:url?"website":"website", title:g("title"),
+        publisher:g("publisher")||g("organization"), url:url, access:access };
+    default:
+      return {...base, type:"book", title:g("title"), publisher:g("publisher"), place:g("address")};
+  }
+}
+
+function doParseBib(){
+  const src=$("bib").value.trim();
+  const msg=$("bibmsg");
+  if(!src){ msg.className="parsemsg err"; msg.textContent="Nothing to parse — paste BibTeX or drop a .bib file."; return; }
+  let models;
+  try{ models=parseBibtex(src); }
+  catch(e){ msg.className="parsemsg err"; msg.textContent="Couldn't read that BibTeX. Check the braces are balanced."; return; }
+  if(!models.length){ msg.className="parsemsg err"; msg.textContent="No entries found. Each should start with @type{…}."; return; }
+  models.forEach(m=>{ m.id=uid++; list.push(m); });
+  renderList();
+  msg.className="parsemsg ok";
+  msg.textContent=`Added ${models.length} ${models.length===1?"entry":"entries"}. Check author names — tick "whole name" on any Malay/organisation names via Edit.`;
+  $("bib").value="";
+}
+
+/* ---------------- DOI / Crossref ---------------- */
+async function fetchDoi(){
+  const doi=$("doi").value.trim().replace(/^https?:\/\/(dx\.)?doi\.org\//i,"");
+  const msg=$("doimsg");
+  if(!doi){ msg.className="parsemsg err"; msg.textContent="Enter a DOI first."; return; }
+  msg.className="parsemsg"; msg.textContent="Looking up…";
+  try{
+    const r=await fetch("https://api.crossref.org/works/"+encodeURIComponent(doi));
+    if(!r.ok) throw new Error("not found");
+    const d=(await r.json()).message;
+    const m=crossrefToModel(d);
+    loadModel(m); selectTab("fields");
+    msg.className="parsemsg ok"; msg.textContent="Loaded into the Fields tab — review, then Add to list.";
+  }catch(e){
+    msg.className="parsemsg err";
+    msg.textContent="Couldn't reach Crossref (offline, blocked sandbox, or bad DOI). Paste the BibTeX instead, or type the fields.";
+  }
+}
+function crossrefToModel(d){
+  const authors=(d.author||[]).map(a=>{
+    if(a.family) return {name:`${a.family}, ${a.given||""}`.trim().replace(/,\s*$/,""), full:false};
+    return {name:a.name||"", full:true};
+  });
+  const editors=(d.editor||[]).map(a=>({name:`${a.family||""}, ${a.given||""}`.trim().replace(/,\s*$/,""),full:false}));
+  const yr=(((d.issued||{})["date-parts"]||[[]])[0][0])||"";
+  const title=Array.isArray(d.title)?d.title[0]:(d.title||"");
+  const cont=Array.isArray(d["container-title"])?d["container-title"][0]:(d["container-title"]||"");
+  const type=d.type||"";
+  const base={year:String(yr), authors, title};
+  if(type.includes("journal")) return {...base,type:"journal",container:cont,volume:d.volume||"",issue:d.issue||"",pages:(d.page||"").replace(/--/g,"-")};
+  if(type==="proceedings-article") return {...base,type:"proceedings",container:cont,pages:(d.page||"").replace(/--/g,"-")};
+  if(type==="book-chapter") return {...base,type:"chapter",container:cont,editors,pages:(d.page||"").replace(/--/g,"-"),place:(d["publisher-location"]||""),publisher:d.publisher||""};
+  if(type.includes("book")) return {...base,type:"book",place:(d["publisher-location"]||""),publisher:d.publisher||""};
+  return {...base,type:"journal",container:cont,volume:d.volume||"",issue:d.issue||"",pages:(d.page||"").replace(/--/g,"-")};
+}
+
+/* ---------------- Paste-a-list: split + parse ---------------- */
+function splitRefs(text){
+  text=(text||"").replace(/\r/g,"").trim();
+  if(!text) return [];
+  let parts;
+  const NUM=/^\s*(\[\d+\]|\(\d+\)|\d+[.)])\s+/;
+  if(/\n[ \t]*\n/.test(text)){
+    parts=text.split(/\n[ \t]*\n+/);
+  } else {
+    const lines=text.split(/\n/).map(l=>l.trim()).filter(Boolean);
+    const numbered=lines.filter(l=>NUM.test(l)).length;
+    if(numbered>=Math.max(2,lines.length*0.5)){
+      parts=[]; let cur="";
+      lines.forEach(l=>{ if(NUM.test(l)){ if(cur)parts.push(cur); cur=l; } else cur+=" "+l; });
+      if(cur)parts.push(cur);
+    } else { parts=lines; }
+  }
+  return parts.map(p=>p.replace(NUM,"").replace(/\s+/g," ").trim()).filter(p=>p.length>5);
+}
+
+/* Parse an author block, auto-detecting two common shapes:
+   Vancouver/AMA : "Adomavicius G, Bockstedt JC, Gupta A"  (initials trail, no commas inside a name)
+   APA/Harvard   : "Smith, M., Beck, J., & Cooper, C. L."  (comma between surname and initials, &/and before last) */
+/* Parse an author block, Unicode-aware so accents (Holló, Ramírez) and
+   non-Latin scripts (Cyrillic) work, and tolerant of lowercase particles
+   (van Dijk, de la Torre-López).
+   Vancouver/AMA : "Adomavicius G, Bockstedt JC, Gupta A"  (trailing initials)
+   APA/Harvard   : "Smith, M., Beck, J., & Cooper, C. L."  (comma + initials) */
+function parseAuthorBlock(block){
+  if(!block) return [{name:"",full:false}];
+  block=block.trim().replace(/\bet\s*al\.?$/i,"").replace(/[,;:]\s*$/,"")
+             .replace(/,\s*(1[5-9]\d\d|20\d\d)[a-z]?(\s*,\s*[A-Za-z]+)?\.?\s*$/,"")
+             .replace(/\(?(1[5-9]\d\d|20\d\d)[a-z]?\)?\.?\s*$/,"").trim();
+  if(!block) return [{name:"",full:false}];
+
+  const parts=block.split(/\s*,\s*/).map(s=>s.trim()).filter(Boolean);
+  // Vancouver: each comma-part ENDS with a short run of capitals (the initials)
+  const vanHits=parts.filter(p=>/\s\p{Lu}{1,4}$/u.test(p)).length;
+  const vancouver = !/&|\sand\s/i.test(block) && parts.length>=1
+                    && vanHits>=Math.ceil(parts.length*0.7);
+  if(vancouver){
+    return parts.map(p=>{
+      const m=p.match(/^(.+?)\s+(\p{Lu}{1,4})$/u);
+      if(!m) return {name:p,full:false};
+      const ini=m[2].split("").map(c=>c+".").join("");
+      return {name:`${m[1].trim()}, ${ini}`, full:false};
+    });
+  }
+  // APA/Harvard: normalise &/and, then split "Surname, I., Surname, I."
+  let b=block.replace(/\s*&\s*/g,"§").replace(/\s+and\s+/gi,"§");
+  b=b.replace(/,\s*(?=\p{Lu}[\p{L}'’\-]+,\s*\p{Lu})/gu,"§");
+  let ps=b.split("§").map(p=>p.replace(/[,;\s]+$/,"").trim())
+          .filter(p=>p && !/^et\s*al\.?$/i.test(p));
+  if(!ps.length) return [{name:block,full:false}];
+  return ps.map(name=>({name, full:false}));
+}
+
+const JKEY=/\b(Journal|Review|Proceedings|Transactions|Bulletin|Letters|Annals|Archives|Studies|Research|Reports|Advances|Frontiers|Quarterly|Sciences?|Medicine|Education|Management|Therapeutics|Psychiatry|Computing|Economics|Endocrinology)\b/i;
+const MONTHS=/^(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec)[a-z]*\.?(\s+\d+)?$/i;
+const MONTHW=/(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec)[a-z]*/i;
+const VENUE=/\b(Conference|Proceedings|Congress|Symposium|Workshop|Annales|HICSS)\b|^In[A-Z:]/;
+
+/* Title Case = most words capitalised (a journal name like "Journal of X"),
+   as opposed to a sentence-case article title (only first word capitalised). */
+function isTitleCase(s){
+  const w=s.replace(/[^\p{L}\s]/gu,"").split(/\s+/).filter(x=>x.length>2);
+  if(w.length<2) return false;
+  const caps=w.filter(x=>/^\p{Lu}/u.test(x)).length;
+  return caps/w.length>=0.6;
+}
+
+function cleanVenue(s){
+  return s.replace(/^In(?=[A-Z])/,"")          // "InProceedings" -> "Proceedings"
+          .replace(/^In\b:?\s*/i,"")            // "In ", "In:"
+          .replace(/^[:\s]+/,"")                // leftover colon/space
+          .replace(/\s*\((?:Vol\.?|pp\.?|No\.?)[^)]*\)?/gi,"")  // (Vol. 53), (pp. 1-2)
+          .replace(/\s+(1[5-9]\d\d|20\d\d)\b.*$/,"")            // trailing year onward
+          .replace(/[\s,.]+$/,"").trim();
+}
+
+/* segment a reference on ". " (period + space), which separates
+   authors / title / journal in Vancouver, APA and LNCS styles alike */
+function segmentsOf(s){ return s.split(/\.\s+(?=\S)/).map(x=>x.trim()).filter(Boolean); }
+
+function heuristicParse(ref){
+  ref=ref.trim();
+
+  // --- bare URL (software / website with no metadata) ---
+  if(/^https?:\/\/\S+$/.test(ref)){
+    return { type:"website", authors:[{name:"",full:false}], year:"", title:"",
+             url:ref.replace(/[.,;)\]]+$/,""), access:"", _confidence:"low" };
+  }
+  const urlM=ref.match(/https?:\/\/\S+/);
+  const url=urlM?urlM[0].replace(/[.,;)\]]+$/,""):"";
+
+  let segs=segmentsOf(ref);
+
+  // --- LNCS / Springer colon style: "Authors: Title ... (year)" ---
+  let colon=false;
+  if(segs[0]){
+    const cm=segs[0].match(/^(.+?):\s+(.+)$/);
+    if(cm && /\p{Lu}\.(,|\s|$)/u.test(cm[1]) && cm[1].length<90 && !/\d{4}/.test(cm[1])){
+      segs[0]=cm[2]; colon=true;            // seg0 now starts at the title
+      var authorsBlock=cm[1];
+    }
+  }
+  if(typeof authorsBlock==="undefined") authorsBlock=segs[0]||"";
+  const authors=parseAuthorBlock(authorsBlock);
+  let body=colon ? segs.slice() : segs.slice(1);
+
+  const m={ type:"journal", authors };
+
+  // --- year (use the last one in the string) ---
+  const ys=[...ref.matchAll(/\b(1[5-9]\d\d|20\d\d)\b/g)];
+  m.year = ys.length ? ys[ys.length-1][1] : "";
+
+  // --- volume / issue / pages (search whole string) ---
+  const vp = ref.match(/;\s*(\d+)\s*(?:\((\d+[^)]*)\))?\s*:\s*([A-Za-z]?\d+)\s*(?:[-–]\s*([A-Za-z]?\d+))?/)
+          || ref.match(/(?:^|[\s(])(\d+)\s*\((\d+[^)]*)\)\s*:\s*([A-Za-z]?\d+)\s*(?:[-–]\s*([A-Za-z]?\d+))?/);
+  if(vp){ m.volume=vp[1]; if(vp[2])m.issue=vp[2]; m.pages=vp[4]?vp[3]+"-"+vp[4]:vp[3]; }
+  else { const pgs=ref.match(/\bpp\.?\s*(\d+)\s*[-–]\s*(\d+)/i); if(pgs) m.pages=pgs[1]+"-"+pgs[2]; }
+
+  // --- drop trailing publication-noise segments (year / vol:pages / month) ---
+  const noise=s=> /^\(?(1[5-9]\d\d|20\d\d)\b/.test(s)
+               || /^\d+\s*[:(]/.test(s)
+               || MONTHS.test(s)
+               || /^[A-Z][a-z]+\.?\s+\d.*[;:]\d/.test(s);
+  while(body.length && noise(body[body.length-1])) body.pop();
+
+  // --- conference / proceedings detection ---
+  const venIdx=body.findIndex(s=>VENUE.test(s));
+  if(venIdx>=0){
+    m.type="proceedings";
+    m.container=cleanVenue(body[venIdx]);
+    m.title=body.slice(0,venIdx).join(". ");
+  } else {
+    // rejoin a journal split by an internal period ("… Education. Research"),
+    // but ONLY when the preceding part is a Title-Case journal name (not a sentence title)
+    if(body.length>=2 && /^\p{Lu}[\p{Ll}]+\.?$/u.test(body[body.length-1])
+       && JKEY.test(body[body.length-2]) && isTitleCase(body[body.length-2])){
+      body=[...body.slice(0,-2), body.slice(-2).join(". ")];
+    }
+    if(body.length>=2){ m.container=body[body.length-1]; m.title=body.slice(0,-1).join(". "); }
+    else if(body.length===1){ m.title=body[0]; }
+    else m.title="";
+  }
+
+  // --- book: "Place: Publisher" with no volume/pages ---
+  if(m.container && !m.volume && !m.pages){
+    const bm=m.container.match(/^([\p{L} .'\-]+):\s*([^.0-9].*)$/u);
+    if(bm){ m.type="book"; m.place=bm[1].trim(); m.publisher=bm[2].trim(); m.container=""; }
+  }
+
+  // --- URL handling ---
+  if(url){
+    m.url=url;
+    const am=ref.match(/\[([^\]]+)\]/); if(am) m.access=am[1];
+    if(!m.container && !m.volume && !m.pages && m.type!=="proceedings"){ m.type="website"; }
+    else if(m.type==="journal"){ m.type="online"; }
+  }
+
+  if(!m.title) m.title="";
+  if(!m.authors||!m.authors.length) m.authors=[{name:"",full:false}];
+  m._confidence="low";
+  return m;
+}
+
+function confidenceCheck(ref, item){
+  const low=ref.toLowerCase();
+  const fa=((item.author&&item.author[0]&&item.author[0].family)||"").toLowerCase();
+  const title=(Array.isArray(item.title)?item.title[0]:item.title||"").toLowerCase();
+  const hit=title.split(/\W+/).filter(w=>w.length>4).filter(w=>low.includes(w)).length;
+  const authorOk=fa && low.includes(fa);
+  return (authorOk && hit>=2) || hit>=4;
+}
+
+async function crossrefMatch(ref){
+  const url="https://api.crossref.org/works?rows=1&select=author,editor,title,container-title,volume,issue,page,issued,publisher,publisher-location,type&query.bibliographic="+encodeURIComponent(ref);
+  const r=await fetch(url);
+  if(!r.ok) throw new Error("http");
+  const items=((await r.json()).message||{}).items||[];
+  if(!items.length) throw new Error("none");
+  const m=crossrefToModel(items[0]);
+  m._confidence=confidenceCheck(ref,items[0])?"high":"med";
+  return m;
+}
+
+async function convertList(){
+  const refs=splitRefs($("paste").value);
+  const msg=$("pastemsg");
+  if(!refs.length){ msg.className="parsemsg err"; msg.textContent="Nothing to convert — paste one or more references."; return; }
+  const useCR=$("usecrossref").checked;
+  const btn=$("convertList"); btn.disabled=true;
+  let high=0, check=0;
+  for(let i=0;i<refs.length;i++){
+    msg.className="parsemsg"; msg.textContent=`Converting ${i+1} of ${refs.length}…`;
+    let model=null;
+    if(useCR){ try{ model=await crossrefMatch(refs[i]); }catch(e){ model=null; } }
+    if(!model) model=heuristicParse(refs[i]);
+    if(model._confidence==="high") high++; else check++;
+    delete model._confidence;
+    model.id=uid++; list.push(model);
+  }
+  btn.disabled=false;
+  renderList();
+  msg.className="parsemsg ok";
+  let s=`Added ${refs.length} reference${refs.length===1?"":"s"}.`;
+  if(useCR && high) s+=` ${high} matched confidently`;
+  if(check) s+=`${useCR&&high?", ":" "}${check} need${check===1?"s":""} a quick check — use Edit to fix names or fields.`;
+  else s+=" Review each via Edit if needed.";
+  msg.textContent=s;
+  $("paste").value="";
+}
+
+/* ---------------- Copy / download whole list ---------------- */
+function sortedModels(){ return [...list].sort((a,b)=>sortKey(a).localeCompare(sortKey(b))); }
+function listAsText(){ return sortedModels().map(m=>formatRef(m).text).join("\n\n"); }
+function listAsHtml(){
+  return sortedModels().map(m=>{
+    return `<p style="text-indent:-2.1em;padding-left:2.1em;margin:0 0 .4em">${formatRef(m).html}</p>`;
+  }).join("");
+}
+function copyAll(){
+  if(!list.length){ toast("List is empty"); return; }
+  if(VIEW==="plain") copyText(listAsText()).then(ok=>toast(ok?"List copied (plain)":"Copy failed"));
+  else copyRich(listAsHtml(),listAsText()).then(ok=>toast(ok?"List copied (italics preserved)":"Copy failed"));
+}
+async function downloadTxt(){
+  if(!list.length){ toast("List is empty"); return; }
+  const txt=T[LANG].ref.toUpperCase()+"\n\n"+listAsText()+"\n";
+  let started=false;
+  try{
+    const blob=new Blob([txt],{type:"text/plain;charset=utf-8"});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement("a");
+    a.href=url; a.download="rujukan-gaya-ukm.txt"; a.rel="noopener";
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url),1000);
+    started=true;
+  }catch(e){ started=false; }
+  if(started){
+    toast("Downloading — if nothing saved, tap “Copy list”");
+  } else {
+    // downloads blocked (sandboxed iframe): guarantee an export path via clipboard
+    const ok=await copyText(txt);
+    toast(ok ? "Download blocked here — copied to clipboard instead" : "Export blocked; select the list and copy manually");
+  }
+}
+
+/* ---------------- Tabs ---------------- */
+function selectTab(name){
+  const map={fields:"t-fields",bibtex:"t-bibtex",doi:"t-doi",paste:"t-paste"};
+  ["fields","bibtex","doi","paste"].forEach(n=>{
+    const tab=$(map[n]); const panel=$("p-"+n);
+    const on=(n===name);
+    tab.setAttribute("aria-selected",on?"true":"false");
+    panel.hidden=!on;
+  });
+}
+
+/* ---------------- Wire up ---------------- */
+function init(){
+  // tabs
+  $("t-fields").onclick=()=>selectTab("fields");
+  $("t-bibtex").onclick=()=>selectTab("bibtex");
+  $("t-doi").onclick=()=>selectTab("doi");
+  $("t-paste").onclick=()=>selectTab("paste");
+
+  // language
+  $("langBM").onclick=()=>setLang("bm");
+  $("langEN").onclick=()=>setLang("en");
+
+  // view mode
+  $("viewTypeset").onclick=()=>setView("typeset");
+  $("viewPlain").onclick=()=>setView("plain");
+
+  // type change
+  $("type").onchange=()=>{ showFieldsFor($("type").value); livePreview(); };
+
+  // authors / editors
+  $("addAuthor").onclick=()=>{ makePersonRow($("authors"),{name:"",full:false}); };
+  $("addEditor").onclick=()=>{ makePersonRow($("editors"),{name:"",full:false}); };
+
+  // live preview on any field change
+  FIELD_IDS.forEach(k=>{ if($(k)) $(k).addEventListener("input",livePreview); });
+
+  // actions
+  $("addToList").onclick=addOrUpdate;
+  $("clearFields").onclick=clearFields;
+  $("parseBib").onclick=doParseBib;
+  $("clearBib").onclick=()=>{ $("bib").value=""; $("bibmsg").textContent=""; };
+  $("fetchDoi").onclick=fetchDoi;
+  $("convertList").onclick=convertList;
+  $("clearPaste").onclick=()=>{ $("paste").value=""; $("pastemsg").textContent=""; };
+  $("doi").addEventListener("keydown",e=>{ if(e.key==="Enter"){e.preventDefault();fetchDoi();}});
+
+  $("copyAll").onclick=copyAll;
+  $("download").onclick=downloadTxt;
+  $("clearAll").onclick=()=>{
+    if(!list.length){ toast("List is already empty"); return; }
+    const btn=$("clearAll");
+    if(btn.dataset.armed==="1"){
+      clearTimeout(btn._t); btn.dataset.armed="";
+      btn.textContent="Clear";
+      list.length=0; clearFields(); renderList(); toast("List cleared");
+    } else {
+      btn.dataset.armed="1"; btn.textContent="Click again to clear";
+      btn._t=setTimeout(()=>{ btn.dataset.armed=""; btn.textContent="Clear"; }, 3500);
+    }
+  };
+
+  // file drop
+  const drop=$("drop"), file=$("file");
+  drop.onclick=()=>file.click();
+  drop.onkeydown=e=>{ if(e.key==="Enter"||e.key===" "){e.preventDefault();file.click();} };
+  file.onchange=()=>{ if(file.files[0]) readFile(file.files[0]); };
+  ["dragover","dragenter"].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add("drag");}));
+  ["dragleave","drop"].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove("drag");}));
+  drop.addEventListener("drop",e=>{ const fl=e.dataTransfer.files[0]; if(fl) readFile(fl); });
+
+  // seed
+  clearFields();
+  showFieldsFor("book");
+  renderList();
+}
+function readFile(f){
+  const r=new FileReader();
+  r.onload=()=>{ $("bib").value=r.result; doParseBib(); };
+  r.readAsText(f);
+}
+function setLang(l){
+  LANG=l;
+  $("langBM").setAttribute("aria-pressed",l==="bm");
+  $("langEN").setAttribute("aria-pressed",l==="en");
+  livePreview(); renderList();
+}
+function setView(v){
+  VIEW=v;
+  $("viewTypeset").setAttribute("aria-pressed",v==="typeset");
+  $("viewPlain").setAttribute("aria-pressed",v==="plain");
+  renderList();
+}
+
+document.addEventListener("DOMContentLoaded",init);
+</script>
+</body>
+</html>
