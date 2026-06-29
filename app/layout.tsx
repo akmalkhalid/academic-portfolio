@@ -1,7 +1,9 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import SiteNav from '@/components/SiteNav'
+import PageTransition from '@/components/PageTransition'
 import { getSiteConfig } from '@/lib/content'
+import { s } from '@/lib/style'
 
 const cfg = getSiteConfig()
 
@@ -11,21 +13,30 @@ export const metadata: Metadata = {
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const social = cfg.social || ({} as typeof cfg.social)
   return (
     <html lang="en">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"
+          rel="stylesheet"
+        />
+      </head>
       <body>
-        <header className="border-b border-stone-200 bg-white sticky top-0 z-20">
-          <SiteNav shortName={cfg.authorShortName} />
-        </header>
-        <main className="max-w-5xl mx-auto px-6 py-10">{children}</main>
-        <footer className="border-t border-stone-200 mt-20 py-8 text-sm text-stone-500">
-          <div className="max-w-5xl mx-auto px-6 flex flex-col md:flex-row gap-2 md:gap-6 justify-between">
-            <p>© {new Date().getFullYear()} {cfg.authorName}. FTSM, UKM.</p>
-            <div className="flex gap-4">
-              {cfg.social.scholar && <a href={cfg.social.scholar} target="_blank" rel="noopener noreferrer">Scholar</a>}
-              {cfg.social.orcid && <a href={cfg.social.orcid} target="_blank" rel="noopener noreferrer">ORCID</a>}
-              {cfg.social.linkedin && <a href={cfg.social.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a>}
-              {cfg.social.github && <a href={cfg.social.github} target="_blank" rel="noopener noreferrer">GitHub</a>}
+        <PageTransition />
+        <SiteNav shortName={cfg.authorShortName} />
+        <main>{children}</main>
+        <footer style={s('border-top:1px solid #e7e3dd;background:#fff')}>
+          <div style={s('max-width:1120px;margin:0 auto;padding:30px 28px;display:flex;flex-wrap:wrap;gap:14px 28px;align-items:center;justify-content:space-between')}>
+            <p style={s('font-size:13px;color:#8a8279;margin:0')}>© {new Date().getFullYear()} {cfg.authorName} · FTSM, UKM</p>
+            <p style={s("font-family:'JetBrains Mono',monospace;font-size:11px;color:#a39a8f;margin:0")}>Cookie-free analytics · honours Do-Not-Track · no personal data stored</p>
+            <div style={s('display:flex;gap:18px;font-size:13px')}>
+              {social.scholar && <a href={social.scholar} target="_blank" rel="noopener noreferrer" style={s('color:#57514b;text-decoration:none')}>Scholar</a>}
+              {social.orcid && <a href={social.orcid} target="_blank" rel="noopener noreferrer" style={s('color:#57514b;text-decoration:none')}>ORCID</a>}
+              {social.linkedin && <a href={social.linkedin} target="_blank" rel="noopener noreferrer" style={s('color:#57514b;text-decoration:none')}>LinkedIn</a>}
+              {social.researchgate && <a href={social.researchgate} target="_blank" rel="noopener noreferrer" style={s('color:#57514b;text-decoration:none')}>ResearchGate</a>}
             </div>
           </div>
         </footer>

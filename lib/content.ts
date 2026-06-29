@@ -16,6 +16,9 @@ export type SiteConfig = {
   siteUrl: string
   social: { scholar?: string; orcid?: string; linkedin?: string; github?: string; researchgate?: string }
   heroHeadline: string; heroSubheadline: string
+  // Optional headline metrics shown on the home page. All optional — the page
+  // falls back to computed counts when these are absent.
+  metrics?: { citations?: number; hIndex?: number; i10Index?: number }
 }
 
 export type Tag = { id: string; name: string; color: string; description?: string }
@@ -150,4 +153,9 @@ export function getOpenResearchSlots(): ResearchSlot[] {
   const raw = fs.readFileSync(path.join(CONTENT_DIR, 'research-slots/slots.yml'), 'utf-8')
   const slots = yaml.load(raw) as ResearchSlot[]
   return slots.filter((s) => s.isOpen)
+}
+
+export function getAllResearchSlots(): ResearchSlot[] {
+  const raw = fs.readFileSync(path.join(CONTENT_DIR, 'research-slots/slots.yml'), 'utf-8')
+  return yaml.load(raw) as ResearchSlot[]
 }

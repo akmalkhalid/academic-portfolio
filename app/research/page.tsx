@@ -1,36 +1,67 @@
-export const metadata = { title: 'Research & Expertise — Academic Portfolio' }
+import { getAllProjects } from '@/lib/content'
+import { codesFromTags, isPI, PCOL, PNAME, PBADGE, type Code } from '@/lib/view'
+import ResearchClient from './ResearchClient'
 
-const PILLARS = [
-  {
-    id: 'generative-ai',
-    title: 'Generative AI & Expert Systems',
-    body: `Generative AI and Expert Systems represent two complementary visions of machine intelligence: one that creates and one that reasons. My research investigates how generative models (transformers, diffusion architectures, GAN) can be coupled with structured, symbolic, and rule-based knowledge to produce systems that are both creative and explainable.`,
-  },
-  {
-    id: 'evolutionary',
-    title: 'Evolutionary Computing & Computational Optimization',
-    body: `Many of the most important problems in engineering, logistics, and AI are NP-hard. My work in evolutionary computing focuses on designing nature-inspired metaheuristics, which include genetic algorithms, swarm intelligence, and hybrid memetic methods, applied for large-scale combinatorial and continuous optimization.`,
-  },
-  {
-    id: 'games',
-    title: 'Games Informatics & Simulation',
-    body: `Games are demanding testbeds for AI: real-time decision making, adversarial reasoning, content creativity, human-aware adaptation. My research explores data analytics for making sense of the science behind playing, information that culminates in the entertainment as knowledge in human-machine interactions, procedural content generation to explore shared creativity between human and AI players, AI-controlled NPCs to enhance player experience, and serious games for training, education, and policy modeling.`,
-  },
-]
+const D0 = 2024, SPAN = 6.5
+const left = (f: number) => ((f - D0) / SPAN) * 100
+const frac = (ym: string) => { const p = ym.split('-'); return +p[0] + ((+p[1] || 1) - 1) / 12 }
+const fmt = (n: number) => 'RM ' + n.toLocaleString()
+const tagChip = (c: Code) => ({ label: PNAME[c], style: `font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:500;padding:2px 8px;border-radius:5px;background:${PBADGE[c].bg};color:${PBADGE[c].fg}` })
 
-export default function ResearchPage() {
+export default function Page() {
+  const projects = getAllProjects()
+  const grants = projects.map((p) => ({
+    title: p.title,
+    agency: p.fundingAgency,
+    grantCode: p.grantCode || '',
+    amount: p.amountMyr || 0,
+    role: isPI(p.role) ? 'Principal Investigator' : 'Co-Investigator',
+    start: (p.startDate || '').slice(0, 7),
+    end: (p.endDate || '').slice(0, 7),
+    status: p.status,
+    codes: codesFromTags(p.researchTags),
+  }))
+
+  const total = grants.reduce((sum, g) => sum + g.amount, 0)
+  const active = grants.filter((g) => g.status === 'Active')
+  const completed = grants.filter((g) => g.status === 'Completed')
+  const piGrants = grants.filter((g) => g.role === 'Principal Investigator')
+  const piTotal = piGrants.reduce((sum, g) => sum + g.amount, 0)
+
+  const stats = [
+    { num: piTotal, prefix: 'RM ', display: piTotal.toLocaleString(), label: 'Research funding led as PI', hint: 'RM ' + total.toLocaleString() + ' cumulative · ' + grants.length + ' grants', dot: '#8b7bf0' },
+    { num: grants.length, prefix: '', display: String(grants.length), label: 'Funded grants', hint: active.length + ' active · ' + completed.length + ' completed', dot: '#4d8df0' },
+    { num: piGrants.length, prefix: '', display: String(piGrants.length), label: 'As Principal Investigator', hint: 'lead-led projects', dot: '#21b3a0' },
+    { num: active.length, prefix: '', display: String(active.length), label: 'Active right now', hint: 'running 2024 — 2030', dot: '#f2683f' },
+  ]
+
+  const timeline = grants.slice().sort((a, b) => frac(a.start) - frac(b.start) || b.amount - a.amount).map((g) => {
+    const l = left(frac(g.start)), w = Math.max(2.4, left(frac(g.end)) - l)
+    const done = g.status === 'Completed'
+    const col = PCOL[g.codes[0]]
+    const barStyle = `position:absolute;top:5px;bottom:5px;left:${l}%;width:${w}%;border-radius:5px;display:flex;align-items:center;padding:0 7px;overflow:hidden;background:${col};${done ? 'opacity:.42;' : 'box-shadow:0 2px 8px -3px ' + col + ';'}transition:transform .15s,filter .15s;cursor:default`
+    return { short: g.title, amountFmt: fmt(g.amount), roleShort: g.role === 'Principal Investigator' ? 'PI' : 'Co-I', title: g.title, barStyle, barLabel: w > 16 ? g.agency : '' }
+  })
+  const years = [2024, 2025, 2026, 2027, 2028, 2029, 2030].map((y) => ({ label: String(y), left: left(y) }))
+  const now = new Date()
+  const todayLeft = left(now.getFullYear() + now.getMonth() / 12)
+
+  const decorate = (g: typeof grants[number]) => ({
+    title: g.title, agency: g.agency, grantCode: g.grantCode, role: g.role,
+    amountFmt: fmt(g.amount), years: g.start.slice(0, 4) + '–' + g.end.slice(0, 4),
+    accent: PCOL[g.codes[0]], tags: g.codes.slice(0, 2).map(tagChip),
+  })
+
   return (
-    <div>
-      <h1 className="text-3xl font-medium mb-2">Research & expertise</h1>
-      <p className="text-stone-600 mb-10 max-w-3xl">Three interconnected pillars at the convergence of AI, optimization, and interactive systems.</p>
-      <div className="space-y-12">
-        {PILLARS.map((p) => (
-          <section key={p.id} id={p.id} className="scroll-mt-24">
-            <h2 className="text-2xl font-medium mb-4">{p.title}</h2>
-            <p className="text-stone-700 leading-relaxed max-w-3xl">{p.body}</p>
-          </section>
-        ))}
-      </div>
-    </div>
+    <ResearchClient
+      stats={stats}
+      timeline={timeline}
+      years={years}
+      todayLeft={todayLeft}
+      active={active.map(decorate)}
+      completed={completed.map(decorate)}
+      activeCount={active.length}
+      completedCount={completed.length}
+    />
   )
 }

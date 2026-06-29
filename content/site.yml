@@ -19,3 +19,11 @@ social:
 # Hero section copy
 heroHeadline: "Engineering intelligence at the intersection of theory and play."
 heroSubheadline: "Senior lecturer and researcher at FTSM, UKM. My work explores how generative AI, evolutionary computing, computational intelligence, and games informatics, to solve real-world problems."
+
+# Headline metrics shown on the home page (all optional). Publications, grants
+# and supervised-students counts are computed automatically from /content; these
+# are the figures the site can't derive on its own. Update after each Scholar sync.
+metrics:
+  citations: 1153
+  hIndex: 18
+  i10Index: 31
