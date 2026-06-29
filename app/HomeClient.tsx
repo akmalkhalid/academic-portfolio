@@ -139,7 +139,7 @@ export default function HomeClient({
       const cv = mazeRef.current
       if (!cv || !cv.getBoundingClientRect().width) { requestAnimationFrame(setupMaze); return }
       let g = fit(cv, 200)
-      let cs: number, cols: number, rows: number, cells: any[], queue: number[], parent: number[], path: number[] | null, phase: string, exitIdx: number
+      let cs: number, cols: number, rows: number, cells: any[], queue: number[], parent: number[], path: number[] | null = null, phase: string = 'search', exitIdx: number
       let visitedOrder: number[] = [], pathDraw = 0, holdT = 0
       const idx = (x: number, y: number) => y * cols + x
       const build = () => {
