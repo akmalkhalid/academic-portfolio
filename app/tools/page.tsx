@@ -47,7 +47,7 @@ export default function Page() {
     function setupMaze() {
       const cv = mazeRef.current; if (!cv || !cv.getBoundingClientRect().width) { requestAnimationFrame(setupMaze); return }
       let g = fit(cv, 210)
-      let cs: number, cols: number, rows: number, cells: any[], queue: number[], parent: number[], path: number[] | null, phase: string, exitIdx: number
+      let cs: number, cols: number, rows: number, cells: any[], queue: number[], parent: number[], path: number[] | null = null, phase: string = 'search', exitIdx: number
       let visitedOrder: number[] = [], pathDraw = 0, holdT = 0
       const idx = (x: number, y: number) => y * cols + x
       const build = () => {
@@ -78,7 +78,7 @@ export default function Page() {
       }
       build(); draw()
       fits.push(() => { g = fit(cv, 210); build(); draw() })
-      if (reduce) { let guard = 0; while (phase === 'search' && guard++ < 99999) stepBFS(50); pathDraw = path ? path.length : 0; draw(); return }
+      if (reduce) { let guard = 0; while (phase === 'search' && guard++ < 99999) stepBFS(50); pathDraw = path ? (path as number[]).length : 0; draw(); return }
       let vis = true; const io = new IntersectionObserver((en) => { en.forEach((x) => (vis = x.isIntersecting)) }, { threshold: .15 }); io.observe(cv); ios.push(io)
       const loop = () => { if (vis) { if (phase === 'search') stepBFS(2); else if (phase === 'path') { if (pathDraw < path!.length) pathDraw += 1; else { holdT++; if (holdT > 150) build() } } draw() } rafs.push(requestAnimationFrame(loop)) }; loop()
     }
