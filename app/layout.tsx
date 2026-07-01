@@ -44,3 +44,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     </html>
   )
 }
+
+fetch('https://akmal-counter.akmal-counter.workers.dev', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ path: location.pathname, referrer: document.referrer }),
+  }).catch(() => {});
