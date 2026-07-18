@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import './globals.css'
 import SiteNav from '@/components/SiteNav'
 import PageTransition from '@/components/PageTransition'
+import VisitCounter from '@/components/VisitCounter'
 import { getSiteConfig } from '@/lib/content'
 import { s } from '@/lib/style'
 
@@ -25,6 +26,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body>
+        <VisitCounter />
         <PageTransition />
         <SiteNav shortName={cfg.authorShortName} />
         <main>{children}</main>
@@ -44,9 +46,3 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     </html>
   )
 }
-
-fetch('https://akmal-counter.akmal-counter.workers.dev', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ path: location.pathname, referrer: document.referrer }),
-  }).catch(() => {});
