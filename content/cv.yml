@@ -1,0 +1,290 @@
+# ============================================================================
+#  CANONICAL CV DATA  —  single source of truth for BOTH the /cv web page
+#  and the auto-generated PDF (public/cv/Akmal_CV_2026.pdf).
+#
+#  Edit this file, push, and GitHub Actions regenerates the PDF to match.
+#  Keep your "numbers of truth" here (see NOTE on figures at the bottom).
+# ============================================================================
+
+meta:
+  name: "Mohd Nor Akmal Khalid"
+  credential: "Ph.D."
+  monogram: "MNAK"
+  title: "Senior Lecturer (DS13)"
+  subtitle: "Artificial Intelligence, Games & Optimization"
+  affiliation: "Faculty of Information Science & Technology · Center for AI Technology (CAIT) · Universiti Kebangsaan Malaysia"
+  contacts:
+    - { label: "email",        value: "akmal@ukm.edu.my",                 href: "mailto:akmal@ukm.edu.my" }
+    - { label: "phone",        value: "+6011-5662 0079",                  href: "tel:+601156620079" }
+    - { label: "web",          value: "akmal.app",                        href: "https://akmal.app" }
+    - { label: "ORCID",        value: "0000-0002-7909-8869",              href: "https://orcid.org/0000-0002-7909-8869" }
+    - { label: "Scopus",       value: "55488603600",                      href: "https://www.scopus.com/authid/detail.uri?authorId=55488603600" }
+    - { label: "Scholar",      value: "GJeS-CwAAAAJ",                     href: "https://scholar.google.com/citations?user=GJeS-CwAAAAJ" }
+    - { label: "LinkedIn",     value: "mohd-nor-akmal-khalid-ts-dr",      href: "https://www.linkedin.com/in/mohd-nor-akmal-khalid-ts-dr" }
+    - { label: "ResearchGate", value: "Mohd-Nor-Akmal-Khalid",            href: "https://www.researchgate.net/profile/Mohd-Nor-Akmal-Khalid" }
+
+# Headline stat tiles (top of page 1). value + label + accent key.
+stats:
+  - { value: "113",      label: "Publications",     accent: "blue"   }
+  - { value: "1,153",    label: "Citations",        accent: "indigo" }
+  - { value: "18",       label: "h-index",          accent: "teal"   }
+  - { value: "31",       label: "i10-index",        accent: "amber"  }
+  - { value: "14",       label: "Postgraduates",    accent: "purple" }
+  - { value: "10",       label: "Research Grants",  accent: "blue2"  }
+  - { value: "7 / 30",   label: "Q1 / Q2 Scopus",   accent: "teal"   }
+  - { value: "RM 920K+", label: "Funding",          accent: "rose"   }
+
+profile: >
+  Artificial-intelligence researcher and educator specializing in game informatics,
+  computational intelligence, and intelligent/expert systems. PhD in Evolutionary
+  Computing (Universiti Sains Malaysia, 2018), with a prior appointment as Assistant
+  Professor at the Japan Advanced Institute of Science and Technology (JAIST), where he
+  co-founded the International Research Center for AI and Entertainment Science. Currently
+  a Senior Lecturer at Universiti Kebangsaan Malaysia and Research Coordinator at CAIT,
+  leading grants totalling over RM 920K — including a national flagship on large language
+  models for the Malay language. Author of 113 publications with 1,153 citations
+  (h-index 18, i10-index 31) and supervisor of 14 postgraduate researchers. A certified
+  Professional Technologist (MBOT), IEEE and AAAI member, guest editor and regular referee
+  for Elsevier and IEEE journals.
+
+researchFocus:
+  - accent: "blue"
+    title: "Game Informatics"
+    text: "Game analytics & design, entertainment science, game-playing AI agents, game-tree search, gamification, empathic entertainment, archaeogaming"
+  - accent: "teal"
+    title: "Computational Intelligence"
+    text: "Bio-inspired & evolutionary computing, computational modeling, machine learning, agent-based systems, cellular automata, computational psychometrics"
+  - accent: "purple"
+    title: "Expert Systems & LLMs"
+    text: "Large language models, intelligent search, case-based reasoning, knowledge-based systems, data-driven decision making & business intelligence"
+
+# marker: * = first author, dagger = corresponding/senior, section = sole author
+selectedPapers:
+  - group: "Game Informatics & Entertainment Science"
+    accent: "blue"
+    items:
+      - { marker: "sole", quartile: "Q2", cite: "M. N. A. Khalid (2025). Ludogenic innovation: How playing incentivizes technological innovation. Entertainment Computing, 52, 100900." }
+      - { marker: "first", quartile: "Q2", cite: "M. N. A. Khalid & H. Iida (2021). Objectivity and subjectivity in games: Understanding engagement and addiction mechanism. IEEE Access, 9, 65187–65205." }
+      - { marker: "corr", quartile: "Q2", cite: "H. Iida & M. N. A. Khalid (2020). Using games to study law of motions in mind. IEEE Access, 8, 138701–138709." }
+  - group: "Computational Intelligence & Optimization"
+    accent: "teal"
+    items:
+      - { marker: "first", quartile: "Q1", cite: "M. N. A. Khalid & U. K. Yusof (2018). Dynamic crowd evacuation approach for the emergency route planning problem. Safety Science, 102, 263–274." }
+      - { marker: "first", quartile: "Q2", cite: "M. N. A. Khalid & U. K. Yusof (2021). Leveraging bio-inspired knowledge-intensive optimization in the assembly line balancing problem. IEEE Access, 9, 117832–117844." }
+      - { marker: "first", quartile: "Q2", cite: "M. N. A. Khalid & U. K. Yusof (2020). Incorporating shifting bottleneck identification in assembly line balancing via an artificial immune system approach. Flexible Services and Manufacturing Journal." }
+  - group: "Expert Systems, AI & Large Language Models"
+    accent: "purple"
+    items:
+      - { marker: "first", quartile: "Q1", cite: "M. N. A. Khalid, A. A. Al-Kadhimi & M. M. Singh (2023). Game-theory approaches for detection and defense against advanced persistent threats: A systematic review. Mathematics, 11(6), 1353." }
+      - { marker: "first", quartile: "", cite: "M. N. A. Khalid, N. H. Kamarudin, W. Virgiyanti & R. Thurasamy (2025). Framework for assisted knowledge management practices using large language models. Asia-Pacific J. of Information Technology & Multimedia, 14(2)." }
+      - { marker: "corr", quartile: "Q1", cite: "M. A. M. Tasir & M. N. A. Khalid (2025). A novel deep neural model for efficient and scalable historical place image classification. Scientific Reports, 15, 42745." }
+      - { marker: "sole", quartile: "", cite: "M. N. A. Khalid (2025). Simulating AI-human collaborative strategies in Sudoku puzzle generation. Int. Conf. on Entertainment Computing, Springer, 468–477." }
+
+education:
+  - { period: "2015–2018", degree: "Ph.D., Evolutionary Computing", place: "Universiti Sains Malaysia", detail: "Thesis: Enhanced Artificial Immune System for Assembly Line Balancing via Shifting Bottleneck Identification." }
+  - { period: "2013–2015", degree: "M.Sc., Computer Science", place: "Universiti Sains Malaysia", detail: "Thesis: Optimizing Crowd Evacuation in the Emergency Route Planning Problem." }
+  - { period: "2009–2013", degree: "B.Comp.Sc. (Hons)", place: "Universiti Sains Malaysia", detail: "Major: Intelligent Systems; Minor: Management. CGPA 3.15." }
+
+employment:
+  - { period: "2023–present", role: "Senior Lecturer", place: "Faculty of Information Science & Technology, UKM." }
+  - { period: "2018–2023", role: "Assistant Professor", place: "School of Information Science, JAIST, Japan." }
+  - { period: "2021–2023", role: "Part-Time Research Fellow", place: "School of Computer Sciences, USM." }
+  - { period: "2013–2018", role: "Graduate Research & Teaching Assistant", place: "School of Computer Sciences, USM." }
+
+# amount drives the funding-bar width (relative to the largest grant). note shows instead of amount when amount is 0.
+grants:
+  - { role: "Co-I",   title: "AI-Enhanced Pain Assessment in Postoperative Recovery (PACU)", period: "2026–2030", funder: "Geran Fundamental Fakulti Perubatan (GFFP)", amount: 0, note: "Active · newest" }
+  - { role: "PI",     title: "LLM for the Malay National Language", period: "2025–2026", funder: "KPT", amount: 400000 }
+  - { role: "PI",     title: "Human-Machine Collaborative Framework using GAN & Map-Elites (FRGS)", period: "2024–2027", funder: "FRGS / KPT", amount: 125300 }
+  - { role: "Co-PI",  title: "Swarm-Based Hyperparameter Optimization for Random Forest in Healthcare (FRGS)", period: "2024–2027", funder: "FRGS / KPT", amount: 117700 }
+  - { role: "Member", title: "Global Warming & Depression Prediction via Deep RNN + HMM (FRGS)", period: "2019–2022", funder: "FRGS / KPT", amount: 98400 }
+  - { role: "Co-PI",  title: "Enhancing Braille Literacy through Novel Interactive Features", period: "2024–2026", funder: "UKM Internal", amount: 77500 }
+  - { role: "PI",     title: "A Modified Liquid Neural Network Architecture for Iterative Design Optimization", period: "2024–2026", funder: "UKM Internal", amount: 50000 }
+  - { role: "PI",     title: "Fusion of Data- & Theory-Driven Research: Empathic Entertainment (founded IRC-AIES, JAIST)", period: "2022–2023", funder: "JAIST", amount: 23259 }
+  - { role: "PI",     title: "Establishing a New Research Field of “Comfort in Mind” Science & Technology", period: "2021–2022", funder: "JAIST", amount: 16615 }
+
+ip:
+  - { title: "AI Technopreneurship", place: "FTSM, UKM", year: "2025" }
+  - { title: "AI for Education", place: "FTSM, UKM", year: "2025" }
+  - { title: "AI for Workplace", place: "FTSM, UKM", year: "2025" }
+  - { title: "AI-Assisted Research Writing", place: "FTSM, UKM", year: "2024" }
+  - { title: "AI-Assisted Systematic Literature Review", place: "FTSM, UKM", year: "2024" }
+
+journals:
+  - { q: "Q4", cite: "W. D. Ahmad, A. A. Bakar, and M. N. A. Khalid (2025). A systematic literature review on the sand cat swarm algorithm: Enhancements, applications, and future directions. International Journal of Advanced Computer Science and Applications, vol. 16, pp. 538–553." }
+  - { q: "Q2", cite: "O. Bashaddadh, N. Omar, M. Mohd, and M. N. A. Khalid (2025). Machine learning and deep learning approaches for fake news detection: A systematic review of techniques, challenges, and advancements. IEEE Access, vol. 13, pp. 90 433–90 466." }
+  - { q: "Q2", cite: "N. Gao, M. N. A. Khalid, and H. Iida (2025). The impact of performance degree on players: Exploring player enjoyment and engagement in the dynamic of game process. Entertainment Computing, vol. 52, p. 100 887." }
+  - { q: "Q2", cite: "M. N. A. Khalid (2025). Ludogenic innovation: How playing incentivizes technological innovation. Entertainment Computing, vol. 52, p. 100 900." }
+  - { q: "Scopus", cite: "M. N. A. Khalid, N. H. Kamarudin, W. Virgiyanti, and R. Thurasamy (2025). Framework for assisted knowledge management practices using large language models: Preliminary findings. Asia-Pacific Journal of Information Technology & Multimedia, vol. 14, no. 2." }
+  - { q: "Q2", cite: "M. Numan, H. Iida, and M. N. A. Khalid (2025). From opening to endgame: When does the game get engaging and exciting? Exploring phase-based velocity dynamics using the mim framework. IEEE Access, vol. 13, pp. 172 326–172 340." }
+  - { q: "Q2", cite: "M. Numan, H. Iida, and M. N. A. Khalid (2025). Modeling sports engagement: A game refinement theory perspective on game length and scoring frequency. IEEE Access, vol. 13, pp. 103 264–103 281." }
+  - { q: "Q2", cite: "L. Siqi, M. N. A. Khalid, and H. Iida (2025). Enhancing auction experiences: Game dynamics and customer experience design. Entertainment Computing, vol. 54, p. 100 959." }
+  - { q: "Q1", cite: "M. A. M. Tasir and M. N. A. Khalid (2025). A novel deep neural model for efficient and scalable historical place image classification. Scientific Reports, vol. 15, no. 1, p. 42 745." }
+  - { q: "Scopus", cite: "S. Thavamuni, M. N. A. Khalid, Y. Kohda, and H. Iida (2025). Analyzing the gacha system in genshin impact: Odds, mechanics and player enticement. Asia-Pacific Journal of Information Technology and Multimedia, vol. 14, no. 1, pp. 61–71." }
+  - { q: "Scopus", cite: "S. Thavamuni, H. Iida, and M. N. A. Khalid (2025). Studying the emotional impact of increasing cooperative players towards the difficulty of a game. Asia-Pacific Journal of Information Technology & Multimedia, vol. 14, no. 2." }
+  - { q: "Q2", cite: "S. Thavamuni, M. N. A. Khalid, and H. Iida (2025). Inherent addiction mechanisms in video games’ gacha. Information, vol. 16, no. 10." }
+  - { q: "Q1", cite: "A. Ullah, M. Numan, M. N. A. Khalid, and A. Majid (2025). Words shaping worlds: A comprehensive exploration of text-driven image and video generation with generative adversarial networks. Neurocomputing, vol. 632, p. 129 767." }
+  - { q: "Q1", cite: "X. Yu, M. N. A. Khalid, A. Abu Bakar, et al. (2025). A novel 2d hyperchaotic map with high complexity and its application in dcsk. Physica Scripta, vol. 100, no. 11, p. 115 228." }
+  - { q: "Q4", cite: "N. A. Zaini, T. S. M. Tengku Wook, M. N. A. Khalid, and S. A. Mohd Noah (2025). User requirements of adaptive learning through digital game-based learning: User-centered design approach to enhance the language literacy development. International Journal of Advanced Computer Science & Applications, vol. 16, no. 9." }
+  - { q: "Q2", cite: "N. H. Kamarudin, N. H. S. Suhaimi, F. A. Nor Rashid, M. N. A. Khalid, and F. Mohd Ali (2024). Exploring authentication paradigms in the internet of things: A comprehensive scoping review. Symmetry, vol. 16, no. 2, p. 171." }
+  - { q: "Scopus", cite: "S. Li, M. N. A. Khalid, and H. Iida (2024). Rational bidding meets emotional viewing: The landscape of english auction livestreams in the age of algorithms. Asia-Pacific Journal of Information Technology and Multimedia, vol. 13, no. 1, pp. 105–118." }
+  - { q: "Scopus", cite: "S. Li, M. N. A. Khalid, and H. Iida (2024). Strategic selection and design of the first auction item: Analyzing auction dynamics through “motion in mind” and “potential reinforcement energy.” Asia-Pacific Journal of Information Technology and Multimedia, vol. 13, no. 2, pp. 298–312." }
+  - { q: "Scopus", cite: "M. Numan, H. Iida, and M. N. A. Khalid (2024). Analyzing soccer dynamics using the motion in mind model. Asia-Pacific Journal of Information Technology and Multimedia, vol. 13, no. 2, pp. 266–286." }
+  - { q: "Q1", cite: "M. Numan, F. Subhan, M. N. A. Khalid, W. Z. Khan, and H. Iida (2024). Clone node detection in static wireless sensor networks: A hybrid approach. Journal of Network and Computer Applications, vol. 232, p. 104 018." }
+  - { q: "Q2", cite: "N. H. S. Suhaimi, N. H. Kamarudin, M. N. A. Khalid, I. Tahir, and M. A. A. Mohamed (2024). State-of-the-art authentication measures in satellite communication networks: A comprehensive analysis. IEEE Access, vol. 12, pp. 142 241–142 264." }
+  - { q: "Q4", cite: "S. Xiong, L. Zuo, Q. Chen, Z. Zeliang, and M. N. A. Khalid (2024). A serious game (“fight with virus”) for preventing covid-19 health rumors: Development and experimental study. JMIR Serious Games, vol. 12, e45546." }
+  - { q: "Q2", cite: "P. Anunpattana, M. N. A. Khalid, and H. Iida (2023). Objectivity and subjectivity in variation of multiple choice questions: Linking the theoretical concepts using motion in mind. IEEE Access, vol. 11, pp. 35 371–35 397." }
+  - { q: "Q1", cite: "A. A. Al-Kadhimi, M. M. Singh, and M. N. A. Khalid (2023). A systematic literature review and a conceptual framework proposition for advanced persistent threats (apt) detection for mobile devices using artificial intelligence techniques. Applied Sciences, vol. 13, no. 14." }
+  - { q: "Q1", cite: "M. N. A. Khalid, A. A. Al-Kadhimi, and M. M. Singh (2023). Recent developments in game-theory approaches for the detection and defense against advanced persistent threats (apts): A systematic review. Mathematics, vol. 11, no. 6." }
+  - { q: "Q2", cite: "M. N. Rizani, M. N. A. Khalid, and H. Iida (2023). Application of meta-gaming concept to the publishing platform: Analysis of the steam games platform. Information, vol. 14, no. 2." }
+  - { q: "Q2", cite: "S. Thavamuni, M. N. A. Khalid, and H. Iida (2022). What makes an ideal team? Analysis of popular multiplayer online battle arena (moba) games. Entertainment Computing, vol. 44, p. 100 523." }
+  - { q: "Q2", cite: "N. Gao, H. Chang, Z. Zhang, M. N. A. Khalid, and H. Iida (2022). Implications of jerk’s on the measure of game’s entertainment: Discovering potentially addictive games. IEEE Access, vol. 10, pp. 134 362–134 376." }
+  - { q: "Q2", cite: "Y. Gao, C. Liu, N. Gao, M. N. A. Khalid, and H. Iida (2022). Nature of arcade games. Entertainment Computing, vol. 41, p. 100 469." }
+  - { q: "Scopus", cite: "L. Hao, M. N. A. Khalid, and H. Iida (2022). Analysis of the attractiveness of soccer: A game refinement model and the significance of ‘antagonistic rate’. Journal of Creative Industry and Sustainable Culture, vol. 1, pp. 203–223." }
+  - { q: "Scopus", cite: "N. I. A. Kader, U. K. Yusof, M. N. A. Khalid, and N. R. N. Husain (2022). Recent techniques in determining the effects of climate change on depressive patients: A systematic review. Journal of Environmental and Public Health, vol. 2022, pp. 1–11." }
+  - { q: "Q1", cite: "C. Liu, S. Huang, G. Naying, M. N. A. Khalid, and H. Iida (2022). A solver of single-agent stochastic puzzle: A case study with minesweeper. Knowledge-Based Systems, vol. 246, p. 108 630." }
+  - { q: "Scopus", cite: "G. Naying, G. Yuexian, M. N. A. Khalid, and H. Iida (2022). A computational game experience analysis via game refinement theory. Telematics and Informatics Reports, vol. 9, p. 100 039." }
+  - { q: "Q2", cite: "H. Ri, X. Kang, M. N. A. Khalid, and H. Iida (2022). The dynamics of minority versus majority behaviors: A case study of the mafia game. Information, vol. 13, no. 3, p. 134." }
+  - { q: "Q2", cite: "Z. Zhang, N. Gao, S. Li, M. N. A. Khalid, and H. Iida (2022). Action games evolution analysis: A case study using the god of war series. IEEE Access, vol. 10, pp. 123 697–123 710." }
+  - { q: "Q2", cite: "H. P. P. Aung, M. N. A. Khalid, and H. Iida (2021). What constitutes fairness in games? A case study with scrabble. Information, vol. 12, no. 9, p. 352." }
+  - { q: "Q2", cite: "X. Kang, H. Ri, M. N. A. Khalid, and H. Iida (2021). Addictive games: Case study on multi-armed bandit game. Information, vol. 12, no. 12, p. 521." }
+  - { q: "Q2", cite: "M. N. A. Khalid and H. Iida (2021). Objectivity and subjectivity in games: Understanding engagement and addiction mechanism. IEEE Access, vol. 9, pp. 65 187–65 205." }
+  - { q: "Q2", cite: "M. N. A. Khalid and U. K. Yusof (2021). Leveraging bio-inspired knowledge-intensive optimization algorithm in the assembly line balancing problem. IEEE Access, vol. 9, pp. 117 832–117 844." }
+  - { q: "Q2", cite: "A. Primanita, M. N. A. Khalid, and H. Iida (2021). Computing games: Bridging the gap between search and entertainment. IEEE Access, vol. 9, pp. 72 087–72 102." }
+  - { q: "Q2", cite: "H. Wang, Z. Zhang, M. N. A. Khalid, H. Iida, and K. Li (2021). MMORPG evolution analysis from explorer and achiever perspectives: A case study using the final fantasy series. Information, vol. 12, no. 6, p. 229." }
+  - { q: "Q2", cite: "Z. Zhang, K. Xiaohan, M. N. A. Khalid, and H. Iida (2021). Bridging ride and play comfort. Information, vol. 12, no. 3, p. 119." }
+  - { q: "Q2", cite: "Y. Gao, W. Li, Y. Xiao, M. N. A. Khalid, and H. Iida (2020). Nature of attractive multiplayer games: Case study on china’s most popular card game—DouDiZhu. Information, vol. 11, no. 3, p. 141." }
+  - { q: "", cite: "H. Iida and M. N. A. Khalid (2020). A paradigm shift from optimal play to mental comfort: A perspective from the game refinement theory. International Journal of Informatics, Information System and Computer Engineering (INJIISCOM), vol. 1, no. 1, pp. 48–81." }
+  - { q: "Q2", cite: "H. Iida and M. N. A. Khalid (2020). Using games to study law of motions in mind. IEEE Access, vol. 8, pp. 138 701–138 709." }
+  - { q: "Q2", cite: "M. N. A. Khalid and U. K. Yusof (2020). Incorporating shifting bottleneck identification in assembly line balancing problem using an artificial immune system approach. Flexible Services and Manufacturing Journal." }
+  - { q: "Q2", cite: "A. Primanita, M. N. A. Khalid, and H. Iida (2020). Characterizing the nature of probability-based proof number search: A case study in the othello and connect four games. Information, vol. 11, no. 5, p. 264." }
+  - { q: "Q2", cite: "K. Xiaohan, M. N. A. Khalid, and H. Iida (2020). Player satisfaction model and its implication to cultural change. IEEE Access, vol. 8, pp. 184 375–184 382." }
+  - { q: "Q2", cite: "L. Xinyue, F. Luping, M. N. A. Khalid, and H. Iida (2020). Finding appropriate settings for fairness and engagement in a newly designed game through self-playing AI program: A case study using japanese crossword game ’MyoGo renju’. Entertainment Computing, vol. 34, p. 100 358." }
+  - { q: "Q2", cite: "W. Yisi, M. N. A. Khalid, and H. Iida (2020). Analyzing the sophistication of chinese checkers. Entertainment Computing, vol. 34, p. 100 363." }
+  - { q: "", cite: "S. Agarwal, M. N. A. Khalid, and H. Iida (2019). Game refinement theory: Paradigm shift from performance optimization to comfort in mind. Entertainment Computing, vol. 32, p. 100314." }
+  - { q: "", cite: "A. V. N. Dinh, N. P. H. Bao, M. N. A. Khalid, and H. Iida (2019). Simulating competitiveness and precision in a tournament structure: A reaper tournament system. International Journal of Information Technology, vol. 12, no. 1, pp. 1–18." }
+  - { q: "", cite: "P. Anunpattana, M. N. A. Khalid, U. K. Yusof, and H. Iida (2018). Analysis of realm of valor and its business model on PC and mobile platform comparison. Asia-Pacific Journal of Information Technology and Multimedia, vol. 7, no. 2, pp. 1–11." }
+  - { q: "", cite: "C. T. Fei, M. N. A. Khalid, and U. K. Yusof (2018). Alzheimer patient detection using Bayesian network model. Advanced Science Letters, vol. 24, no. 2, pp. 1289–1292." }
+  - { q: "", cite: "M. N. A. Khalid and U. K. Yusof (2018). Dynamic crowd evacuation approach for the emergency route planning problem: Application to case studies. Safety Science, vol. 102, pp. 263–274." }
+  - { q: "", cite: "M. N. A. Khalid, U. K. Yusof, and M. T. Isa (2018). Automatic detection method of pipeline anomalies on caliper data. Advanced Science Letters, vol. 24, no. 2, pp. 1293–1297." }
+  - { q: "", cite: "M. N. A. Khalid, U. K. Yusof, and Z. F. Zaaba (2018). An artificial immune system approach for type-E assembly line balancing problem. International Journal of Engineering and Technology (IJET), vol. 7, no. 4, pp. 220–227." }
+  - { q: "", cite: "U. K. Yusof and M. N. A. Khalid (2018). Classification of manufacturing high dimensional data using deep learning-based approach. Big Data Summit 2: HPC & AI Empowering Data Analytics, p. 1." }
+  - { q: "", cite: "M. N. A. Khalid, U. K. Yusof, and K. M. Ku Aman (2016). A survey on bio-inspired multi-agent system for versatile manufacturing assembly line. ICIC Express Letters, vol. 10, no. 1, pp. 1–7." }
+  - { q: "", cite: "M. N. A. Khalid and U. K. Yusof (2015). An artificial immune approach for optimizing crowd emergency evacuation route planning problem. ICAART, vol. 2, pp. 503–508." }
+  - { q: "", cite: "M. N. A. Khalid and U. K. Yusof (2015). Immune-based approach for optimizing emergency route planning problem: Application to case studies. ICIC Express Letters, vol. 9, no. 12, pp. 3291–3298." }
+  - { q: "", cite: "M. N. A. Khalid and U. K. Yusof (2015). Optimizing distributed production scheduling problem in flexible manufacturing system subject to machine maintenance: A modified chemical reaction approach. International Journal of Innovative Computing, Information and Control, vol. 11, no. 1, pp. 213–229." }
+  - { q: "", cite: "M. N. A. Khalid, U. K. Yusof, H. Iida, and T. Ishitobi (2015). Critical position identification in games and its application to speculative play. ICAART, vol. 2, pp. 38–45." }
+  - { q: "", cite: "M. N. A. Khalid, U. K. Yusof, and A. T. Khader (2015). Survey on crowd guidance's optimization algorithm for emergency route planning and management problems. International Journal of Innovative Computing, Information and Control, vol. 9, no. 3, pp. 791–798." }
+  - { q: "", cite: "L. Y. P. Fang, U. K. Yusof, and M. N. A. Khalid (2014). Artificial immune system for optimizing public bus transportation route during peak and off-peak hour. Australian Journal of Basic and Applied Sciences, vol. 8, no. 8, p. 24." }
+  - { q: "", cite: "M. N. A. Khalid and U. K. Yusof (2014). A crowd modelling considering group cohesion in the emergency route planning problems. Australian Journal of Basic and Applied Sciences, vol. 8, pp. 33–39." }
+  - { q: "", cite: "M. N. A. Khalid and U. K. Yusof (2014). Improved immune algorithm for optimizing distributed production scheduling problem in flexible manufacturing system subject to machine maintenance. International Journal of Mathematics and Computers in Simulation, vol. 8, no. 1, pp. 19–30." }
+  - { q: "", cite: "M. N. A. Khalid and U. K. Yusof (2014). Optimizing the distributed production scheduling problems using an immune-based algorithm. Journal of Network and Innovative Computing (JNIC), vol. 2, pp. 166–177." }
+  - { q: "", cite: "U. K. Yusof, M. N. A. Khalid, and A. T. Khader (2014). Artificial immune system for flexible manufacturing system machine loading problem. ICIC Express Letters, vol. 8, no. 3, pp. 709–716." }
+  - { q: "", cite: "M. N. A. Khalid, U. K. Yusof, and A. T. Khader (2013). Solving flexible manufacturing system distributed scheduling problem subject to maintenance: An artificial immune system approach. ICIC Express Letters, vol. 7, no. 3." }
+
+conferences:
+  - "M. N. A. Khalid (2025). Exploring efficiency and solution diversity for type-E assembly line balancing problem. 2025 IEEE 15th ICCSCE, pp. 12–17."
+  - "M. N. A. Khalid (2025). Simulating AI-human collaborative strategies in Sudoku puzzle generation. Int. Conf. on Entertainment Computing, Springer, pp. 468–477."
+  - "N. I. Ab Kader, U. K. Yusof, and M. N. A. Khalid (2023). Forecasting of outpatient hospital visits using a bidirectional LSTM model. 2023 8th ICBIR, IEEE, pp. 1003–1008."
+  - "Y. An, A. Primanita, M. N. A. Khalid, and H. Iida (2020). Ascertaining the play outcome using the single conspiracy number in Gobang. 2020 IEEE Conference on Games (CoG)."
+  - "L. Jiangzhou, A. Primanita, M. N. A. Khalid, and H. Iida (2020). Analyzing the improvement process of table tennis using game refinement theory. SICONIAN 2019, Atlantis Press."
+  - "M. N. A. Khalid, U. K. Yusof, and H. Iida (2020). An artificial immune system approach for solving type-E assembly line balancing problem with problem-specific information. 2020 IEEE 16th ICCA."
+  - "C. Liu, S. Huang, M. N. A. Khalid, and H. Iida (2020). Attractiveness of single-agent game: Case study using sliding puzzle. 2020 ICAIT."
+  - "G. Naying, A. Primanita, M. N. A. Khalid, and H. Iida (2020). A key factor to maintain engagement: Case study using 'login system'. SICONIAN 2019, Atlantis Press."
+  - "H. Ri, M. N. A. Khalid, and H. Iida (2020). Analysis of Jump & Jump game and its possible enhancement. 2020 ICAIT."
+  - "M. N. Rizani, M. N. A. Khalid, H. Iida, and R. F. Malik (2020). Analysis of business model transition based on active user and review value. Int. Conf. on the Foundations of Digital Games, ACM."
+  - "H. Shamsudin, U. K. Yusof, A. Jayalakshmi, and M. N. A. Khalid (2020). Combining oversampling and undersampling for imbalanced classification: A study using a credit-card fraud dataset. 2020 IEEE 16th ICCA."
+  - "W. Tingting, H. Shunqi, H. P. P. Aung, M. N. A. Khalid, and H. Iida (2020). Analysis of single-agent game: Case study using Minesweeper. 2020 ICAIT."
+  - "W. Yicong, M. N. A. Khalid, and H. Iida (2020). Informatical analysis of Go, part 1: Evolutionary changes of board size. 2020 IEEE CoG."
+  - "W. Yicong, C. Liu, M. N. A. Khalid, and H. Iida (2020). Informational analysis of Go, part 2: Zuozi and Huanqitou. 2020 ICAIT."
+  - "S. Agarwal, M. N. A. Khalid, and H. Iida (2019). Using curiosity model to characterize edutainment based on learner's growth rate. INCITEST 2019, EAI."
+  - "P. Anunpattana, M. N. A. Khalid, and H. Iida (2019). User-centered entertainment factors for platform transformation and game development. INCITEST 2019, EAI."
+  - "H. P. P. Aung and M. N. A. Khalid (2019). Can we save near-dying games? An approach using advantage of initiative and game refinement measures. INCITEST 2019, EAI."
+  - "H. P. P. Aung, M. N. A. Khalid, and H. Iida (2019). Towards a fairness solution of Scrabble with Komi system. 2019 ICAIT, IEEE."
+  - "S. Busala, Z. Song, H. Iida, M. N. A. Khalid, and U. K. Yusof (2019). Single conspiracy number analysis in checkers. ICAART 2019, SciTePress, pp. 539–546."
+  - "C. Xiao, A. Primanita, M. N. A. Khalid, and H. Iida (2019). Analysis of card collection game 'Hearthstone'. 2019 TAAI, IEEE."
+  - "K. Xiaohan, Z. Zhang, A. Primanita, M. N. A. Khalid, H. Iida, and B. Han (2019). Analysis of boardgames using eye-tracking: Case study with Gomoku. 2019 TAAI, IEEE."
+  - "W. Yicong, H. P. P. Aung, M. N. A. Khalid, and H. Iida (2019). Evolution of games towards the discovery of noble uncertainty. 2019 ICAIT, IEEE."
+  - "M. N. A. Khalid, U. K. Yusof, and L. G. Xiang (2016). Model student selection using fuzzy logic reasoning approach. 2016 ICAICTA, IEEE, pp. 1–6."
+  - "N. I. Abdul Khader, H. Shamsudin, N. D. Abdul Razak, U. K. Yusof, and M. N. A. Khalid (2015). A cellular automata and navigation graph framework in simulating crowd behavior at bus terminal platform. IWGA 2015, pp. 275–281."
+  - "M. B. Burhanuddin, M. S. Suhaimi, M. T. Isa, U. K. Yusof, and M. N. A. Khalid (2015). Football player selection using fuzzy logic. ACIS 2015, IEEJ."
+  - "M. N. A. Khalid and U. K. Yusof (2015). Incorporating dynamism in emergency route planning problem using immune-based approach. 2015 4th ICSECS, IEEE, pp. 160–165."
+  - "U. K. Yusof and M. N. A. Khalid (2015). Dynamism in a semiconductor industrial machine allocation problem using a hybrid bio-inspired and musical-harmony approach. IOP Conf. Series: MSE, vol. 83."
+  - "T. L. Cheng, U. K. Yusof, and M. N. A. Khalid (2014). Content-based filtering algorithm for mobile recipe application. 2014 8th MySEC, IEEE, pp. 183–188."
+  - "N. I. M. Anuar, U. K. Yusof, and M. N. A. Khalid (2013). An artificial immune system algorithm for optimizing distributed production scheduling in the semiconductor assembly industry. 2013 13th ISDA, IEEE, pp. 259–264."
+  - "N. I. Azhar, U. K. Yusof, and M. N. A. Khalid (2013). Preventive maintenance scheduling optimization in semiconductor assembly industry using harmony search algorithm. 2013 IEEE SCOReD, pp. 254–259."
+  - "M. N. A. Khalid and U. K. Yusof (2013). An improved immune algorithm for solving flexible manufacturing system distributed production scheduling problem subject to machine maintenance. Int. Conf. on Applied Mathematics and Computational Methods, vol. 1, pp. 132–139."
+  - "M. N. A. Khalid and U. K. Yusof (2012). A knowledge-based expert system for the smallholder palm oil cultivator in Malaysia. 2012 IEEE SCOReD, pp. 256–261."
+  - "M. N. A. Khalid, U. K. Yusof, and M. Sabudin (2012). Solving flexible manufacturing system distributed scheduling problem subject to maintenance using harmony search algorithm. 2012 4th DMO, IEEE, pp. 73–79."
+
+bookChapters:
+  - "Y. Gao, N. Gao, M. N. A. Khalid, and H. Iida (2020). Finding flow in training activities by exploring single-agent arcade game information dynamics. Lecture Notes in Computer Science, Springer, pp. 126–133."
+  - "Y. Gao, W. Li, M. N. A. Khalid, and H. Iida (2020). Quantifying attractiveness of incomplete-information multi-player game: Case study using DouDiZhu. Computational Science and Technology, Springer, pp. 301–310."
+  - "M. N. A. Khalid, E. M. Ang, U. K. Yusof, H. Iida, and T. Ishitobi (2015). Identifying critical positions based on conspiracy numbers. Lecture Notes in Computer Science, Springer, pp. 100–127."
+
+supervision:
+  ongoing:
+    - { role: "PhD·Main", name: "Yu Xiong", year: "2021", topic: "Discrete chaotic maps with enhanced dynamical properties for image encryption." }
+    - { role: "PhD·Main", name: "Wang Yuting", year: "2023", topic: "Large-scale differential evolution via short-board dimension identification for flexible job-shop scheduling." }
+    - { role: "MSc·Main", name: "Md All Moon Tasir", year: "2024", topic: "Hybrid CNN-Transformer-Mamba for interpretable historical place image classification." }
+    - { role: "PhD·Main", name: "Syed Sohaib Ali Shah", year: "2024", topic: "Prototype-guided sparse MoE for efficient multimodal federated fall detection on edge devices." }
+    - { role: "PhD·Main", name: "Halimaton Saadiah Sadon", year: "2025", topic: "Adaptive decision-based multimodal learning for deaf TVET students." }
+    - { role: "PhD·Main", name: "Waseem Mishaal Hamdoon", year: "2025", topic: "Explainable AI framework for urban air-quality early warning." }
+    - { role: "PhD·Main", name: "Nur Niswah Hasina Mohammad Amin", year: "2025", topic: "Human-AI collaborative framework for creative-thinking learning." }
+    - { role: "PhD·Co", name: "Saadeddin Ali Mohammad Hroub", year: "2020", topic: "Swarm-based hyperparameter optimization of random forest for surgical patient prioritization." }
+    - { role: "PhD·Co", name: "Najwa Abd Ghafar", year: "2022", topic: "Cognitive AR learning model integrating multimodal interaction and gamification." }
+    - { role: "PhD·Co", name: "Marwan Ghazwan Mitab Al Zuhairi", year: "2022", topic: "SHAP analysis in metaheuristic feature selection for disease-progress prediction." }
+    - { role: "PhD·Co", name: "Wirawati Dewi Ahmad", year: "2023", topic: "Hyperbolic sand-cat swarm algorithm for multi-objective flexible job scheduling." }
+    - { role: "PhD·Co", name: "Omar Hammad Jasim", year: "2023", topic: "Deep learning for misinformation detection on big data in Arabic." }
+  graduated:
+    - { role: "PhD·Co", name: "Haziqah Shamsudin", year: "2023", topic: "AE-XGBoost with boosted ε-greedy deep Q-learning for highly imbalanced classification.", now: "Now Senior Lecturer, Taylor's University." }
+    - { role: "PhD·Co", name: "Nur Izzati Abd Kader", year: "2025", topic: "HMM with RNN for the impact of climate change on depression in Malaysia.", now: "Now Senior Lecturer, UNITEN." }
+
+awards:
+  - "Best Paper Award — M-CAIT 2021, UKM"
+  - "Best Paper Award — IRICT 2020"
+  - "Best Paper Award — iCiCSE 2018, Kuching"
+  - "Best Student Paper Award — ICCST'16, Kota Kinabalu"
+  - "Certificate of Excellence — Industrial Training, USM (2011)"
+
+teaching:
+  - { when: "Now", text: "Advanced Artificial Intelligence (TTTC6544, PG)" }
+  - { when: "Now", text: "Advanced Research Method in Computing (TTTM6124, PG)" }
+  - { when: "Now", text: "Computer Organization & Architecture (TTTK1153, UG)" }
+  - { when: "Now", text: "3D Modelling (TTTH2213, UG) · Digital Innovation (TTTT1221, UG)" }
+  - { when: "Past", text: "Discrete Mathematics, System Simulation & Modeling, Probability & Statistics, Database (UG)" }
+  - { when: "2019–23", text: "Game Informatics (M.Sc./Ph.D., JAIST)" }
+
+skills:
+  Programming: "C++ · C#.NET · Python · Java · R · MATLAB · Scilab · PHP · SQL · Prolog · LaTeX"
+  "Data & Web": "MySQL · Neo4j · SQLite · XQuery · HTML/CSS · JavaScript · Apache · Tomcat"
+  Professional: "Research & Publishing · Teaching & Training · Consultation · Peer Review"
+  Languages: "English (fluent) · Bahasa Malaysia (native)"
+
+membership:
+  - "Professional Technologist, MBOT (2023–)"
+  - "IEEE Member & Computational Intelligence Society (2019–)"
+  - "AAAI Member · MyAIS (AIS Malaysia Chapter)"
+  - "Research Coordinator, CAIT · JPPI Committee, FTSM"
+
+service:
+  - "Guest Editor — Entertainment Computing (Elsevier), Information (MDPI), PeerJ Computer Science"
+  - "Program Committee — IFIP-ICEC, AGENTICS/IJCCI 2025, AWIST"
+  - "General Chair — ASEAN Workshop on Information Science & Technology; AI & Entertainment Science Workshop, JAIST"
+  - "Referee — Elsevier, IEEE and other reputable journals"
+  - "Academic Collaboration Advisor — JAIST (2024–2026)"
+  - "Invited Speaker — 15+ talks on AI, entertainment science, gamification & scientific publishing"
+
+references:
+  - { name: "Prof. Dr. Shahrul Azman Mohd Noah", role: "Professor & Dean, Faculty of Information Science & Technology", affil: "Universiti Kebangsaan Malaysia, 43600 Bangi, Selangor, Malaysia.", email: "shahrul@ukm.edu.my" }
+  - { name: "Prof. Dr. Hiroyuki Iida", role: "Professor & Vice President, School of Information Science", affil: "Japan Advanced Institute of Science and Technology, Nomi, Ishikawa, Japan.", email: "iida@jaist.ac.jp" }
+
+# ----------------------------------------------------------------------------
+#  NOTE ON "NUMBERS OF TRUTH"  (reconcile before you publish)
+#  Your research-expertise brainstorm cited different figures than this CV:
+#    - Citations: brainstorm ~1,020 (Google Scholar) vs CV 1,153.
+#    - Funding:   brainstorm RM 650,600 as PI / RM 1,583,650 cumulative (10 grants)
+#                 vs CV "RM 920K+".
+#  This file currently uses the CV figures. Pick ONE source of truth, update the
+#  `stats:` block and `profile:` above, and both the site and PDF will follow.
+# ----------------------------------------------------------------------------
