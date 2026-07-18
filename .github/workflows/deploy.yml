@@ -26,7 +26,9 @@ jobs:
       - run: npm ci
       
       - name: Generate CV PDF (living CV)
-        run: node scripts/generate-cv-pdf.mjs
+        run: |
+          npm install puppeteer js-yaml
+          node scripts/generate-cv-pdf.mjs
       
       - name: Build Next.js
         run: npm run build
