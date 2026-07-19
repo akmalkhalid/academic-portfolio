@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { s } from '@/lib/style'
 import { PCOL, PNAME, PBADGE, QCOL, CATNAME, type Code } from '@/lib/view'
-import PillarDemo from '@/components/pillar-demos/PillarDemo'
+import ResearchShowreel from '@/components/paper-demos/ResearchShowreel'
 
 type PubNode = { t: string; y: number; pills: Code[]; q: string; cat: string; citation: string; scholar: string }
 type Funded = { role: string; title: string; agency: string; years: string; dots: string[] }
@@ -316,27 +316,9 @@ export default function HomeClient({
           <div style={s('margin-bottom:26px')}>
             <p style={s("font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#6f6a82;margin:0 0 10px")}>/ see the research run · live</p>
             <h2 style={s(`font-family:${stack};font-weight:600;font-size:clamp(26px,3.4vw,38px);letter-spacing:-.02em;margin:0;color:#ECEAF3`)}>Three pillars, running live.</h2>
-            <p style={s('font-size:14.5px;line-height:1.6;color:#9b96aa;max-width:620px;margin:12px 0 0')}>Each pillar demonstrated, not described — a generative field that self-organizes, a search solving a maze, and emergent agents that flock. Open any one for the full, interactive version.</p>
+            <p style={s('font-size:14.5px;line-height:1.6;color:#9b96aa;max-width:620px;margin:12px 0 0')}>Each pillar demonstrated, not described — a showreel of the simulations rebuilt from the published work, playing one at a time. Open any one for the full, interactive version.</p>
           </div>
-          <div style={s('display:grid;grid-template-columns:repeat(3,1fr);gap:16px')}>
-            {[
-              { key: 'flow-field' as const, href: '/demos/flow-field/', eyebrow: 'Generative AI', accent: '#8b7bf0', title: 'A field that self-organizes', bg: 'radial-gradient(120% 120% at 50% 0%,#1b1830 0%,#100e1a 72%)', note: 'A living particle field — connections form and dissolve.' },
-              { key: 'maze-search' as const, href: '/demos/maze-search/', eyebrow: 'Optimization', accent: '#4d8df0', title: 'A search solving a maze', bg: 'radial-gradient(120% 120% at 50% 0%,#142420 0%,#0c1614 72%)', note: 'Breadth-first search flooding the maze, then tracing the shortest path.' },
-              { key: 'boids' as const, href: '/demos/boids/', eyebrow: 'Games & Simulation', accent: '#f2683f', title: 'Emergence you can disturb', bg: 'radial-gradient(120% 120% at 50% 0%,#241410 0%,#160c0a 72%)', note: 'Boids flocking from three local rules — no leader.' },
-            ].map((c) => (
-              <a key={c.key} href={c.href} style={s(`display:flex;flex-direction:column;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.09);text-decoration:none;background:${c.bg}`)}>
-                <div style={s('padding:16px 16px 10px')}>
-                  <p style={s(`font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:${c.accent};margin:0 0 5px`)}>{c.eyebrow}</p>
-                  <h3 style={s(`font-family:${stack};font-weight:600;font-size:17px;color:#ECEAF3;margin:0`)}>{c.title}</h3>
-                </div>
-                <PillarDemo demoKey={c.key} />
-                <div style={s('padding:11px 16px;border-top:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:space-between;gap:10px')}>
-                  <p style={s('font-size:12px;color:#9b96aa;line-height:1.45;margin:0')}>{c.note}</p>
-                  <span style={s(`font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:600;color:${c.accent};white-space:nowrap`)}>Open →</span>
-                </div>
-              </a>
-            ))}
-          </div>
+          <ResearchShowreel />
         </div>
       </section>
 
