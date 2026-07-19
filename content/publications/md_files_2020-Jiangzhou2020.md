@@ -8,6 +8,7 @@ isFirstAuthor: false
 quartile: "NA"
 doi: "https://doi.org/10.2991/aisr.k.200424.067"
 featured: false
+demo: "game-refinement"
 topicTags: ["games-informatics", "simulation"]
 ---
 

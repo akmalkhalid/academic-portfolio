@@ -10,6 +10,7 @@ isFirstAuthor: false
 quartile: "Q1"
 doi: "https://doi.org/10.1109/ACCESS.2021.3079356"
 featured: false
+demo: "game-refinement"
 topicTags: ["games-informatics", "simulation"]
 ---
 

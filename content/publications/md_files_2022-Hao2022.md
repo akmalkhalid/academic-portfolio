@@ -10,6 +10,7 @@ isFirstAuthor: false
 quartile: "NA"
 doi: "https://doi.org/10.32890/jcisc2022.1.9"
 featured: false
+demo: "game-refinement"
 topicTags: ["games-informatics", "simulation"]
 ---
 

@@ -25,6 +25,7 @@ export default function DemosPage() {
   const evacPapers = counts['crowd-evacuation'] || 0
   const albPapers = counts['assembly-line-balancing'] || 0
   const schedPapers = counts['production-scheduling'] || 0
+  const grPapers = counts['game-refinement'] || 0
 
   return (
     <div data-screen-label="Demos" style={s('min-height:100vh')}>
@@ -94,6 +95,25 @@ export default function DemosPage() {
             </p>
             <div style={s('display:flex;flex-wrap:wrap;gap:7px')}>
               {['Gantt schedule', 'Immune optimizer', 'Machine maintenance', 'Makespan minimization'].map((c) => (
+                <span key={c} style={mono('font-size:11px;color:#6b6560;background:#f4f1ec;border:1px solid #e7e3dd;padding:4px 9px;border-radius:6px')}>{c}</span>
+              ))}
+            </div>
+          </a>
+          <a href="/demos/game-refinement/" style={card('#f2683f')}>
+            <div style={s('display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px')}>
+              <span style={mono('font-size:11px;font-weight:600;letter-spacing:.04em;padding:4px 10px;border-radius:6px;background:#f2683f1a;color:#f2683f')}>Game refinement &amp; engagement</span>
+              {grPapers > 0 && <span style={mono('font-size:11.5px;color:#8a8279')}>{grPapers} linked papers</span>}
+            </div>
+            <h2 style={s(`font-family:${stack};font-weight:600;font-size:24px;letter-spacing:-.01em;margin:0 0 8px;color:#16142e`)}>
+              Game refinement &amp; the engagement zone <span style={s('color:#f2683f')}>→</span>
+            </h2>
+            <p style={s('font-size:15px;line-height:1.6;color:#57514b;margin:0 0 14px;max-width:640px')}>
+              An abstract game plays itself; its game-refinement value GR = √B ⁄ D drifts across the “comfortable zone”
+              (~0.07–0.08) where engaging games — chess, Go, soccer — cluster, with live thrill and addiction readouts.
+              Tune the complexity, pace, and balance.
+            </p>
+            <div style={s('display:flex;flex-wrap:wrap;gap:7px')}>
+              {['Self-play', 'Comfortable zone', 'Motion in mind', 'Engagement + addiction'].map((c) => (
                 <span key={c} style={mono('font-size:11px;color:#6b6560;background:#f4f1ec;border:1px solid #e7e3dd;padding:4px 9px;border-radius:6px')}>{c}</span>
               ))}
             </div>

@@ -10,6 +10,7 @@ isFirstAuthor: false
 quartile: "Q3"
 doi: "https://doi.org/10.17576/apjitm-2024-1302-08"
 featured: false
+demo: "game-refinement"
 topicTags: ["games-informatics", "simulation"]
 ---
 

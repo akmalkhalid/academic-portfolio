@@ -7,6 +7,7 @@ import { s } from '@/lib/style'
 import CrowdEvacuation from '@/components/paper-demos/CrowdEvacuation'
 import AssemblyLineBalancing from '@/components/paper-demos/AssemblyLineBalancing'
 import ProductionScheduling from '@/components/paper-demos/ProductionScheduling'
+import GameRefinement from '@/components/paper-demos/GameRefinement'
 import DemoDisclaimer from '@/components/DemoDisclaimer'
 
 type Entry = {
@@ -37,6 +38,13 @@ const REGISTRY: Record<string, Entry> = {
       'A looping preview of the FMS scheduling model: an artificial immune system orders operations across machines around maintenance windows, compacting the Gantt chart to minimize the makespan.',
     fullHref: '/demos/production-scheduling/',
     render: (accent) => <ProductionScheduling accent={accent} />,
+  },
+  'game-refinement': {
+    label: 'Game refinement · self-play',
+    caption:
+      'A looping preview of game-refinement theory: an abstract game plays itself, and its refinement value GR = √B ⁄ D settles on the engagement spectrum against the comfortable zone, with live thrill and addiction readouts.',
+    fullHref: '/demos/game-refinement/',
+    render: (accent) => <GameRefinement accent={accent} />,
   },
 }
 

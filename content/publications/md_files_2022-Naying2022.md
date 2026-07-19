@@ -10,6 +10,7 @@ isFirstAuthor: false
 quartile: "Q1"
 doi: "https://doi.org/10.1016/j.teler.2022.100039"
 featured: false
+demo: "game-refinement"
 topicTags: ["games-informatics", "simulation"]
 ---
 
