@@ -7,6 +7,7 @@ import { chicago, bibtex } from '@/lib/cite'
 import { codesFromTags, PNAME, PCOL, QCOL, type Code } from '@/lib/view'
 import { s } from '@/lib/style'
 import PubActions from './PubActions'
+import abstracts from '@/content/abstracts.auto.json'
 
 export const dynamicParams = false
 
@@ -38,7 +39,7 @@ export default function PublicationPage({ params }: { params: { slug: string } }
     : (p.authors && !p.authors.includes(' and ') && p.isFirstAuthor) ? '§ sole author'
     : p.isFirstAuthor ? '∗ first author' : ''
   const metaBits = [p.venue, p.volume && `vol. ${p.volume}`, p.issue && `no. ${p.issue}`, p.pages && `pp. ${p.pages}`, String(p.year)].filter(Boolean)
-  const abstract = (p._body || '').trim()
+  const abstract = (p._body || '').trim() || ((abstracts as Record<string, string>)[clean(p._slug)] || '')
   const links = [
     p.doi && { label: 'DOI ↗', href: p.doi.startsWith('http') ? p.doi : `https://doi.org/${p.doi}`, solid: true },
     p.pdfUrl && { label: 'PDF ↓', href: p.pdfUrl, solid: false },
