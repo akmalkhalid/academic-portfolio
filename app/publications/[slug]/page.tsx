@@ -7,6 +7,7 @@ import { chicago, bibtex } from '@/lib/cite'
 import { codesFromTags, PNAME, PCOL, QCOL, type Code } from '@/lib/view'
 import { s } from '@/lib/style'
 import PubActions from './PubActions'
+import PaperDemo from './PaperDemo'
 import abstracts from '@/content/abstracts.auto.json'
 
 export const dynamicParams = false
@@ -38,7 +39,7 @@ export default function PublicationPage({ params }: { params: { slug: string } }
   const marker = p.isCorrespondingAuthor ? '† corresponding author'
     : (p.authors && !p.authors.includes(' and ') && p.isFirstAuthor) ? '§ sole author'
     : p.isFirstAuthor ? '∗ first author' : ''
-  const metaBits = [p.venue, p.volume && `vol. ${p.volume}`, p.issue && `no. ${p.issue}`, p.pages && `pp. ${p.pages}`, String(p.year)].filter(Boolean)
+  const metaBits = [p.venue, p.volume && `vol. ${p.volume}`, p.issue && `no. ${p.issue}`, p.pages && `pp. ${p.pages.replace(/(\d)\s*--\s*(\d)/g, '$1\u2013$2')}`, String(p.year)].filter(Boolean)
   const abstract = (p._body || '').trim() || ((abstracts as Record<string, string>)[clean(p._slug)] || '')
   const links = [
     p.doi && { label: 'DOI ↗', href: p.doi.startsWith('http') ? p.doi : `https://doi.org/${p.doi}`, solid: true },
@@ -84,6 +85,8 @@ export default function PublicationPage({ params }: { params: { slug: string } }
             ))}
           </section>
         )}
+
+        {p.demo && <PaperDemo demo={p.demo} accent={accent} />}
 
         <section style={s('margin-top:40px;padding-top:28px;border-top:1px solid #e7e3dd')}>
           <PubActions chicago={chicago(p)} bibtex={bibtex(p)} />

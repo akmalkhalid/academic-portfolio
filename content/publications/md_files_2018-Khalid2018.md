@@ -10,6 +10,7 @@ isFirstAuthor: true
 quartile: "Q1"
 doi: "https://doi.org/10.1016/j.ssci.2017.10.024"
 featured: false
+demo: "crowd-evacuation"
 topicTags: ["evolutionary-computing", "optimization", "simulation"]
 ---
 

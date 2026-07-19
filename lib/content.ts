@@ -80,7 +80,7 @@ export type Publication = {
   doi?: string; externalLink?: string; pdfUrl?: string
   indexing?: string[]; topicTags?: string[]
   isFirstAuthor?: boolean; isCorrespondingAuthor?: boolean
-  citationCount?: number; featured?: boolean
+  citationCount?: number; featured?: boolean; demo?: string
   _slug: string; _body: string
 }
 
