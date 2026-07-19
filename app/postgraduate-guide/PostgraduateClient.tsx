@@ -17,11 +17,11 @@ const looking = [
   { accent: '#4d8df0', title: 'Communication discipline', body: 'Postgraduate research is largely a writing exercise. Concise, structured initial emails predict thesis quality.' },
 ]
 const areas = [
-  { accent: '#8b7bf0', title: 'Generative AI for domain-specific reasoning', desc: 'Combining large language models with structured knowledge.' },
-  { accent: '#21b3a0', title: 'Evolutionary neural architecture search', desc: 'Multi-objective AutoML.' },
-  { accent: '#f2683f', title: 'Procedural content generation in games', desc: 'AI-driven generation of levels, quests and narratives.' },
-  { accent: '#84b53a', title: 'Agent-based simulation', desc: 'Applied to education, public health and sustainability.' },
-  { accent: '#4d8df0', title: 'Hybrid metaheuristics for combinatorial optimization', desc: 'Scheduling, routing and allocation.' },
+  { accent: '#f2683f', title: 'Engagement modelling with game-refinement theory', desc: 'Extending the “motion in mind” model to measure and optimize engagement, addiction and player experience in games and interactive systems.' },
+  { accent: '#21b3a0', title: 'Metaheuristic & bio-inspired optimization', desc: 'Evolutionary, immune and swarm algorithms for scheduling, assembly-line balancing and large-scale combinatorial problems.' },
+  { accent: '#8b7bf0', title: 'Quality-diversity & agentic content generation', desc: 'Coupling GANs with MAP-Elites and procedural content generation for creativity-based, adaptive play.' },
+  { accent: '#4d8df0', title: 'LLMs & agentic AI for applied domains', desc: 'Large language models and agentic systems for knowledge management and the Malay national language.' },
+  { accent: '#84b53a', title: 'Optimization-driven AI for healthcare & society', desc: 'Swarm-optimized models for patient prioritization and data/theory-driven methods for public-health problems.' },
 ]
 const sendItems = [
   { n: '01', text: 'A two-paragraph introduction citing at least one of my papers by title.' },

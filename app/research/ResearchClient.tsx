@@ -180,14 +180,14 @@ export default function ResearchClient({
   const ghostBtn = "font-family:'JetBrains Mono',monospace;font-size:12.5px;color:#ECEAF3;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);padding:8px 14px;border-radius:7px;cursor:pointer"
 
   const pillars = [
-    { id: 'generative-ai', n: '01', accent: '#8b7bf0', accentSoft: '#eeedfe', title: 'Generative AI & Expert Systems',
+    { id: 'generative-ai', n: '03', accent: '#8b7bf0', accentSoft: '#eeedfe', title: 'Generative & Agentic AI',
       body: 'Two complementary visions of machine intelligence: one that creates and one that reasons. My research couples generative models — transformers, diffusion architectures and GANs — with structured, symbolic and rule-based knowledge to build systems that are both creative and explainable.',
       themes: [chip('Transformers & diffusion', 'purple'), chip('LLM-assisted reasoning', 'purple'), chip('Text-to-image / video', 'purple'), chip('Explainable decision support', 'amber'), chip('Knowledge-based systems', 'amber')],
       slot: { level: 'PhD', funding: 'Funded', title: 'LLM-Driven Human–AI Collaboration in Team Settings', desc: 'Large language models as collaborative teammates — how humans and AI co-reason, divide work and build shared understanding in team-based problem solving.' },
       labBg: 'radial-gradient(120% 120% at 50% 0%,#1b1830 0%,#100e1a 72%)', ref: genRef, cursor: 'default',
       demoEyebrow: 'Latent flow field · generative', demoCaption: 'Particles self-organize and connections form and dissolve — emergence as a stand-in for the generative process. Move your cursor to perturb the field.',
       readoutDisp: 'none', r1label: '', r2label: '', controls: [] as any[] },
-    { id: 'evolutionary', n: '02', accent: '#21b3a0', accentSoft: '#e1f5ee', title: 'Evolutionary Computing & Computational Optimization',
+    { id: 'evolutionary', n: '01', accent: '#21b3a0', accentSoft: '#e1f5ee', title: 'Computational Intelligence & Optimization',
       body: 'Many of the most important problems in engineering, logistics and AI are NP-hard. My work designs nature-inspired metaheuristics — genetic algorithms, swarm intelligence and hybrid memetic methods — for large-scale combinatorial and continuous optimization.',
       themes: [chip('Genetic & immune algorithms', 'teal'), chip('Swarm intelligence', 'teal'), chip('Memetic hybrids', 'teal'), chip('Assembly-line balancing', 'blue'), chip('Production scheduling', 'blue'), chip('Combinatorial optimization', 'blue')],
       slot: { level: 'PhD / MSc', funding: 'Scholarship-eligible', title: 'Optimizing for Engagement: Game Refinement Meets Optimization', desc: 'Coupling metaheuristic optimization with game-refinement theory — deriving new performance and engagement metrics that quantify what makes systems and play compelling.' },
@@ -195,8 +195,8 @@ export default function ResearchClient({
       demoEyebrow: 'Swarm intelligence · fitness landscape', demoCaption: 'A flock of agents foraging a multimodal landscape — local flocking rules combined with a pull toward the best-known peak. Swarm behaviour and optimization in one. Brighter regions are higher fitness.',
       readoutDisp: 'flex', r1label: 'ITERATION', r2label: 'BEST FITNESS',
       controls: [{ label: optPlaying ? '❚❚ Pause' : '▶ Play', onClick: toggleOpt, style: darkBtn('#21b3a0') }, { label: 'New landscape', onClick: resetOpt, style: ghostBtn }] },
-    { id: 'games', n: '03', accent: '#f2683f', accentSoft: '#faece7', title: 'Games Informatics & Simulation',
-      body: 'Games are demanding testbeds for AI — and a canvas for generative design. My research spans procedural content generation that lets human and AI players co-create, gamification and serious games for training, education and policy, and agent-based simulation of how people actually play.',
+    { id: 'games', n: '02', accent: '#f2683f', accentSoft: '#faece7', title: 'Games Informatics & Engagement Modelling',
+      body: 'My signature line of work: extending game-refinement theory and the “motion in mind” model to measure and optimize engagement, addiction and player experience. It spans procedural content generation where human and AI players co-create, gamification and serious games, and agent-based simulation of how people actually play.',
       themes: [chip('Procedural content generation', 'coral'), chip('Roguelike level design', 'coral'), chip('Gamification', 'coral'), chip('Serious games', 'green'), chip('Agent-based simulation', 'green'), chip('Player-experience modelling', 'green')],
       slot: { level: 'PhD', funding: 'Scholarship-eligible', title: 'Agentic Procedural Content Generation for Adaptive Play', desc: 'Integrating PCG with agentic and generative AI — co-designing levels, mechanics and narratives that adapt for richer, more entertaining player experiences.' },
       labBg: 'radial-gradient(120% 120% at 50% 0%,#241410 0%,#160c0a 72%)', ref: boidsRef, cursor: 'pointer',
@@ -220,7 +220,7 @@ export default function ResearchClient({
       </section>
 
       {/* PILLARS */}
-      {pillars.map((p) => (
+      {pillars.slice().sort((a, b) => a.n.localeCompare(b.n)).map((p) => (
         <section key={p.id} id={p.id} style={s('max-width:1120px;margin:0 auto;padding:40px 28px 24px;scroll-margin-top:80px')}>
           <div style={s('display:flex;align-items:center;gap:16px;margin-bottom:26px')}>
             <span style={s(`font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:${p.accent};letter-spacing:.08em`)}>PILLAR {p.n}</span>
