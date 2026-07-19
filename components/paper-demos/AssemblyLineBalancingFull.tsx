@@ -36,7 +36,7 @@ export default function AssemblyLineBalancingFull({ accent = '#4d8df0' }: { acce
       window.matchMedia('(prefers-reduced-motion: reduce)').matches
     setReduced(!!reduce)
 
-    const H = 470
+    const H = 384
     let dpr = 1
     const sim = new ALBPSim(accent)
     simRef.current = sim
@@ -141,7 +141,7 @@ export default function AssemblyLineBalancingFull({ accent = '#4d8df0' }: { acce
 
   return (
     <div>
-      <canvas ref={canvasRef} style={s('display:block;width:100%;height:470px;border-radius:10px')} />
+      <canvas ref={canvasRef} style={s('display:block;width:100%;height:384px;border-radius:10px')} />
 
       {!reduced && stats && (
         <div style={s('display:flex;flex-wrap:wrap;gap:26px;margin-top:14px')}>

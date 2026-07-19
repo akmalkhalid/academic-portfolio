@@ -8,6 +8,7 @@ import CrowdEvacuation from '@/components/paper-demos/CrowdEvacuation'
 import AssemblyLineBalancing from '@/components/paper-demos/AssemblyLineBalancing'
 import ProductionScheduling from '@/components/paper-demos/ProductionScheduling'
 import GameRefinement from '@/components/paper-demos/GameRefinement'
+import QuestGeneration from '@/components/paper-demos/QuestGeneration'
 import DemoDisclaimer from '@/components/DemoDisclaimer'
 
 type Entry = {
@@ -45,6 +46,13 @@ const REGISTRY: Record<string, Entry> = {
       'A looping preview of game-refinement theory: an abstract game plays itself, and its refinement value GR = √B ⁄ D settles on the engagement spectrum against the comfortable zone, with live thrill and addiction readouts.',
     fullHref: '/demos/game-refinement/',
     render: (accent) => <GameRefinement accent={accent} />,
+  },
+  'quest-generation': {
+    label: 'Agentic content generation · genetic + critic',
+    caption:
+      'A looping preview of agentic procedural content generation: a genetic loop with generator and critic agents evolves a rough draft into a well-formed role-playing quest, matching a target difficulty arc.',
+    fullHref: '/demos/quest-generation/',
+    render: (accent) => <QuestGeneration accent={accent} />,
   },
 }
 

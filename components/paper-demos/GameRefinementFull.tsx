@@ -35,7 +35,7 @@ export default function GameRefinementFull({ accent = '#f2683f' }: { accent?: st
       window.matchMedia('(prefers-reduced-motion: reduce)').matches
     setReduced(!!reduce)
 
-    const H = 420
+    const H = 372
     let dpr = 1
     const sim = new GRSim(accent)
     simRef.current = sim
@@ -122,7 +122,7 @@ export default function GameRefinementFull({ accent = '#f2683f' }: { accent?: st
 
   return (
     <div>
-      <canvas ref={canvasRef} style={s('display:block;width:100%;height:420px;border-radius:10px')} />
+      <canvas ref={canvasRef} style={s('display:block;width:100%;height:372px;border-radius:10px')} />
 
       {!reduced && stats && (
         <>

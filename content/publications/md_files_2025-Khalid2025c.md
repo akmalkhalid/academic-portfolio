@@ -9,6 +9,7 @@ isFirstAuthor: true
 quartile: "Q3"
 doi: "https://doi.org/10.17576/apjitm-2025-1402-05"
 featured: true
+demo: "quest-generation"
 topicTags: ["generative-ai", "simulation"]
 ---
 

@@ -35,7 +35,7 @@ export default function CrowdEvacuationFull({ accent = '#4d8df0' }: { accent?: s
       window.matchMedia('(prefers-reduced-motion: reduce)').matches
     setReduced(!!reduce)
 
-    const H = 500
+    const H = 400
     let dpr = 1
     const sim = new EvacSim(accent)
     simRef.current = sim
@@ -123,7 +123,7 @@ export default function CrowdEvacuationFull({ accent = '#4d8df0' }: { accent?: s
 
   return (
     <div>
-      <canvas ref={canvasRef} style={s('display:block;width:100%;height:500px;border-radius:10px;cursor:crosshair')} />
+      <canvas ref={canvasRef} style={s('display:block;width:100%;height:400px;border-radius:10px;cursor:crosshair')} />
 
       {!reduced && (
         <div style={s('display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px 24px;margin-top:16px')}>

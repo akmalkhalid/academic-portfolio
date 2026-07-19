@@ -36,7 +36,7 @@ export default function ProductionSchedulingFull({ accent = '#21b3a0' }: { accen
       window.matchMedia('(prefers-reduced-motion: reduce)').matches
     setReduced(!!reduce)
 
-    const H = 440
+    const H = 360
     let dpr = 1
     const sim = new FMSSim(accent)
     simRef.current = sim
@@ -123,7 +123,7 @@ export default function ProductionSchedulingFull({ accent = '#21b3a0' }: { accen
 
   return (
     <div>
-      <canvas ref={canvasRef} style={s('display:block;width:100%;height:440px;border-radius:10px')} />
+      <canvas ref={canvasRef} style={s('display:block;width:100%;height:360px;border-radius:10px')} />
 
       {!reduced && stats && (
         <div style={s('display:flex;flex-wrap:wrap;gap:26px;margin-top:14px')}>

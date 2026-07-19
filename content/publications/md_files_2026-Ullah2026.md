@@ -9,5 +9,6 @@ isFirstAuthor: false
 quartile: "Q1"
 doi: "https://doi.org/10.1038/s41598-026-45313-7"
 featured: false
+demo: "quest-generation"
 topicTags: ["generative-ai", "simulation"]
 ---
