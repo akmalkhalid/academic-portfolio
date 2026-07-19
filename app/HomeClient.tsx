@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { s } from '@/lib/style'
 import { PCOL, PNAME, PBADGE, QCOL, CATNAME, type Code } from '@/lib/view'
+import PillarDemo from '@/components/pillar-demos/PillarDemo'
 
 type PubNode = { t: string; y: number; pills: Code[]; q: string; cat: string; citation: string; scholar: string }
 type Funded = { role: string; title: string; agency: string; years: string; dots: string[] }
@@ -15,10 +16,7 @@ export default function HomeClient({
 }: { hero: { headline: string; sub: string }; pubs: PubNode[]; funded: Funded[]; stats: Stats; articles: SelectedGroup[] }) {
   const wrapRef = useRef<HTMLDivElement>(null)
   const heroRef = useRef<HTMLCanvasElement>(null)
-  const mazeRef = useRef<HTMLCanvasElement>(null)
-  const boidsRef = useRef<HTMLCanvasElement>(null)
   const graphRef = useRef<HTMLCanvasElement>(null)
-  const miniGenRef = useRef<HTMLCanvasElement>(null)
 
   const [pillarFilter, setPillarFilter] = useState<string[]>([])
   const [catFilter, setCatFilter] = useState<string[]>([])
@@ -136,105 +134,6 @@ export default function HomeClient({
       rafs.push(requestAnimationFrame(step))
     }
 
-    // ---- maze BFS ----
-    function setupMaze() {
-      const cv = mazeRef.current
-      if (!cv || !cv.getBoundingClientRect().width) { requestAnimationFrame(setupMaze); return }
-      let g = fit(cv, 200)
-      let cs: number, cols: number, rows: number, cells: any[], queue: number[], parent: number[], path: number[] | null = null, phase: string = 'search', exitIdx: number
-      let visitedOrder: number[] = [], pathDraw = 0, holdT = 0
-      const idx = (x: number, y: number) => y * cols + x
-      const build = () => {
-        cs = Math.max(13, Math.floor(g.w / 22)); cols = Math.max(4, Math.floor((g.w - 2) / cs)); rows = Math.max(3, Math.floor((g.h - 2) / cs))
-        cells = []; for (let i = 0; i < cols * rows; i++) cells.push({ n: true, e: true, s: true, w: true, v: false, bfs: false })
-        const stack = [0]; cells[0].v = true; let count = 1; const total = cols * rows
-        while (count < total) {
-          const cur = stack[stack.length - 1], cx = cur % cols, cy = (cur / cols) | 0, nb: any[] = []
-          if (cy > 0 && !cells[idx(cx, cy - 1)].v) nb.push([idx(cx, cy - 1), 'n', 's'])
-          if (cx < cols - 1 && !cells[idx(cx + 1, cy)].v) nb.push([idx(cx + 1, cy), 'e', 'w'])
-          if (cy < rows - 1 && !cells[idx(cx, cy + 1)].v) nb.push([idx(cx, cy + 1), 's', 'n'])
-          if (cx > 0 && !cells[idx(cx - 1, cy)].v) nb.push([idx(cx - 1, cy), 'w', 'e'])
-          if (nb.length) { const [ni, wa, wb] = nb[(Math.random() * nb.length) | 0]; cells[cur][wa] = false; cells[ni][wb] = false; cells[ni].v = true; stack.push(ni); count++ } else stack.pop()
-        }
-        queue = [0]; cells[0].bfs = true; parent = new Array(cols * rows).fill(-1); exitIdx = cols * rows - 1; path = null; phase = 'search'; visitedOrder = []; pathDraw = 0; holdT = 0
-      }
-      const openNb = (i: number) => { const x = i % cols, y = (i / cols) | 0, c = cells[i], r: number[] = []; if (!c.n) r.push(idx(x, y - 1)); if (!c.e) r.push(idx(x + 1, y)); if (!c.s) r.push(idx(x, y + 1)); if (!c.w) r.push(idx(x - 1, y)); return r }
-      const stepBFS = (k: number) => { for (let st = 0; st < k && queue.length; st++) { const cur = queue.shift()!; if (cur === exitIdx) { path = []; let p = cur; while (p !== -1) { path.push(p); p = parent[p] } phase = 'path'; return } for (const nb of openNb(cur)) { if (!cells[nb].bfs) { cells[nb].bfs = true; parent[nb] = cur; queue.push(nb); visitedOrder.push(nb) } } } }
-      const draw = () => {
-        const ctx = g.ctx; ctx.clearRect(0, 0, g.w, g.h); ctx.fillStyle = '#0c1614'; ctx.fillRect(0, 0, g.w, g.h)
-        ctx.fillStyle = 'rgba(77,141,240,0.13)'
-        for (const i of visitedOrder) { const x = i % cols, y = (i / cols) | 0; ctx.fillRect(1 + x * cs, 1 + y * cs, cs, cs) }
-        ctx.strokeStyle = 'rgba(255,255,255,0.16)'; ctx.lineWidth = 1.4
-        for (let i = 0; i < cells.length; i++) { const x = i % cols, y = (i / cols) | 0, px = 1 + x * cs, py = 1 + y * cs, c = cells[i]; ctx.beginPath(); if (c.n) { ctx.moveTo(px, py); ctx.lineTo(px + cs, py) } if (c.w) { ctx.moveTo(px, py); ctx.lineTo(px, py + cs) } if (c.e) { ctx.moveTo(px + cs, py); ctx.lineTo(px + cs, py + cs) } if (c.s) { ctx.moveTo(px, py + cs); ctx.lineTo(px + cs, py + cs) } ctx.stroke() }
-        ctx.fillStyle = '#21b3a0'; ctx.fillRect(1 + cs * 0.28, 1 + cs * 0.28, cs * 0.44, cs * 0.44)
-        const ex = exitIdx % cols, ey = (exitIdx / cols) | 0; ctx.fillStyle = '#f2683f'; ctx.fillRect(1 + ex * cs + cs * 0.28, 1 + ey * cs + cs * 0.28, cs * 0.44, cs * 0.44)
-        if (path) { ctx.strokeStyle = '#4d8df0'; ctx.lineWidth = Math.max(2.4, cs * 0.2); ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.beginPath(); const n = Math.min(pathDraw, path.length); for (let k = 0; k < n; k++) { const i = path[path.length - 1 - k], x = i % cols, y = (i / cols) | 0, cxp = 1 + x * cs + cs / 2, cyp = 1 + y * cs + cs / 2; if (k === 0) ctx.moveTo(cxp, cyp); else ctx.lineTo(cxp, cyp) } ctx.stroke() }
-      }
-      build(); draw()
-      fits.push(() => { g = fit(cv, 200); build(); draw() })
-      if (reduce) { let guard = 0; while (phase === 'search' && guard++ < 99999) stepBFS(50); pathDraw = path ? (path as number[]).length : 0; draw(); return }
-      let vis = true
-      const io = new IntersectionObserver((en) => { en.forEach((x) => (vis = x.isIntersecting)) }, { threshold: .15 }); io.observe(cv); ios.push(io)
-      const loop = () => { if (vis) { if (phase === 'search') stepBFS(2); else if (phase === 'path') { if (pathDraw < path!.length) pathDraw += 1; else { holdT++; if (holdT > 150) build() } } draw() } rafs.push(requestAnimationFrame(loop)) }
-      loop()
-    }
-
-    // ---- mini generative field ----
-    function setupMiniGen() {
-      const cv = miniGenRef.current
-      if (!cv || !cv.getBoundingClientRect().width) { requestAnimationFrame(setupMiniGen); return }
-      let g = fit(cv, 200)
-      const cols = ['#8b7bf0', '#a99bf5', '#b98ad6', '#6d8bf0']
-      let ps: any[] = []; const mk = () => { ps = []; const N = g.w < 300 ? 50 : 74; for (let i = 0; i < N; i++) ps.push({ x: Math.random() * g.w, y: Math.random() * g.h, vx: (Math.random() - .5) * .3, vy: (Math.random() - .5) * .3, c: cols[i % cols.length], r: Math.random() * 1.5 + 1 }) }; mk()
-      const mouse = { x: -999, y: -999 }
-      cv.addEventListener('pointermove', (e) => { const r = cv.getBoundingClientRect(); mouse.x = e.clientX - r.left; mouse.y = e.clientY - r.top })
-      cv.addEventListener('pointerleave', () => { mouse.x = -999; mouse.y = -999 })
-      fits.push(() => { g = fit(cv, 200); mk() })
-      const draw = () => {
-        const ctx = g.ctx; ctx.clearRect(0, 0, g.w, g.h)
-        for (const p of ps) { const a = Math.sin(p.y * 0.014 + p.x * 0.01) * 0.7; p.vx += Math.cos(a) * 0.012; p.vy += Math.sin(a) * 0.012; const dx = p.x - mouse.x, dy = p.y - mouse.y, d2 = dx * dx + dy * dy; if (d2 < 8000) { const d = Math.sqrt(d2) || 1; p.vx += dx / d * 0.5; p.vy += dy / d * 0.5 } p.vx *= 0.95; p.vy *= 0.95; p.x += p.vx; p.y += p.vy; if (p.x < 0) p.x += g.w; if (p.x > g.w) p.x -= g.w; if (p.y < 0) p.y += g.h; if (p.y > g.h) p.y -= g.h }
-        for (let i = 0; i < ps.length; i++) for (let j = i + 1; j < ps.length; j++) { const a = ps[i], b = ps[j], dx = a.x - b.x, dy = a.y - b.y, d = Math.sqrt(dx * dx + dy * dy); if (d < 58) { ctx.strokeStyle = 'rgba(139,123,240,' + (0.2 * (1 - d / 58)) + ')'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke() } }
-        ctx.globalAlpha = .9; for (const p of ps) { ctx.fillStyle = p.c; ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, 7); ctx.fill() } ctx.globalAlpha = 1
-      }
-      if (reduce) { draw(); return }
-      let vis = true
-      const io = new IntersectionObserver((en) => { en.forEach((x) => (vis = x.isIntersecting)) }, { threshold: .1 }); io.observe(cv); ios.push(io)
-      const loop = () => { if (vis) draw(); rafs.push(requestAnimationFrame(loop)) }; loop()
-    }
-
-    // ---- boids ----
-    function setupBoids() {
-      const cv = boidsRef.current; if (!cv) return
-      if (!cv.getBoundingClientRect().width) { requestAnimationFrame(setupBoids); return }
-      let g = fit(cv, 360)
-      const cols = Object.values(PCOL)
-      let bs: any[] = []
-      const spawn = (n: number, x?: number, y?: number) => { for (let i = 0; i < n; i++) { const a = Math.random() * 7; bs.push({ x: x == null ? Math.random() * g.w : x, y: y == null ? Math.random() * g.h : y, vx: Math.cos(a), vy: Math.sin(a), c: cols[(Math.random() * cols.length) | 0] }) } }
-      spawn(g.w < 640 ? 40 : 78)
-      const mouse = { x: -999, y: -999 }
-      cv.addEventListener('pointermove', (e) => { const r = cv.getBoundingClientRect(); mouse.x = e.clientX - r.left; mouse.y = e.clientY - r.top })
-      cv.addEventListener('pointerleave', () => { mouse.x = -999; mouse.y = -999 })
-      cv.addEventListener('pointerdown', (e) => { const r = cv.getBoundingClientRect(); spawn(8, e.clientX - r.left, e.clientY - r.top) })
-      fits.push(() => { g = fit(cv, 360) })
-      const step = () => {
-        const per = 58
-        for (const b of bs) {
-          let ax = 0, ay = 0, cx = 0, cy = 0, sx = 0, sy = 0, n = 0
-          for (const o of bs) { if (o === b) continue; const dx = o.x - b.x, dy = o.y - b.y, d = Math.hypot(dx, dy); if (d < per && d > 0) { ax += o.vx; ay += o.vy; cx += o.x; cy += o.y; if (d < 22) { sx -= dx / d; sy -= dy / d } n++ } }
-          if (n) { ax /= n; ay /= n; cx = cx / n - b.x; cy = cy / n - b.y; b.vx += (ax - b.vx) * 0.05 + cx * 0.0009 + sx * 0.06; b.vy += (ay - b.vy) * 0.05 + cy * 0.0009 + sy * 0.06 }
-          const mdx = b.x - mouse.x, mdy = b.y - mouse.y, md = Math.hypot(mdx, mdy); if (md < 92 && md > 0) { b.vx += mdx / md * 0.45; b.vy += mdy / md * 0.45 }
-          const sp = Math.hypot(b.vx, b.vy), max = 2.4; if (sp > max) { b.vx = b.vx / sp * max; b.vy = b.vy / sp * max }
-          b.x += b.vx; b.y += b.vy; if (b.x < 0) b.x += g.w; if (b.x > g.w) b.x -= g.w; if (b.y < 0) b.y += g.h; if (b.y > g.h) b.y -= g.h
-        }
-      }
-      const draw = () => { const ctx = g.ctx; ctx.clearRect(0, 0, g.w, g.h); ctx.globalAlpha = .92; for (const b of bs) { const a = Math.atan2(b.vy, b.vx); ctx.save(); ctx.translate(b.x, b.y); ctx.rotate(a); ctx.fillStyle = b.c; ctx.beginPath(); ctx.moveTo(7, 0); ctx.lineTo(-5, 3.5); ctx.lineTo(-5, -3.5); ctx.closePath(); ctx.fill(); ctx.restore() } ctx.globalAlpha = 1 }
-      draw()
-      if (reduce) { step(); draw(); return }
-      let vis = true
-      const io = new IntersectionObserver((en) => { en.forEach((x) => (vis = x.isIntersecting)) }, { threshold: .15 }); io.observe(cv); ios.push(io)
-      const loop = () => { if (vis) { step(); draw() } rafs.push(requestAnimationFrame(loop)) }; loop()
-    }
-
     // ---- publication constellation ----
     function setupGraph() {
       const cv = graphRef.current; if (!cv) return
@@ -286,7 +185,7 @@ export default function HomeClient({
     const onResize = () => fits.forEach((f) => f && f())
     window.addEventListener('resize', onResize)
 
-    setupTextReveal(); setupHero(); setupCounters(); setupVisitorCounter(); setupMaze(); setupMiniGen(); setupBoids(); setupGraph()
+    setupTextReveal(); setupHero(); setupCounters(); setupVisitorCounter(); setupGraph()
 
     return () => {
       rafs.forEach((r) => cancelAnimationFrame(r))
@@ -417,33 +316,26 @@ export default function HomeClient({
           <div style={s('margin-bottom:26px')}>
             <p style={s("font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#6f6a82;margin:0 0 10px")}>/ see the research run · live</p>
             <h2 style={s(`font-family:${stack};font-weight:600;font-size:clamp(26px,3.4vw,38px);letter-spacing:-.02em;margin:0;color:#ECEAF3`)}>Three pillars, running live.</h2>
-            <p style={s('font-size:14.5px;line-height:1.6;color:#9b96aa;max-width:620px;margin:12px 0 0')}>Each pillar demonstrated, not described — a generative field that self-organizes, a search solving a maze, and emergent agents you can disturb.</p>
+            <p style={s('font-size:14.5px;line-height:1.6;color:#9b96aa;max-width:620px;margin:12px 0 0')}>Each pillar demonstrated, not described — a generative field that self-organizes, a search solving a maze, and emergent agents that flock. Open any one for the full, interactive version.</p>
           </div>
           <div style={s('display:grid;grid-template-columns:repeat(3,1fr);gap:16px')}>
-            <div style={s('display:flex;flex-direction:column;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.09);background:radial-gradient(120% 120% at 50% 0%,#1b1830 0%,#100e1a 72%)')}>
-              <div style={s('padding:16px 16px 10px')}>
-                <p style={s("font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#8b7bf0;margin:0 0 5px")}>Generative AI</p>
-                <h3 style={s(`font-family:${stack};font-weight:600;font-size:17px;color:#ECEAF3;margin:0`)}>A field that self-organizes</h3>
-              </div>
-              <canvas ref={miniGenRef} style={s('display:block;width:100%;height:200px')} />
-              <div style={s('padding:11px 16px;border-top:1px solid rgba(255,255,255,.06)')}><p style={s('font-size:12px;color:#9b96aa;line-height:1.45;margin:0')}>A living particle field — move your cursor to perturb it.</p></div>
-            </div>
-            <div style={s('display:flex;flex-direction:column;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.09);background:radial-gradient(120% 120% at 50% 0%,#142420 0%,#0c1614 72%)')}>
-              <div style={s('padding:16px 16px 10px')}>
-                <p style={s("font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#4d8df0;margin:0 0 5px")}>Optimization</p>
-                <h3 style={s(`font-family:${stack};font-weight:600;font-size:17px;color:#ECEAF3;margin:0`)}>A search solving a maze</h3>
-              </div>
-              <canvas ref={mazeRef} style={s('display:block;width:100%;height:200px')} />
-              <div style={s('padding:11px 16px;border-top:1px solid rgba(255,255,255,.06)')}><p style={s('font-size:12px;color:#9b96aa;line-height:1.45;margin:0')}>Breadth-first search flooding the maze, then tracing the shortest path.</p></div>
-            </div>
-            <div style={s('display:flex;flex-direction:column;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.09);background:radial-gradient(120% 120% at 50% 0%,#241410 0%,#160c0a 72%)')}>
-              <div style={s('padding:16px 16px 10px')}>
-                <p style={s("font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#f2683f;margin:0 0 5px")}>Games &amp; Simulation</p>
-                <h3 style={s(`font-family:${stack};font-weight:600;font-size:17px;color:#ECEAF3;margin:0`)}>Emergence you can disturb</h3>
-              </div>
-              <canvas ref={boidsRef} style={s('display:block;width:100%;height:200px;cursor:crosshair')} />
-              <div style={s('padding:11px 16px;border-top:1px solid rgba(255,255,255,.06)')}><p style={s('font-size:12px;color:#9b96aa;line-height:1.45;margin:0')}>Boids flocking — click to seed, sweep to scatter.</p></div>
-            </div>
+            {[
+              { key: 'flow-field' as const, href: '/demos/flow-field/', eyebrow: 'Generative AI', accent: '#8b7bf0', title: 'A field that self-organizes', bg: 'radial-gradient(120% 120% at 50% 0%,#1b1830 0%,#100e1a 72%)', note: 'A living particle field — connections form and dissolve.' },
+              { key: 'maze-search' as const, href: '/demos/maze-search/', eyebrow: 'Optimization', accent: '#4d8df0', title: 'A search solving a maze', bg: 'radial-gradient(120% 120% at 50% 0%,#142420 0%,#0c1614 72%)', note: 'Breadth-first search flooding the maze, then tracing the shortest path.' },
+              { key: 'boids' as const, href: '/demos/boids/', eyebrow: 'Games & Simulation', accent: '#f2683f', title: 'Emergence you can disturb', bg: 'radial-gradient(120% 120% at 50% 0%,#241410 0%,#160c0a 72%)', note: 'Boids flocking from three local rules — no leader.' },
+            ].map((c) => (
+              <a key={c.key} href={c.href} style={s(`display:flex;flex-direction:column;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.09);text-decoration:none;background:${c.bg}`)}>
+                <div style={s('padding:16px 16px 10px')}>
+                  <p style={s(`font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:${c.accent};margin:0 0 5px`)}>{c.eyebrow}</p>
+                  <h3 style={s(`font-family:${stack};font-weight:600;font-size:17px;color:#ECEAF3;margin:0`)}>{c.title}</h3>
+                </div>
+                <PillarDemo demoKey={c.key} />
+                <div style={s('padding:11px 16px;border-top:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:space-between;gap:10px')}>
+                  <p style={s('font-size:12px;color:#9b96aa;line-height:1.45;margin:0')}>{c.note}</p>
+                  <span style={s(`font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:600;color:${c.accent};white-space:nowrap`)}>Open →</span>
+                </div>
+              </a>
+            ))}
           </div>
         </div>
       </section>
