@@ -9,6 +9,7 @@ isFirstAuthor: true
 quartile: "NA"
 doi: "https://doi.org/10.1109/ICCSCE65566.2025.11182666"
 featured: false
+demo: "assembly-line-balancing"
 topicTags: ["evolutionary-computing", "optimization"]
 ---
 

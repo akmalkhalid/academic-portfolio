@@ -10,6 +10,7 @@ isFirstAuthor: true
 quartile: "Q1"
 doi: "https://doi.org/10.1109/ACCESS.2021.3106321"
 featured: true
+demo: "assembly-line-balancing"
 topicTags: ["evolutionary-computing", "optimization"]
 ---
 

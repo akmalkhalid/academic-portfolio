@@ -23,6 +23,7 @@ export default function DemosPage() {
   const counts: Record<string, number> = {}
   for (const p of getAllPublications()) if (p.demo) counts[p.demo] = (counts[p.demo] || 0) + 1
   const evacPapers = counts['crowd-evacuation'] || 0
+  const albPapers = counts['assembly-line-balancing'] || 0
 
   return (
     <div data-screen-label="Demos" style={s('min-height:100vh')}>
@@ -37,26 +38,47 @@ export default function DemosPage() {
           here in full and interactive.
         </p>
 
-        {/* Research-faithful demo */}
+        {/* Research-faithful demos */}
         <p style={mono('font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#a39a8f;margin:0 0 12px')}>Built from published research</p>
-        <a href="/demos/crowd-evacuation/" style={card('#4d8df0')}>
-          <div style={s('display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px')}>
-            <span style={mono('font-size:11px;font-weight:600;letter-spacing:.04em;padding:4px 10px;border-radius:6px;background:#4d8df01a;color:#4d8df0')}>Emergency route planning</span>
-            {evacPapers > 0 && <span style={mono('font-size:11.5px;color:#8a8279')}>{evacPapers} linked papers</span>}
-          </div>
-          <h2 style={s(`font-family:${stack};font-weight:600;font-size:24px;letter-spacing:-.01em;margin:0 0 8px;color:#16142e`)}>
-            Crowd evacuation <span style={s('color:#4d8df0')}>→</span>
-          </h2>
-          <p style={s('font-size:15px;line-height:1.6;color:#57514b;margin:0 0 14px;max-width:640px')}>
-            A shopping-mall concourse clears through adjustable exits. A navigation field routes the crowd; congestion
-            and panic reshape the flow — the “faster-is-slower” effect. Tune the crowd, panic, and exits, and edit walls live.
-          </p>
-          <div style={s('display:flex;flex-wrap:wrap;gap:7px')}>
-            {['Navigation field', 'Congestion + panic', 'Adjustable exits', 'Editable floor plan'].map((c) => (
-              <span key={c} style={mono('font-size:11px;color:#6b6560;background:#f4f1ec;border:1px solid #e7e3dd;padding:4px 9px;border-radius:6px')}>{c}</span>
-            ))}
-          </div>
-        </a>
+        <div style={s('display:flex;flex-direction:column;gap:16px')}>
+          <a href="/demos/crowd-evacuation/" style={card('#4d8df0')}>
+            <div style={s('display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px')}>
+              <span style={mono('font-size:11px;font-weight:600;letter-spacing:.04em;padding:4px 10px;border-radius:6px;background:#4d8df01a;color:#4d8df0')}>Emergency route planning</span>
+              {evacPapers > 0 && <span style={mono('font-size:11.5px;color:#8a8279')}>{evacPapers} linked papers</span>}
+            </div>
+            <h2 style={s(`font-family:${stack};font-weight:600;font-size:24px;letter-spacing:-.01em;margin:0 0 8px;color:#16142e`)}>
+              Crowd evacuation <span style={s('color:#4d8df0')}>→</span>
+            </h2>
+            <p style={s('font-size:15px;line-height:1.6;color:#57514b;margin:0 0 14px;max-width:640px')}>
+              A shopping-mall concourse clears through adjustable exits. A navigation field routes the crowd; congestion
+              and panic reshape the flow — the “faster-is-slower” effect. Tune the crowd, panic, and exits, and edit walls live.
+            </p>
+            <div style={s('display:flex;flex-wrap:wrap;gap:7px')}>
+              {['Navigation field', 'Congestion + panic', 'Adjustable exits', 'Editable floor plan'].map((c) => (
+                <span key={c} style={mono('font-size:11px;color:#6b6560;background:#f4f1ec;border:1px solid #e7e3dd;padding:4px 9px;border-radius:6px')}>{c}</span>
+              ))}
+            </div>
+          </a>
+          <a href="/demos/assembly-line-balancing/" style={card('#4d8df0')}>
+            <div style={s('display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px')}>
+              <span style={mono('font-size:11px;font-weight:600;letter-spacing:.04em;padding:4px 10px;border-radius:6px;background:#4d8df01a;color:#4d8df0')}>Assembly line balancing</span>
+              {albPapers > 0 && <span style={mono('font-size:11.5px;color:#8a8279')}>{albPapers} linked papers</span>}
+            </div>
+            <h2 style={s(`font-family:${stack};font-weight:600;font-size:24px;letter-spacing:-.01em;margin:0 0 8px;color:#16142e`)}>
+              Assembly line balancing <span style={s('color:#4d8df0')}>→</span>
+            </h2>
+            <p style={s('font-size:15px;line-height:1.6;color:#57514b;margin:0 0 14px;max-width:640px')}>
+              An artificial immune system assigns precedence-constrained tasks to workstations under a cycle-time limit,
+              rebalancing the line to raise efficiency and shrink the bottleneck. Tune the cycle time, task count, and
+              mutation rate, and watch stations and efficiency trade off.
+            </p>
+            <div style={s('display:flex;flex-wrap:wrap;gap:7px')}>
+              {['Precedence graph', 'Immune optimizer', 'Cycle-time trade-off', 'Bottleneck tracking'].map((c) => (
+                <span key={c} style={mono('font-size:11px;color:#6b6560;background:#f4f1ec;border:1px solid #e7e3dd;padding:4px 9px;border-radius:6px')}>{c}</span>
+              ))}
+            </div>
+          </a>
+        </div>
 
         {/* Pillar demos */}
         <p style={mono('font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#a39a8f;margin:34px 0 12px')}>Research-pillar demos</p>

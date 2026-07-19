@@ -5,6 +5,7 @@
 // Add a new demo by building the components and adding one entry to REGISTRY below.
 import { s } from '@/lib/style'
 import CrowdEvacuation from '@/components/paper-demos/CrowdEvacuation'
+import AssemblyLineBalancing from '@/components/paper-demos/AssemblyLineBalancing'
 import DemoDisclaimer from '@/components/DemoDisclaimer'
 
 type Entry = {
@@ -21,6 +22,13 @@ const REGISTRY: Record<string, Entry> = {
       'A looping preview of the emergency route-planning model: a navigation field routes shoppers to the exits while congestion and panic reshape the flow.',
     fullHref: '/demos/crowd-evacuation/',
     render: (accent) => <CrowdEvacuation accent={accent} />,
+  },
+  'assembly-line-balancing': {
+    label: 'Assembly line balancing · immune algorithm',
+    caption:
+      'A looping preview of the line-balancing model: an artificial immune system assigns precedence-constrained tasks to workstations under a cycle-time limit, rebalancing to raise line efficiency.',
+    fullHref: '/demos/assembly-line-balancing/',
+    render: (accent) => <AssemblyLineBalancing accent={accent} />,
   },
 }
 

@@ -11,6 +11,7 @@ isFirstAuthor: true
 quartile: "Q4"
 doi: "NA"
 featured: false
+demo: "assembly-line-balancing"
 topicTags: ["evolutionary-computing", "optimization"]
 ---
 

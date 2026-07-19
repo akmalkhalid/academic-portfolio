@@ -8,6 +8,7 @@ isFirstAuthor: true
 quartile: "NA"
 doi: "https://doi.org/10.1109/icca51439.2020.9264382"
 featured: false
+demo: "assembly-line-balancing"
 topicTags: ["evolutionary-computing", "optimization"]
 ---
 
