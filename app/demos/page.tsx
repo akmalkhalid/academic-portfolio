@@ -44,10 +44,31 @@ export default function DemosPage() {
         {/* Research-faithful demos */}
         <p style={mono('font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#a39a8f;margin:0 0 12px')}>Built from published research</p>
         <div style={s('display:flex;flex-direction:column;gap:16px')}>
+          <a href="/demos/production-scheduling/" style={card('#21b3a0')}>
+            <div style={s('display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px')}>
+              <span style={mono('font-size:11px;font-weight:600;letter-spacing:.04em;padding:4px 10px;border-radius:6px;background:#21b3a01a;color:#21b3a0')}>Production scheduling</span>
+              {schedPapers > 0 && <span style={mono('font-size:11.5px;color:#8a8279')}>{schedPapers} linked papers</span>}
+              <span style={mono('font-size:11px;color:#a39a8f')}>2012–2015</span>
+            </div>
+            <h2 style={s(`font-family:${stack};font-weight:600;font-size:24px;letter-spacing:-.01em;margin:0 0 8px;color:#16142e`)}>
+              Production scheduling <span style={s('color:#21b3a0')}>→</span>
+            </h2>
+            <p style={s('font-size:15px;line-height:1.6;color:#57514b;margin:0 0 14px;max-width:640px')}>
+              Jobs flow across machines in a flexible manufacturing system, working around maintenance windows. An
+              artificial immune system reorders operations to compact the Gantt chart and minimize the makespan. Tune
+              the jobs, machines, maintenance, and mutation rate.
+            </p>
+            <div style={s('display:flex;flex-wrap:wrap;gap:7px')}>
+              {['Gantt schedule', 'Immune optimizer', 'Machine maintenance', 'Makespan minimization'].map((c) => (
+                <span key={c} style={mono('font-size:11px;color:#6b6560;background:#f4f1ec;border:1px solid #e7e3dd;padding:4px 9px;border-radius:6px')}>{c}</span>
+              ))}
+            </div>
+          </a>
           <a href="/demos/crowd-evacuation/" style={card('#4d8df0')}>
             <div style={s('display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px')}>
               <span style={mono('font-size:11px;font-weight:600;letter-spacing:.04em;padding:4px 10px;border-radius:6px;background:#4d8df01a;color:#4d8df0')}>Emergency route planning</span>
               {evacPapers > 0 && <span style={mono('font-size:11.5px;color:#8a8279')}>{evacPapers} linked papers</span>}
+              <span style={mono('font-size:11px;color:#a39a8f')}>2014–2018</span>
             </div>
             <h2 style={s(`font-family:${stack};font-weight:600;font-size:24px;letter-spacing:-.01em;margin:0 0 8px;color:#16142e`)}>
               Crowd evacuation <span style={s('color:#4d8df0')}>→</span>
@@ -66,6 +87,7 @@ export default function DemosPage() {
             <div style={s('display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px')}>
               <span style={mono('font-size:11px;font-weight:600;letter-spacing:.04em;padding:4px 10px;border-radius:6px;background:#4d8df01a;color:#4d8df0')}>Assembly line balancing</span>
               {albPapers > 0 && <span style={mono('font-size:11.5px;color:#8a8279')}>{albPapers} linked papers</span>}
+              <span style={mono('font-size:11px;color:#a39a8f')}>2016–2025</span>
             </div>
             <h2 style={s(`font-family:${stack};font-weight:600;font-size:24px;letter-spacing:-.01em;margin:0 0 8px;color:#16142e`)}>
               Assembly line balancing <span style={s('color:#4d8df0')}>→</span>
@@ -81,29 +103,11 @@ export default function DemosPage() {
               ))}
             </div>
           </a>
-          <a href="/demos/production-scheduling/" style={card('#21b3a0')}>
-            <div style={s('display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px')}>
-              <span style={mono('font-size:11px;font-weight:600;letter-spacing:.04em;padding:4px 10px;border-radius:6px;background:#21b3a01a;color:#21b3a0')}>Production scheduling</span>
-              {schedPapers > 0 && <span style={mono('font-size:11.5px;color:#8a8279')}>{schedPapers} linked papers</span>}
-            </div>
-            <h2 style={s(`font-family:${stack};font-weight:600;font-size:24px;letter-spacing:-.01em;margin:0 0 8px;color:#16142e`)}>
-              Production scheduling <span style={s('color:#21b3a0')}>→</span>
-            </h2>
-            <p style={s('font-size:15px;line-height:1.6;color:#57514b;margin:0 0 14px;max-width:640px')}>
-              Jobs flow across machines in a flexible manufacturing system, working around maintenance windows. An
-              artificial immune system reorders operations to compact the Gantt chart and minimize the makespan. Tune
-              the jobs, machines, maintenance, and mutation rate.
-            </p>
-            <div style={s('display:flex;flex-wrap:wrap;gap:7px')}>
-              {['Gantt schedule', 'Immune optimizer', 'Machine maintenance', 'Makespan minimization'].map((c) => (
-                <span key={c} style={mono('font-size:11px;color:#6b6560;background:#f4f1ec;border:1px solid #e7e3dd;padding:4px 9px;border-radius:6px')}>{c}</span>
-              ))}
-            </div>
-          </a>
           <a href="/demos/game-refinement/" style={card('#f2683f')}>
             <div style={s('display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px')}>
               <span style={mono('font-size:11px;font-weight:600;letter-spacing:.04em;padding:4px 10px;border-radius:6px;background:#f2683f1a;color:#f2683f')}>Game refinement &amp; engagement</span>
               {grPapers > 0 && <span style={mono('font-size:11.5px;color:#8a8279')}>{grPapers} linked papers</span>}
+              <span style={mono('font-size:11px;color:#a39a8f')}>2019–2025</span>
             </div>
             <h2 style={s(`font-family:${stack};font-weight:600;font-size:24px;letter-spacing:-.01em;margin:0 0 8px;color:#16142e`)}>
               Game refinement &amp; the engagement zone <span style={s('color:#f2683f')}>→</span>
@@ -123,6 +127,7 @@ export default function DemosPage() {
             <div style={s('display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:10px')}>
               <span style={mono('font-size:11px;font-weight:600;letter-spacing:.04em;padding:4px 10px;border-radius:6px;background:#8b7bf01a;color:#8b7bf0')}>Agentic content generation</span>
               {questPapers > 0 && <span style={mono('font-size:11.5px;color:#8a8279')}>{questPapers} linked papers</span>}
+              <span style={mono('font-size:11px;color:#a39a8f')}>2025–2026</span>
             </div>
             <h2 style={s(`font-family:${stack};font-weight:600;font-size:24px;letter-spacing:-.01em;margin:0 0 8px;color:#16142e`)}>
               Agentic procedural content generation <span style={s('color:#8b7bf0')}>→</span>
