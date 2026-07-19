@@ -105,6 +105,7 @@ export default function AboutClient({ name, jobTitle, profiles }: { name: string
           <div data-reveal style={s('display:flex;flex-wrap:wrap;gap:10px')}>
             <a href="/research" style={s('font-size:14.5px;font-weight:500;text-decoration:none;color:#fff;background:#16142e;padding:11px 18px;border-radius:8px')}>Explore the research →</a>
             <a href="/contact" style={s('font-size:14.5px;font-weight:500;text-decoration:none;color:#1c1917;background:#fff;border:1px solid #d9d3ca;padding:11px 18px;border-radius:8px')}>Get in touch</a>
+            <a href="/cv/Akmal_CV_2026.pdf" download style={s('font-size:14.5px;font-weight:500;text-decoration:none;color:#1c1917;background:#fff;border:1px solid #d9d3ca;padding:11px 18px;border-radius:8px')}>Download CV ↓</a>
           </div>
         </div>
         <div style={s('position:relative;width:300px;height:300px;justify-self:center')}>

@@ -358,6 +358,7 @@ export default function HomeClient({
             <div style={s('display:flex;flex-wrap:wrap;gap:12px;margin-bottom:30px')}>
               <a href="#research" style={s('font-size:14.5px;font-weight:500;text-decoration:none;color:#fff;background:#16142e;padding:12px 20px;border-radius:8px')}>Explore my research →</a>
               <a href="#pubs" style={s('font-size:14.5px;font-weight:500;text-decoration:none;color:#1c1917;background:#fff;border:1px solid #d9d3ca;padding:12px 20px;border-radius:8px')}>View publications</a>
+              <a href="/cv/Akmal_CV_2026.pdf" download style={s('font-size:14.5px;font-weight:500;text-decoration:none;color:#1c1917;background:#fff;border:1px solid #d9d3ca;padding:12px 20px;border-radius:8px')}>Download CV ↓</a>
             </div>
           </div>
           <div style={s('position:relative;width:230px;height:230px;flex-shrink:0;justify-self:end')}>

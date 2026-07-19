@@ -13,6 +13,7 @@ const NAV = [
   { href: '/publications', label: 'Publications' },
   { href: '/tools', label: 'Tools' },
   { href: '/teaching', label: 'Teaching' },
+  { href: '/cv', label: 'CV' },
   { href: '/contact', label: 'Contact' },
 ]
 
