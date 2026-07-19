@@ -8,7 +8,7 @@ pages: "468--477"
 isFirstAuthor: true
 quartile: "NA"
 doi: "https://doi.org/10.1007/978-3-032-02555-5_35"
-featured: false
+featured: true
 topicTags: ["generative-ai", "simulation"]
 ---
 

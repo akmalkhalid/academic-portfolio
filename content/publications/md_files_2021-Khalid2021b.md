@@ -7,7 +7,7 @@ category: "Journal"
 isFirstAuthor: true
 quartile: "NA"
 doi: "https://doi.org/10.1007/s10696-020-09389-1"
-featured: false
+featured: true
 topicTags: ["evolutionary-computing", "optimization"]
 ---
 

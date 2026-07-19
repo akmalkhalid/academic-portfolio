@@ -8,9 +8,11 @@ type PubNode = { t: string; y: number; pills: Code[]; q: string; cat: string; ci
 type Funded = { role: string; title: string; agency: string; years: string; dots: string[] }
 type Stats = { pubs: number; citations: number; hIndex: number | null; i10Index: number | null; grants: number; students: number; autoCitations?: number | null; autoSource?: string | null }
 
+type SelectedGroup = { title: string; accent: string; items: { quartile: string; marker: string; cite: string; slug: string }[] }
+
 export default function HomeClient({
-  hero, pubs, funded, stats,
-}: { hero: { headline: string; sub: string }; pubs: PubNode[]; funded: Funded[]; stats: Stats }) {
+  hero, pubs, funded, stats, articles,
+}: { hero: { headline: string; sub: string }; pubs: PubNode[]; funded: Funded[]; stats: Stats; articles: SelectedGroup[] }) {
   const wrapRef = useRef<HTMLDivElement>(null)
   const heroRef = useRef<HTMLCanvasElement>(null)
   const mazeRef = useRef<HTMLCanvasElement>(null)
@@ -446,64 +448,30 @@ export default function HomeClient({
         </div>
       </section>
 
-      {/* LIVING PUBLICATIONS (dark) */}
+      {/* SELECTED ARTICLES (dark) */}
       <section id="pubs" style={s('background:#0f0e14;padding:70px 0;border-top:1px solid rgba(255,255,255,.05)')}>
         <div style={s('max-width:1120px;margin:0 auto;padding:0 28px')}>
-          <div style={s('display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-bottom:24px')}>
-            <div>
-              <p style={s("font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#6f6a82;margin:0 0 10px")}>/ the body of work · alive</p>
-              <h2 style={s(`font-family:${stack};font-weight:600;font-size:clamp(26px,3.4vw,38px);letter-spacing:-.02em;margin:0;color:#ECEAF3`)}>{stats.pubs} papers as one constellation.</h2>
-              <p style={s('font-size:14.5px;line-height:1.6;color:#9b96aa;max-width:560px;margin:12px 0 0')}>Every node a publication, coloured by research pillar and pulled toward its cluster. Split-colour nodes span two or more pillars. Hover to read a title, or flip to the list.</p>
-            </div>
-            <div style={s('display:flex;gap:6px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:9px;padding:4px;flex-shrink:0')}>
-              <button type="button" onClick={() => setMode('graph')} style={s(mode === 'graph' ? tabOn : tabOff)}>Constellation</button>
-              <button type="button" onClick={() => setMode('list')} style={s(mode === 'list' ? tabOn : tabOff)}>List</button>
-            </div>
+          <div style={s('margin-bottom:30px')}>
+            <p style={s("font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#6f6a82;margin:0 0 10px")}>/ selected work</p>
+            <h2 style={s(`font-family:${stack};font-weight:600;font-size:clamp(26px,3.4vw,38px);letter-spacing:-.02em;margin:0;color:#ECEAF3`)}>Selected articles.</h2>
+            <p style={s('font-size:14.5px;line-height:1.6;color:#9b96aa;max-width:600px;margin:12px 0 0')}>A curated slice of the record, grouped by research pillar. The full body of work — {stats.pubs} papers, filterable and mapped — lives on the publications page.</p>
           </div>
-
-          <div style={s('display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:18px')}>
-            <span style={s("font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;color:#6f6a82;margin-right:4px")}>HIGHLIGHT ·</span>
-            {pillarChips.map((c, i) => (
-              <button key={i} type="button" onClick={c.onClick} style={s(chipStyle(c.active))}>
-                <span style={s(`width:8px;height:8px;border-radius:50%;background:${c.dot};display:inline-block;margin-right:7px;vertical-align:middle`)} />{c.label}
-              </button>
-            ))}
-          </div>
-          <div style={s('display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-bottom:18px')}>
-            <span style={s("font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;color:#6f6a82;margin-right:4px")}>TYPE ·</span>
-            {catChips.map((c, i) => (
-              <button key={i} type="button" onClick={c.onClick} style={s(chipStyle(c.active))}>
-                <span style={s(`width:8px;height:8px;border-radius:50%;background:${c.dot};display:inline-block;margin-right:7px;vertical-align:middle`)} />{c.label}
-              </button>
-            ))}
-            <span style={s('width:1px;height:18px;background:rgba(255,255,255,.12);margin:0 6px')} />
-            <span style={s("font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;color:#6f6a82;margin-right:4px")}>QUARTILE ·</span>
-            {quartileChips.map((c, i) => (
-              <button key={i} type="button" onClick={c.onClick} style={s(chipStyle(c.active))}>
-                <span style={s(`width:8px;height:8px;border-radius:50%;background:${c.dot};display:inline-block;margin-right:7px;vertical-align:middle`)} />{c.label}
-              </button>
-            ))}
-          </div>
-
-          <div style={s('position:relative;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.09);background:radial-gradient(130% 130% at 50% 40%,#16151d 0%,#0c0b11 75%)')}>
-            <div style={s('display:' + (mode === 'graph' ? 'block' : 'none'))}>
-              <canvas ref={graphRef} style={s('display:block;width:100%;height:440px')} />
+          {articles.map((group) => (
+            <div key={group.title} style={s('margin-bottom:24px')}>
+              <div style={s(`display:inline-block;font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:700;color:#0f0e14;background:${group.accent};border-radius:6px;padding:3px 10px;margin-bottom:6px`)}>{group.title}</div>
+              <div style={s('display:flex;flex-direction:column')}>
+                {group.items.map((it) => (
+                  <a key={it.slug} href={`/publications/${it.slug}`} style={s('display:flex;gap:11px;align-items:baseline;padding:11px 4px;border-bottom:1px solid rgba(255,255,255,.06);text-decoration:none')}>
+                    <span style={s(`color:${group.accent};font-weight:700;flex-shrink:0;width:12px;text-align:center`)}>{it.marker}</span>
+                    {it.quartile && it.quartile !== 'NA' && (<span style={s(`font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;flex-shrink:0;padding:2px 6px;border-radius:4px;background:${QCOL[it.quartile] || '#6f6a82'}26;color:${QCOL[it.quartile] || '#9b96aa'};align-self:center`)}>{it.quartile}</span>)}
+                    <span style={s('flex:1;min-width:0;font-size:13.8px;line-height:1.5;color:#c9c4d6')}>{it.cite}</span>
+                    <span style={s('color:#56516a;flex-shrink:0;align-self:center;font-size:15px')}>→</span>
+                  </a>
+                ))}
+              </div>
             </div>
-            <div data-darkscroll="1" style={s('display:' + (mode === 'list' ? 'block' : 'none') + ';max-height:440px;overflow-y:auto;padding:8px 4px')}>
-              {filteredPubs.map((pub, i) => (
-                <div key={i} onClick={() => { setCopied(false); setSelected(pub) }} style={s('display:flex;gap:14px;align-items:baseline;padding:11px 18px;border-bottom:1px solid rgba(255,255,255,.05);cursor:pointer')}>
-                  <span style={s('display:flex;gap:3px;flex-shrink:0')}>{pub.pills.map((p, k) => (<span key={k} style={s(`width:9px;height:9px;border-radius:50%;background:${PCOL[p]}`)} />))}</span>
-                  <span style={s('font-size:14px;color:#d7d3e0;line-height:1.4;flex:1')}>{pub.t}</span>
-                  <span style={s("font-family:'JetBrains Mono',monospace;font-size:12px;color:#6f6a82;flex-shrink:0")}>{pub.y}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-          <p style={s("font-family:'JetBrains Mono',monospace;font-size:11px;color:#56516a;margin:14px 0 0;letter-spacing:.04em")}>Showing {filteredPubs.length} of {pubs.length} works · node size ≈ relative impact</p>
-        </div>
-        <div data-graph-tip="1" style={s('position:fixed;z-index:90;pointer-events:none;opacity:0;transition:opacity .12s;background:#1c1b24;border:1px solid rgba(255,255,255,.14);border-radius:9px;padding:9px 12px;max-width:280px;box-shadow:0 14px 40px -12px rgba(0,0,0,.7)')}>
-          <div data-tip-title="1" style={s('font-size:13px;color:#ECEAF3;line-height:1.35;margin-bottom:4px')} />
-          <div data-tip-meta="1" style={s("font-family:'JetBrains Mono',monospace;font-size:11px;color:#9b96aa")} />
+          ))}
+          <a href="/publications" style={s(`display:inline-block;margin-top:12px;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;text-decoration:none;color:#0f0e14;background:#ECEAF3;padding:11px 18px;border-radius:8px`)}>View all {stats.pubs} publications →</a>
         </div>
       </section>
 

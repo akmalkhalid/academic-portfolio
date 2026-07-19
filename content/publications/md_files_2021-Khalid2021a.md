@@ -9,7 +9,7 @@ pages: "65187--65205"
 isFirstAuthor: true
 quartile: "Q1"
 doi: "https://doi.org/10.1109/ACCESS.2021.3075954"
-featured: false
+featured: true
 topicTags: ["games-informatics", "simulation"]
 ---
 

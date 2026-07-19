@@ -9,7 +9,7 @@ pages: "117832--117844"
 isFirstAuthor: true
 quartile: "Q1"
 doi: "https://doi.org/10.1109/ACCESS.2021.3106321"
-featured: false
+featured: true
 topicTags: ["evolutionary-computing", "optimization"]
 ---
 

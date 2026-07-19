@@ -13,6 +13,7 @@ export default function Page() {
     q: p.quartile || 'NA',
     cat: catCode(p.category),
     v: p.venueShort || p.venue || '—',
+    slug: p._slug.replace(/^md_files_/, ''),
     citation: chicago(p),
     scholar: 'https://scholar.google.com/scholar?q=' + encodeURIComponent(p.title || ''),
   }))

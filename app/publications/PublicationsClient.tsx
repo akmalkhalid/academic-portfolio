@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { s } from '@/lib/style'
 import { PCOL, PNAME, QCOL, CATNAME, type Code } from '@/lib/view'
 
-type PubNode = { t: string; y: number; pills: Code[]; q: string; cat: string; v: string; citation: string; scholar: string }
+type PubNode = { t: string; y: number; pills: Code[]; q: string; cat: string; v: string; citation: string; scholar: string; slug: string }
 
 export default function PublicationsClient({
   pubs, quartileStats, minYearBound, maxYearBound,
@@ -242,6 +242,7 @@ export default function PublicationsClient({
                   <div style={s('font-size:15px;font-weight:500;color:#ECEAF3;line-height:1.2')}>{spills.map((p) => PNAME[p]).join(' + ')}</div>
                 </div>
               </div>
+              <a href={`/publications/${sp.slug}`} style={s(`display:inline-flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:600;text-decoration:none;color:#fff;background:${pc};padding:11px 17px;border-radius:8px;align-self:flex-start`)}>View full page →</a>
               <a href={sp.scholar} target="_blank" rel="noopener noreferrer" style={s("display:inline-flex;align-items:center;gap:8px;font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:600;text-decoration:none;color:#0f0e14;background:#ECEAF3;padding:11px 17px;border-radius:8px;align-self:flex-start")}>Find on Google Scholar →</a>
               <div style={s('display:flex;flex-direction:column;gap:10px;padding-top:16px;border-top:1px solid rgba(255,255,255,.08)')}>
                 <span style={s("font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#6f6a82")}>Chicago citation</span>

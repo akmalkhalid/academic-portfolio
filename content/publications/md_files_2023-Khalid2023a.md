@@ -9,7 +9,7 @@ issue: "6"
 isFirstAuthor: false
 quartile: "Q2"
 doi: "https://doi.org/10.3390/math11061353"
-featured: false
+featured: true
 topicTags: ["expert-systems", "simulation"]
 ---
 

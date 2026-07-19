@@ -33,6 +33,29 @@ export default function Page() {
     }
   })
 
+  // Selected articles for the home page — featured pubs grouped by pillar (CV-style).
+  const gsel = [
+    { title: 'Computational Intelligence & Optimization', accent: PCOL.evo, codes: ['evo', 'opt'] },
+    { title: 'Games Informatics & Engagement Modelling', accent: PCOL.gam, codes: ['gam', 'sim'] },
+    { title: 'Generative & Agentic AI', accent: PCOL.gen, codes: ['gen', 'exp'] },
+  ]
+  const groupKey = (p: (typeof pubs)[number]) => {
+    const c = codesFromTags(p.topicTags)[0]
+    if (c === 'gam' || c === 'sim') return 1
+    if (c === 'gen' || c === 'exp') return 2
+    return 0
+  }
+  const featuredPubs = pubs.filter((p) => p.featured)
+  const selected = gsel.map((g, gi) => ({
+    title: g.title, accent: g.accent,
+    items: featuredPubs.filter((p) => groupKey(p) === gi).sort((a, b) => b.year - a.year).map((p) => ({
+      quartile: p.quartile || '',
+      marker: p.isCorrespondingAuthor ? '†' : (p.authors && !p.authors.includes(' and ') && p.isFirstAuthor ? '§' : (p.isFirstAuthor ? '∗' : '')),
+      cite: chicago(p),
+      slug: p._slug.replace(/^md_files_/, ''),
+    })),
+  })).filter((g) => g.items.length > 0)
+
   const computedCitations = pubs.reduce((sum, p) => sum + (p.citationCount || 0), 0)
   const stats = {
     pubs: pubs.length,
@@ -51,6 +74,7 @@ export default function Page() {
       pubs={pubNodes}
       funded={funded}
       stats={stats}
+      articles={selected}
     />
   )
 }

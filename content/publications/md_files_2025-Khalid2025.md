@@ -9,7 +9,7 @@ pages: "100900"
 isFirstAuthor: true
 quartile: "Q2"
 doi: "https://doi.org/10.1016/j.entcom.2024.100900"
-featured: false
+featured: true
 topicTags: ["games-informatics", "simulation"]
 ---
 
