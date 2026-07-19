@@ -6,6 +6,7 @@
 import { s } from '@/lib/style'
 import CrowdEvacuation from '@/components/paper-demos/CrowdEvacuation'
 import AssemblyLineBalancing from '@/components/paper-demos/AssemblyLineBalancing'
+import ProductionScheduling from '@/components/paper-demos/ProductionScheduling'
 import DemoDisclaimer from '@/components/DemoDisclaimer'
 
 type Entry = {
@@ -29,6 +30,13 @@ const REGISTRY: Record<string, Entry> = {
       'A looping preview of the line-balancing model: an artificial immune system assigns precedence-constrained tasks to workstations under a cycle-time limit, rebalancing to raise line efficiency.',
     fullHref: '/demos/assembly-line-balancing/',
     render: (accent) => <AssemblyLineBalancing accent={accent} />,
+  },
+  'production-scheduling': {
+    label: 'Production scheduling · immune algorithm',
+    caption:
+      'A looping preview of the FMS scheduling model: an artificial immune system orders operations across machines around maintenance windows, compacting the Gantt chart to minimize the makespan.',
+    fullHref: '/demos/production-scheduling/',
+    render: (accent) => <ProductionScheduling accent={accent} />,
   },
 }
 

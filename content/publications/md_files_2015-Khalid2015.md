@@ -11,6 +11,7 @@ isFirstAuthor: true
 quartile: "NA"
 doi: "https://doi.org/10.24507/ijicic.11.01.213"
 featured: false
+demo: "production-scheduling"
 topicTags: ["evolutionary-computing", "expert-systems", "simulation"]
 ---
 

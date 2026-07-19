@@ -10,6 +10,7 @@ isFirstAuthor: true
 quartile: "NA"
 doi: "https://cspub-jnic.org/index.php/jnic/article/view/66"
 featured: false
+demo: "production-scheduling"
 topicTags: ["evolutionary-computing", "optimization"]
 ---
 

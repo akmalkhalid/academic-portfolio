@@ -9,6 +9,7 @@ quartile: "NA"
 doi: "https://doi.org/10.1109/DMO.2012.6329801"
 isFirstAuthor: true
 featured: false
+demo: "production-scheduling"
 topicTags: ["evolutionary-computing", "optimization"]
 ---
 

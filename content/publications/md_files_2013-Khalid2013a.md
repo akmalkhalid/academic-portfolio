@@ -10,6 +10,7 @@ isFirstAuthor: true
 quartile: "NA"
 doi: "https://scholar.google.com/scholar?oi=bibs&cluster=2129467486101888051&btnI=1&hl=en"
 featured: false
+demo: "production-scheduling"
 topicTags: ["evolutionary-computing", "optimization"]
 ---
 

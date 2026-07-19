@@ -11,6 +11,7 @@ isFirstAuthor: false
 quartile: "NA"
 doi: "NA"
 featured: false
+demo: "production-scheduling"
 topicTags: ["expert-systems", "optimization"]
 ---
 
