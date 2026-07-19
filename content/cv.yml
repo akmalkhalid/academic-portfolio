@@ -35,8 +35,9 @@ stats:
   - { value: "RM 1.51M", label: "Funding",          accent: "rose"   }
 
 profile: >
-  Artificial-intelligence researcher and educator specializing in game informatics,
-  computational intelligence, and intelligent/expert systems. PhD in Evolutionary
+  Artificial-intelligence researcher and educator working on computational intelligence
+  for games and engagement modelling — spanning nature-inspired optimization, game
+  informatics & entertainment science, and generative/agentic AI. PhD in Evolutionary
   Computing (Universiti Sains Malaysia, 2018), with a prior appointment as Assistant
   Professor at the Japan Advanced Institute of Science and Technology (JAIST), where he
   co-founded the International Research Center for AI and Entertainment Science. Currently
@@ -48,15 +49,15 @@ profile: >
   for Elsevier and IEEE journals.
 
 researchFocus:
-  - accent: "blue"
-    title: "Game Informatics"
-    text: "Game analytics & design, entertainment science, game-playing AI agents, game-tree search, gamification, empathic entertainment, archaeogaming"
   - accent: "teal"
-    title: "Computational Intelligence"
-    text: "Bio-inspired & evolutionary computing, computational modeling, machine learning, agent-based systems, cellular automata, computational psychometrics"
+    title: "Computational Intelligence & Optimization"
+    text: "Nature-inspired metaheuristics — genetic & immune algorithms, swarm intelligence, memetic hybrids; assembly-line balancing, production scheduling, large-scale combinatorial & continuous optimization"
+  - accent: "amber"
+    title: "Games Informatics & Engagement Modelling"
+    text: "Game-refinement theory & the “motion in mind” model; measuring and optimizing engagement, addiction & player experience; procedural content generation, gamification, serious games, agent-based simulation"
   - accent: "purple"
-    title: "Expert Systems & LLMs"
-    text: "Large language models, intelligent search, case-based reasoning, knowledge-based systems, data-driven decision making & business intelligence"
+    title: "Generative & Agentic AI"
+    text: "Large language models and generative models (transformers, diffusion, GANs) coupled with symbolic and knowledge-based reasoning; agentic content generation, explainable decision support"
 
 # marker: * = first author, dagger = corresponding/senior, section = sole author
 selectedPapers:
