@@ -9,6 +9,7 @@ isFirstAuthor: true
 quartile: "NA"
 doi: "https://doi.org/10.1109/ICSECS.2015.7333102"
 featured: false
+demo: "crowd-evacuation"
 topicTags: ["evolutionary-computing", "optimization", "simulation"]
 ---
 
