@@ -41,6 +41,8 @@ export default function Page() {
     i10Index: cfg.metrics?.i10Index ?? null,
     grants: projects.length,
     students: students.length,
+    autoCitations: cfg.autoMetrics?.citations ?? null,
+    autoSource: cfg.autoMetrics?.source ?? null,
   }
 
   return (

@@ -6,7 +6,7 @@ import { PCOL, PNAME, PBADGE, QCOL, CATNAME, type Code } from '@/lib/view'
 
 type PubNode = { t: string; y: number; pills: Code[]; q: string; cat: string; citation: string; scholar: string }
 type Funded = { role: string; title: string; agency: string; years: string; dots: string[] }
-type Stats = { pubs: number; citations: number; hIndex: number | null; i10Index: number | null; grants: number; students: number }
+type Stats = { pubs: number; citations: number; hIndex: number | null; i10Index: number | null; grants: number; students: number; autoCitations?: number | null; autoSource?: string | null }
 
 export default function HomeClient({
   hero, pubs, funded, stats,
@@ -334,7 +334,7 @@ export default function HomeClient({
 
   const statList = [
     { num: stats.pubs, display: String(stats.pubs), label: 'Peer-reviewed publications', hint: '2012 — 2026', dot: '#8b7bf0', live: false },
-    { num: stats.citations, display: stats.citations.toLocaleString(), label: 'Citations', hint: stats.hIndex ? `h-index ${stats.hIndex} · i10 ${stats.i10Index}` : 'Google Scholar', dot: '#4d8df0', live: false },
+    { num: stats.citations, display: stats.citations.toLocaleString(), label: 'Citations', hint: `${stats.hIndex ? `Scholar · h-index ${stats.hIndex} · i10 ${stats.i10Index}` : 'Google Scholar'}${stats.autoCitations ? ` · ${stats.autoSource || 'OpenAlex'} ${stats.autoCitations.toLocaleString()}` : ''}`, dot: '#4d8df0', live: false },
     { num: stats.grants, display: String(stats.grants), label: 'Funded grants', hint: 'FRGS · GGPM · TR-UKM', dot: '#21b3a0', live: false },
     { num: stats.students, display: String(stats.students), label: 'Postgraduates supervised', hint: "PhD & Master's", dot: '#f2683f', live: false },
     { num: 0, display: '—', label: 'Site visitors', hint: 'cookie-free · live count', dot: '#84b53a', live: true },

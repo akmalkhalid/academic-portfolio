@@ -19,6 +19,8 @@ export type SiteConfig = {
   // Optional headline metrics shown on the home page. All optional — the page
   // falls back to computed counts when these are absent.
   metrics?: { citations?: number; hIndex?: number; i10Index?: number }
+  // Auto-updated (build time) from metrics.auto.json — e.g. a live Scopus figure.
+  autoMetrics?: { citations: number | null; hIndex: number | null; source: string | null; updated: string | null }
 }
 
 export type Tag = { id: string; name: string; color: string; description?: string }
@@ -29,7 +31,12 @@ let _tags: Tag[] | null = null
 export function getSiteConfig(): SiteConfig {
   if (_config) return _config
   const raw = fs.readFileSync(path.join(CONTENT_DIR, 'site.yml'), 'utf-8')
-  _config = yaml.load(raw) as SiteConfig
+  const cfg = yaml.load(raw) as SiteConfig
+  try {
+    const auto = JSON.parse(fs.readFileSync(path.join(CONTENT_DIR, 'metrics.auto.json'), 'utf-8'))
+    cfg.autoMetrics = { citations: auto.citations ?? null, hIndex: auto.hIndex ?? null, source: auto.source ?? null, updated: auto.updated ?? null }
+  } catch { /* no auto metrics yet — fine */ }
+  _config = cfg
   return _config
 }
 
