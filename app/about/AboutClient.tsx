@@ -7,10 +7,10 @@ const P = { purple: '#8b7bf0', blue: '#4d8df0', teal: '#21b3a0', coral: '#f2683f
 const stack = "'Space Grotesk', system-ui, sans-serif"
 
 const competencies = [
-  { title: 'Artificial Intelligence', accent: P.purple, detail: 'Generative AI, LLM applications and knowledge-based expert systems.' },
-  { title: 'Evolutionary Computing', accent: P.teal, detail: 'Genetic algorithms, particle-swarm optimization and multi-objective metaheuristics.' },
+  { title: 'Computational Intelligence', accent: P.teal, detail: 'Evolutionary and immune algorithms, particle-swarm optimization and multi-objective metaheuristics.' },
+  { title: 'Games Informatics & Engagement', accent: P.coral, detail: 'Game refinement theory, the “motion in mind” model, procedural content and serious games.' },
   { title: 'Computational Optimization', accent: P.blue, detail: 'Combinatorial optimization, scheduling, assembly-line balancing and AutoML.' },
-  { title: 'Games Informatics', accent: P.coral, detail: 'Procedural content generation, NPC AI, game refinement and serious games.' },
+  { title: 'Generative & Agentic AI', accent: P.purple, detail: 'Generative models, LLM applications, agentic content generation and knowledge-based expert systems.' },
   { title: 'Simulation & Modelling', accent: P.green, detail: 'Agent-based simulation, crowd dynamics and Monte-Carlo methods.' },
   { title: 'Technical Stack', accent: P.amber, detail: 'Python, PyTorch, MATLAB, Unity, R and LaTeX.' },
 ]

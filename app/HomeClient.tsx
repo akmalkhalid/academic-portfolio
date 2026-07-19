@@ -387,9 +387,9 @@ export default function HomeClient({
         <h2 style={s(`font-family:${stack};font-weight:600;font-size:clamp(28px,3.6vw,40px);letter-spacing:-.02em;margin:0 0 32px`)}>Three pillars, one connected agenda.</h2>
         <div style={s('display:grid;grid-template-columns:repeat(3,1fr);gap:18px')}>
           {[
-            { n: '01', accent: PCOL.gen, title: 'Generative AI & Expert Systems', blurb: 'Generative models, LLM-assisted reasoning and knowledge-based systems — from text-to-video synthesis to explainable decision support.', tags: ['gen', 'exp'] as Code[] },
-            { n: '02', accent: PCOL.evo, title: 'Evolutionary Computing & Optimization', blurb: 'Immune algorithms, swarm intelligence and metaheuristics applied to scheduling, assembly-line balancing and large-scale combinatorial problems.', tags: ['evo', 'opt'] as Code[] },
-            { n: '03', accent: PCOL.gam, title: 'Games Informatics & Simulation', blurb: 'Game refinement theory, agent-based simulation and procedural content — measuring what makes play engaging and modelling emergent behaviour.', tags: ['gam', 'sim'] as Code[] },
+            { n: '01', accent: PCOL.evo, title: 'Computational Intelligence & Optimization', blurb: 'Evolutionary and immune algorithms, swarm intelligence and metaheuristics — the search and optimization methods at the core of my work, applied to scheduling, assembly-line balancing and large-scale combinatorial problems.', tags: ['evo', 'opt'] as Code[] },
+            { n: '02', accent: PCOL.gam, title: 'Games Informatics & Engagement Modelling', blurb: 'Game refinement theory and the “motion in mind” model, agent-based simulation and procedural content — measuring and optimizing what makes play engaging.', tags: ['gam', 'sim'] as Code[] },
+            { n: '03', accent: PCOL.gen, title: 'Generative & Agentic AI', blurb: 'The emerging frontier — generative models, LLM foundation models and agentic content generation, extending the optimization-of-engagement programme into new domains.', tags: ['gen', 'exp'] as Code[] },
           ].map((p) => (
             <a key={p.n} href="/research" style={s(`display:block;text-decoration:none;color:#1c1917;background:#fff;border:1px solid #e7e3dd;border-top:3px solid ${p.accent};border-radius:14px;padding:24px;transition:transform .2s,box-shadow .2s`)}>
               <div style={s('display:flex;align-items:center;justify-content:space-between;margin-bottom:16px')}>

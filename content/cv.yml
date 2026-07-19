@@ -32,7 +32,7 @@ stats:
   - { value: "14",       label: "Postgraduates",    accent: "purple" }
   - { value: "10",       label: "Research Grants",  accent: "blue2"  }
   - { value: "7 / 30",   label: "Q1 / Q2 Scopus",   accent: "teal"   }
-  - { value: "RM 920K+", label: "Funding",          accent: "rose"   }
+  - { value: "RM 1.51M", label: "Funding",          accent: "rose"   }
 
 profile: >
   Artificial-intelligence researcher and educator specializing in game informatics,
@@ -41,7 +41,7 @@ profile: >
   Professor at the Japan Advanced Institute of Science and Technology (JAIST), where he
   co-founded the International Research Center for AI and Entertainment Science. Currently
   a Senior Lecturer at Universiti Kebangsaan Malaysia and Research Coordinator at CAIT,
-  leading grants totalling over RM 920K — including a national flagship on large language
+  leading RM 575,300 as principal investigator within a cumulative RM 1.51M across ten competitive grants — including a national flagship on large language
   models for the Malay language. Author of 113 publications with 1,153 citations
   (h-index 18, i10-index 31) and supervisor of 14 postgraduate researchers. A certified
   Professional Technologist (MBOT), IEEE and AAAI member, guest editor and regular referee
@@ -280,11 +280,9 @@ references:
   - { name: "Prof. Dr. Hiroyuki Iida", role: "Professor & Vice President, School of Information Science", affil: "Japan Advanced Institute of Science and Technology, Nomi, Ishikawa, Japan.", email: "iida@jaist.ac.jp" }
 
 # ----------------------------------------------------------------------------
-#  NOTE ON "NUMBERS OF TRUTH"  (reconcile before you publish)
-#  Your research-expertise brainstorm cited different figures than this CV:
-#    - Citations: brainstorm ~1,020 (Google Scholar) vs CV 1,153.
-#    - Funding:   brainstorm RM 650,600 as PI / RM 1,583,650 cumulative (10 grants)
-#                 vs CV "RM 920K+".
-#  This file currently uses the CV figures. Pick ONE source of truth, update the
-#  `stats:` block and `profile:` above, and both the site and PDF will follow.
+#  NUMBERS OF TRUTH  (settled 2026-07)
+#    - Citations: 1,153 (site + CV agree; update after each Google Scholar sync).
+#    - Funding:   RM 575,300 as PI · RM 1,508,350 (≈ RM 1.51M) cumulative, 10 grants.
+#                 The site computes these live from content/projects/*.md, so they
+#                 stay in sync; the stat tile shows the cumulative figure.
 # ----------------------------------------------------------------------------

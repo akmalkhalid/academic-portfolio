@@ -10,7 +10,7 @@ const cfg = getSiteConfig()
 
 export const metadata: Metadata = {
   title: `${cfg.authorName} — Academic Portfolio`,
-  description: `${cfg.jobTitle} at ${cfg.affiliation}. Research in Generative AI, Evolutionary Computing, Games Informatics, and Computational Optimization.`,
+  description: `${cfg.jobTitle} at ${cfg.affiliation}. Computational intelligence for games and engagement modelling — search- and optimization-driven design of adaptive, generative and player-centred systems.`,
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
