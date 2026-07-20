@@ -13,6 +13,13 @@ const TOOLS = [
     blurb: 'Turn a form, raw BibTeX, a .bib file or a DOI into a clean Gaya UKM reference list — author–date, hanging indents, italics preserved. Bahasa Melayu or English, with a live preview and one-click copy.',
     chips: ['Fields · BibTeX · DOI', 'Crossref lookup', 'BM / EN', 'Copy & export'],
   },
+  {
+    href: '/tools/human-voice-check/',
+    accent: '#d99320', kicker: 'Revision checker', status: 'Live',
+    title: 'Human Voice — academic revision checker',
+    blurb: 'Paste a draft and see the paragraph-level patterns that read as machine-generated. Nine tells (P1–P9), each surfaced with the question only you can answer — it flags and asks, it never rewrites a sentence. Grammar tagging runs in an inlined offline parser; no LLM, nothing uploaded.',
+    chips: ['9 voice patterns', 'Flag & ask · no rewrite', 'Offline POS parser', 'Runs locally'],
+  },
 ]
 
 export default function Page() {
