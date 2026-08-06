@@ -41,6 +41,38 @@ body {
   .nav-burger { display: flex !important; }
 }
 
+/* Research pillars — three compact cards side by side, collapsing on narrow screens */
+.pillar-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  align-items: stretch;
+}
+@media (max-width: 1000px) { .pillar-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 700px)  { .pillar-grid { grid-template-columns: 1fr; } }
+
+.pillar-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0; /* keeps the three grid columns exactly equal */
+  background: #fff;
+  border: 1px solid #e7e3dd;
+  border-radius: 14px;
+  padding: 18px;
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.pillar-card:hover { transform: translateY(-2px); box-shadow: 0 14px 34px -22px rgba(28, 25, 23, .45); }
+
+/* Clickable demo preview tile — a live "GIF capture" of the full demo */
+.demo-tile { transition: transform .2s ease, box-shadow .2s ease; }
+.demo-tile:hover { transform: translateY(-1px); box-shadow: 0 12px 30px -18px rgba(10, 9, 16, .8); }
+.demo-tile-overlay { opacity: 0; transition: opacity .18s ease; pointer-events: none; }
+.demo-tile:hover .demo-tile-overlay,
+.demo-tile:focus-visible .demo-tile-overlay { opacity: 1; }
+.demo-tile:hover .demo-tile-cta { color: #cfcad9; }
+.demo-tile:focus-visible { outline: 2px solid #8b7bf0; outline-offset: 3px; }
+@media (hover: none) { .demo-tile-overlay { display: none; } }
+
 /* Legacy academic prose helpers (kept for any markdown body rendering) */
 .tag-purple { background: var(--tag-purple-bg); color: var(--tag-purple-fg); }
 .tag-teal   { background: var(--tag-teal-bg);   color: var(--tag-teal-fg); }
