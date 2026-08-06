@@ -47,18 +47,9 @@ export default function TeachingClient({
         <p style={s('font-size:18px;line-height:1.6;color:#57514b;max-width:660px;margin:0')}>Undergraduate and postgraduate courses at FTSM, postgraduate researchers under supervision, and open-access materials anyone can learn from.</p>
       </section>
 
-      {/* FEATURED MODULE */}
-      <section style={s('max-width:1120px;margin:0 auto;padding:24px 28px 10px')}>
-        <a href="/courses/prompt-engineering/" style={s('display:block;text-decoration:none;color:#1c1917;background:linear-gradient(115deg,#f3f1fe 0%,#fff 45%,#eaf5ef 100%);border:1px solid #e7e3dd;border-radius:16px;padding:28px')}>
-          <div style={s('display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap')}>
-            <span style={s("font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#3c3489;background:#eeedfe;padding:3px 9px;border-radius:5px")}>Self-instructional module</span>
-            <span style={s("font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:600;letter-spacing:.06em;color:#27500a;background:#eaf3de;padding:3px 9px;border-radius:5px")}>FREE · OPEN ACCESS</span>
-          </div>
-          <h2 style={s(`font-family:${stack};font-weight:600;font-size:clamp(22px,2.8vw,30px);letter-spacing:-.02em;margin:0 0 10px`)}>Prompt Engineering Architect</h2>
-          <p style={s('font-size:15px;line-height:1.6;color:#57514b;max-width:680px;margin:0 0 14px')}>An interactive course on designing effective prompts for large language models — with quizzes, drag-and-drop exercises, hands-on analytics and a global leaderboard.</p>
-          <p style={s("font-family:'JetBrains Mono',monospace;font-size:11.5px;color:#a39a8f;margin:0")}>Authored at CAIT, FTSM, UKM · English &amp; Bahasa Melayu · Launch module →</p>
-        </a>
-      </section>
+      {/* Prompt Engineering Architect used to be featured here. It now lives with
+          the other self-paced series under /workshops/, which are unlisted —
+          shared directly with a cohort rather than linked from the site. */}
 
       {/* COURSES */}
       <section style={s('max-width:1120px;margin:0 auto;padding:40px 28px 10px')}>

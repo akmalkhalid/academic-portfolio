@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unit 3 · The Golden Template and the Build Loop — SIM Builder</title>
+<style>
+/* ============================================================
+   SIM BUILDER — SHARED DESIGN SYSTEM v3 (derived from LMCRXXX2)
+   Bilingual EN/BM. Every translatable node has an EN twin
+   (lang="en") and a BM twin (lang="ms"); CSS shows the active
+   one only. Prompt bodies stay in English by design.
+   ============================================================ */
+:root{
+  --ink:#111629; --ink-soft:#333a5c; --muted:#565d80;
+  --bg:#f5f6fb; --panel:#ffffff; --line:#e2e5f1;
+  --accent:#3b4cc0; --accent-2:#5a34b8; --accent-soft:#eef0ff;
+  --amber:#a85e00; --amber-soft:#fff3de; --amber-ink:#5c3400;
+  --green:#137a4b; --green-soft:#e4f6ec; --green-ink:#0c5233;
+  --red:#c23434; --red-soft:#fcebeb; --red-ink:#8a1f1f;
+  --radius:16px; --shadow:0 10px 34px rgba(20,26,60,.10);
+  --maxw:1010px;
+  --font:"Segoe UI",system-ui,-apple-system,Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:"SF Mono",Consolas,"Roboto Mono",ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:var(--font);color:var(--ink);
+  background:radial-gradient(1200px 600px at 85% -10%,var(--accent-soft),transparent 60%),var(--bg);
+  line-height:1.62;-webkit-font-smoothing:antialiased}
+body[data-accent="u1"]{--accent:#0f5257;--accent-2:#08383c;--accent-soft:#e2f1f1}
+body[data-accent="u3"]{--accent:#4338ca;--accent-2:#312e81;--accent-soft:#ebecfe}
+/* ===== LANGUAGE TOGGLE ===== */
+body.lang-en [lang="ms"]{display:none!important}
+body.lang-ms [lang="en"]{display:none!important}
+.langtog{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden;background:var(--panel)}
+.langtog button{border:none;background:transparent;color:var(--muted);font-weight:800;font-size:.76rem;
+  padding:6px 11px;cursor:pointer;font-family:inherit;transition:.15s}
+.langtog button.on{background:var(--accent);color:#fff}
+/* ---------- Top bar ---------- */
+.topbar{position:fixed;top:0;left:0;right:0;z-index:50;height:56px;display:flex;align-items:center;
+  gap:12px;padding:0 16px;background:rgba(255,255,255,.9);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.brand{font-weight:800;letter-spacing:.3px;font-size:.95rem;color:var(--accent-2);white-space:nowrap}
+.brand span{color:var(--muted);font-weight:600}
+.progress-wrap{flex:1;height:7px;background:var(--line);border-radius:99px;overflow:hidden;min-width:40px}
+.progress-bar{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width .3s}
+.counter{font-variant-numeric:tabular-nums;font-size:.82rem;color:var(--muted);white-space:nowrap}
+.btn{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:10px;padding:7px 11px;
+  font-size:.8rem;font-weight:600;cursor:pointer;transition:.15s;white-space:nowrap}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn.solid{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn.solid:hover{background:var(--accent-2);color:#fff}
+.nav-arrows{display:flex;gap:6px}
+/* ---------- Deck / slides ---------- */
+.deck{max-width:var(--maxw);margin:0 auto;padding:78px 20px 120px}
+.slide{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);
+  padding:38px 40px;margin:0 0 26px;scroll-margin-top:70px}
+body.mode-slides .slide{display:none}
+body.mode-slides .slide.active{display:block;animation:fade .35s ease}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.slide-kicker{display:inline-flex;align-items:center;gap:8px;font-size:.72rem;font-weight:800;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--accent-2);background:var(--accent-soft);padding:5px 11px;border-radius:99px;margin-bottom:14px}
+h1{font-size:2.15rem;line-height:1.15;margin:.1em 0 .15em}
+h2{font-size:1.62rem;line-height:1.2;margin:.1em 0 .3em}
+h3{font-size:1.16rem;margin:1.3em 0 .4em;color:var(--ink)}
+h4{margin:.2em 0 .3em;font-size:1rem}
+.ms-tag{color:var(--muted);font-weight:600;font-style:italic;font-size:.96rem}
+.lead{font-size:1.08rem;color:var(--ink-soft)}
+p{margin:.6em 0}
+strong{color:var(--ink)}
+a{color:var(--accent-2);text-decoration:none;border-bottom:1px solid transparent}
+a:hover{border-bottom-color:var(--accent-2)}
+ul,ol{margin:.5em 0;padding-left:1.25em}
+li{margin:.32em 0}
+code{font-family:var(--mono);font-size:.88em;background:var(--accent-soft);color:var(--accent-2);padding:1px 6px;border-radius:5px}
+/* ---------- Cover ---------- */
+.cover{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;border:none}
+.cover .slide-kicker{background:rgba(255,255,255,.2);color:#fff}
+.cover h1,.cover h2,.cover h3,.cover strong{color:#fff}
+.cover .lead,.cover p{color:rgba(255,255,255,.95)}
+.cover em{color:#fff}
+.cover .meta-grid{display:flex;flex-wrap:wrap;gap:10px 26px;margin-top:22px;font-size:.9rem}
+.cover .meta-grid div{opacity:.97}
+.cover .meta-grid b{display:block;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;opacity:.78}
+/* ---------- Blocks ---------- */
+.block{border-radius:14px;padding:18px 20px;margin:16px 0;border:1px solid var(--line)}
+.tag{display:inline-flex;align-items:center;gap:7px;font-size:.7rem;font-weight:800;letter-spacing:.1em;
+  text-transform:uppercase;padding:4px 10px;border-radius:99px;margin-bottom:6px}
+.concept{background:var(--accent-soft);border-color:transparent}
+.concept .tag{background:var(--accent);color:#fff}
+.fact{background:var(--amber-soft);border-color:#f0d9ac}
+.fact .tag{background:var(--amber);color:#fff}
+.realworld{background:var(--green-soft);border-color:#bce6cd}
+.realworld .tag{background:var(--green);color:#fff}
+.practical{background:#f1edff;border-color:#d8ccfa}
+.practical .tag{background:var(--accent-2);color:#fff}
+.example{background:#fbfbfe;border-color:var(--line)}
+.example .tag{background:var(--ink-soft);color:#fff}
+.callout-vary{border-left:4px solid var(--accent);padding:2px 0 2px 14px;margin:10px 0;color:var(--ink-soft)}
+.callout-vary strong{color:var(--ink)}
+.owncase{background:#0f1836;color:#eef1ff;border:1px solid #26325f;border-radius:14px;padding:18px 20px;margin:16px 0}
+.owncase .tag{background:#f0b93c;color:#3a2a00}
+.owncase strong{color:#fff}
+.owncase em{color:#ffd977;font-style:normal;font-weight:700}
+/* ---------- Outcomes ---------- */
+.outcomes{display:grid;gap:12px;grid-template-columns:1fr}
+.outcome{display:flex;gap:14px;align-items:flex-start;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.outcome .num{flex:none;width:34px;height:34px;border-radius:9px;display:grid;place-items:center;font-weight:800;color:#fff;
+  background:linear-gradient(135deg,var(--accent),var(--accent-2))}
+.clo-chip{display:inline-block;font-size:.68rem;font-weight:800;color:#fff;background:var(--accent-2);
+  border-radius:6px;padding:2px 8px;margin-left:6px;letter-spacing:.04em}
+/* ---------- Columns / cards ---------- */
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:720px){.cols{grid-template-columns:1fr}}
+.figure{margin:18px 0;text-align:center}
+.figure svg{max-width:100%;height:auto;border-radius:12px;border:1px solid var(--line);background:#fff}
+.figcap{font-size:.85rem;color:var(--muted);margin-top:8px}
+.cardgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;margin:14px 0}
+.card{border:1px solid var(--line);border-radius:12px;padding:15px 16px;background:var(--panel);transition:.15s}
+.card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:var(--shadow)}
+.card .name{font-weight:700;display:flex;align-items:center;gap:8px}
+.card .use{font-size:.85rem;color:var(--muted);margin-top:5px}
+.card a{font-size:.82rem;font-weight:700}
+.pill{display:inline-block;font-size:.72rem;font-weight:700;padding:3px 10px;border-radius:99px;background:var(--accent-soft);color:var(--accent-2);margin:2px 4px 2px 0}
+.divider{height:1px;background:var(--line);margin:26px 0}
+/* ---------- Data table ---------- */
+.dtab{width:100%;border-collapse:collapse;margin:14px 0;font-size:.88rem}
+.dtab th{background:var(--accent-2);color:#fff;text-align:left;padding:9px 11px;font-size:.74rem;
+  text-transform:uppercase;letter-spacing:.07em}
+.dtab td{border-bottom:1px solid var(--line);padding:9px 11px;color:var(--ink-soft);vertical-align:top}
+.dtab tr:last-child td{border-bottom:none}
+.dtab td b{color:var(--ink)}
+.dtab code{font-size:.82em}
+/* ---------- Quiz ---------- */
+.quiz{background:var(--panel);border:2px solid var(--accent-soft);border-radius:14px;padding:20px 22px;margin:18px 0}
+.q{margin:16px 0}
+.q .stem{font-weight:600;margin-bottom:10px}
+.opt{display:block;width:100%;text-align:left;border:1px solid var(--line);background:#fff;border-radius:10px;
+  padding:11px 14px;margin:8px 0;cursor:pointer;font-size:.95rem;transition:.15s;font-family:inherit;color:var(--ink)}
+.opt:hover{border-color:var(--accent);background:var(--accent-soft)}
+.opt.correct{border-color:var(--green);background:var(--green-soft);font-weight:600;color:var(--green-ink)}
+.opt.wrong{border-color:var(--red);background:var(--red-soft);color:var(--red-ink)}
+.opt.correct::after{content:" ✓";font-weight:800}
+.opt.wrong::after{content:" ✕";font-weight:800}
+.opt:disabled{cursor:default}
+.feedback{display:none;margin-top:10px;padding:12px 14px;border-radius:10px;font-size:.92rem}
+.feedback.show{display:block;animation:fade .3s}
+.feedback.ok{background:var(--green-soft);border:1px solid #bfe7d1;color:var(--green-ink)}
+.feedback.no{background:var(--red-soft);border:1px solid #f2c4c4;color:var(--red-ink)}
+body.lang-en .feedback [lang="ms"],body.lang-ms .feedback [lang="en"]{display:none}
+/* ---------- Prompt Lab ---------- */
+.prompt-lab{border:1px solid var(--line);border-radius:16px;overflow:hidden;margin:18px 0;box-shadow:var(--shadow);background:var(--panel)}
+.pl-tabs{display:flex;flex-wrap:wrap;gap:6px;background:var(--accent-soft);padding:11px 13px;border-bottom:1px solid var(--line)}
+.pl-tab{border:1px solid var(--line);background:var(--panel);color:var(--ink-soft);border-radius:8px;padding:5px 12px;
+  font-size:.76rem;font-weight:800;cursor:pointer;font-family:var(--mono);transition:.15s}
+.pl-tab:hover{border-color:var(--accent);color:var(--accent-2)}
+.pl-tab.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.pl-panel{display:none}
+.pl-panel.on{display:block}
+.pl-head{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--accent-2);color:#fff;padding:13px 18px}
+.pl-title{font-weight:800;font-size:.94rem;letter-spacing:.02em}
+.pl-sub{font-size:.74rem;color:rgba(255,255,255,.86);font-weight:600}
+.copy-btn{border:1px solid rgba(255,255,255,.5);background:rgba(255,255,255,.14);color:#fff;border-radius:9px;padding:7px 14px;
+  font-size:.8rem;font-weight:700;cursor:pointer;transition:.15s;font-family:inherit;white-space:nowrap}
+.copy-btn:hover{background:#fff;color:var(--accent-2);border-color:#fff}
+.copy-btn.done{background:var(--green);border-color:var(--green);color:#fff}
+/* Light, high-legibility prompt surface. Readable on screen AND on paper: if a browser
+   drops backgrounds when printing, dark text on white still reads correctly. */
+.pl-prompt{margin:0;background:#fcfcfe;color:#151b2e;font-family:var(--mono);font-size:.88rem;line-height:1.78;
+  padding:18px 20px 18px 22px;white-space:pre-wrap;overflow-x:auto;tab-size:2;
+  border-left:5px solid var(--accent);border-bottom:1px solid var(--line);max-height:520px;overflow-y:auto}
+.pl-prompt .ph{background:#fff0c8;color:#67380a;font-weight:800;border:1px solid #e3bd68;
+  border-radius:5px;padding:0 5px;white-space:nowrap}
+.pl-prompt .kw{background:var(--accent-soft);color:var(--accent-2);font-weight:800;border-radius:5px;padding:0 5px}
+.pl-cols{display:grid;grid-template-columns:1fr 1fr;gap:0;background:#fff;border-top:1px solid var(--line)}
+@media(max-width:720px){.pl-cols{grid-template-columns:1fr}}
+.pl-anno{padding:16px 18px;border-right:1px solid var(--line)}
+@media(max-width:720px){.pl-anno{border-right:none;border-bottom:1px solid var(--line)}}
+.pl-anno h4,.pl-out h4{font-size:.74rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-2);margin:0 0 8px}
+.pl-anno ul{list-style:none;padding:0;margin:0}
+.pl-anno li{font-size:.86rem;color:var(--ink-soft);padding:6px 0;border-bottom:1px dashed var(--line);display:flex;gap:8px}
+.pl-anno li:last-child{border-bottom:none}
+.pl-anno .ln{flex:none;font-family:var(--mono);font-size:.72rem;font-weight:700;color:#fff;background:var(--accent);border-radius:5px;padding:1px 6px;height:fit-content;margin-top:1px}
+.pl-out{padding:16px 18px;background:#f7f9ff}
+.pl-outbox{font-size:.85rem;color:var(--ink-soft);background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.pl-outbox b{color:var(--ink)}
+.pl-note{background:#fff8e8;color:#5c3400;border-top:1px solid #f0d9ac;padding:11px 16px;font-size:.85rem}
+/* ---------- Footnotes ---------- */
+.fn{font-size:.64em;font-weight:800;vertical-align:super;line-height:0;color:var(--accent-2);
+  background:var(--accent-soft);border-radius:4px;padding:2px 5px;margin-left:2px;
+  text-decoration:none;border-bottom:none!important;white-space:nowrap}
+.fn:hover{background:var(--accent);color:#fff}
+.footnotes{margin-top:28px;padding-top:14px;border-top:2px solid var(--line)}
+.footnotes h4{font-size:.7rem;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin:0 0 10px}
+.footnotes ol{margin:0;padding-left:1.4em}
+.footnotes li{font-size:.82rem;line-height:1.55;color:var(--muted);margin:.45em 0;scroll-margin-top:74px}
+.footnotes li:target{background:var(--accent-soft);border-radius:6px;padding:2px 6px;margin-left:-6px}
+.footnotes li em{color:var(--ink-soft)}
+.footnotes a{font-weight:700;font-size:.95em}
+.pl-anno .fn{background:var(--accent);color:#fff}
+.pl-anno .fn:hover{background:var(--accent-2)}
+/* ---------- Resources ---------- */
+.reslist{list-style:none;padding:0;margin:8px 0}
+.reslist li{padding:10px 0;border-bottom:1px dashed var(--line)}
+.reslist .k{font-size:.66rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#fff;background:var(--accent-2);padding:2px 8px;border-radius:6px;margin-right:8px}
+.reslist .doi{display:inline-block;font-size:.78rem;font-weight:700;margin-left:4px}
+.reslist .fnum{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:6px;
+  background:var(--accent);color:#fff;font-size:.72rem;font-weight:800;margin-right:8px;vertical-align:middle}
+.reslist .cited{display:block;font-size:.72rem;color:var(--muted);font-style:italic;margin-top:3px}
+.reslist .doi::before{content:"🔗 "}
+/* ---------- Connectivism ---------- */
+.connections{background:linear-gradient(135deg,#0d2a2d,#123f45);color:#eef8f8;border:none}
+.connections .tag{background:rgba(255,255,255,.2);color:#fff}
+.connections h3,.connections strong{color:#fff}
+.connections a{color:#a8e0e4;border-bottom-color:transparent}
+.connections a:hover{border-bottom-color:#a8e0e4}
+.connections .cols p{color:#cfe8ea}
+.node-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+.node{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);border-radius:99px;padding:8px 15px;font-size:.85rem;color:#fff}
+footer.deckfoot{text-align:center;color:var(--muted);font-size:.8rem;padding:20px}
+@media print{.topbar{display:none}.deck{padding-top:10px}body.mode-slides .slide{display:block!important}
+.slide{break-inside:avoid;box-shadow:none}.pl-panel{display:block!important}.pl-prompt{max-height:none}
+.footnotes,.footnotes li{display:block!important}.footnotes li{display:list-item!important}
+.prompt-lab,.pl-prompt,.pl-note,.block,.card{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.pl-head{background:#fff!important;color:#111629!important;border-bottom:2px solid #111629}
+.pl-sub{color:#565d80!important}.copy-btn{display:none}
+.pl-tabs{background:#fff!important;border-bottom:1px solid #111629}
+.pl-tab{background:#fff!important;color:#111629!important;border-color:#111629!important}
+.connections,.owncase{background:#fff!important;color:#111629!important;border:2px solid #111629!important}
+.connections h3,.connections strong,.owncase strong,.connections a{color:#111629!important}
+.connections .cols p,.owncase em{color:#333a5c!important}
+.connections .tag,.owncase .tag{background:#111629!important;color:#fff!important}
+.node{background:#fff!important;color:#111629!important;border:1px solid #111629!important}}
+</style>
+</head>
+
+<body data-accent="u3" class="mode-slides lang-en">
+
+<div class="topbar">
+  <div class="brand"><a href="index.html" style="color:inherit;text-decoration:none" title="Course hub">SIM BUILDER</a> · <span>Unit 3 / 4</span></div>
+  <div class="progress-wrap"><div class="progress-bar" id="pbar"></div></div>
+  <span class="counter" id="counter">1 / 1</span>
+  <div class="langtog" title="Language / Bahasa">
+    <button data-l="en" class="on" onclick="setLang('en')">EN</button>
+    <button data-l="ms" onclick="setLang('ms')">BM</button>
+  </div>
+  <button class="btn" id="modeBtn" onclick="toggleMode()"><span lang="en">📖 Guide</span><span lang="ms">📖 Panduan</span></button>
+  <div class="nav-arrows">
+    <button class="btn" onclick="go(-1)"><span lang="en">‹ Prev</span><span lang="ms">‹ Seb</span></button>
+    <button class="btn solid" onclick="go(1)"><span lang="en">Next ›</span><span lang="ms">Seterusnya ›</span></button>
+  </div>
+</div>
+
+<main class="deck" id="deck">
+
+<section class="slide cover active">
+  <div class="slide-kicker"><span lang="en">Unit 3 of 4 · Self-paced</span><span lang="ms">Unit 3 daripada 4 · Kadar sendiri</span></div>
+  <h1 lang="en">The golden template and the build loop</h1>
+  <h1 lang="ms">Templat emas dan gelung pembinaan</h1>
+  <p class="lead" lang="en" style="max-width:680px">Design <em>one</em> unit properly, describe it in under seventy lines, then produce the
+    rest without drift. This unit is where the course actually gets built.</p>
+  <p class="lead" lang="ms" style="max-width:680px">Reka bentuk <em>satu</em> unit dengan betul, perihalkannya dalam kurang tujuh puluh baris,
+    kemudian hasilkan selebihnya tanpa penyimpangan. Unit inilah tempat kursus itu benar-benar dibina.</p>
+  <div class="meta-grid">
+    <div><b lang="en">Series</b><b lang="ms">Siri</b><span lang="en">SIM Builder · 4 units</span><span lang="ms">SIM Builder · 4 unit</span></div>
+    <div><b lang="en">Time</b><b lang="ms">Masa</b><span lang="en">≈ 30 min read + 45 min per unit</span><span lang="ms">≈ 30 min baca + 45 min setiap unit</span></div>
+    <div><b lang="en">Focus outcome</b><b lang="ms">Hasil fokus</b><span lang="en">BO2 — Constructing the contract</span><span lang="ms">HPB2 — Membina kontrak</span></div>
+    <div><b lang="en">Prompts</b><b lang="ms">Gesaan</b><span>P3 · P4 · P5</span></div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-kicker"><span lang="en">Outcome-Based Learning · OBE</span><span lang="ms">Pembelajaran Berasaskan Hasil · OBE</span></div>
+  <h2 lang="en">What you will be able to do</h2>
+  <h2 lang="ms">Apa yang anda akan mampu lakukan</h2>
+  <p class="lead" lang="en">By the end of Unit 3 you will be able to:</p>
+  <p class="lead" lang="ms">Pada akhir Unit 3, anda akan mampu:</p>
+  <div class="outcomes">
+    <div class="outcome"><div class="num">1</div><div>
+      <span lang="en"><strong>Distinguish</strong> the invariants of a unit from the five things that legitimately change between units.</span>
+      <span lang="ms"><strong>Membezakan</strong> perkara tak berubah dalam sesebuah unit daripada lima perkara yang sah berubah antara unit.</span>
+      <span class="clo-chip">BO2 · C4</span></div></div>
+    <div class="outcome"><div class="num">2</div><div>
+      <span lang="en"><strong>Build</strong> a golden template for your own course and <strong>extract</strong> a Structure Contract from it that a different model could work from.</span>
+      <span lang="ms"><strong>Membina</strong> templat emas untuk kursus anda sendiri dan <strong>mengekstrak</strong> Kontrak Struktur daripadanya yang boleh digunakan oleh model berbeza.</span>
+      <span class="clo-chip">BO2 · C6</span></div></div>
+    <div class="outcome"><div class="num">3</div><div>
+      <span lang="en"><strong>Operate</strong> the per-unit loop — including the ledger entry and the split-output protocol — for at least one unit beyond the template.</span>
+      <span lang="ms"><strong>Mengendalikan</strong> gelung setiap unit — termasuk catatan lejar dan protokol pecahan keluaran — untuk sekurang-kurangnya satu unit selepas templat.</span>
+      <span class="clo-chip">BO2 · C3</span></div></div>
+  </div>
+  <div class="block concept" style="margin-top:18px">
+    <span class="tag"><span lang="en">How this is assessed · OBE alignment</span><span lang="ms">Cara ia ditaksir · Penjajaran OBE</span></span>
+    <p lang="en" style="margin:.3em 0 0">The evidence is your own <code>unit-01</code> file, your <code>CONTRACT.md</code>, and at least one
+      sibling unit built from them with a ledger entry appended. Unit 4 audits exactly these artefacts, so build them for real.</p>
+    <p lang="ms" style="margin:.3em 0 0">Buktinya ialah fail <code>unit-01</code> anda sendiri, <code>CONTRACT.md</code> anda, dan sekurang-kurangnya
+      satu unit adik-beradik yang dibina daripadanya dengan catatan lejar ditambah. Unit 4 mengaudit artifak inilah, jadi binalah dengan
+      sungguh-sungguh.</p>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-kicker"><span lang="en">The Hook · Why It Matters</span><span lang="ms">Pencetus · Mengapa Ia Penting</span></div>
+  <h2 lang="en">Nobody decided to change the design. It changed anyway.</h2>
+  <h2 lang="ms">Tiada siapa memutuskan untuk mengubah reka bentuk. Ia berubah juga.</h2>
+  <p class="lead" lang="en">Put unit 1 and unit 9 of a generated series side by side and the difference is unmistakable — but no single step
+    caused it. Unit 3 renamed one class. Unit 5 dropped a section that had felt repetitive. Unit 7 restated the styling in slightly
+    tidier words. Unit 9 inherited all three. Each change was locally reasonable and individually invisible; together they produced a
+    series that no longer looks like one course. This is the failure mode a contract exists to prevent, and it is why the template's
+    style and script blocks are copied rather than described.</p>
+  <p class="lead" lang="ms">Letakkan unit 1 dan unit 9 daripada siri yang dijana secara bersebelahan dan perbezaannya jelas — tetapi tiada
+    satu langkah pun yang menyebabkannya. Unit 3 menamakan semula satu kelas. Unit 5 menggugurkan bahagian yang terasa berulang. Unit 7
+    menyatakan semula gaya itu dengan perkataan yang sedikit lebih kemas. Unit 9 mewarisi ketiga-tiganya. Setiap perubahan munasabah
+    secara setempat dan tidak kelihatan secara individu; bergabung, ia menghasilkan siri yang tidak lagi kelihatan seperti satu kursus.
+    Inilah mod kegagalan yang cuba dihalang oleh kontrak, dan itulah sebabnya blok gaya dan skrip templat disalin, bukan diperihalkan.</p>
+  <div class="block fact">
+    <span class="tag"><span lang="en">Why fourteen screens, each doing one thing</span><span lang="ms">Mengapa empat belas skrin, setiap satu satu tugas</span></span>
+    <p lang="en" style="margin:.3em 0 0">The spine is not an arbitrary number. Segmenting material so that each screen carries a single job
+      keeps the load imposed by presentation low enough that the learner's effort goes into building the schema you are teaching rather
+      than into holding the page together.<a class="fn" href="#fn1">1</a> A screen that does three jobs is not richer; it is more
+      expensive to read. The same logic governs the build: one session, one unit.</p>
+    <p lang="ms" style="margin:.3em 0 0">Tulang belakang ini bukan nombor sembarangan. Membahagikan bahan supaya setiap skrin membawa satu
+      tugas sahaja mengekalkan beban yang dikenakan oleh persembahan cukup rendah sehingga usaha pelajar tertumpu kepada membina skema yang
+      anda ajarkan dan bukan kepada menyatukan halaman itu.<a class="fn" href="#fn1">1</a> Skrin yang melakukan tiga tugas bukannya lebih
+      kaya; ia lebih mahal untuk dibaca. Logik yang sama mengawal pembinaan: satu sesi, satu unit.</p>
+  </div>
+  <div class="footnotes">
+    <h4><span lang="en">Notes</span><span lang="ms">Nota</span></h4>
+    <ol>
+      <li id="fn1" value="1">Sweller, J. (1988). Cognitive load during problem solving: Effects on learning. <em>Cognitive Science</em>,
+        12(2), 257–285. <a href="https://doi.org/10.1207/s15516709cog1202_4">doi.org/10.1207/s15516709cog1202_4</a></li>
+    </ol>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-kicker"><span lang="en">Core Concept · Konsep Teras</span><span lang="ms">Konsep Teras</span></div>
+  <h2 lang="en">The artefact is copied; the contract is obeyed</h2>
+  <h2 lang="ms">Artifak disalin; kontrak dipatuhi</h2>
+  <div class="block concept">
+    <span class="tag"><span lang="en">Definition</span><span lang="ms">Takrifan</span></span>
+    <p lang="en" style="margin:.3em 0 0">The <strong>golden template</strong> is one finished unit whose styling and behaviour every sibling
+      inherits <em>byte for byte</em>. The <strong>Structure Contract</strong> is a short description of that template — class names, screen
+      order, function signatures — used when the file itself cannot be attached. The template is the artefact; the contract is the
+      specification of the artefact. Drift happens when a session is given neither and asked to "keep the same style".</p>
+    <p lang="ms" style="margin:.3em 0 0"><strong>Templat emas</strong> ialah satu unit siap yang gaya dan tingkah lakunya diwarisi setiap
+      adik-beradik <em>bait demi bait</em>. <strong>Kontrak Struktur</strong> ialah huraian ringkas templat itu — nama kelas, susunan skrin,
+      tandatangan fungsi — digunakan apabila fail itu sendiri tidak boleh dilampirkan. Templat ialah artifak; kontrak ialah spesifikasi
+      artifak itu. Penyimpangan berlaku apabila sesi tidak diberi kedua-duanya dan disuruh "kekalkan gaya yang sama".</p>
+  </div>
+  <div class="cols">
+    <div>
+      <h3 lang="en">❌ “Keep the same styling”</h3>
+      <h3 lang="ms">❌ “Kekalkan gaya yang sama”</h3>
+      <p lang="en">An instruction to preserve an <em>impression</em>. The model rewrites the CSS in its own words, arrives at something that
+        looks close, and the next unit rewrites that. Three generations later the family resemblance is gone.</p>
+      <p lang="ms">Arahan untuk mengekalkan <em>tanggapan</em>. Model menulis semula CSS dengan perkataannya sendiri, menghasilkan sesuatu
+        yang kelihatan hampir sama, dan unit berikutnya menulis semula yang itu pula. Tiga generasi kemudian, persamaan keluarga itu hilang.</p>
+    </div>
+    <div>
+      <h3 lang="en">✅ “Copy these two blocks verbatim”</h3>
+      <h3 lang="ms">✅ “Salin dua blok ini bait demi bait”</h3>
+      <p lang="en">An instruction about <em>bytes</em>, which is checkable. Combined with a whitelist of the five things that may change,
+        it makes every sibling a true copy — and makes any deviation a diff you can see rather than a feeling you cannot.</p>
+      <p lang="ms">Arahan tentang <em>bait</em>, yang boleh disemak. Digabungkan dengan senarai putih lima perkara yang boleh berubah, ia
+        menjadikan setiap adik-beradik salinan sebenar — dan menjadikan sebarang penyelewengan sebagai perbezaan yang boleh dilihat, bukan
+        perasaan yang tidak dapat dipastikan.</p>
+    </div>
+  </div>
+  <div class="block practical">
+    <span class="tag"><span lang="en">Whitelist, not blacklist</span><span lang="ms">Senarai putih, bukan senarai hitam</span></span>
+    <p lang="en" style="margin:.3em 0 0">Listing what <em>may</em> change is stronger than listing what may not, because the whitelist is
+      finite and the blacklist never is. Five items — title, accent rule, brand text, teasers, content — and everything absent from that
+      list is invariant by default.</p>
+    <p lang="ms" style="margin:.3em 0 0">Menyenaraikan apa yang <em>boleh</em> berubah lebih kukuh daripada menyenaraikan apa yang tidak boleh,
+      kerana senarai putih itu terhingga manakala senarai hitam tidak pernah terhingga. Lima item — tajuk, peraturan aksen, teks jenama,
+      penggoda, kandungan — dan segala yang tiada dalam senarai itu adalah tak berubah secara lalai.</p>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-kicker"><span lang="en">Diagram · Rajah</span><span lang="ms">Rajah</span></div>
+  <h2 lang="en">Five things change. Everything else is frozen.</h2>
+  <h2 lang="ms">Lima perkara berubah. Selebihnya beku.</h2>
+  <p class="lead" lang="en">Every sibling unit is the same file with five substitutions. If a diff between two units shows anything outside
+    the amber column, something drifted.</p>
+  <p class="lead" lang="ms">Setiap unit adik-beradik ialah fail yang sama dengan lima penggantian. Jika perbezaan antara dua unit menunjukkan
+    apa-apa di luar lajur ambar, sesuatu telah terpesong.</p>
+  <div class="figure">
+  <svg viewBox="0 0 940 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A unit file split into a frozen column and a changeable column of five items.">
+    <rect x="18" y="40" width="410" height="336" rx="12" fill="#f1f3f9" stroke="#7b839e" stroke-width="1.5"/>
+    <text x="223" y="70" font-size="14" font-weight="800" fill="#111629" text-anchor="middle">FROZEN — copied byte for byte</text>
+    <text x="223" y="92" font-size="11.5" fill="#333a5c" text-anchor="middle">if a diff shows any of this, drift has begun</text>
+
+    <rect x="38" y="110" width="370" height="34" rx="8" fill="#ffffff" stroke="#7b839e"/>
+    <text x="52" y="132" font-size="12.5" font-weight="700" fill="#111629">the entire &lt;style&gt; block — every rule, every token</text>
+    <rect x="38" y="150" width="370" height="34" rx="8" fill="#ffffff" stroke="#7b839e"/>
+    <text x="52" y="172" font-size="12.5" font-weight="700" fill="#111629">the entire &lt;script&gt; block — all six functions</text>
+    <rect x="38" y="190" width="370" height="34" rx="8" fill="#ffffff" stroke="#7b839e"/>
+    <text x="52" y="212" font-size="12.5" font-weight="700" fill="#111629">every class name, exactly as contracted</text>
+    <rect x="38" y="230" width="370" height="34" rx="8" fill="#ffffff" stroke="#7b839e"/>
+    <text x="52" y="252" font-size="12.5" font-weight="700" fill="#111629">the screen count and the screen order</text>
+    <rect x="38" y="270" width="370" height="34" rx="8" fill="#ffffff" stroke="#7b839e"/>
+    <text x="52" y="292" font-size="12.5" font-weight="700" fill="#111629">the language-twin pattern</text>
+    <rect x="38" y="310" width="370" height="34" rx="8" fill="#ffffff" stroke="#7b839e"/>
+    <text x="52" y="332" font-size="12.5" font-weight="700" fill="#111629">the top bar, progress bar and footer structure</text>
+
+    <text x="470" y="200" font-size="26" font-weight="800" fill="#312e81" text-anchor="middle">+</text>
+
+    <rect x="512" y="40" width="410" height="336" rx="12" fill="#fdefdc" stroke="#b45309" stroke-width="1.5"/>
+    <text x="717" y="70" font-size="14" font-weight="800" fill="#7c3a06" text-anchor="middle">CHANGES — the whitelist of five</text>
+    <text x="717" y="92" font-size="11.5" fill="#7c3a06" text-anchor="middle">anything not listed here is frozen by default</text>
+
+    <rect x="532" y="110" width="370" height="34" rx="8" fill="#ffffff" stroke="#b45309"/>
+    <text x="546" y="132" font-size="12.5" font-weight="700" fill="#111629">1 · the &lt;title&gt;</text>
+    <rect x="532" y="150" width="370" height="34" rx="8" fill="#ffffff" stroke="#b45309"/>
+    <text x="546" y="172" font-size="12.5" font-weight="700" fill="#111629">2 · data-accent + its ONE added CSS rule</text>
+    <rect x="532" y="190" width="370" height="34" rx="8" fill="#ffffff" stroke="#b45309"/>
+    <text x="546" y="212" font-size="12.5" font-weight="700" fill="#111629">3 · the brand text “Unit n / N”</text>
+    <rect x="532" y="230" width="370" height="34" rx="8" fill="#ffffff" stroke="#b45309"/>
+    <text x="546" y="252" font-size="12.5" font-weight="700" fill="#111629">4 · cover teasers + next-unit pointer</text>
+    <rect x="532" y="270" width="370" height="34" rx="8" fill="#ffffff" stroke="#b45309"/>
+    <text x="546" y="292" font-size="12.5" font-weight="700" fill="#111629">5 · all screen content</text>
+    <rect x="532" y="310" width="370" height="34" rx="8" fill="#0f1836" stroke="#26325f"/>
+    <text x="546" y="332" font-size="12.5" font-weight="700" fill="#ffffff">…and the footer's unit number</text>
+  </svg>
+  <div class="figcap"><span lang="en">The asymmetry is deliberate: six frozen categories described loosely, five changes described exactly.
+    Precision belongs where the decisions are.</span><span lang="ms">Ketidaksimetrian ini disengajakan: enam kategori beku diperihalkan secara
+    longgar, lima perubahan diperihalkan dengan tepat. Ketepatan diperlukan di tempat keputusan dibuat.</span></div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-kicker"><span lang="en">Example with Variations · Contoh &amp; Variasi</span><span lang="ms">Contoh &amp; Variasi</span></div>
+  <h2 lang="en">One loop, run eleven times</h2>
+  <h2 lang="ms">Satu gelung, dijalankan sebelas kali</h2>
+  <div class="block example">
+    <span class="tag"><span lang="en">Base case</span><span lang="ms">Kes asas</span></span>
+    <p lang="en" style="margin:.3em 0 0">Open a fresh session. Paste P0, the spec card, the contract, the ledger so far, and <em>one</em>
+      brief — roughly three pages. Attach the template. Ask for unit <em>n</em>. Receive one file plus a seven-line ledger entry. Save both,
+      close the session. The loop takes about forty-five minutes per unit, most of it your reading rather than the model's writing, and it
+      does not get slower at unit 11 than it was at unit 2 — which is the entire point.</p>
+    <p lang="ms" style="margin:.3em 0 0">Buka sesi baharu. Tampal P0, kad spesifikasi, kontrak, lejar setakat ini, dan <em>satu</em> ringkasan
+      — kira-kira tiga halaman. Lampirkan templat. Minta unit <em>n</em>. Terima satu fail beserta catatan lejar tujuh baris. Simpan
+      kedua-duanya, tutup sesi. Gelung ini mengambil kira-kira empat puluh lima minit setiap unit, kebanyakannya bacaan anda dan bukan
+      penulisan model, dan ia tidak menjadi lebih perlahan pada unit 11 berbanding unit 2 — itulah keseluruhan intinya.</p>
+  </div>
+  <div class="callout-vary">
+    <strong lang="en">Variation A — the model truncates halfway through screen 9.</strong>
+    <strong lang="ms">Variasi A — model terpotong di pertengahan skrin 9.</strong>
+    <span lang="en"> Switch to the split-output protocol: three chunks with explicit end markers, and reply only with the word
+      <code>CONTINUE</code> between them. Anything else you type between chunks becomes new context and invites drift.</span>
+    <span lang="ms"> Tukar kepada protokol pecahan keluaran: tiga bahagian dengan penanda akhir yang jelas, dan balas hanya dengan perkataan
+      <code>CONTINUE</code> antaranya. Apa sahaja lain yang anda taip antara bahagian menjadi konteks baharu dan mengundang penyimpangan.</span>
+  </div>
+  <div class="callout-vary">
+    <strong lang="en">Variation B — you cannot attach the template.</strong>
+    <strong lang="ms">Variasi B — anda tidak boleh melampirkan templat.</strong>
+    <span lang="en"> Paste <code>CONTRACT.md</code> instead and accept that minor CSS drift becomes possible. Compensate by auditing every
+      second unit rather than every third. <strong>The contract is a fallback, not an equal substitute.</strong></span>
+    <span lang="ms"> Tampal <code>CONTRACT.md</code> sebagai ganti dan terima bahawa sedikit penyimpangan CSS menjadi mungkin. Imbangi dengan
+      mengaudit setiap unit kedua dan bukan setiap unit ketiga. <strong>Kontrak ialah sandaran, bukan pengganti setara.</strong></span>
+  </div>
+  <div class="callout-vary">
+    <strong lang="en">Variation C — the brief demands more than the hours allow.</strong>
+    <strong lang="ms">Variasi C — ringkasan menuntut lebih daripada jam yang dibenarkan.</strong>
+    <span lang="en"> P5 instructs the model to trim and say so in a closing comment. Read those comments: three of them in a row means your
+      unit map, not your material, is what needs fixing.</span>
+    <span lang="ms"> P5 mengarahkan model memangkas dan menyatakannya dalam komen penutup. Baca komen itu: tiga kali berturut-turut bermakna
+      peta unit anda, bukan bahan anda, yang perlu dibetulkan.</span>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-kicker"><span lang="en">Interactive Prompt Lab · Makmal Gesaan</span><span lang="ms">Makmal Gesaan Interaktif</span></div>
+  <h2 lang="en">Build the template, then run the loop</h2>
+  <h2 lang="ms">Bina templat, kemudian jalankan gelung</h2>
+  <p class="lead" lang="en">Run <strong>P3</strong> and <strong>P4</strong> in the <em>same</em> session — that is the one place reuse is
+    correct, because the template is still in view. Then close it, and run <strong>P5</strong> once per unit in fresh sessions.</p>
+  <p class="lead" lang="ms">Jalankan <strong>P3</strong> dan <strong>P4</strong> dalam sesi yang <em>sama</em> — itulah satu-satunya tempat
+    guna semula adalah betul, kerana templat masih kelihatan. Kemudian tutup, dan jalankan <strong>P5</strong> sekali bagi setiap unit dalam
+    sesi baharu.</p>
+  <div class="prompt-lab">
+    <div class="pl-tabs">
+      <button class="pl-tab on" onclick="showP(this,'p3')">P3 template</button>
+      <button class="pl-tab" onclick="showP(this,'p4')">P4 contract</button>
+      <button class="pl-tab" onclick="showP(this,'p5')">P5 unit loop</button>
+    </div>
+    <div class="pl-panel on" id="p3">
+      <div class="pl-head">
+        <div><div class="pl-title">🏗️ P3 — The Golden Template (Unit 1)</div>
+          <div class="pl-sub">Defines every later unit. Build it once, carefully.</div></div>
+        <button class="copy-btn" onclick="copyPrompt(this)"><span lang="en">📋 Copy prompt</span><span lang="ms">📋 Salin gesaan</span></button>
+      </div>
+      <pre class="pl-prompt"><code>[Paste P0, then SPEC.md, then ONLY the Unit 1 brief, then:]
+
+TASK: Build Unit 1 as a single self-contained HTML file. This becomes the
+GOLDEN TEMPLATE for all units, so its CSS and JS must be generic enough to be
+copied verbatim into every later unit.
+
+TECHNICAL
+- One file. Inline &lt;style&gt; and &lt;script&gt;. No external dependencies, no build
+  step, no CDN, no frameworks. Must work when opened from a local disk.
+- No localStorage or sessionStorage.
+- Responsive to 380px. Print stylesheet that reveals all screens.
+- WCAG AA contrast everywhere. Keyboard navigation. Semantic headings.
+
+DUAL VIEW ENGINE
+- Screen mode: one section visible at a time; arrow keys and Prev/Next; a
+  progress bar and an "n / total" counter in a fixed top bar.
+- Guide mode: toggled by a button and the G key; all screens shown as one
+  scrollable document. This is what makes it a SIM, not lecture support.
+
+LANGUAGE ENGINE (omit if monolingual)
+- Every translatable node exists twice: &lt;span lang="<span class="ph">[L1]</span>"&gt; and &lt;span lang="<span class="ph">[L2]</span>"&gt;.
+- CSS alone hides the inactive twin. A toggle in the top bar calls setLang().
+
+DESIGN TOKENS (:root custom properties)
+ink, ink-soft, muted, bg, panel, line, accent, accent-2, accent-soft, amber
+trio, green trio, red trio, radius, shadow, maxw, font, mono.
+Per-unit theming happens ONLY through:
+body[data-accent="uN"]{--accent:..;--accent-2:..;--accent-soft:..}
+
+COMPONENT LIBRARY (define all in CSS even if unit 1 uses only some)
+.slide .slide-kicker .lead .ms-tag .divider
+.block + .concept .fact .realworld .practical .example .connections .owncase
+.tag .callout-vary
+.outcomes .outcome .num .clo-chip
+.cols .cardgrid .card .figure .figcap
+.quiz .q .stem .opt .feedback.ok .feedback.no
+.prompt-lab .pl-head .pl-title .pl-sub .copy-btn .pl-prompt .ph .kw .pl-cols
+  .pl-anno .ln .pl-out .pl-outbox .pl-note
+.node-row .node
+.reslist .doi
+footer.deckfoot
+
+THE 14-SCREEN SPINE (this order, every unit, no exceptions)
+ 1 Cover . 2 Outcomes (3, with CLO chips + an assessment-alignment block)
+ 3 Hook (real story + factual anchor) . 4 Core concept (definition + contrast)
+ 5 Diagram (hand-authored inline SVG + caption) . 6 Example + 3 variations
+ 7 Practice Lab . 8 Applications (4 cards + local-lens block)
+ 9 Framework (named checklist) . 10 Self-check (3 questions)
+11 Tools (4 cards, real links) . 12 Resources (2 columns, every item linked,
+   plus a "branch into" row of pills) . 13 Learning network (back / forward
+   columns, 3 external node actions, own-case assessment tie-in)
+14 Closing (summary, memorable line, before-next-unit list, teaser)
+
+SCREEN 7 - THE PRACTICE LAB
+- A head with title, subtitle and a Copy button calling copyPrompt(this).
+- A &lt;pre&gt;&lt;code&gt; holding a copy-paste-ready prompt or protocol built around the
+  LEARNER'S OWN case. Blanks wrapped in &lt;span class="ph"&gt;[LIKE THIS]&lt;/span&gt;,
+  structural keywords in &lt;span class="kw"&gt;.
+- Two columns: left = line-by-line explanation of WHY each line is there;
+  right = "Expected output (illustrative)" showing the SHAPE of a good answer
+  without giving THE answer.
+- A closing note reminding the learner the case and judgement are their own.
+
+SVG RULES
+Author it by hand. No placeholder rectangles labelled "diagram here". Every
+label dark on light OR white on dark; never light grey on light. Visible stroke
+on every shape. Under ~40 elements so it stays legible on a phone.
+
+SELF-CHECK BEHAVIOUR
+Each question carries data-answer="0..3". pick(el,i) marks correct/incorrect,
+disables the group and reveals the matching feedback. Feedback for WRONG
+answers must teach the distinction, not just say "incorrect".
+
+CONTENT
+Use the Unit 1 brief. Write in the register of the audience in SPEC - plain,
+concrete, second-person, example-led. No filler, no marketing tone. If
+bilingual, both languages carry the same substance; the second is a real
+translation, not a stub.
+
+Output the complete HTML file only.</code></pre>
+      <div class="pl-cols">
+        <div class="pl-anno">
+          <h4><span lang="en">Why it is shaped this way</span><span lang="ms">Mengapa ia berbentuk begini</span></h4>
+          <ul>
+            <li><span class="ln">Spine</span><span><span lang="en">Fourteen screens, each doing exactly one job. Segmenting material this way holds extraneous load low enough for the learner to build the schema you are actually teaching.<a class="fn" href="#fn1b">1</a></span><span lang="ms">Empat belas skrin, setiap satu melakukan satu tugas sahaja. Pembahagian bahan sebegini mengekalkan beban luaran cukup rendah untuk pelajar membina skema yang sebenarnya anda ajarkan.<a class="fn" href="#fn1b">1</a></span></span></li>
+            <li><span class="ln">Lib</span><span><span lang="en">Asking for the <b>full component library up front</b> — even unused parts — means unit 7 never has to invent CSS, which is where visual drift starts.</span><span lang="ms">Meminta <b>pustaka komponen penuh di awal</b> — termasuk bahagian tak terpakai — bermakna unit 7 tidak perlu mencipta CSS, iaitu punca penyimpangan visual bermula.</span></span></li>
+            <li><span class="ln">Guide</span><span><span lang="en">Guide view is not a convenience feature. It is the difference between slides that need a lecturer and material that teaches alone.</span><span lang="ms">Paparan panduan bukan ciri kemudahan. Ia perbezaan antara slaid yang memerlukan pensyarah dan bahan yang mengajar sendiri.</span></span></li>
+            <li><span class="ln">SVG</span><span><span lang="en">Without the explicit "no placeholder rectangles" line, models reliably emit an empty box captioned "diagram".</span><span lang="ms">Tanpa baris "tiada segi empat pengganti" yang jelas, model memang lazim mengeluarkan kotak kosong berkapsyen "rajah".</span></span></li>
+            <li><span class="ln">Fdbk</span><span><span lang="en">"Teach the distinction" is what turns a quiz into formative assessment rather than a scoring device.<a class="fn" href="#fn2">2</a></span><span lang="ms">"Ajar perbezaannya" mengubah kuiz menjadi pentaksiran formatif dan bukan sekadar alat pemarkahan.<a class="fn" href="#fn2">2</a></span></span></li>
+          </ul>
+        </div>
+        <div class="pl-out">
+          <h4><span lang="en">Expected output (illustrative)</span><span lang="ms">Output dijangka (ilustrasi)</span></h4>
+          <div class="pl-outbox">
+            <span lang="en">One HTML file, roughly 700–900 lines. Open it, click every control, read it end to end in guide view,
+            and fix it <em>now</em>. Every flaw you leave in this file will appear eleven more times.</span>
+            <span lang="ms">Satu fail HTML, lebih kurang 700–900 baris. Buka, klik setiap kawalan, baca hujung ke hujung dalam paparan
+            panduan, dan betulkan <em>sekarang</em>. Setiap kecacatan yang anda tinggalkan akan muncul sebelas kali lagi.</span>
+          </div>
+        </div>
+      </div>
+      <div class="pl-note"><span lang="en">💡 Already have a template you like? Skip P3 entirely and go straight to P4 to describe it.</span><span lang="ms">💡 Sudah ada templat yang anda suka? Langkau P3 sepenuhnya dan terus ke P4 untuk memerihalkannya.</span></div>
+    </div>
+    <div class="pl-panel" id="p4">
+      <div class="pl-head">
+        <div><div class="pl-title">📐 P4 — The Structure Contract</div>
+          <div class="pl-sub">Run in the SAME session as P3, while the template is still in view.</div></div>
+        <button class="copy-btn" onclick="copyPrompt(this)"><span lang="en">📋 Copy prompt</span><span lang="ms">📋 Salin gesaan</span></button>
+      </div>
+      <pre class="pl-prompt"><code>TASK: Extract a STRUCTURE CONTRACT from the file you just produced.
+
+The contract is what I will paste into future sessions INSTEAD of the whole
+template. It must be under 70 lines, and must let a DIFFERENT model, with no
+sight of the template file, produce a class-identical sibling unit.
+
+Include:
+1. The exact head requirements and the body attribute pattern.
+2. The full list of CSS class names, grouped by component, each with a one-line
+   note on its purpose. Names only - not the rules.
+3. The 14 screen sections in order, with the required components inside each.
+4. The exact JS function signatures that must exist, and what each does in one
+   line: setLang(l), toggleMode(), go(n), show(i), pick(el,i), copyPrompt(btn).
+5. The five things that change between units, and NOTHING else:
+   title . the data-accent value and its one CSS rule . the "Unit n / N" brand
+   text . the cover teasers and next-unit pointer . all screen content.
+6. The invariants: the whole style block and the whole script block are copied
+   VERBATIM, byte for byte.
+
+Output the contract only, as markdown.</code></pre>
+      <div class="pl-cols">
+        <div class="pl-anno">
+          <h4><span lang="en">Why it is shaped this way</span><span lang="ms">Mengapa ia berbentuk begini</span></h4>
+          <ul>
+            <li><span class="ln">Test</span><span><span lang="en">"A different model, with no sight of the file" is the acceptance test. If the contract only works for the model that wrote it, it is a memory aid, not a specification.</span><span lang="ms">"Model berbeza, tanpa melihat fail" ialah ujian penerimaan. Jika kontrak hanya berfungsi untuk model yang menulisnya, ia alat bantu ingatan, bukan spesifikasi.</span></span></li>
+            <li><span class="ln">Names</span><span><span lang="en">Class names without rules is the whole compression trick: the names are what must match; the rules get copied.</span><span lang="ms">Nama kelas tanpa peraturan ialah keseluruhan helah pemampatan: nama itulah yang mesti sepadan; peraturan disalin.</span></span></li>
+            <li><span class="ln">70</span><span><span lang="en">The line cap is deliberate. A contract long enough to be inconvenient is a contract that stops getting pasted.</span><span lang="ms">Had baris itu disengajakan. Kontrak yang cukup panjang untuk menyusahkan ialah kontrak yang berhenti ditampal.</span></span></li>
+          </ul>
+        </div>
+        <div class="pl-out">
+          <h4><span lang="en">Expected output (illustrative)</span><span lang="ms">Output dijangka (ilustrasi)</span></h4>
+          <div class="pl-outbox">
+            <b># STRUCTURE CONTRACT — v1</b><br>
+            <b>BODY:</b> <code>&lt;body data-accent="uN" class="mode-slides lang-en"&gt;</code><br>
+            <b>blocks:</b> .block + .concept .fact .realworld .practical …<br>
+            <b>CHANGES:</b> title · data-accent + rule · brand · teasers · content<br>
+            <b>INVARIANT:</b> entire style block, entire script block
+          </div>
+        </div>
+      </div>
+      <div class="pl-note"><span lang="en">💡 Sanity-check it by handing the contract to a <em>different</em> AI and asking for unit 2. If
+        the result matches, the contract is sound.</span><span lang="ms">💡 Uji kewarasannya dengan menyerahkan kontrak kepada AI yang
+        <em>berbeza</em> dan meminta unit 2. Jika hasilnya sepadan, kontrak itu kukuh.</span></div>
+    </div>
+    <div class="pl-panel" id="p5">
+      <div class="pl-head">
+        <div><div class="pl-title">🔁 P5 — The Unit Loop</div>
+          <div class="pl-sub">A fresh session per unit. This is where 90% of the work happens.</div></div>
+        <button class="copy-btn" onclick="copyPrompt(this)"><span lang="en">📋 Copy prompt</span><span lang="ms">📋 Salin gesaan</span></button>
+      </div>
+      <pre class="pl-prompt"><code>[Paste, in order: P0 . SPEC.md . CONTRACT.md . LEDGER.md so far .
+ ONLY this unit's brief . then:]
+
+TASK: Build Unit <span class="ph">[n]</span> as a single self-contained HTML file, a sibling of unit-01.
+
+TEMPLATE SOURCE - choose ONE:
+(a) unit-01.html is attached or in this project. Copy its style and script
+    blocks VERBATIM, byte for byte. Do not improve, reorder, minify or
+    reformat them.
+(b) No template file available. Reconstruct both blocks strictly from
+    CONTRACT.md.
+
+WHAT CHANGES - and only this:
+1. The title -&gt; Unit <span class="ph">[n]</span> . [title] . <span class="ph">[COURSE CODE]</span>
+2. body data-accent="u<span class="ph">[n]</span>", plus ONE added CSS rule using this unit's assigned
+   accent triple. Keep the u1 rule in place as well.
+3. Top-bar brand text -&gt; "Unit <span class="ph">[n]</span> / <span class="ph">[N]</span>"
+4. All 14 screens of content, from the brief below.
+5. The footer's unit number.
+
+WHAT MUST NOT CHANGE
+Every class name. The screen count and order. The JS. The design tokens. The
+language-twin pattern.
+
+CONTINUITY - use the LEDGER
+- Screen 13 "connects back to" must name specific earlier units by their real
+  titles and say what each established.
+- Screen 13 "feeds forward to" must name specific later units from the map.
+- Do NOT reuse any hook story, primary case, tool or source already listed in
+  the ledger. Check the ledger before choosing.
+- Screen 9's framework must be new, and should visibly build on an earlier
+  unit's framework.
+- Screen 14's teaser must match the next unit's actual title.
+
+QUALITY BARS
+- The Practice Lab must exercise THIS unit's specific method, and be genuinely
+  runnable today - not a generic "analyse my case" prompt.
+- The SVG must be authored for this unit's concept. No reuse of unit 1's shape.
+- All 4 tool links and all 4 sources real and current. Mark [VERIFY] if unsure.
+- If bilingual, both languages carry equal substance.
+- Reading + activity load must fit this unit's independent-learning hours. If
+  the brief demands more than fits, trim and note it in a closing comment.
+
+OUTPUT
+The complete HTML file only. Then, AFTER the file, output the ledger entry in
+exactly this form and nothing more:
+
+UNIT <span class="ph">[n]</span> | [title]
+accent: [three hex values]
+hook: [one line - the story used]
+framework: [the named framework introduced]
+sources: [4 short citation keys]
+tools: [4 tool names]
+links-back: [units] | links-fwd: [units]</code></pre>
+      <div class="pl-cols">
+        <div class="pl-anno">
+          <h4><span lang="en">Line by line</span><span lang="ms">Baris demi baris</span></h4>
+          <ul>
+            <li><span class="ln">Src</span><span><span lang="en"><b>"Byte for byte"</b> is not pedantry. Told merely to "keep the styling", models paraphrase CSS — and units slowly stop matching.</span><span lang="ms"><b>"Bait demi bait"</b> bukan cerewet. Jika hanya disuruh "kekalkan gaya", model memparafrasa CSS — dan unit perlahan-lahan tidak lagi sepadan.</span></span></li>
+            <li><span class="ln">Chg</span><span><span lang="en">An explicit <b>whitelist of five changes</b> beats any list of prohibitions. Anything not on it is invariant by default.</span><span lang="ms">Senarai putih <b>lima perubahan</b> yang eksplisit mengatasi mana-mana senarai larangan. Apa sahaja yang tiada padanya adalah tak berubah secara lalai.</span></span></li>
+            <li><span class="ln">Cont</span><span><span lang="en">This block is why the ledger exists. It is the <b>only</b> thing giving unit 9 accurate knowledge of unit 3 — for roughly 1% of the tokens.</span><span lang="ms">Blok inilah sebab lejar wujud. Ia satu-satunya perkara yang memberi unit 9 pengetahuan tepat tentang unit 3 — dengan kira-kira 1% token.</span></span></li>
+            <li><span class="ln">Load</span><span><span lang="en">Tying content volume to the approved learning hours keeps the material honest against the workload the curriculum promised.</span><span lang="ms">Mengikat jumlah kandungan kepada jam pembelajaran yang diluluskan memastikan bahan jujur terhadap beban kerja yang dijanjikan kurikulum.</span></span></li>
+            <li><span class="ln">Out</span><span><span lang="en">Requesting the ledger entry <b>after</b> the file means the model writes it having just built the unit — so it is accurate rather than predicted.</span><span lang="ms">Meminta catatan lejar <b>selepas</b> fail bermakna model menulisnya sebaik selesai membina unit — jadi ia tepat, bukan ramalan.</span></span></li>
+          </ul>
+        </div>
+        <div class="pl-out">
+          <h4><span lang="en">Expected output (illustrative)</span><span lang="ms">Output dijangka (ilustrasi)</span></h4>
+          <div class="pl-outbox">
+            <span lang="en">A complete HTML file, then exactly seven lines:</span>
+            <span lang="ms">Satu fail HTML lengkap, kemudian tepat tujuh baris:</span><br><br>
+            <b>UNIT 4 | Bias, Fairness &amp; Social Inequality</b><br>
+            accent: #b45309 / #7c3a06 / #fdefdc<br>
+            hook: Amazon's scrapped AI recruiting tool (2018)<br>
+            framework: the Four Fairness Questions<br>
+            links-back: U2, U3 | links-fwd: U5, U7
+          </div>
+        </div>
+      </div>
+      <div class="pl-note"><span lang="en">💡 Then: append the entry to LEDGER.md, save the file, <strong>close the session</strong>, open a
+        new one. Never build two units in one chat.</span><span lang="ms">💡 Kemudian: tambahkan catatan ke LEDGER.md, simpan fail,
+        <strong>tutup sesi itu</strong>, buka yang baharu. Jangan sekali-kali bina dua unit dalam satu sembang.</span></div>
+    </div>
+  </div>
+  <div class="footnotes">
+    <h4><span lang="en">Notes</span><span lang="ms">Nota</span></h4>
+    <ol>
+      <li id="fn1b" value="1" data-p="p3">Sweller, J. (1988). Cognitive load during problem solving: Effects on learning.
+        <em>Cognitive Science</em>, 12(2), 257–285.
+        <a href="https://doi.org/10.1207/s15516709cog1202_4">doi.org/10.1207/s15516709cog1202_4</a></li>
+      <li id="fn2" value="2" data-p="p3">Hattie, J. &amp; Timperley, H. (2007). The power of feedback.
+        <em>Review of Educational Research</em>, 77(1), 81–112.
+        <a href="https://doi.org/10.3102/003465430298487">doi.org/10.3102/003465430298487</a></li>
+    </ol>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-kicker"><span lang="en">Real-World Applications · Aplikasi Dunia Sebenar</span><span lang="ms">Aplikasi Dunia Sebenar</span></div>
+  <h2 lang="en">What a contract is worth beyond this course</h2>
+  <h2 lang="ms">Nilai kontrak di luar kursus ini</h2>
+  <div class="cardgrid">
+    <div class="card"><div class="name">👥 <span lang="en">A team teaching one course</span><span lang="ms">Pasukan mengajar satu kursus</span></div>
+      <div class="use"><span lang="en">Five lecturers, five styles. The contract is a shared standard that does not depend on anyone's taste —
+        and it can be reviewed and agreed in one meeting.</span><span lang="ms">Lima pensyarah, lima gaya. Kontrak ialah standard sepunya yang
+        tidak bergantung pada citarasa sesiapa — dan boleh disemak serta dipersetujui dalam satu mesyuarat.</span></div></div>
+    <div class="card"><div class="name">🏛️ <span lang="en">A programme, not a course</span><span lang="ms">Program, bukan kursus</span></div>
+      <div class="use"><span lang="en">One contract shared across ten courses makes a degree feel like a degree. Students stop relearning the
+        interface every semester.</span><span lang="ms">Satu kontrak dikongsi merentas sepuluh kursus menjadikan ijazah terasa seperti satu ijazah.
+        Pelajar berhenti mempelajari semula antara muka setiap semester.</span></div></div>
+    <div class="card"><div class="name">🔄 <span lang="en">Next year's revision</span><span lang="ms">Semakan tahun depan</span></div>
+      <div class="use"><span lang="en">Edit one brief, re-run P5 for that unit alone, and everything else stays byte-identical. Revision becomes
+        surgical rather than a rewrite.</span><span lang="ms">Sunting satu ringkasan, jalankan semula P5 untuk unit itu sahaja, dan selebihnya kekal
+        sama bait demi bait. Semakan menjadi pembedahan, bukan penulisan semula.</span></div></div>
+    <div class="card"><div class="name">♿ <span lang="en">Fixing accessibility once</span><span lang="ms">Membetulkan kebolehcapaian sekali</span></div>
+      <div class="use"><span lang="en">A contrast problem found in unit 6 is a problem in all twelve. Fix the template, re-run the loop, and the
+        fix propagates — because nothing downstream diverged.</span><span lang="ms">Masalah kontras yang ditemui dalam unit 6 ialah masalah dalam
+        kesemua dua belas. Betulkan templat, jalankan semula gelung, dan pembetulan itu merebak — kerana tiada apa di hilir yang menyimpang.</span></div></div>
+  </div>
+  <div class="block realworld">
+    <span class="tag"><span lang="en">Local lens · Malaysia</span><span lang="ms">Lensa tempatan · Malaysia</span></span>
+    <p lang="en" style="margin:.3em 0 0">For bilingual delivery the contract earns its keep twice over. The language-twin pattern —
+      every visible string existing once per language, with CSS alone choosing which is shown — is easy to state in sixty lines and
+      almost impossible to maintain by convention. Put it in the contract and every unit inherits it; leave it to good intentions and
+      unit 8 will quietly ship a Malay block that is a stub of its English twin. Audit for that specifically: a second-language block
+      much shorter than the first is not a translation.</p>
+    <p lang="ms" style="margin:.3em 0 0">Bagi penyampaian dwibahasa, kontrak ini berbaloi dua kali ganda. Corak kembar bahasa — setiap
+      rentetan yang kelihatan wujud sekali bagi setiap bahasa, dengan CSS sahaja memilih yang mana ditunjukkan — mudah dinyatakan dalam
+      enam puluh baris dan hampir mustahil dikekalkan melalui kebiasaan semata-mata. Letakkannya dalam kontrak dan setiap unit
+      mewarisinya; serahkan kepada niat baik dan unit 8 akan senyap-senyap menghantar blok Melayu yang hanya tempelan kepada kembar
+      Inggerisnya. Auditlah perkara itu secara khusus: blok bahasa kedua yang jauh lebih pendek daripada yang pertama bukanlah
+      terjemahan.</p>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-kicker"><span lang="en">Practical Framework · Kerangka Amali</span><span lang="ms">Kerangka Amali</span></div>
+  <h2 lang="en">The loop, as a checklist you can run from memory</h2>
+  <h2 lang="ms">Gelung itu, sebagai senarai semak yang boleh anda jalankan dari ingatan</h2>
+  <p class="lead" lang="en">Five steps per unit. Once these are habit, a unit takes about forty-five minutes and the eleventh is no harder
+    than the second.</p>
+  <p class="lead" lang="ms">Lima langkah setiap unit. Setelah ini menjadi tabiat, satu unit mengambil kira-kira empat puluh lima minit dan
+    yang kesebelas tidak lebih sukar daripada yang kedua.</p>
+  <div class="outcomes">
+    <div class="outcome"><div class="num">1</div><div>
+      <span lang="en"><strong>Open fresh.</strong> A new session, every time. Paste P0, spec, contract, ledger, and only this unit's brief. Attach the template.</span>
+      <span lang="ms"><strong>Buka baharu.</strong> Sesi baharu, setiap kali. Tampal P0, spesifikasi, kontrak, lejar, dan hanya ringkasan unit ini. Lampirkan templat.</span></div></div>
+    <div class="outcome"><div class="num">2</div><div>
+      <span lang="en"><strong>Ask for one unit.</strong> Never two. If the output truncates, switch to three chunks and reply only <code>CONTINUE</code>.</span>
+      <span lang="ms"><strong>Minta satu unit.</strong> Jangan dua. Jika keluaran terpotong, tukar kepada tiga bahagian dan balas <code>CONTINUE</code> sahaja.</span></div></div>
+    <div class="outcome"><div class="num">3</div><div>
+      <span lang="en"><strong>Open it and click everything.</strong> Both languages, every tab, every self-check option — including the wrong ones, whose feedback must teach rather than scold.</span>
+      <span lang="ms"><strong>Buka dan klik semuanya.</strong> Kedua-dua bahasa, setiap tab, setiap pilihan semakan kendiri — termasuk yang salah, yang maklum balasnya mesti mengajar dan bukan menegur.</span></div></div>
+    <div class="outcome"><div class="num">4</div><div>
+      <span lang="en"><strong>Append the ledger entry.</strong> Seven lines, unedited, never rewritten. This is the only memory the next unit will have of this one.</span>
+      <span lang="ms"><strong>Tambah catatan lejar.</strong> Tujuh baris, tanpa suntingan, jangan ditulis semula. Inilah satu-satunya ingatan yang akan dimiliki unit seterusnya tentang unit ini.</span></div></div>
+    <div class="outcome"><div class="num">5</div><div>
+      <span lang="en"><strong>Close the session.</strong> Not minimise — close. A session left open is a session you will be tempted to reuse.</span>
+      <span lang="ms"><strong>Tutup sesi itu.</strong> Bukan minimumkan — tutup. Sesi yang dibiarkan terbuka ialah sesi yang anda akan tergoda untuk guna semula.</span></div></div>
+  </div>
+  <div class="block practical">
+    <span class="tag"><span lang="en">Split-output markers</span><span lang="ms">Penanda pecahan keluaran</span></span>
+    <p lang="en" style="margin:.3em 0 0"><code>CHUNK 1</code> = doctype through the end of the style block ·
+      <code>CHUNK 2</code> = body through the end of screen 7 · <code>CHUNK 3</code> = screen 8 through the closing tag.
+      Each ends with a comment marker you delete after stitching in a text editor.</p>
+    <p lang="ms" style="margin:.3em 0 0"><code>CHUNK 1</code> = doctype hingga akhir blok gaya ·
+      <code>CHUNK 2</code> = body hingga akhir skrin 7 · <code>CHUNK 3</code> = skrin 8 hingga tag penutup.
+      Setiap satu berakhir dengan penanda komen yang anda padam selepas mencantum dalam penyunting teks.</p>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-kicker"><span lang="en">Formative Check · Semakan Formatif</span><span lang="ms">Semakan Formatif</span></div>
+  <h2 lang="en">Quick check — instant feedback</h2>
+  <h2 lang="ms">Semakan pantas — maklum balas segera</h2>
+  <p class="ms-tag"><span lang="en">No grade, just for learning.</span><span lang="ms">Tiada markah — hanya untuk pembelajaran.</span></p>
+  <div class="quiz">
+    <div class="q" data-answer="2">
+      <div class="stem"><span lang="en">1. Why are P3 and P4 the one pair of prompts deliberately run in the <em>same</em> session?</span><span lang="ms">1. Mengapa P3 dan P4 ialah satu-satunya pasangan gesaan yang sengaja dijalankan dalam sesi yang <em>sama</em>?</span></div>
+      <button class="opt" onclick="pick(this,0)"><span lang="en">To save time on pasting the spec card twice</span><span lang="ms">Untuk menjimatkan masa menampal kad spesifikasi dua kali</span></button>
+      <button class="opt" onclick="pick(this,1)"><span lang="en">Because P4 cannot run without P3's ledger entry</span><span lang="ms">Kerana P4 tidak boleh berjalan tanpa catatan lejar P3</span></button>
+      <button class="opt" onclick="pick(this,2)"><span lang="en">Because the contract describes the template, which is still in that session's context</span><span lang="ms">Kerana kontrak memerihalkan templat, yang masih berada dalam konteks sesi itu</span></button>
+      <button class="opt" onclick="pick(this,3)"><span lang="en">Because contracts must be written by the same model that wrote the template</span><span lang="ms">Kerana kontrak mesti ditulis oleh model yang sama yang menulis templat</span></button>
+      <div class="feedback ok"><span lang="en">✓ Exactly. P4 is the one task where the artefact you are describing is already in view, so reusing the session is correct rather than risky. Every other prompt starts fresh.</span><span lang="ms">✓ Tepat. P4 ialah satu-satunya tugas yang artifaknya sudah berada dalam pandangan, jadi menggunakan semula sesi itu adalah betul dan bukan berisiko. Setiap gesaan lain bermula baharu.</span></div>
+      <div class="feedback no"><span lang="en">It is not about convenience or dependency order. P4 asks the model to describe a file it just wrote — the only moment in the whole chain when the thing being described is already in context.</span><span lang="ms">Ia bukan tentang kemudahan atau susunan kebergantungan. P4 meminta model memerihalkan fail yang baru ditulisnya — satu-satunya saat dalam keseluruhan rantaian apabila perkara yang diperihalkan sudah berada dalam konteks.</span></div>
+    </div>
+    <div class="q" data-answer="0">
+      <div class="stem"><span lang="en">2. You diff unit 5 against the template and find the CSS reformatted with different indentation but identical rules. Is that acceptable?</span><span lang="ms">2. Anda membandingkan unit 5 dengan templat dan mendapati CSS diformat semula dengan inden berbeza tetapi peraturannya sama. Adakah itu boleh diterima?</span></div>
+      <button class="opt" onclick="pick(this,0)"><span lang="en">No — “verbatim” means byte for byte, and reformatting signals the model rewrote rather than copied</span><span lang="ms">Tidak — “verbatim” bermaksud bait demi bait, dan pemformatan semula menandakan model menulis semula dan bukan menyalin</span></button>
+      <button class="opt" onclick="pick(this,1)"><span lang="en">Yes — the rendered result is identical, so nothing is wrong</span><span lang="ms">Ya — hasil paparannya sama, jadi tiada masalah</span></button>
+      <button class="opt" onclick="pick(this,2)"><span lang="en">Yes, provided the class names still match the contract</span><span lang="ms">Ya, asalkan nama kelas masih sepadan dengan kontrak</span></button>
+      <button class="opt" onclick="pick(this,3)"><span lang="en">Only a problem if the unit is bilingual</span><span lang="ms">Hanya menjadi masalah jika unit itu dwibahasa</span></button>
+      <div class="feedback ok"><span lang="en">✓ Right. This unit renders fine, but the model regenerated the block instead of copying it — so the next unit will regenerate from <em>this</em> version. That is exactly how drift starts, one harmless-looking generation at a time.</span><span lang="ms">✓ Betul. Unit ini dipaparkan dengan baik, tetapi model menjana semula blok itu dan bukan menyalinnya — jadi unit seterusnya akan menjana semula daripada versi <em>ini</em>. Begitulah tepatnya penyimpangan bermula, satu penjanaan yang kelihatan tidak berbahaya pada satu masa.</span></div>
+      <div class="feedback no"><span lang="en">Look past the rendering. Identical output today, but the model clearly regenerated rather than copied — and the next unit inherits that regenerated version, not the original. Three units later the rules themselves will have moved.</span><span lang="ms">Lihat melangkaui paparan. Keluaran sama hari ini, tetapi model jelas menjana semula dan bukan menyalin — dan unit seterusnya mewarisi versi yang dijana semula itu, bukan yang asal. Tiga unit kemudian, peraturannya sendiri akan berubah.</span></div>
+    </div>
+    <div class="q" data-answer="3">
+      <div class="stem"><span lang="en">3. Between two chunks of a split output, what should you type?</span><span lang="ms">3. Antara dua bahagian keluaran yang dipecahkan, apa yang patut anda taip?</span></div>
+      <button class="opt" onclick="pick(this,0)"><span lang="en">A reminder of the class names, to be safe</span><span lang="ms">Peringatan tentang nama kelas, untuk berjaga-jaga</span></button>
+      <button class="opt" onclick="pick(this,1)"><span lang="en">The contract again, so nothing is forgotten</span><span lang="ms">Kontrak sekali lagi, supaya tiada yang terlupa</span></button>
+      <button class="opt" onclick="pick(this,2)"><span lang="en">A short note on what you liked about chunk 1</span><span lang="ms">Nota ringkas tentang apa yang anda suka dalam bahagian 1</span></button>
+      <button class="opt" onclick="pick(this,3)"><span lang="en">The single word CONTINUE, and nothing else</span><span lang="ms">Satu perkataan CONTINUE sahaja, tiada yang lain</span></button>
+      <div class="feedback ok"><span lang="en">✓ Yes. Anything you add between chunks becomes new context competing with the instructions already given — the most common way a carefully set-up session drifts at the halfway mark.</span><span lang="ms">✓ Ya. Apa sahaja yang anda tambah antara bahagian menjadi konteks baharu yang bersaing dengan arahan yang telah diberikan — cara paling lazim sesi yang disediakan dengan teliti terpesong di pertengahan jalan.</span></div>
+      <div class="feedback no"><span lang="en">Adding reminders feels helpful but is not. Every extra token between chunks competes with the instructions already in context; the protocol works precisely because it adds nothing.</span><span lang="ms">Menambah peringatan terasa membantu tetapi sebenarnya tidak. Setiap token tambahan antara bahagian bersaing dengan arahan yang sudah ada dalam konteks; protokol ini berkesan justeru kerana ia tidak menambah apa-apa.</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-kicker"><span lang="en">Companion Tools · Alat Pendamping</span><span lang="ms">Alat Pendamping</span></div>
+  <h2 lang="en">Tools that make drift visible</h2>
+  <h2 lang="ms">Alat yang menjadikan penyimpangan kelihatan</h2>
+  <p class="lead" lang="en">You cannot eyeball an eight-hundred-line file for byte differences. Each of these turns "does it still match?"
+    into a question with a yes-or-no answer.</p>
+  <p class="lead" lang="ms">Anda tidak boleh memeriksa fail lapan ratus baris dengan mata untuk perbezaan bait. Setiap satu ini mengubah
+    “adakah ia masih sepadan?” menjadi soalan dengan jawapan ya atau tidak.</p>
+  <div class="cardgrid">
+    <div class="card"><div class="name">🔍 <span lang="en">Any diff tool</span><span lang="ms">Mana-mana alat diff</span></div>
+      <div class="use"><span lang="en">Compare the style block of each new unit against the template. Expect exactly one difference: the added
+        accent rule. Anything else is drift.</span><span lang="ms">Bandingkan blok gaya setiap unit baharu dengan templat. Jangkakan tepat satu
+        perbezaan: peraturan aksen yang ditambah. Apa-apa lain ialah penyimpangan.</span></div></div>
+    <div class="card"><div class="name">⚫ <span lang="en">A repo-aware coding agent</span><span lang="ms">Ejen kod sedar-repositori</span></div>
+      <div class="use"><span lang="en">The strongest option: it can run the diff itself, and the four files are real files rather than pasted text.
+        Ask it to diff before you read.</span><span lang="ms">Pilihan terkuat: ia boleh menjalankan diff sendiri, dan empat fail itu ialah fail
+        sebenar dan bukan teks yang ditampal. Minta ia membanding beza sebelum anda membaca.</span></div>
+      <a href="https://cursor.com">cursor.com</a></div>
+    <div class="card"><div class="name">🗃️ <span lang="en">Version control</span><span lang="ms">Kawalan versi</span></div>
+      <div class="use"><span lang="en">Commit after each unit. When drift appears you can see exactly which unit introduced it, instead of guessing
+        from the rendered pages.</span><span lang="ms">Komit selepas setiap unit. Apabila penyimpangan muncul anda boleh melihat dengan tepat unit
+        mana yang memperkenalkannya, dan bukan meneka daripada halaman yang dipaparkan.</span></div></div>
+    <div class="card"><div class="name">🌐 <span lang="en">A browser and a phone</span><span lang="ms">Pelayar dan telefon</span></div>
+      <div class="use"><span lang="en">Open every unit on a narrow screen before release. Diagram labels and two-column layouts are where the template
+        most often fails first.</span><span lang="ms">Buka setiap unit pada skrin sempit sebelum dikeluarkan. Label rajah dan susun atur dua lajur ialah
+        tempat templat paling kerap gagal dahulu.</span></div></div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-kicker"><span lang="en">References &amp; Further Reading · Rujukan &amp; Bacaan Lanjut</span><span lang="ms">Rujukan &amp; Bacaan Lanjut</span></div>
+  <h2 lang="en">Where the design decisions come from</h2>
+  <h2 lang="ms">Dari mana keputusan reka bentuk ini datang</h2>
+  <p class="lead" lang="en">Numbers match the footnote markers used in this unit. Each note also appears at the foot of the screen where it
+    is cited.</p>
+  <p class="lead" lang="ms">Nombornya sepadan dengan penanda nota kaki yang digunakan dalam unit ini. Setiap nota turut muncul di kaki skrin
+    tempat ia dipetik.</p>
+  <div class="cols">
+    <div>
+      <ul class="reslist">
+        <li><b class="fnum">1</b><span class="k">Load</span>Sweller, J. (1988). Cognitive load during problem solving: Effects on learning.
+          <em>Cognitive Science</em>, 12(2), 257–285.
+          <a class="doi" href="https://doi.org/10.1207/s15516709cog1202_4">10.1207/s15516709cog1202_4</a>
+          <span class="cited"><span lang="en">cited on screens 3 and 7</span><span lang="ms">dipetik di skrin 3 dan 7</span></span></li>
+        <li><b class="fnum">2</b><span class="k">Feedback</span>Hattie, J. &amp; Timperley, H. (2007). The power of feedback.
+          <em>Review of Educational Research</em>, 77(1), 81–112.
+          <a class="doi" href="https://doi.org/10.3102/003465430298487">10.3102/003465430298487</a>
+          <span class="cited"><span lang="en">cited on screen 7</span><span lang="ms">dipetik di skrin 7</span></span></li>
+      </ul>
+    </div>
+    <div>
+      <ul class="reslist">
+        <li><b class="fnum">3</b><span class="k">Theory</span>Siemens, G. (2005). Connectivism: A learning theory for the digital age.
+          <em>International Journal of Instructional Technology and Distance Learning</em>, 2(1).
+          <a class="doi" href="http://www.itdl.org/Journal/Jan_05/article01.htm">itdl.org</a>
+          <span class="cited"><span lang="en">cited on screen 13</span><span lang="ms">dipetik di skrin 13</span></span></li>
+        <li><b class="fnum">4</b><span class="k">Theory</span>Downes, S. (2012). <em>Connectivism and Connective Knowledge: Essays on Meaning
+          and Learning Networks.</em> National Research Council Canada.
+          <a class="doi" href="https://www.downes.ca/files/books/Connective_Knowledge-19May2012.pdf">downes.ca</a>
+          <span class="cited"><span lang="en">cited on screen 13</span><span lang="ms">dipetik di skrin 13</span></span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-kicker"><span lang="en">Learning Network · Rangkaian Pembelajaran</span><span lang="ms">Rangkaian Pembelajaran</span></div>
+  <h2 lang="en">How this unit connects</h2>
+  <h2 lang="ms">Bagaimana unit ini berhubung</h2>
+  <div class="block connections">
+    <span class="tag"><span lang="en">Connectivism · Knowledge lives in the connections</span><span lang="ms">Konektivisme · Pengetahuan hidup dalam hubungan</span></span>
+    <p lang="en" style="margin:.3em 0 .2em">Screen 13 of every unit you build is where the course stops being a stack of files and becomes a
+      network. Learning, on this account, is the capacity to form and traverse connections rather than to hold facts.<a class="fn" href="#fn3">3</a><a class="fn" href="#fn4">4</a> The ledger is what makes those connections nameable rather than decorative.</p>
+    <p lang="ms" style="margin:.3em 0 .2em">Skrin 13 setiap unit yang anda bina ialah tempat kursus itu berhenti menjadi timbunan fail dan
+      menjadi rangkaian. Menurut pandangan ini, pembelajaran ialah keupayaan membentuk dan melalui hubungan, bukan menyimpan
+      fakta.<a class="fn" href="#fn3">3</a><a class="fn" href="#fn4">4</a> Lejar itulah yang menjadikan hubungan tersebut boleh dinamakan
+      dan bukan sekadar hiasan.</p>
+    <div class="cols" style="margin-top:6px">
+      <div><h3 lang="en">← Connects back to</h3><h3 lang="ms">← Berhubung kembali ke</h3>
+        <p lang="en"><strong>Unit 1</strong>, for the six-rule protocol this loop enacts, and <strong>Unit 2</strong>, whose spec card and briefs
+          are consumed one at a time here. Without the accent list P2 returned, step 2 of the whitelist has nothing to write.</p>
+        <p lang="ms"><strong>Unit 1</strong>, untuk protokol enam peraturan yang dilaksanakan gelung ini, dan <strong>Unit 2</strong>, yang kad
+          spesifikasi dan ringkasannya digunakan satu demi satu di sini. Tanpa senarai aksen yang dipulangkan P2, langkah 2 senarai putih tiada
+          apa untuk ditulis.</p></div>
+      <div><h3 lang="en">Feeds forward to →</h3><h3 lang="ms">Menyuap ke hadapan →</h3>
+        <p lang="en"><strong>Unit 4 — Auditing and defending the result</strong>, which takes the very files this loop produced and checks them
+          against the contract, the outcomes and the approved learning hours before anyone sees them.</p>
+        <p lang="ms"><strong>Unit 4 — Mengaudit dan mempertahankan hasil</strong>, yang mengambil fail yang dihasilkan gelung ini dan menyemaknya
+          terhadap kontrak, hasil pembelajaran dan jam pembelajaran yang diluluskan sebelum sesiapa melihatnya.</p></div>
+    </div>
+    <div class="node-row">
+      <span class="node"><span lang="en">👥 Give your contract to a colleague and ask them to build unit 2 from it</span><span lang="ms">👥 Beri kontrak anda kepada rakan dan minta mereka membina unit 2 daripadanya</span></span>
+      <span class="node"><span lang="en">🔗 Hand the contract to a different AI and compare the result</span><span lang="ms">🔗 Serahkan kontrak kepada AI lain dan bandingkan hasilnya</span></span>
+      <span class="node"><span lang="en">🧩 Propose your contract as a faculty-wide template standard</span><span lang="ms">🧩 Cadangkan kontrak anda sebagai standard templat seluruh fakulti</span></span>
+    </div>
+  </div>
+  <div class="block owncase" style="margin-top:16px">
+    <span class="tag"><span lang="en">Your assessment · open-ended</span><span lang="ms">Pentaksiran anda · terbuka</span></span>
+    <p lang="en" style="margin:.2em 0 0"><strong>Your course is your case.</strong> Build unit 1 of your own course, extract the contract, then
+      build unit 2 from it and diff the two style blocks. The test is not whether the units look nice — it is whether the difference between
+      them is exactly one line. If it is more, you have found your own drift before it cost you anything.</p>
+    <p lang="ms" style="margin:.2em 0 0"><strong>Kursus anda ialah kes anda.</strong> Bina unit 1 kursus anda sendiri, ekstrak kontraknya,
+      kemudian bina unit 2 daripadanya dan bandingkan dua blok gaya itu. Ujiannya bukan sama ada unit itu kelihatan cantik — tetapi sama ada
+      perbezaan antara keduanya tepat satu baris. Jika lebih, anda telah menemui penyimpangan anda sendiri sebelum ia menelan sebarang kos.</p>
+  </div>
+  <div class="footnotes">
+    <h4><span lang="en">Notes</span><span lang="ms">Nota</span></h4>
+    <ol>
+      <li id="fn3" value="3">Siemens, G. (2005). Connectivism: A learning theory for the digital age. <em>International Journal of
+        Instructional Technology and Distance Learning</em>, 2(1). <a href="http://www.itdl.org/Journal/Jan_05/article01.htm">itdl.org</a></li>
+      <li id="fn4" value="4">Downes, S. (2012). <em>Connectivism and Connective Knowledge: Essays on Meaning and Learning Networks.</em>
+        National Research Council Canada.
+        <a href="https://www.downes.ca/files/books/Connective_Knowledge-19May2012.pdf">downes.ca</a></li>
+    </ol>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-kicker"><span lang="en">Wrap-up · Rumusan</span><span lang="ms">Rumusan</span></div>
+  <h2 lang="en">Unit 3 in one breath</h2>
+  <h2 lang="ms">Unit 3 dalam satu nafas</h2>
+  <p class="lead" lang="en">Design one unit properly and every later unit is a copy with five substitutions. The template is copied byte for
+    byte; the contract describes it in under seventy lines for when the file cannot be attached; and the whitelist names the five things
+    that may change so that everything else is frozen by default. Drift is not a single bad output — it is a series of locally reasonable
+    rewrites, which is why the instruction has to be about bytes rather than about style.</p>
+  <p class="lead" lang="ms">Reka bentuk satu unit dengan betul dan setiap unit kemudian ialah salinan dengan lima penggantian. Templat disalin
+    bait demi bait; kontrak memerihalkannya dalam kurang tujuh puluh baris untuk keadaan fail tidak boleh dilampirkan; dan senarai putih
+    menamakan lima perkara yang boleh berubah supaya selebihnya beku secara lalai. Penyimpangan bukan satu keluaran buruk — ia siri
+    penulisan semula yang munasabah secara setempat, dan itulah sebabnya arahan mesti tentang bait dan bukan tentang gaya.</p>
+  <div class="block fact"><span class="tag"><span lang="en">Remember this line</span><span lang="ms">Ingat baris ini</span></span>
+    <p lang="en" style="margin:.2em 0 0"><em>“Whitelist what may change. Everything else is frozen by default.”</em></p>
+    <p lang="ms" style="margin:.2em 0 0"><em>“Senarai putihkan apa yang boleh berubah. Selebihnya beku secara lalai.”</em></p></div>
+  <h3 lang="en">Before Unit 4</h3>
+  <h3 lang="ms">Sebelum Unit 4</h3>
+  <ul lang="en">
+    <li>Build unit 1 of your course with <strong>P3</strong>, then live with it for a day before extracting the contract.</li>
+    <li>Run <strong>P4</strong> in that same session. Test the contract by handing it to a <em>different</em> AI.</li>
+    <li>Run <strong>P5</strong> for at least one more unit, and append its ledger entry.</li>
+    <li>Diff the two style blocks. Expect exactly one differing line.</li>
+  </ul>
+  <ul lang="ms">
+    <li>Bina unit 1 kursus anda dengan <strong>P3</strong>, kemudian biarkan sehari sebelum mengekstrak kontrak.</li>
+    <li>Jalankan <strong>P4</strong> dalam sesi yang sama itu. Uji kontrak dengan menyerahkannya kepada AI yang <em>berbeza</em>.</li>
+    <li>Jalankan <strong>P5</strong> untuk sekurang-kurangnya satu unit lagi, dan tambah catatan lejarnya.</li>
+    <li>Bandingkan dua blok gaya itu. Jangkakan tepat satu baris yang berbeza.</li>
+  </ul>
+  <div class="divider"></div>
+  <p class="ms-tag"><span lang="en">Next · Unit 4 — Auditing and defending the result: conformance, rubrics, workload reconciliation, and the
+    release gate.</span><span lang="ms">Seterusnya · Unit 4 — Mengaudit dan mempertahankan hasil: pematuhan, rubrik, penyelarasan beban kerja,
+    dan pintu pelepasan.</span></p>
+</section>
+
+<footer class="deckfoot">
+  <span lang="en">SIM Builder · Unit 3 of 4 · A self-instructional series on producing OBE-aligned, connectivist course materials with AI · Design system derived from the SIMs deck series owned by Dr. Akmal.</span>
+  <span lang="ms">SIM Builder · Unit 3 daripada 4 · Siri pembelajaran kendiri tentang menghasilkan bahan kursus terjajar OBE dan konektivis dengan AI · Sistem reka bentuk diterbitkan daripada siri deck SIM milik Dr. Akmal.</span>
+</footer>
+</main>
+
+<script>
+/* ===== Language toggle ===== */
+function setLang(l){
+  document.body.classList.remove('lang-en','lang-ms');
+  document.body.classList.add('lang-'+l);
+  document.documentElement.lang = (l==='ms')?'ms':'en';
+  document.querySelectorAll('.langtog button').forEach(b=>b.classList.toggle('on', b.dataset.l===l));
+}
+/* ===== Deck engine ===== */
+let slides=[],cur=0;
+function init(){
+  slides=Array.from(document.querySelectorAll('.slide'));cur=0;show(0);
+  document.querySelectorAll('.prompt-lab').forEach(lab=>{
+    const active=lab.querySelector('.pl-panel.on');
+    if(active)filterNotes(lab.closest('.slide'),active.id);
+  });
+  document.addEventListener('keydown',e=>{
+    if(e.target.tagName==='TEXTAREA'||e.target.tagName==='INPUT')return;
+    if(e.key==='ArrowRight'||e.key==='PageDown'){go(1)}
+    if(e.key==='ArrowLeft'||e.key==='PageUp'){go(-1)}
+    if(e.key.toLowerCase()==='g'){toggleMode()}
+  });
+}
+function show(i){
+  if(document.body.classList.contains('mode-guide'))return;
+  slides.forEach(s=>s.classList.remove('active'));slides[i].classList.add('active');
+  window.scrollTo(0,0);update();
+}
+function go(d){
+  if(document.body.classList.contains('mode-guide')){window.scrollBy({top:d*window.innerHeight*.85,behavior:'smooth'});return;}
+  cur=Math.max(0,Math.min(slides.length-1,cur+d));show(cur);
+}
+function update(){
+  document.getElementById('counter').textContent=(cur+1)+' / '+slides.length;
+  document.getElementById('pbar').style.width=((cur+1)/slides.length*100)+'%';
+}
+function toggleMode(){
+  const b=document.body,btn=document.getElementById('modeBtn');
+  if(b.classList.contains('mode-slides')){
+    b.classList.remove('mode-slides');b.classList.add('mode-guide');
+    slides.forEach(s=>s.classList.add('active'));
+    btn.querySelector('[lang="en"]').textContent='🖥 Slides';btn.querySelector('[lang="ms"]').textContent='🖥 Slaid';
+    document.getElementById('pbar').style.width='100%';
+  }else{b.classList.remove('mode-guide');b.classList.add('mode-slides');
+    btn.querySelector('[lang="en"]').textContent='📖 Guide';btn.querySelector('[lang="ms"]').textContent='📖 Panduan';show(cur);}
+}
+/* ===== Self-check engine ===== */
+function pick(btn,idx){
+  const q=btn.closest('.q'),ans=parseInt(q.dataset.answer,10);
+  q.querySelectorAll('.opt').forEach(o=>o.disabled=true);
+  const chosen=Array.from(q.querySelectorAll('.opt')).indexOf(btn);
+  q.querySelectorAll('.feedback').forEach(f=>f.classList.remove('show'));
+  if(chosen===ans){btn.classList.add('correct');q.querySelector('.feedback.ok').classList.add('show');}
+  else{btn.classList.add('wrong');q.querySelectorAll('.opt')[ans].classList.add('correct');q.querySelector('.feedback.no').classList.add('show');}
+}
+/* ===== Prompt tabs ===== */
+function showP(btn,id){
+  const lab=btn.closest('.prompt-lab');
+  lab.querySelectorAll('.pl-tab').forEach(t=>t.classList.remove('on'));
+  lab.querySelectorAll('.pl-panel').forEach(p=>p.classList.remove('on'));
+  btn.classList.add('on');
+  document.getElementById(id).classList.add('on');
+  filterNotes(lab.closest('.slide'),id);
+}
+/* Show only the notes cited by the visible panel; hide the block if none. */
+function filterNotes(slide,id){
+  if(!slide)return;
+  const box=slide.querySelector('.footnotes');
+  if(!box)return;
+  let shown=0;
+  box.querySelectorAll('li[data-p]').forEach(li=>{
+    const on=li.dataset.p.split(' ').indexOf(id)>-1;
+    li.style.display=on?'list-item':'none';
+    if(on)shown++;
+  });
+  box.style.display=shown?'block':'none';
+}
+/* ===== Copy prompt ===== */
+function copyPrompt(btn){
+  const panel=btn.closest('.pl-panel')||btn.closest('.prompt-lab');
+  const node=panel.querySelector('.pl-prompt');
+  const text=node.innerText;
+  const done=()=>{const en=btn.querySelector('[lang="en"]'),ms=btn.querySelector('[lang="ms"]');
+    const oe=en.textContent,om=ms.textContent;en.textContent='✓ Copied';ms.textContent='✓ Disalin';btn.classList.add('done');
+    setTimeout(()=>{en.textContent=oe;ms.textContent=om;btn.classList.remove('done');},1600);};
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(done).catch(()=>fallbackCopy(text,done));}
+  else{fallbackCopy(text,done);}
+}
+function fallbackCopy(text,cb){
+  const ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';
+  document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(e){}document.body.removeChild(ta);cb&&cb();
+}
+init();
+</script>
+</body>
+</html>

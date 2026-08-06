@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unit 2 · Compiling Your Curriculum — SIM Builder</title>
+<style>
+/* ============================================================
+   SIM BUILDER — SHARED DESIGN SYSTEM v3 (derived from LMCRXXX2)
+   Bilingual EN/BM. Every translatable node has an EN twin
+   (lang="en") and a BM twin (lang="ms"); CSS shows the active
+   one only. Prompt bodies stay in English by design.
+   ============================================================ */
+:root{
+  --ink:#111629; --ink-soft:#333a5c; --muted:#565d80;
+  --bg:#f5f6fb; --panel:#ffffff; --line:#e2e5f1;
+  --accent:#3b4cc0; --accent-2:#5a34b8; --accent-soft:#eef0ff;
+  --amber:#a85e00; --amber-soft:#fff3de; --amber-ink:#5c3400;
+  --green:#137a4b; --green-soft:#e4f6ec; --green-ink:#0c5233;
+  --red:#c23434; --red-soft:#fcebeb; --red-ink:#8a1f1f;
+  --radius:16px; --shadow:0 10px 34px rgba(20,26,60,.10);
+  --maxw:1010px;
+  --font:"Segoe UI",system-ui,-apple-system,Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:"SF Mono",Consolas,"Roboto Mono",ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:var(--font);color:var(--ink);
+  background:radial-gradient(1200px 600px at 85% -10%,var(--accent-soft),transparent 60%),var(--bg);
+  line-height:1.62;-webkit-font-smoothing:antialiased}
+body[data-accent="u1"]{--accent:#0f5257;--accent-2:#08383c;--accent-soft:#e2f1f1}
+body[data-accent="u2"]{--accent:#b45309;--accent-2:#7c3a06;--accent-soft:#fdefdc}
+/* ===== LANGUAGE TOGGLE ===== */
+body.lang-en [lang="ms"]{display:none!important}
+body.lang-ms [lang="en"]{display:none!important}
+.langtog{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden;background:var(--panel)}
+.langtog button{border:none;background:transparent;color:var(--muted);font-weight:800;font-size:.76rem;
+  padding:6px 11px;cursor:pointer;font-family:inherit;transition:.15s}
+.langtog button.on{background:var(--accent);color:#fff}
+/* ---------- Top bar ---------- */
+.topbar{position:fixed;top:0;left:0;right:0;z-index:50;height:56px;display:flex;align-items:center;
+  gap:12px;padding:0 16px;background:rgba(255,255,255,.9);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.brand{font-weight:800;letter-spacing:.3px;font-size:.95rem;color:var(--accent-2);white-space:nowrap}
+.brand span{color:var(--muted);font-weight:600}
+.progress-wrap{flex:1;height:7px;background:var(--line);border-radius:99px;overflow:hidden;min-width:40px}
+.progress-bar{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width .3s}
+.counter{font-variant-numeric:tabular-nums;font-size:.82rem;color:var(--muted);white-space:nowrap}
+.btn{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:10px;padding:7px 11px;
+  font-size:.8rem;font-weight:600;cursor:pointer;transition:.15s;white-space:nowrap}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn.solid{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn.solid:hover{background:var(--accent-2);color:#fff}
+.nav-arrows{display:flex;gap:6px}
+/* ---------- Deck / slides ---------- */
+.deck{max-width:var(--maxw);margin:0 auto;padding:78px 20px 120px}
+.slide{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);
+  padding:38px 40px;margin:0 0 26px;scroll-margin-top:70px}
+body.mode-slides .slide{display:none}
+body.mode-slides .slide.active{display:block;animation:fade .35s ease}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.slide-kicker{display:inline-flex;align-items:center;gap:8px;font-size:.72rem;font-weight:800;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--accent-2);background:var(--accent-soft);padding:5px 11px;border-radius:99px;margin-bottom:14px}
+h1{font-size:2.15rem;line-height:1.15;margin:.1em 0 .15em}
+h2{font-size:1.62rem;line-height:1.2;margin:.1em 0 .3em}
+h3{font-size:1.16rem;margin:1.3em 0 .4em;color:var(--ink)}
+h4{margin:.2em 0 .3em;font-size:1rem}
+.ms-tag{color:var(--muted);font-weight:600;font-style:italic;font-size:.96rem}
+.lead{font-size:1.08rem;color:var(--ink-soft)}
+p{margin:.6em 0}
+strong{color:var(--ink)}
+a{color:var(--accent-2);text-decoration:none;border-bottom:1px solid transparent}
+a:hover{border-bottom-color:var(--accent-2)}
+ul,ol{margin:.5em 0;padding-left:1.25em}
+li{margin:.32em 0}
+code{font-family:var(--mono);font-size:.88em;background:var(--accent-soft);color:var(--accent-2);padding:1px 6px;border-radius:5px}
+/* ---------- Cover ---------- */
+.cover{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;border:none}
+.cover .slide-kicker{background:rgba(255,255,255,.2);color:#fff}
+.cover h1,.cover h2,.cover h3,.cover strong{color:#fff}
+.cover .lead,.cover p{color:rgba(255,255,255,.95)}
+.cover em{color:#fff}
+.cover .meta-grid{display:flex;flex-wrap:wrap;gap:10px 26px;margin-top:22px;font-size:.9rem}
+.cover .meta-grid div{opacity:.97}
+.cover .meta-grid b{display:block;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;opacity:.78}
+/* ---------- Blocks ---------- */
+.block{border-radius:14px;padding:18px 20px;margin:16px 0;border:1px solid var(--line)}
+.tag{display:inline-flex;align-items:center;gap:7px;font-size:.7rem;font-weight:800;letter-spacing:.1em;
+  text-transform:uppercase;padding:4px 10px;border-radius:99px;margin-bottom:6px}
+.concept{background:var(--accent-soft);border-color:transparent}
+.concept .tag{background:var(--accent);color:#fff}
+.fact{background:var(--amber-soft);border-color:#f0d9ac}
+.fact .tag{background:var(--amber);color:#fff}
+.realworld{background:var(--green-soft);border-color:#bce6cd}
+.realworld .tag{background:var(--green);color:#fff}
+.practical{background:#f1edff;border-color:#d8ccfa}
+.practical .tag{background:var(--accent-2);color:#fff}
+.example{background:#fbfbfe;border-color:var(--line)}
+.example .tag{background:var(--ink-soft);color:#fff}
+.callout-vary{border-left:4px solid var(--accent);padding:2px 0 2px 14px;margin:10px 0;color:var(--ink-soft)}
+.callout-vary strong{color:var(--ink)}
+.owncase{background:#0f1836;color:#eef1ff;border:1px solid #26325f;border-radius:14px;padding:18px 20px;margin:16px 0}
+.owncase .tag{background:#f0b93c;color:#3a2a00}
+.owncase strong{color:#fff}
+.owncase em{color:#ffd977;font-style:normal;font-weight:700}
+/* ---------- Outcomes ---------- */
+.outcomes{display:grid;gap:12px;grid-template-columns:1fr}
+.outcome{display:flex;gap:14px;align-items:flex-start;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.outcome .num{flex:none;width:34px;height:34px;border-radius:9px;display:grid;place-items:center;font-weight:800;color:#fff;
+  background:linear-gradient(135deg,var(--accent),var(--accent-2))}
+.clo-chip{display:inline-block;font-size:.68rem;font-weight:800;color:#fff;background:var(--accent-2);
+  border-radius:6px;padding:2px 8px;margin-left:6px;letter-spacing:.04em}
+/* ---------- Columns / cards ---------- */
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:720px){.cols{grid-template-columns:1fr}}
+.figure{margin:18px 0;text-align:center}
+.figure svg{max-width:100%;height:auto;border-radius:12px;border:1px solid var(--line);background:#fff}
+.figcap{font-size:.85rem;color:var(--muted);margin-top:8px}
+.cardgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;margin:14px 0}
+.card{border:1px solid var(--line);border-radius:12px;padding:15px 16px;background:var(--panel);transition:.15s}
+.card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:var(--shadow)}
+.card .name{font-weight:700;display:flex;align-items:center;gap:8px}
+.card .use{font-size:.85rem;color:var(--muted);margin-top:5px}
+.card a{font-size:.82rem;font-weight:700}
+.pill{display:inline-block;font-size:.72rem;font-weight:700;padding:3px 10px;border-radius:99px;background:var(--accent-soft);color:var(--accent-2);margin:2px 4px 2px 0}
+.divider{height:1px;background:var(--line);margin:26px 0}
+/* ---------- Data table ---------- */
+.dtab{width:100%;border-collapse:collapse;margin:14px 0;font-size:.88rem}
+.dtab th{background:var(--accent-2);color:#fff;text-align:left;padding:9px 11px;font-size:.74rem;
+  text-transform:uppercase;letter-spacing:.07em}
+.dtab td{border-bottom:1px solid var(--line);padding:9px 11px;color:var(--ink-soft);vertical-align:top}
+.dtab tr:last-child td{border-bottom:none}
+.dtab td b{color:var(--ink)}
+.dtab code{font-size:.82em}
+/* ---------- Quiz ---------- */
+.quiz{background:var(--panel);border:2px solid var(--accent-soft);border-radius:14px;padding:20px 22px;margin:18px 0}
+.q{margin:16px 0}
+.q .stem{font-weight:600;margin-bottom:10px}
+.opt{display:block;width:100%;text-align:left;border:1px solid var(--line);background:#fff;border-radius:10px;
+  padding:11px 14px;margin:8px 0;cursor:pointer;font-size:.95rem;transition:.15s;font-family:inherit;color:var(--ink)}
+.opt:hover{border-color:var(--accent);background:var(--accent-soft)}
+.opt.correct{border-color:var(--green);background:var(--green-soft);font-weight:600;color:var(--green-ink)}
+.opt.wrong{border-color:var(--red);background:var(--red-soft);color:var(--red-ink)}
+.opt.correct::after{content:" ✓";font-weight:800}
+.opt.wrong::after{content:" ✕";font-weight:800}
+.opt:disabled{cursor:default}
+.feedback{display:none;margin-top:10px;padding:12px 14px;border-radius:10px;font-size:.92rem}
+.feedback.show{display:block;animation:fade .3s}
+.feedback.ok{background:var(--green-soft);border:1px solid #bfe7d1;color:var(--green-ink)}
+.feedback.no{background:var(--red-soft);border:1px solid #f2c4c4;color:var(--red-ink)}
+body.lang-en .feedback [lang="ms"],body.lang-ms .feedback [lang="en"]{display:none}
+/* ---------- Prompt Lab ---------- */
+.prompt-lab{border:1px solid var(--line);border-radius:16px;overflow:hidden;margin:18px 0;box-shadow:var(--shadow);background:var(--panel)}
+.pl-tabs{display:flex;flex-wrap:wrap;gap:6px;background:var(--accent-soft);padding:11px 13px;border-bottom:1px solid var(--line)}
+.pl-tab{border:1px solid var(--line);background:var(--panel);color:var(--ink-soft);border-radius:8px;padding:5px 12px;
+  font-size:.76rem;font-weight:800;cursor:pointer;font-family:var(--mono);transition:.15s}
+.pl-tab:hover{border-color:var(--accent);color:var(--accent-2)}
+.pl-tab.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.pl-panel{display:none}
+.pl-panel.on{display:block}
+.pl-head{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--accent-2);color:#fff;padding:13px 18px}
+.pl-title{font-weight:800;font-size:.94rem;letter-spacing:.02em}
+.pl-sub{font-size:.74rem;color:rgba(255,255,255,.86);font-weight:600}
+.copy-btn{border:1px solid rgba(255,255,255,.5);background:rgba(255,255,255,.14);color:#fff;border-radius:9px;padding:7px 14px;
+  font-size:.8rem;font-weight:700;cursor:pointer;transition:.15s;font-family:inherit;white-space:nowrap}
+.copy-btn:hover{background:#fff;color:var(--accent-2);border-color:#fff}
+.copy-btn.done{background:var(--green);border-color:var(--green);color:#fff}
+/* Light, high-legibility prompt surface. Readable on screen AND on paper: if a browser
+   drops backgrounds when printing, dark text on white still reads correctly. */
+.pl-prompt{margin:0;background:#fcfcfe;color:#151b2e;font-family:var(--mono);font-size:.88rem;line-height:1.78;
+  padding:18px 20px 18px 22px;white-space:pre-wrap;overflow-x:auto;tab-size:2;
+  border-left:5px solid var(--accent);border-bottom:1px solid var(--line);max-height:520px;overflow-y:auto}
+.pl-prompt .ph{background:#fff0c8;color:#67380a;font-weight:800;border:1px solid #e3bd68;
+  border-radius:5px;padding:0 5px;white-space:nowrap}
+.pl-prompt .kw{background:var(--accent-soft);color:var(--accent-2);font-weight:800;border-radius:5px;padding:0 5px}
+.pl-cols{display:grid;grid-template-columns:1fr 1fr;gap:0;background:#fff;border-top:1px solid var(--line)}
+@media(max-width:720px){.pl-cols{grid-template-columns:1fr}}
+.pl-anno{padding:16px 18px;border-right:1px solid var(--line)}
+@media(max-width:720px){.pl-anno{border-right:none;border-bottom:1px solid var(--line)}}
+.pl-anno h4,.pl-out h4{font-size:.74rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-2);margin:0 0 8px}
+.pl-anno ul{list-style:none;padding:0;margin:0}
+.pl-anno li{font-size:.86rem;color:var(--ink-soft);padding:6px 0;border-bottom:1px dashed var(--line);display:flex;gap:8px}
+.pl-anno li:last-child{border-bottom:none}
+.pl-anno .ln{flex:none;font-family:var(--mono);font-size:.72rem;font-weight:700;color:#fff;background:var(--accent);border-radius:5px;padding:1px 6px;height:fit-content;margin-top:1px}
+.pl-out{padding:16px 18px;background:#f7f9ff}
+.pl-outbox{font-size:.85rem;color:var(--ink-soft);background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.pl-outbox b{color:var(--ink)}
+.pl-note{background:#fff8e8;color:#5c3400;border-top:1px solid #f0d9ac;padding:11px 16px;font-size:.85rem}
+/* ---------- Footnotes ---------- */
+.fn{font-size:.64em;font-weight:800;vertical-align:super;line-height:0;color:var(--accent-2);
+  background:var(--accent-soft);border-radius:4px;padding:2px 5px;margin-left:2px;
+  text-decoration:none;border-bottom:none!important;white-space:nowrap}
+.fn:hover{background:var(--accent);color:#fff}
+.footnotes{margin-top:28px;padding-top:14px;border-top:2px solid var(--line)}
+.footnotes h4{font-size:.7rem;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin:0 0 10px}
+.footnotes ol{margin:0;padding-left:1.4em}
+.footnotes li{font-size:.82rem;line-height:1.55;color:var(--muted);margin:.45em 0;scroll-margin-top:74px}
+.footnotes li:target{background:var(--accent-soft);border-radius:6px;padding:2px 6px;margin-left:-6px}
+.footnotes li em{color:var(--ink-soft)}
+.footnotes a{font-weight:700;font-size:.95em}
+.pl-anno .fn{background:var(--accent);color:#fff}
+.pl-anno .fn:hover{background:var(--accent-2)}
+/* ---------- Resources ---------- */
+.reslist{list-style:none;padding:0;margin:8px 0}
+.reslist li{padding:10px 0;border-bottom:1px dashed var(--line)}
+.reslist .k{font-size:.66rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#fff;background:var(--accent-2);padding:2px 8px;border-radius:6px;margin-right:8px}
+.reslist .doi{display:inline-block;font-size:.78rem;font-weight:700;margin-left:4px}
+.reslist .fnum{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:6px;
+  background:var(--accent);color:#fff;font-size:.72rem;font-weight:800;margin-right:8px;vertical-align:middle}
+.reslist .cited{display:block;font-size:.72rem;color:var(--muted);font-style:italic;margin-top:3px}
+.reslist .doi::before{content:"🔗 "}
+/* ---------- Connectivism ---------- */
+.connections{background:linear-gradient(135deg,#0d2a2d,#123f45);color:#eef8f8;border:none}
+.connections .tag{background:rgba(255,255,255,.2);color:#fff}
+.connections h3,.connections strong{color:#fff}
+.connections a{color:#a8e0e4;border-bottom-color:transparent}
+.connections a:hover{border-bottom-color:#a8e0e4}
+.connections .cols p{color:#cfe8ea}
+.node-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+.node{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);border-radius:99px;padding:8px 15px;font-size:.85rem;color:#fff}
+footer.deckfoot{text-align:center;color:var(--muted);font-size:.8rem;padding:20px}
+@media print{.topbar{display:none}.deck{padding-top:10px}body.mode-slides .slide{display:block!important}
+.slide{break-inside:avoid;box-shadow:none}.pl-panel{display:block!important}.pl-prompt{max-height:none}
+.footnotes,.footnotes li{display:block!important}.footnotes li{display:list-item!important}
+.prompt-lab,.pl-prompt,.pl-note,.block,.card{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.pl-head{background:#fff!important;color:#111629!important;border-bottom:2px solid #111629}
+.pl-sub{color:#565d80!important}.copy-btn{display:none}
+.pl-tabs{background:#fff!important;border-bottom:1px solid #111629}
+.pl-tab{background:#fff!important;color:#111629!important;border-color:#111629!important}
+.connections,.owncase{background:#fff!important;color:#111629!important;border:2px solid #111629!important}
+.connections h3,.connections strong,.owncase strong,.connections a{color:#111629!important}
+.connections .cols p,.owncase em{color:#333a5c!important}
+.connections .tag,.owncase .tag{background:#111629!important;color:#fff!important}
+.node{background:#fff!important;color:#111629!important;border:1px solid #111629!important}}
+</style>
+</head>
+
+<body data-accent="u2" class="mode-slides lang-en">
+
+<div class="topbar">
+  <div class="brand"><a href="index.html" style="color:inherit;text-decoration:none" title="Course hub">SIM BUILDER</a> · <span>Unit 2 / 4</span></div>
+  <div class="progress-wrap"><div class="progress-bar" id="pbar"></div></div>
+  <span class="counter" id="counter">1 / 1</span>
+  <div class="langtog" title="Language / Bahasa">
+    <button data-l="en" class="on" onclick="setLang('en')">EN</button>
+    <button data-l="ms" onclick="setLang('ms')">BM</button>
+  </div>
+  <button class="btn" id="modeBtn" onclick="toggleMode()"><span lang="en">📖 Guide</span><span lang="ms">📖 Panduan</span></button>
+  <div class="nav-arrows">
+    <button class="btn" onclick="go(-1)"><span lang="en">‹ Prev</span><span lang="ms">‹ Seb</span></button>
+    <button class="btn solid" onclick="go(1)"><span lang="en">Next ›</span><span lang="ms">Seterusnya ›</span></button>
+  </div>
+</div>
+
+<main class="deck" id="deck">
+
+<section class="slide cover active">
+  <div class="slide-kicker"><span lang="en">Unit 2 of 4 · Self-paced</span><span lang="ms">Unit 2 daripada 4 · Kadar sendiri</span></div>
+  <h1 lang="en">Compiling your curriculum into a specification</h1>
+  <h1 lang="ms">Mengkompil kurikulum anda menjadi satu spesifikasi</h1>
+  <p class="lead" lang="en" style="max-width:680px">Your approved documents already contain almost everything the chain needs. This unit
+    turns them into <code>SPEC.md</code> and <code>BRIEFS.md</code> — and, along the way, usually finds an error nobody had noticed.</p>
+  <p class="lead" lang="ms" style="max-width:680px">Dokumen anda yang diluluskan sudah mengandungi hampir segala keperluan rantaian ini.
+    Unit ini menukarkannya menjadi <code>SPEC.md</code> dan <code>BRIEFS.md</code> — dan, sepanjang prosesnya, biasanya menemui ralat yang
+    tiada siapa perasan.</p>
+  <div class="meta-grid">
+    <div><b lang="en">Series</b><b lang="ms">Siri</b><span lang="en">SIM Builder · 4 units</span><span lang="ms">SIM Builder · 4 unit</span></div>
+    <div><b lang="en">Time</b><b lang="ms">Masa</b><span lang="en">≈ 25 min read + 60 min build</span><span lang="ms">≈ 25 min baca + 60 min bina</span></div>
+    <div><b lang="en">Focus outcome</b><b lang="ms">Hasil fokus</b><span lang="en">BO2 — Constructing the spec</span><span lang="ms">HPB2 — Membina spesifikasi</span></div>
+    <div><b lang="en">Prompts</b><b lang="ms">Gesaan</b><span>P1 · P2</span></div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-kicker"><span lang="en">Outcome-Based Learning · OBE</span><span lang="ms">Pembelajaran Berasaskan Hasil · OBE</span></div>
+  <h2 lang="en">What you will be able to do</h2>
+  <h2 lang="ms">Apa yang anda akan mampu lakukan</h2>
+  <p class="lead" lang="en">By the end of Unit 2 you will be able to:</p>
+  <p class="lead" lang="ms">Pada akhir Unit 2, anda akan mampu:</p>
+  <div class="outcomes">
+    <div class="outcome"><div class="num">1</div><div>
+      <span lang="en"><strong>Distinguish</strong> a specification from a summary, and explain why only the first can govern later generation.</span>
+      <span lang="ms"><strong>Membezakan</strong> spesifikasi daripada ringkasan, dan menjelaskan mengapa hanya yang pertama boleh mengawal penjanaan seterusnya.</span>
+      <span class="clo-chip">BO2 · C4</span></div></div>
+    <div class="outcome"><div class="num">2</div><div>
+      <span lang="en"><strong>Produce</strong> a one-page Course Spec Card from your own curriculum documents, with the learning-hours arithmetic reconciled or the discrepancy flagged.</span>
+      <span lang="ms"><strong>Menghasilkan</strong> Kad Spesifikasi Kursus satu halaman daripada dokumen kurikulum anda sendiri, dengan aritmetik jam pembelajaran diselaraskan atau percanggahannya ditandakan.</span>
+      <span class="clo-chip">BO2 · C6</span></div></div>
+    <div class="outcome"><div class="num">3</div><div>
+      <span lang="en"><strong>Expand</strong> your official topic list into a unit map and a set of briefs, and <strong>verify</strong> every citation in them before building anything.</span>
+      <span lang="ms"><strong>Mengembangkan</strong> senarai topik rasmi anda menjadi peta unit dan set ringkasan, dan <strong>mengesahkan</strong> setiap petikan di dalamnya sebelum membina apa-apa.</span>
+      <span class="clo-chip">BO2 · C6</span></div></div>
+  </div>
+  <div class="block concept" style="margin-top:18px">
+    <span class="tag"><span lang="en">How this is assessed · OBE alignment</span><span lang="ms">Cara ia ditaksir · Penjajaran OBE</span></span>
+    <p lang="en" style="margin:.3em 0 0">You finish this unit holding two of the four files, filled in for <strong>your own course</strong>.
+      Units 3 and 4 cannot proceed without them, so treat the Prompt Lab here as compulsory rather than illustrative.</p>
+    <p lang="ms" style="margin:.3em 0 0">Anda menamatkan unit ini dengan memegang dua daripada empat fail, terisi untuk <strong>kursus anda
+      sendiri</strong>. Unit 3 dan 4 tidak boleh diteruskan tanpanya, jadi anggap Makmal Gesaan di sini sebagai wajib, bukan sekadar
+      ilustrasi.</p>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-kicker"><span lang="en">The Hook · Why It Matters</span><span lang="ms">Pencetus · Mengapa Ia Penting</span></div>
+  <h2 lang="en">The portfolio was due in week 18. The course ended in week 12.</h2>
+  <h2 lang="ms">Portfolio perlu dihantar pada minggu 18. Kursus tamat pada minggu 12.</h2>
+  <p class="lead" lang="en">It was in the approved paperwork the whole time. The workload sheet scheduled a large portfolio in the
+    examination weeks, while every teaching topic sat inside a twelve-week block — so the material a student needed for their biggest
+    assessment stopped arriving six weeks before the assessment did. Nobody had noticed, because no single document showed both facts
+    on the same page. The moment those two tables were compiled into one specification, the gap was impossible to miss.</p>
+  <p class="lead" lang="ms">Ia berada dalam dokumen yang diluluskan sepanjang masa. Helaian beban kerja menjadualkan portfolio besar
+    pada minggu peperiksaan, sementara setiap topik pengajaran berada dalam blok dua belas minggu — jadi bahan yang diperlukan pelajar
+    untuk pentaksiran terbesar mereka berhenti tiba enam minggu sebelum pentaksiran itu. Tiada siapa perasan, kerana tiada satu dokumen
+    pun menunjukkan kedua-dua fakta pada halaman yang sama. Sebaik dua jadual itu dikompil menjadi satu spesifikasi, jurang itu mustahil
+    untuk dilepaskan.</p>
+  <div class="block fact">
+    <span class="tag"><span lang="en">Why the arithmetic is the point</span><span lang="ms">Mengapa aritmetik itu intinya</span></span>
+    <p lang="en" style="margin:.3em 0 0">Credit values in an outcome-based system are defined by <strong>notional learning hours</strong>:
+      the time a typical learner needs across contact, independent study and assessment. Quality frameworks therefore require that the
+      hours in your topic table and the hours in your assessment table add up to the credit you claim.<a class="fn" href="#fn1">1</a>
+      That single sum is the cheapest audit in curriculum design — and the one most often skipped, because the two halves live in
+      different tables.</p>
+    <p lang="ms" style="margin:.3em 0 0">Nilai kredit dalam sistem berasaskan hasil ditakrifkan oleh <strong>jam pembelajaran
+      nosional</strong>: masa yang diperlukan pelajar tipikal merentas pertemuan, pembelajaran kendiri dan pentaksiran. Justeru rangka
+      kerja jaminan kualiti menuntut agar jam dalam jadual topik dan jam dalam jadual pentaksiran anda berjumlah kepada kredit yang anda
+      dakwa.<a class="fn" href="#fn1">1</a> Jumlah tunggal itu ialah audit termurah dalam reka bentuk kurikulum — dan yang paling kerap
+      dilangkau, kerana dua bahagiannya berada dalam jadual berbeza.</p>
+  </div>
+  <div class="footnotes">
+    <h4><span lang="en">Notes</span><span lang="ms">Nota</span></h4>
+    <ol>
+      <li id="fn1" value="1">Malaysian Qualifications Agency. <em>Code of Practice for Programme Accreditation (COPPA)</em> and related
+        curriculum design guidelines. <a href="https://www.mqa.gov.my">mqa.gov.my</a></li>
+    </ol>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-kicker"><span lang="en">Core Concept · Konsep Teras</span><span lang="ms">Konsep Teras</span></div>
+  <h2 lang="en">Compile, don't summarise</h2>
+  <h2 lang="ms">Kompil, jangan ringkaskan</h2>
+  <div class="block concept">
+    <span class="tag"><span lang="en">Definition</span><span lang="ms">Takrifan</span></span>
+    <p lang="en" style="margin:.3em 0 0">A <strong>summary</strong> shortens a document while staying faithful to its shape. A
+      <strong>specification</strong> discards the document's shape entirely and reorganises its <em>content</em> into the fields a builder
+      needs, in a fixed order, with every value stated once. The Spec Card is a specification. That is why it can govern eleven later
+      sessions, and why a "please summarise my syllabus" prompt cannot.</p>
+    <p lang="ms" style="margin:.3em 0 0">Sebuah <strong>ringkasan</strong> memendekkan dokumen sambil setia kepada bentuknya. Sebuah
+      <strong>spesifikasi</strong> membuang bentuk dokumen itu sepenuhnya dan menyusun semula <em>kandungannya</em> ke dalam medan yang
+      diperlukan pembina, dalam susunan tetap, dengan setiap nilai dinyatakan sekali. Kad Spesifikasi ialah satu spesifikasi. Itulah
+      sebabnya ia boleh mengawal sebelas sesi berikutnya, dan sebabnya gesaan “tolong ringkaskan sukatan saya” tidak boleh.</p>
+  </div>
+  <div class="cols">
+    <div>
+      <h3 lang="en">❌ A summary of your syllabus</h3>
+      <h3 lang="ms">❌ Ringkasan sukatan anda</h3>
+      <p lang="en">Follows the source order, keeps the source headings, paraphrases the outcome statements, and silently drops whatever
+        looked repetitive. Ask it a direct question — “how many hours does topic 4 get?” — and you have to go back to the original.</p>
+      <p lang="ms">Mengikut susunan sumber, mengekalkan tajuk sumber, memparafrasa pernyataan hasil, dan senyap-senyap menggugurkan apa
+        yang kelihatan berulang. Tanya soalan langsung — “berapa jam untuk topik 4?” — dan anda terpaksa kembali kepada dokumen asal.</p>
+    </div>
+    <div>
+      <h3 lang="en">✅ A specification of your course</h3>
+      <h3 lang="ms">✅ Spesifikasi kursus anda</h3>
+      <p lang="en">Fixed fields in a fixed order. Outcomes quoted verbatim because they are approved language. Every hour accounted for
+        and summed. Contradictions surfaced as flags rather than smoothed away. Answers questions without reopening the source.</p>
+      <p lang="ms">Medan tetap dalam susunan tetap. Hasil pembelajaran dipetik verbatim kerana ia bahasa yang diluluskan. Setiap jam
+        diambil kira dan dijumlahkan. Percanggahan didedahkan sebagai penanda dan bukan dilicinkan. Menjawab soalan tanpa membuka semula
+        sumber.</p>
+    </div>
+  </div>
+  <div class="block practical">
+    <span class="tag"><span lang="en">The verbatim rule</span><span lang="ms">Peraturan verbatim</span></span>
+    <p lang="en" style="margin:.3em 0 0">One field must never be compiled at all: the course outcomes are <strong>quoted word for
+      word</strong>. They are approved language, and a paraphrase — however elegant — will not survive an audit that compares your
+      material against the document on file.<a class="fn" href="#fn2">2</a></p>
+    <p lang="ms" style="margin:.3em 0 0">Satu medan tidak boleh dikompil langsung: hasil pembelajaran kursus <strong>dipetik perkataan
+      demi perkataan</strong>. Ia bahasa yang diluluskan, dan parafrasa — betapa elegan sekalipun — tidak akan bertahan dalam audit yang
+      membandingkan bahan anda dengan dokumen yang difailkan.<a class="fn" href="#fn2">2</a></p>
+  </div>
+  <div class="footnotes">
+    <h4><span lang="en">Notes</span><span lang="ms">Nota</span></h4>
+    <ol>
+      <li id="fn2" value="2">Biggs, J. (1996). Enhancing teaching through constructive alignment. <em>Higher Education</em>, 32, 347–364.
+        <a href="https://doi.org/10.1007/BF00138871">doi.org/10.1007/BF00138871</a></li>
+    </ol>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-kicker"><span lang="en">Diagram · Rajah</span><span lang="ms">Rajah</span></div>
+  <h2 lang="en">Which document fills which field</h2>
+  <h2 lang="ms">Dokumen mana mengisi medan mana</h2>
+  <p class="lead" lang="en">Nothing in the Spec Card is invented. Every field is drawn from a document you already have — which is why a
+    field the AI cannot fill is a signal that your paperwork has a gap, not that the prompt failed.</p>
+  <p class="lead" lang="ms">Tiada apa dalam Kad Spesifikasi yang direka. Setiap medan diambil daripada dokumen yang sudah anda miliki —
+    sebab itulah medan yang AI tidak dapat isi ialah isyarat bahawa dokumen anda mempunyai jurang, bukan bahawa gesaan itu gagal.</p>
+  <div class="figure">
+  <svg viewBox="0 0 940 430" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A mapping from three source documents to the eight fields of the Course Spec Card.">
+    <defs><marker id="a2" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
+      <path d="M0,0 L9,4.5 L0,9 z" fill="#7c3a06"/></marker></defs>
+
+    <text x="20" y="24" font-size="13" font-weight="800" fill="#7c3a06" letter-spacing="1.4">YOUR DOCUMENTS</text>
+    <text x="600" y="24" font-size="13" font-weight="800" fill="#7c3a06" letter-spacing="1.4">SPEC.md FIELDS</text>
+
+    <rect x="18" y="46" width="196" height="78" rx="10" fill="#fdefdc" stroke="#b45309" stroke-width="1.5"/>
+    <text x="116" y="74" font-size="13" font-weight="800" fill="#111629" text-anchor="middle">Workload / SLT sheet</text>
+    <text x="116" y="95" font-size="11.5" fill="#333a5c" text-anchor="middle">hours per topic, per activity,</text>
+    <text x="116" y="112" font-size="11.5" fill="#333a5c" text-anchor="middle">per assessment</text>
+
+    <rect x="18" y="146" width="196" height="96" rx="10" fill="#fdefdc" stroke="#b45309" stroke-width="1.5"/>
+    <text x="116" y="174" font-size="13" font-weight="800" fill="#111629" text-anchor="middle">Syllabus table</text>
+    <text x="116" y="195" font-size="11.5" fill="#333a5c" text-anchor="middle">outcomes, topics, subtopics,</text>
+    <text x="116" y="212" font-size="11.5" fill="#333a5c" text-anchor="middle">assessment weights,</text>
+    <text x="116" y="229" font-size="11.5" fill="#333a5c" text-anchor="middle">delivery mode</text>
+
+    <rect x="18" y="264" width="196" height="78" rx="10" fill="#fdefdc" stroke="#b45309" stroke-width="1.5"/>
+    <text x="116" y="292" font-size="13" font-weight="800" fill="#111629" text-anchor="middle">Application form</text>
+    <text x="116" y="313" font-size="11.5" fill="#333a5c" text-anchor="middle">justification, audience,</text>
+    <text x="116" y="330" font-size="11.5" fill="#333a5c" text-anchor="middle">resources, references</text>
+
+    <rect x="286" y="150" width="150" height="88" rx="12" fill="#b45309" stroke="#7c3a06" stroke-width="1.5"/>
+    <text x="361" y="186" font-size="14" font-weight="800" fill="#ffffff" text-anchor="middle">P1</text>
+    <text x="361" y="209" font-size="12" fill="#fdefdc" text-anchor="middle">compile</text>
+    <text x="361" y="228" font-size="11" fill="#fdefdc" text-anchor="middle">(never summarise)</text>
+
+    <path d="M218,85 C250,85 254,170 282,178" fill="none" stroke="#7c3a06" stroke-width="2" marker-end="url(#a2)"/>
+    <path d="M218,194 L282,194" fill="none" stroke="#7c3a06" stroke-width="2" marker-end="url(#a2)"/>
+    <path d="M218,303 C250,303 254,218 282,210" fill="none" stroke="#7c3a06" stroke-width="2" marker-end="url(#a2)"/>
+
+    <line x1="440" y1="194" x2="586" y2="194" stroke="#7c3a06" stroke-width="2.5" marker-end="url(#a2)"/>
+
+    <rect x="592" y="42" width="330" height="308" rx="12" fill="#ffffff" stroke="#b45309" stroke-width="1.5"/>
+    <rect x="606" y="56" width="302" height="28" rx="7" fill="#fdefdc" stroke="#b45309"/>
+    <text x="618" y="75" font-size="12" font-weight="800" fill="#7c3a06">Identity</text>
+    <text x="900" y="75" font-size="10.5" fill="#333a5c" text-anchor="end">form + syllabus</text>
+    <rect x="606" y="90" width="302" height="28" rx="7" fill="#fdefdc" stroke="#b45309"/>
+    <text x="618" y="109" font-size="12" font-weight="800" fill="#7c3a06">Audience</text>
+    <text x="900" y="109" font-size="10.5" fill="#333a5c" text-anchor="end">form</text>
+    <rect x="606" y="124" width="302" height="28" rx="7" fill="#0f1836" stroke="#26325f"/>
+    <text x="618" y="143" font-size="12" font-weight="800" fill="#ffffff">CLOs — quoted verbatim</text>
+    <text x="900" y="143" font-size="10.5" fill="#c3ceff" text-anchor="end">syllabus</text>
+    <rect x="606" y="158" width="302" height="28" rx="7" fill="#fdefdc" stroke="#b45309"/>
+    <text x="618" y="177" font-size="12" font-weight="800" fill="#7c3a06">Assessment map</text>
+    <text x="900" y="177" font-size="10.5" fill="#333a5c" text-anchor="end">syllabus + SLT</text>
+    <rect x="606" y="192" width="302" height="28" rx="7" fill="#fdefdc" stroke="#b45309"/>
+    <text x="618" y="211" font-size="12" font-weight="800" fill="#7c3a06">Learning-time table</text>
+    <text x="900" y="211" font-size="10.5" fill="#333a5c" text-anchor="end">SLT sheet</text>
+    <rect x="606" y="226" width="302" height="28" rx="7" fill="#fdefdc" stroke="#b45309"/>
+    <text x="618" y="245" font-size="12" font-weight="800" fill="#7c3a06">Content spine</text>
+    <text x="900" y="245" font-size="10.5" fill="#333a5c" text-anchor="end">syllabus</text>
+    <rect x="606" y="260" width="302" height="28" rx="7" fill="#fdefdc" stroke="#b45309"/>
+    <text x="618" y="279" font-size="12" font-weight="800" fill="#7c3a06">Constraints</text>
+    <text x="900" y="279" font-size="10.5" fill="#333a5c" text-anchor="end">form + policy</text>
+    <rect x="606" y="294" width="302" height="28" rx="7" fill="#e4f6ec" stroke="#137a4b"/>
+    <text x="618" y="313" font-size="12" font-weight="800" fill="#0c5233">Terminology lock</text>
+    <text x="900" y="313" font-size="10.5" fill="#0c5233" text-anchor="end">you decide</text>
+
+    <rect x="286" y="266" width="150" height="76" rx="10" fill="#fcebeb" stroke="#c23434" stroke-width="1.5"/>
+    <text x="361" y="292" font-size="12" font-weight="800" fill="#8a1f1f" text-anchor="middle">hours don't sum?</text>
+    <text x="361" y="313" font-size="11.5" fill="#8a1f1f" text-anchor="middle">flag it — never</text>
+    <text x="361" y="330" font-size="11.5" fill="#8a1f1f" text-anchor="middle">silently adjust</text>
+  </svg>
+  <div class="figcap"><span lang="en">Two fields behave differently from the rest: the outcomes are copied verbatim, and the terminology
+    lock is the one thing you author yourself.</span><span lang="ms">Dua medan berkelakuan berbeza daripada yang lain: hasil pembelajaran
+    disalin verbatim, dan kunci istilah ialah satu-satunya perkara yang anda karang sendiri.</span></div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-kicker"><span lang="en">Example with Variations · Contoh &amp; Variasi</span><span lang="ms">Contoh &amp; Variasi</span></div>
+  <h2 lang="en">Expanding six topics into twelve units</h2>
+  <h2 lang="ms">Mengembangkan enam topik menjadi dua belas unit</h2>
+  <div class="block example">
+    <span class="tag"><span lang="en">Base case</span><span lang="ms">Kes asas</span></span>
+    <p lang="en" style="margin:.3em 0 0">An approved syllabus lists <strong>six topics</strong>; the timetable has <strong>twelve teaching
+      weeks</strong>. They do not divide evenly, and they are not supposed to: topic 1 is an introduction that needs one week, while topic 4
+      carries six hours of contact time and clearly needs three. The map is where you make that judgement explicitly — unit by unit, with
+      the focus outcome and the hours named — instead of leaving it to be improvised twelve times.</p>
+    <p lang="ms" style="margin:.3em 0 0">Sukatan yang diluluskan menyenaraikan <strong>enam topik</strong>; jadual waktu mempunyai
+      <strong>dua belas minggu pengajaran</strong>. Ia tidak terbahagi sama rata, dan memang tidak sepatutnya: topik 1 ialah pengenalan yang
+      memerlukan satu minggu, manakala topik 4 membawa enam jam masa pertemuan dan jelas memerlukan tiga. Peta itulah tempat anda membuat
+      pertimbangan tersebut secara eksplisit — unit demi unit, dengan hasil fokus dan jamnya dinamakan — dan bukan membiarkannya
+      dikarang secara spontan dua belas kali.</p>
+  </div>
+  <div class="callout-vary">
+    <strong lang="en">Variation A — a topic that must split.</strong>
+    <strong lang="ms">Variasi A — topik yang mesti dipecahkan.</strong>
+    <span lang="en"> Six contact hours on one topic becomes three units. Give each a distinct focus outcome and a distinct framework, or
+      learners experience it as the same lesson taught three times. <strong>Splitting a topic is a teaching decision, not a division sum.</strong></span>
+    <span lang="ms"> Enam jam pertemuan bagi satu topik menjadi tiga unit. Beri setiap satu hasil fokus dan kerangka yang berbeza, atau
+      pelajar mengalaminya sebagai pelajaran sama yang diajar tiga kali. <strong>Memecahkan topik ialah keputusan pengajaran, bukan
+      pembahagian aritmetik.</strong></span>
+  </div>
+  <div class="callout-vary">
+    <strong lang="en">Variation B — a unit that bridges two topics.</strong>
+    <strong lang="ms">Variasi B — unit yang merentasi dua topik.</strong>
+    <span lang="en"> Some weeks legitimately serve the end of one topic and the start of the next. Record both in the map, and make the
+      bridging explicit in that unit's backward and forward links — otherwise the network shows a break where the teaching does not.</span>
+    <span lang="ms"> Sesetengah minggu memang melayani penghujung satu topik dan permulaan topik seterusnya. Rekodkan kedua-duanya dalam
+      peta, dan jadikan perentasan itu jelas dalam pautan ke belakang dan ke hadapan unit tersebut — jika tidak, rangkaian menunjukkan
+      keretakan yang tidak wujud dalam pengajaran.</span>
+  </div>
+  <div class="callout-vary">
+    <strong lang="en">Variation C — an outcome that only one unit serves.</strong>
+    <strong lang="ms">Variasi C — hasil pembelajaran yang hanya satu unit melayaninya.</strong>
+    <span lang="en"> If a course outcome is the focus of a single unit, it is under-taught relative to its assessment weight. The map makes
+      this visible before you build. <strong>The taxonomy level of the outcome also sets what the self-check can be</strong>: a synthesis
+      outcome cannot be evidenced by multiple choice.<a class="fn" href="#fn3">3</a></span>
+    <span lang="ms"> Jika satu hasil pembelajaran kursus hanya menjadi fokus satu unit, ia kurang diajar berbanding pemberat
+      pentaksirannya. Peta menjadikan ini kelihatan sebelum anda membina. <strong>Aras taksonomi hasil itu juga menentukan bentuk semakan
+      kendiri</strong>: hasil pada aras sintesis tidak boleh dibuktikan melalui aneka pilihan.<a class="fn" href="#fn3">3</a></span>
+  </div>
+  <div class="footnotes">
+    <h4><span lang="en">Notes</span><span lang="ms">Nota</span></h4>
+    <ol>
+      <li id="fn3" value="3">Anderson, L. W. &amp; Krathwohl, D. R. (2001). <em>A Taxonomy for Learning, Teaching, and Assessing:
+        A Revision of Bloom's Taxonomy of Educational Objectives.</em> Longman.
+        <a href="https://search.worldcat.org/search?q=A+Taxonomy+for+Learning+Teaching+and+Assessing+Anderson+Krathwohl">WorldCat</a></li>
+    </ol>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-kicker"><span lang="en">Interactive Prompt Lab · Makmal Gesaan</span><span lang="ms">Makmal Gesaan Interaktif</span></div>
+  <h2 lang="en">Compile your own curriculum</h2>
+  <h2 lang="ms">Kompil kurikulum anda sendiri</h2>
+  <p class="lead" lang="en">Run <strong>P1</strong> first, read what comes back, fix it, and only then run <strong>P2</strong>. Attach your
+    real documents. If your tool cannot take attachments, paste the extracted tables as plain text — they are small.</p>
+  <p class="lead" lang="ms">Jalankan <strong>P1</strong> dahulu, baca apa yang dipulangkan, betulkannya, dan barulah jalankan
+    <strong>P2</strong>. Lampirkan dokumen sebenar anda. Jika alat anda tidak menerima lampiran, tampal jadual yang diekstrak sebagai
+    teks biasa — saiznya kecil.</p>
+  <div class="prompt-lab">
+    <div class="pl-tabs">
+      <button class="pl-tab on" onclick="showP(this,'p1')">P1 spec card</button>
+      <button class="pl-tab" onclick="showP(this,'p2')">P2 briefs</button>
+    </div>
+    <div class="pl-panel on" id="p1">
+      <div class="pl-head">
+        <div><div class="pl-title">📋 P1 — Course Spec Card</div>
+          <div class="pl-sub">Compress your curriculum documents into one page. Run once.</div></div>
+        <button class="copy-btn" onclick="copyPrompt(this)"><span lang="en">📋 Copy prompt</span><span lang="ms">📋 Salin gesaan</span></button>
+      </div>
+      <pre class="pl-prompt"><code>TASK: Compress the attached curriculum documents into a single COURSE SPEC CARD.
+
+This card will be pasted at the start of every future session INSTEAD of the
+source documents, so it must be self-sufficient and under 700 words. Discard
+anything not needed to author teaching material: approval signatures, form
+instructions, grade-analysis sheets, empty rows.
+
+Output exactly this structure, as markdown:
+
+# SPEC - <span class="ph">[COURSE CODE]</span>
+## Identity
+Code . title (all languages) . credits . status . provider . notional learning
+hours . number of units . delivery mode and the face-to-face : online :
+independent ratio.
+
+## Audience
+Who they are, prior knowledge, what they will NOT have, interface language(s).
+
+## CLOs
+Per CLO: number, taxonomy code, full statement in all languages, and the
+assessment instrument(s) that evidence it.
+
+## Assessment map
+Table: Instrument | Weight % | CLO(s) | Learning hours | Timing.
+Weights must total 100.
+
+## Learning-time allocation
+Table: Topic | CLO | contact hours | independent hours | total. Then the grand
+total, which MUST reconcile with the notional hours. If it does not reconcile,
+add a heading "!! DISCREPANCY" and show the arithmetic. Do not silently adjust.
+
+## Content spine
+The official topic list, in order, all languages, with subtopics.
+
+## Constraints
+Regional/contextual lens . language requirements . the own-case rule . mandated
+software or resources . anything the accrediting body requires.
+
+## Terminology lock
+The exact rendering of the 10-15 key technical terms in each language, so
+wording stays identical across all units. Format: term (L1) = term (L2).
+
+RULES
+- Quote official CLO wording verbatim. Do not paraphrase approved language.
+- Where a source is ambiguous or wrong, flag [CHECK: ...] rather than guessing.
+- Output the card only.</code></pre>
+      <div class="pl-cols">
+        <div class="pl-anno">
+          <h4><span lang="en">Why it is shaped this way</span><span lang="ms">Mengapa ia berbentuk begini</span></h4>
+          <ul>
+            <li><span class="ln">Cut</span><span><span lang="en">Naming the rubbish explicitly (signatures, empty rows) stops the model treating form boilerplate as course content.</span><span lang="ms">Menamakan sampah secara jelas (tandatangan, baris kosong) menghalang model menganggap teks borang sebagai kandungan kursus.</span></span></li>
+            <li><span class="ln">Verb</span><span><span lang="en">"Quote verbatim" protects approved CLO wording. A paraphrased outcome will not survive an accreditation audit.</span><span lang="ms">"Petik secara verbatim" melindungi rumusan HPK yang diluluskan. Hasil pembelajaran yang diparafrasa tidak akan bertahan dalam audit akreditasi.</span></span></li>
+            <li><span class="ln">Sum</span><span><span lang="en">Forcing the arithmetic to be shown surfaces real errors in the source workload sheet — which are common.</span><span lang="ms">Memaksa aritmetik ditunjukkan mendedahkan ralat sebenar dalam helaian beban kerja sumber — yang memang lazim.</span></span></li>
+            <li><span class="ln">Lock</span><span><span lang="en">The terminology lock is what stops unit 9 inventing a new translation for a term fixed in unit 2.</span><span lang="ms">Kunci istilah inilah yang menghalang unit 9 mencipta terjemahan baharu bagi istilah yang ditetapkan pada unit 2.</span></span></li>
+          </ul>
+        </div>
+        <div class="pl-out">
+          <h4><span lang="en">Expected output (illustrative)</span><span lang="ms">Output dijangka (ilustrasi)</span></h4>
+          <div class="pl-outbox">
+            <b># SPEC — ABCD1234</b><br>
+            <b>Identity:</b> 2.0 credits · 80 notional hours · 12 units · 0% physical / 100% online + independent<br>
+            <b>CLO1 (C4):</b> Comparing … <span style="color:#565d80">(verbatim)</span><br>
+            <b>Assessment:</b> Report 10 · Portfolio 40 · Presentations 50 = 100 ✓<br>
+            <b>!! DISCREPANCY:</b> topics sum to 47.5 h, assessment 32.5 h, total 80 ✓
+          </div>
+        </div>
+      </div>
+      <div class="pl-note"><span lang="en">💡 Read this output yourself before continuing. An error here propagates into every unit
+        you build afterwards.</span><span lang="ms">💡 Baca sendiri hasil ini sebelum meneruskan. Ralat di sini merebak ke setiap unit
+        yang anda bina selepasnya.</span></div>
+    </div>
+    <div class="pl-panel" id="p2">
+      <div class="pl-head">
+        <div><div class="pl-title">🗺️ P2 — Week Map &amp; Content Briefs</div>
+          <div class="pl-sub">The single most valuable file in the project. Run once, verify hard.</div></div>
+        <button class="copy-btn" onclick="copyPrompt(this)"><span lang="en">📋 Copy prompt</span><span lang="ms">📋 Salin gesaan</span></button>
+      </div>
+      <pre class="pl-prompt"><code>[Paste P0, then SPEC.md, then:]
+
+TASK: Produce the content brief document for all <span class="ph">[N]</span> units.
+
+STEP 1 - THE MAP
+Expand the official topics into <span class="ph">[N]</span> units. Some topics span several units;
+some units bridge two topics. Output a table:
+Unit | Title (L1) | Title (L2) | Official topic served | Focus CLO | Hours
+
+Sequencing rules:
+- Unit 1 is the hub every later unit links back to. It establishes the core
+  framework and the learner's own case.
+- The final unit is a synthesis capstone linking to ALL prior units and to the
+  learner's practice beyond the course.
+- Nothing may be used before it is introduced. State the dependency chain.
+- Sum the hours and confirm they reconcile with SPEC.
+
+STEP 2 - THE BRIEFS
+For EACH unit write 150-200 words in this exact shape:
+
+## UNIT n - [Title]
+Second-language title. Focus CLO.
+Outcomes: three, each with its taxonomy verb and CLO mapping.
+Hook: one real, verifiable, dated story, plus one factual anchor (a statistic,
+  law or named framework) with its source.
+Core concept: the definition to teach, plus the ONE contrast pair that sharpens
+  it (X vs not-X).
+Diagram: what the visual must show - the entities and the relation between them.
+Example + variations: one base scenario, three variations each changing ONE
+  variable.
+Activity: what the learner does with their OWN case, and with what tool.
+Applications: four real domains + the required local instance.
+Framework: a named, memorable, portable checklist (3-5 steps) they keep.
+Self-check: the three concepts the questions must test.
+Tools: four real, currently-live tools with URLs.
+Sources: four real citations with DOI / arXiv / official URL. Mark [VERIFY] if
+  you are not certain.
+Network: earlier units it connects back to, later units it feeds, and the
+  specific assessment it ties to.
+
+GLOBAL CONSTRAINTS
+- No hook story, case, tool or source may be the primary item in two units.
+  Keep a running check as you write.
+- Every CLO must be the focus of at least two units.
+- Every assessment instrument must be seeded in at least three units.
+- Assign each unit a distinct accent colour triple (accent, accent-2,
+  accent-soft). Accents dark enough for white text; softs light enough for
+  dark text. Output as a list.
+
+Output the map, then the briefs, then the accent list. Nothing else.</code></pre>
+      <div class="pl-cols">
+        <div class="pl-anno">
+          <h4><span lang="en">Why it is shaped this way</span><span lang="ms">Mengapa ia berbentuk begini</span></h4>
+          <ul>
+            <li><span class="ln">Map</span><span><span lang="en">Official topics rarely map one-to-one onto teaching weeks. Making the expansion explicit is where most curriculum-to-timetable errors get caught.</span><span lang="ms">Topik rasmi jarang dipetakan satu-ke-satu kepada minggu pengajaran. Menjadikan pengembangan ini eksplisit ialah tempat kebanyakan ralat kurikulum-ke-jadual dikesan.</span></span></li>
+            <li><span class="ln">Hub</span><span><span lang="en">Declaring unit 1 as the hub and the last as the capstone gives the network a shape. Without it you get twelve unconnected islands.</span><span lang="ms">Mengisytiharkan unit 1 sebagai hab dan unit akhir sebagai kemuncak memberi rangkaian itu bentuk. Tanpanya anda dapat dua belas pulau tak berhubung.</span></span></li>
+            <li><span class="ln">Dup</span><span><span lang="en">The no-duplicates rule is enforced <em>here</em>, while all units are in view. It cannot be enforced later, one session at a time.</span><span lang="ms">Peraturan tiada pendua dikuatkuasakan <em>di sini</em>, semasa semua unit kelihatan. Ia tidak boleh dikuatkuasakan kemudian, satu sesi pada satu masa.</span></span></li>
+            <li><span class="ln">Seed</span><span><span lang="en">"Seeded in at least three units" is what turns an assessment from a bolt-on into something the course actually builds toward.</span><span lang="ms">"Disemai dalam sekurang-kurangnya tiga unit" mengubah pentaksiran daripada tempelan kepada sesuatu yang benar-benar dibina oleh kursus.</span></span></li>
+          </ul>
+        </div>
+        <div class="pl-out">
+          <h4><span lang="en">Expected output (illustrative)</span><span lang="ms">Output dijangka (ilustrasi)</span></h4>
+          <div class="pl-outbox">
+            <b>Unit 4 — Bias, Fairness &amp; Social Inequality</b><br>
+            <b>Focus:</b> CLO1 · <b>Hook:</b> Amazon's scrapped recruiting tool (2018)<br>
+            <b>Framework:</b> the Four Fairness Questions<br>
+            <b>Sources:</b> Buolamwini &amp; Gebru 2018 · Obermeyer 2019 [VERIFY] · …<br>
+            <b>Network:</b> back to U2 (opacity), forward to U5 (accountability)
+          </div>
+        </div>
+      </div>
+      <div class="pl-note"><span lang="en">💡 Check every citation in this file before building a single unit on top of it. This is the
+        cheapest possible moment to catch a fabricated source.</span><span lang="ms">💡 Semak setiap petikan dalam fail ini sebelum membina
+        satu unit pun di atasnya. Inilah saat termurah untuk menangkap sumber palsu.</span></div>
+    </div>
+  </div>
+  <div class="block owncase">
+    <span class="tag"><span lang="en">Stop here and actually run it</span><span lang="ms">Berhenti di sini dan jalankan sungguh-sungguh</span></span>
+    <p lang="en" style="margin:.2em 0 0">Do not read on until <code>SPEC.md</code> exists for <em>your</em> course. Two things to look for
+      the moment it returns: a <strong>hours discrepancy</strong> you did not know about, and any <strong>[CHECK]</strong> flag — both are
+      the method earning its keep on the very first run.</p>
+    <p lang="ms" style="margin:.2em 0 0">Jangan teruskan membaca sehingga <code>SPEC.md</code> wujud untuk kursus <em>anda</em>. Dua perkara
+      yang perlu dicari sebaik ia dipulangkan: <strong>percanggahan jam</strong> yang anda tidak sedari, dan sebarang penanda
+      <strong>[CHECK]</strong> — kedua-duanya ialah kaedah ini membuktikan nilainya pada larian pertama.</p>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-kicker"><span lang="en">Real-World Applications · Aplikasi Dunia Sebenar</span><span lang="ms">Aplikasi Dunia Sebenar</span></div>
+  <h2 lang="en">What a spec card is good for besides generation</h2>
+  <h2 lang="ms">Kegunaan kad spesifikasi selain penjanaan</h2>
+  <div class="cardgrid">
+    <div class="card"><div class="name">🧾 <span lang="en">Committee papers</span><span lang="ms">Kertas jawatankuasa</span></div>
+      <div class="use"><span lang="en">The card is already the one-page course summary every committee asks for, with the hours reconciled.
+        Paste it in rather than writing a new one.</span><span lang="ms">Kad itu sudah pun ringkasan kursus satu halaman yang diminta setiap
+        jawatankuasa, dengan jamnya diselaraskan. Tampal sahaja, jangan tulis yang baharu.</span></div></div>
+    <div class="card"><div class="name">🤝 <span lang="en">Handing a course over</span><span lang="ms">Menyerahkan kursus</span></div>
+      <div class="use"><span lang="en">A new lecturer reads the card in five minutes and knows the outcomes, the weights, the workload and the
+        agreed terminology. No shadowing required.</span><span lang="ms">Pensyarah baharu membaca kad itu dalam lima minit dan tahu hasil
+        pembelajaran, pemberat, beban kerja dan istilah yang dipersetujui. Tiada bayangan diperlukan.</span></div></div>
+    <div class="card"><div class="name">🔁 <span lang="en">Comparing courses</span><span lang="ms">Membandingkan kursus</span></div>
+      <div class="use"><span lang="en">Fixed fields make two courses comparable at a glance — which is how a programme spots duplicated
+        outcomes or a skill nobody teaches.</span><span lang="ms">Medan tetap menjadikan dua kursus boleh dibanding sekali pandang — begitulah
+        sesebuah program mengesan hasil yang bertindih atau kemahiran yang tiada siapa ajar.</span></div></div>
+    <div class="card"><div class="name">🌐 <span lang="en">Translation consistency</span><span lang="ms">Konsistensi terjemahan</span></div>
+      <div class="use"><span lang="en">The terminology lock settles every key term once, in both languages, so unit 9 cannot invent a new
+        rendering of a term fixed in unit 2.</span><span lang="ms">Kunci istilah menetapkan setiap istilah utama sekali, dalam kedua-dua bahasa,
+        supaya unit 9 tidak boleh mencipta terjemahan baharu bagi istilah yang ditetapkan pada unit 2.</span></div></div>
+  </div>
+  <div class="block realworld">
+    <span class="tag"><span lang="en">Local lens · Malaysia</span><span lang="ms">Lensa tempatan · Malaysia</span></span>
+    <p lang="en" style="margin:.3em 0 0">Malaysian course owners are unusually well placed here: the <strong>SLT sheet</strong> and
+      <strong>Table 4</strong> of the new-course application are, between them, already a machine-readable specification of outcomes,
+      topics, activities and workload. Most of P1's work is reorganisation, not invention. The framework's insistence that notional hours
+      reconcile with credits is exactly the constraint that keeps generated material honest. Treat the SLT sheet not as paperwork to be
+      survived but as the <em>source of truth</em> the whole chain compiles from.</p>
+    <p lang="ms" style="margin:.3em 0 0">Pemilik kursus di Malaysia berada pada kedudukan yang sangat baik di sini: <strong>helaian SLT</strong>
+      dan <strong>Jadual 4</strong> dalam permohonan kursus baharu, secara bersama, sudah pun menjadi spesifikasi lengkap bagi hasil
+      pembelajaran, topik, aktiviti dan beban kerja. Kebanyakan kerja P1 ialah penyusunan semula, bukan penciptaan. Desakan rangka kerja
+      itu supaya jam nosional selaras dengan kredit ialah kekangan yang tepat untuk memastikan bahan yang dijana kekal jujur. Anggap
+      helaian SLT bukan sebagai kertas kerja yang perlu dilalui tetapi sebagai <em>sumber kebenaran</em> yang menjadi asas seluruh
+      rantaian ini.</p>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-kicker"><span lang="en">Practical Framework · Kerangka Amali</span><span lang="ms">Kerangka Amali</span></div>
+  <h2 lang="en">Five tests of a usable spec card</h2>
+  <h2 lang="ms">Lima ujian bagi kad spesifikasi yang berguna</h2>
+  <p class="lead" lang="en">Apply these to the card P1 just returned. Any test it fails, fix by hand before you run P2 — an error here is
+    copied into every unit you build afterwards.</p>
+  <p class="lead" lang="ms">Terapkan ini pada kad yang baru dipulangkan P1. Mana-mana ujian yang gagal, betulkan secara manual sebelum anda
+    menjalankan P2 — ralat di sini disalin ke dalam setiap unit yang anda bina selepasnya.</p>
+  <div class="outcomes">
+    <div class="outcome"><div class="num">1</div><div>
+      <span lang="en"><strong>The sum test.</strong> Do the topic hours plus the assessment hours equal the notional total, and does the total match the credit? Show the arithmetic; do not accept a bare number.</span>
+      <span lang="ms"><strong>Ujian jumlah.</strong> Adakah jam topik campur jam pentaksiran sama dengan jumlah nosional, dan adakah jumlah itu sepadan dengan kredit? Tunjukkan aritmetiknya; jangan terima nombor kosong.</span></div></div>
+    <div class="outcome"><div class="num">2</div><div>
+      <span lang="en"><strong>The verbatim test.</strong> Are the course outcomes word-for-word identical to the approved document? Compare them character by character, not by impression.</span>
+      <span lang="ms"><strong>Ujian verbatim.</strong> Adakah hasil pembelajaran kursus sama perkataan demi perkataan dengan dokumen yang diluluskan? Bandingkan aksara demi aksara, bukan mengikut tanggapan.</span></div></div>
+    <div class="outcome"><div class="num">3</div><div>
+      <span lang="en"><strong>The evidence test.</strong> Does every assessment instrument name at least one outcome, and every outcome name at least one instrument? An orphan on either side is a design fault, not a formatting one.</span>
+      <span lang="ms"><strong>Ujian bukti.</strong> Adakah setiap instrumen pentaksiran menamakan sekurang-kurangnya satu hasil, dan setiap hasil menamakan sekurang-kurangnya satu instrumen? Yatim di mana-mana pihak ialah kecacatan reka bentuk, bukan kecacatan format.</span></div></div>
+    <div class="outcome"><div class="num">4</div><div>
+      <span lang="en"><strong>The stranger test.</strong> Could a colleague who has never seen your course build a unit from this card alone? If they would have to ask you a question, the answer belongs in the card.</span>
+      <span lang="ms"><strong>Ujian orang asing.</strong> Bolehkah rakan sekerja yang tidak pernah melihat kursus anda membina satu unit daripada kad ini sahaja? Jika mereka terpaksa bertanya kepada anda, jawapannya sepatutnya berada dalam kad itu.</span></div></div>
+    <div class="outcome"><div class="num">5</div><div>
+      <span lang="en"><strong>The one-page test.</strong> Is it short enough that you will actually keep pasting it? A card that grows past a page stops being pasted, and the method quietly stops working.</span>
+      <span lang="ms"><strong>Ujian satu halaman.</strong> Adakah ia cukup pendek sehingga anda benar-benar akan terus menampalnya? Kad yang melebihi satu halaman berhenti ditampal, dan kaedah ini senyap-senyap berhenti berfungsi.</span></div></div>
+  </div>
+  <div class="block practical">
+    <span class="tag"><span lang="en">On flags</span><span lang="ms">Tentang penanda</span></span>
+    <p lang="en" style="margin:.3em 0 0">A <code>[CHECK]</code> or a discrepancy heading in the returned card is <strong>a success, not a
+      failure</strong>. It means the model refused to smooth over a contradiction in your paperwork. Resolve it as a curriculum decision —
+      then record the decision, because you will be asked about it later.</p>
+    <p lang="ms" style="margin:.3em 0 0">Penanda <code>[CHECK]</code> atau tajuk percanggahan dalam kad yang dipulangkan ialah
+      <strong>kejayaan, bukan kegagalan</strong>. Ia bermakna model enggan melicinkan percanggahan dalam dokumen anda. Selesaikannya
+      sebagai keputusan kurikulum — kemudian rekodkan keputusan itu, kerana anda akan ditanya mengenainya kelak.</p>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-kicker"><span lang="en">Formative Check · Semakan Formatif</span><span lang="ms">Semakan Formatif</span></div>
+  <h2 lang="en">Quick check — instant feedback</h2>
+  <h2 lang="ms">Semakan pantas — maklum balas segera</h2>
+  <p class="ms-tag"><span lang="en">No grade, just for learning.</span><span lang="ms">Tiada markah — hanya untuk pembelajaran.</span></p>
+  <div class="quiz">
+    <div class="q" data-answer="1">
+      <div class="stem"><span lang="en">1. P1 returns your spec card with a heading reading “⚠ DISCREPANCY: topic hours 44, assessment hours 32, notional total 80.” What should you do?</span><span lang="ms">1. P1 memulangkan kad spesifikasi anda dengan tajuk “⚠ PERCANGGAHAN: jam topik 44, jam pentaksiran 32, jumlah nosional 80.” Apa yang patut anda lakukan?</span></div>
+      <button class="opt" onclick="pick(this,0)"><span lang="en">Re-run P1 until it returns a clean card</span><span lang="ms">Jalankan semula P1 sehingga ia memulangkan kad yang bersih</span></button>
+      <button class="opt" onclick="pick(this,1)"><span lang="en">Treat it as a real finding and resolve it as a curriculum decision</span><span lang="ms">Anggap ia penemuan sebenar dan selesaikannya sebagai keputusan kurikulum</span></button>
+      <button class="opt" onclick="pick(this,2)"><span lang="en">Edit the card so the numbers add up, then continue</span><span lang="ms">Sunting kad itu supaya nombornya cukup, kemudian teruskan</span></button>
+      <button class="opt" onclick="pick(this,3)"><span lang="en">Ignore it — the hours only matter to the accreditor</span><span lang="ms">Abaikan — jam itu hanya penting kepada pihak akreditasi</span></button>
+      <div class="feedback ok"><span lang="en">✓ Right. The flag is the method working. Four hours are unaccounted for in your approved paperwork; deciding where they belong is your call, not the model's, and the decision should be recorded.</span><span lang="ms">✓ Betul. Penanda itu menunjukkan kaedah ini berfungsi. Empat jam tidak diambil kira dalam dokumen anda yang diluluskan; menentukan di mana ia sepatutnya berada ialah keputusan anda, bukan model, dan keputusan itu perlu direkodkan.</span></div>
+      <div class="feedback no"><span lang="en">Re-running or hand-editing the numbers hides a real problem in your approved documents. P0 forbids the model from silently adjusting them precisely so that you get to see it and decide.</span><span lang="ms">Menjalankan semula atau menyunting nombor secara manual menyembunyikan masalah sebenar dalam dokumen anda yang diluluskan. P0 melarang model melaraskannya secara senyap justeru supaya anda dapat melihatnya dan membuat keputusan.</span></div>
+    </div>
+    <div class="q" data-answer="3">
+      <div class="stem"><span lang="en">2. Which field of the spec card must <em>not</em> be compiled or reworded at all?</span><span lang="ms">2. Medan kad spesifikasi yang manakah <em>tidak boleh</em> dikompil atau ditulis semula langsung?</span></div>
+      <button class="opt" onclick="pick(this,0)"><span lang="en">The content spine</span><span lang="ms">Tulang belakang kandungan</span></button>
+      <button class="opt" onclick="pick(this,1)"><span lang="en">The audience description</span><span lang="ms">Huraian audiens</span></button>
+      <button class="opt" onclick="pick(this,2)"><span lang="en">The terminology lock</span><span lang="ms">Kunci istilah</span></button>
+      <button class="opt" onclick="pick(this,3)"><span lang="en">The course learning outcomes</span><span lang="ms">Hasil pembelajaran kursus</span></button>
+      <div class="feedback ok"><span lang="en">✓ Yes. Outcomes are approved language. A paraphrase — however clear — breaks the match between your material and the document on file, which is exactly what an audit compares.</span><span lang="ms">✓ Ya. Hasil pembelajaran ialah bahasa yang diluluskan. Parafrasa — betapa jelas sekalipun — memutuskan padanan antara bahan anda dan dokumen yang difailkan, iaitu tepat apa yang dibandingkan dalam audit.</span></div>
+      <div class="feedback no"><span lang="en">Those are all compiled and reorganised freely. Only the <strong>course outcomes</strong> are quoted word for word, because they are the approved wording an audit will check against.</span><span lang="ms">Kesemuanya dikompil dan disusun semula secara bebas. Hanya <strong>hasil pembelajaran kursus</strong> dipetik perkataan demi perkataan, kerana itulah rumusan diluluskan yang akan disemak dalam audit.</span></div>
+    </div>
+    <div class="q" data-answer="0">
+      <div class="stem"><span lang="en">3. Why does P2 enforce the “no duplicate hook, case, tool or source” rule while all units are still in view, rather than later?</span><span lang="ms">3. Mengapa P2 menguatkuasakan peraturan “tiada pendua pencetus, kes, alat atau sumber” semasa semua unit masih kelihatan, dan bukan kemudian?</span></div>
+      <button class="opt" onclick="pick(this,0)"><span lang="en">Because a per-unit session can only see one brief, so it cannot detect duplication across the series</span><span lang="ms">Kerana sesi setiap unit hanya nampak satu ringkasan, jadi ia tidak dapat mengesan pendua merentas siri</span></button>
+      <button class="opt" onclick="pick(this,1)"><span lang="en">Because duplicated sources breach copyright</span><span lang="ms">Kerana sumber berganda melanggar hak cipta</span></button>
+      <button class="opt" onclick="pick(this,2)"><span lang="en">Because the ledger cannot store source names</span><span lang="ms">Kerana lejar tidak boleh menyimpan nama sumber</span></button>
+      <button class="opt" onclick="pick(this,3)"><span lang="en">Because P8 removes duplicates automatically at the audit stage</span><span lang="ms">Kerana P8 membuang pendua secara automatik pada peringkat audit</span></button>
+      <div class="feedback ok"><span lang="en">✓ Exactly. Global constraints have to be applied at the only moment the whole series is visible. Afterwards the ledger can <em>report</em> what was used, but only P2 can plan the distribution.</span><span lang="ms">✓ Tepat. Kekangan global mesti diterapkan pada satu-satunya saat keseluruhan siri kelihatan. Selepas itu lejar boleh <em>melaporkan</em> apa yang telah digunakan, tetapi hanya P2 boleh merancang agihannya.</span></div>
+      <div class="feedback no"><span lang="en">Think about what each later session can actually see: P0, the spec, the contract, the ledger and <em>one</em> brief. Nothing in that view can plan how twelve hooks should be distributed — only P2 has the whole series in front of it.</span><span lang="ms">Fikirkan apa yang benar-benar dapat dilihat oleh setiap sesi kemudian: P0, spesifikasi, kontrak, lejar dan <em>satu</em> ringkasan. Tiada apa dalam pandangan itu boleh merancang bagaimana dua belas pencetus patut diagihkan — hanya P2 mempunyai keseluruhan siri di hadapannya.</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-kicker"><span lang="en">Companion Tools · Alat Pendamping</span><span lang="ms">Alat Pendamping</span></div>
+  <h2 lang="en">Getting your documents into the session</h2>
+  <h2 lang="ms">Memasukkan dokumen anda ke dalam sesi</h2>
+  <p class="lead" lang="en">P1 is the only prompt that needs your source files. Spreadsheets and forms travel badly, so it is worth a few
+    minutes converting them into something the model reads cleanly.</p>
+  <p class="lead" lang="ms">P1 ialah satu-satunya gesaan yang memerlukan fail sumber anda. Hamparan dan borang tidak berpindah dengan baik,
+    jadi berbaloi meluangkan beberapa minit menukarkannya kepada sesuatu yang dibaca model dengan bersih.</p>
+  <div class="cardgrid">
+    <div class="card"><div class="name">📊 <span lang="en">Export sheets as CSV or markdown</span><span lang="ms">Eksport hamparan sebagai CSV atau markdown</span></div>
+      <div class="use"><span lang="en">Merged cells and formulas confuse extraction. One flat table per sheet, headers in the first row, is
+        read far more reliably than the original file.</span><span lang="ms">Sel bergabung dan formula mengelirukan pengekstrakan. Satu jadual
+        rata bagi setiap helaian, tajuk pada baris pertama, dibaca jauh lebih boleh dipercayai daripada fail asal.</span></div></div>
+    <div class="card"><div class="name">📄 <span lang="en">Strip the form furniture</span><span lang="ms">Buang perabot borang</span></div>
+      <div class="use"><span lang="en">Signature blocks, approval boxes and repeated instruction rows are noise. Deleting them before you attach
+        measurably improves what P1 returns.</span><span lang="ms">Blok tandatangan, kotak kelulusan dan baris arahan berulang ialah gangguan.
+        Memadamnya sebelum melampirkan meningkatkan hasil P1 dengan ketara.</span></div></div>
+    <div class="card"><div class="name">🗂️ <span lang="en">One folder, one course</span><span lang="ms">Satu folder, satu kursus</span></div>
+      <div class="use"><span lang="en">Attach only the documents for the course you are compiling. A folder holding three courses invites the
+        model to blend their outcomes.</span><span lang="ms">Lampirkan hanya dokumen untuk kursus yang sedang anda kompil. Folder yang mengandungi
+        tiga kursus mengundang model mencampuradukkan hasil pembelajarannya.</span></div></div>
+    <div class="card"><div class="name">✅ <span lang="en">A DOI resolver, open in a tab</span><span lang="ms">Penyelesai DOI, terbuka dalam tab</span></div>
+      <div class="use"><span lang="en">You will be checking every citation P2 produces. Keep <a href="https://doi.org">doi.org</a> open and paste each
+        one — it takes a minute and it is not optional.</span><span lang="ms">Anda akan menyemak setiap petikan yang dihasilkan P2. Biarkan
+        <a href="https://doi.org">doi.org</a> terbuka dan tampal setiap satu — ia mengambil seminit dan ia bukan pilihan.</span></div></div>
+  </div>
+  <div class="block fact">
+    <span class="tag"><span lang="en">The one job you cannot delegate</span><span lang="ms">Satu tugas yang tidak boleh diwakilkan</span></span>
+    <p lang="en" style="margin:.3em 0 0">P2 will produce four citations per unit. Across twelve units that is forty-eight references, and a
+      model cannot confirm that any of them exist. Verifying them now costs perhaps thirty minutes; discovering a fabricated source after
+      students have cited it costs considerably more.</p>
+    <p lang="ms" style="margin:.3em 0 0">P2 akan menghasilkan empat petikan bagi setiap unit. Merentas dua belas unit itu empat puluh lapan
+      rujukan, dan model tidak boleh mengesahkan bahawa mana-mana daripadanya wujud. Mengesahkannya sekarang mungkin memakan tiga puluh
+      minit; menemui sumber palsu selepas pelajar memetiknya memakan kos yang jauh lebih besar.</p>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-kicker"><span lang="en">References &amp; Further Reading · Rujukan &amp; Bacaan Lanjut</span><span lang="ms">Rujukan &amp; Bacaan Lanjut</span></div>
+  <h2 lang="en">Where the design decisions come from</h2>
+  <h2 lang="ms">Dari mana keputusan reka bentuk ini datang</h2>
+  <p class="lead" lang="en">Numbers match the footnote markers used in this unit. Each note also appears at the foot of the screen where it
+    is cited.</p>
+  <p class="lead" lang="ms">Nombornya sepadan dengan penanda nota kaki yang digunakan dalam unit ini. Setiap nota turut muncul di kaki skrin
+    tempat ia dipetik.</p>
+  <div class="cols">
+    <div>
+      <ul class="reslist">
+        <li><b class="fnum">1</b><span class="k">Standards</span>Malaysian Qualifications Agency. <em>Code of Practice for Programme
+          Accreditation (COPPA)</em> and related curriculum design guidelines.
+          <a class="doi" href="https://www.mqa.gov.my">mqa.gov.my</a>
+          <span class="cited"><span lang="en">cited on screen 3</span><span lang="ms">dipetik di skrin 3</span></span></li>
+        <li><b class="fnum">2</b><span class="k">Alignment</span>Biggs, J. (1996). Enhancing teaching through constructive alignment.
+          <em>Higher Education</em>, 32, 347–364.
+          <a class="doi" href="https://doi.org/10.1007/BF00138871">10.1007/BF00138871</a>
+          <span class="cited"><span lang="en">cited on screen 4</span><span lang="ms">dipetik di skrin 4</span></span></li>
+      </ul>
+    </div>
+    <div>
+      <ul class="reslist">
+        <li><b class="fnum">3</b><span class="k">Taxonomy</span>Anderson, L. W. &amp; Krathwohl, D. R. (2001). <em>A Taxonomy for Learning,
+          Teaching, and Assessing: A Revision of Bloom's Taxonomy of Educational Objectives.</em> Longman.
+          <a class="doi" href="https://search.worldcat.org/search?q=A+Taxonomy+for+Learning+Teaching+and+Assessing+Anderson+Krathwohl">WorldCat</a>
+          <span class="cited"><span lang="en">cited on screen 6</span><span lang="ms">dipetik di skrin 6</span></span></li>
+      </ul>
+    </div>
+  </div>
+  <div class="block concept">
+    <span class="tag"><span lang="en">Connectivism · Branch into</span><span lang="ms">Konektivisme · Cabang ke</span></span>
+    <p lang="en" style="margin:.3em 0 .4em">Worth following if your spec card raised questions you could not answer:</p>
+    <p lang="ms" style="margin:.3em 0 .4em">Berbaloi diikuti jika kad spesifikasi anda menimbulkan soalan yang tidak dapat anda jawab:</p>
+    <span class="pill">Notional learning hours</span><span class="pill">Backward design</span>
+    <span class="pill">Curriculum mapping</span><span class="pill">Programme learning outcomes</span>
+    <span class="pill">Terminology &amp; style guides</span><span class="pill">Bilingual course design</span>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-kicker"><span lang="en">Learning Network · Rangkaian Pembelajaran</span><span lang="ms">Rangkaian Pembelajaran</span></div>
+  <h2 lang="en">How this unit connects</h2>
+  <h2 lang="ms">Bagaimana unit ini berhubung</h2>
+  <div class="block connections">
+    <span class="tag"><span lang="en">Connectivism · Knowledge lives in the connections</span><span lang="ms">Konektivisme · Pengetahuan hidup dalam hubungan</span></span>
+    <p lang="en" style="margin:.3em 0 .2em">Unit 2 is where the series stops being about method and starts being about <em>your</em> course. Everything after this reads from the two files you just produced.</p>
+    <p lang="ms" style="margin:.3em 0 .2em">Unit 2 ialah tempat siri ini berhenti tentang kaedah dan mula tentang kursus <em>anda</em>. Semua selepas ini membaca daripada dua fail yang baru anda hasilkan.</p>
+    <div class="cols" style="margin-top:6px">
+      <div><h3 lang="en">← Connects back to</h3><h3 lang="ms">← Berhubung kembali ke</h3>
+        <p lang="en"><strong>Unit 1</strong>, which established the four files and the rule that compressed cards — not artefacts — carry
+          state. <code>SPEC.md</code> and <code>BRIEFS.md</code> are the first two of those four, and the compression rule is why they must
+          stay short.</p>
+        <p lang="ms"><strong>Unit 1</strong>, yang menetapkan empat fail dan peraturan bahawa kad termampat — bukan artifak — yang membawa
+          keadaan. <code>SPEC.md</code> dan <code>BRIEFS.md</code> ialah dua yang pertama daripada empat itu, dan peraturan pemampatan itulah
+          sebabnya kedua-duanya mesti kekal pendek.</p></div>
+      <div><h3 lang="en">Feeds forward to →</h3><h3 lang="ms">Menyuap ke hadapan →</h3>
+        <p lang="en"><strong>Unit 3 — The golden template and the build loop</strong>, which consumes the unit-1 brief to build the template
+          and then one brief per session · <strong>Unit 4</strong> reconciles the finished material back against the learning-hours table
+          you produced here.</p>
+        <p lang="ms"><strong>Unit 3 — Templat emas dan gelung pembinaan</strong>, yang menggunakan ringkasan unit 1 untuk membina templat
+          kemudian satu ringkasan setiap sesi · <strong>Unit 4</strong> menyelaraskan bahan siap kembali dengan jadual jam pembelajaran yang
+          anda hasilkan di sini.</p></div>
+    </div>
+    <div class="node-row">
+      <span class="node"><span lang="en">👥 Send your spec card to the course's previous teacher and ask what it gets wrong</span><span lang="ms">👥 Hantar kad spesifikasi anda kepada pengajar kursus sebelumnya dan tanya apa yang tersilap</span></span>
+      <span class="node"><span lang="en">🔗 Check each brief's citations against a DOI resolver</span><span lang="ms">🔗 Semak petikan setiap ringkasan dengan penyelesai DOI</span></span>
+      <span class="node"><span lang="en">🧩 Ask a subject librarian to review your source list</span><span lang="ms">🧩 Minta pustakawan subjek menyemak senarai sumber anda</span></span>
+    </div>
+  </div>
+  <div class="block owncase" style="margin-top:16px">
+    <span class="tag"><span lang="en">Your assessment · open-ended</span><span lang="ms">Pentaksiran anda · terbuka</span></span>
+    <p lang="en" style="margin:.2em 0 0"><strong>Your course is your case.</strong> Finish this unit holding a spec card that passes all five
+      tests and a briefs file whose citations you have personally opened. Note down anything P1 flagged that you could not resolve — that
+      list is a genuine curriculum finding, and it is worth taking to whoever owns the programme.</p>
+    <p lang="ms" style="margin:.2em 0 0"><strong>Kursus anda ialah kes anda.</strong> Tamatkan unit ini dengan memegang kad spesifikasi yang
+      lulus kelima-lima ujian dan fail ringkasan yang petikannya telah anda buka sendiri. Catatkan apa-apa yang ditandakan P1 tetapi tidak
+      dapat anda selesaikan — senarai itu ialah penemuan kurikulum yang sebenar, dan berbaloi dibawa kepada pemilik program.</p>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-kicker"><span lang="en">Wrap-up · Rumusan</span><span lang="ms">Rumusan</span></div>
+  <h2 lang="en">Unit 2 in one breath</h2>
+  <h2 lang="ms">Unit 2 dalam satu nafas</h2>
+  <p class="lead" lang="en">Your approved documents already hold the specification; they just hold it in the wrong shape, spread across
+    tables that never appear on the same page. Compiling — not summarising — reorganises that content into fixed fields with the outcomes
+    quoted verbatim and every hour summed. The compile usually finds something: a gap in the arithmetic, an outcome no instrument
+    evidences, an assessment scheduled after the teaching stops. That finding is the method paying for itself before you generate a single
+    unit.</p>
+  <p class="lead" lang="ms">Dokumen anda yang diluluskan sudah memegang spesifikasi itu; ia cuma memegangnya dalam bentuk yang salah,
+    bertaburan merentas jadual yang tidak pernah muncul pada halaman yang sama. Mengkompil — bukan meringkaskan — menyusun semula kandungan
+    itu ke dalam medan tetap dengan hasil pembelajaran dipetik verbatim dan setiap jam dijumlahkan. Kompilasi itu biasanya menemui sesuatu:
+    jurang dalam aritmetik, hasil yang tiada instrumen membuktikannya, pentaksiran yang dijadualkan selepas pengajaran tamat. Penemuan itu
+    ialah kaedah ini membuktikan nilainya sebelum anda menjana satu unit pun.</p>
+  <div class="block fact"><span class="tag"><span lang="en">Remember this line</span><span lang="ms">Ingat baris ini</span></span>
+    <p lang="en" style="margin:.2em 0 0"><em>“Compile, don't summarise — and never let the numbers be smoothed.”</em></p>
+    <p lang="ms" style="margin:.2em 0 0"><em>“Kompil, jangan ringkaskan — dan jangan biarkan nombor itu dilicinkan.”</em></p></div>
+  <h3 lang="en">Before Unit 3</h3>
+  <h3 lang="ms">Sebelum Unit 3</h3>
+  <ul lang="en">
+    <li>Run <strong>P1</strong> and apply the five tests. Fix anything that fails <em>by hand</em>.</li>
+    <li>Run <strong>P2</strong>, then open every DOI it produced. Delete or replace any you cannot resolve.</li>
+    <li>Confirm the unit map's hours sum back to the notional total in your spec card.</li>
+    <li>Save the accent-colour list P2 returned — Unit 3 assigns one per unit and will need it.</li>
+  </ul>
+  <ul lang="ms">
+    <li>Jalankan <strong>P1</strong> dan terapkan kelima-lima ujian. Betulkan apa-apa yang gagal <em>secara manual</em>.</li>
+    <li>Jalankan <strong>P2</strong>, kemudian buka setiap DOI yang dihasilkan. Padam atau ganti mana-mana yang tidak dapat diselesaikan.</li>
+    <li>Pastikan jam dalam peta unit berjumlah kembali kepada jumlah nosional dalam kad spesifikasi anda.</li>
+    <li>Simpan senarai warna aksen yang dipulangkan P2 — Unit 3 menetapkan satu bagi setiap unit dan akan memerlukannya.</li>
+  </ul>
+  <div class="divider"></div>
+  <p class="ms-tag"><span lang="en">Next · Unit 3 — The golden template and the build loop: designing one unit properly, then producing the
+    rest without drift.</span><span lang="ms">Seterusnya · Unit 3 — Templat emas dan gelung pembinaan: mereka bentuk satu unit dengan betul,
+    kemudian menghasilkan selebihnya tanpa penyimpangan.</span></p>
+</section>
+
+<footer class="deckfoot">
+  <span lang="en">SIM Builder · Unit 2 of 4 · A self-instructional series on producing OBE-aligned, connectivist course materials with AI · Design system derived from the SIMs deck series owned by Dr. Akmal.</span>
+  <span lang="ms">SIM Builder · Unit 2 daripada 4 · Siri pembelajaran kendiri tentang menghasilkan bahan kursus terjajar OBE dan konektivis dengan AI · Sistem reka bentuk diterbitkan daripada siri deck SIM milik Dr. Akmal.</span>
+</footer>
+</main>
+
+<script>
+/* ===== Language toggle ===== */
+function setLang(l){
+  document.body.classList.remove('lang-en','lang-ms');
+  document.body.classList.add('lang-'+l);
+  document.documentElement.lang = (l==='ms')?'ms':'en';
+  document.querySelectorAll('.langtog button').forEach(b=>b.classList.toggle('on', b.dataset.l===l));
+}
+/* ===== Deck engine ===== */
+let slides=[],cur=0;
+function init(){
+  slides=Array.from(document.querySelectorAll('.slide'));cur=0;show(0);
+  document.querySelectorAll('.prompt-lab').forEach(lab=>{
+    const active=lab.querySelector('.pl-panel.on');
+    if(active)filterNotes(lab.closest('.slide'),active.id);
+  });
+  document.addEventListener('keydown',e=>{
+    if(e.target.tagName==='TEXTAREA'||e.target.tagName==='INPUT')return;
+    if(e.key==='ArrowRight'||e.key==='PageDown'){go(1)}
+    if(e.key==='ArrowLeft'||e.key==='PageUp'){go(-1)}
+    if(e.key.toLowerCase()==='g'){toggleMode()}
+  });
+}
+function show(i){
+  if(document.body.classList.contains('mode-guide'))return;
+  slides.forEach(s=>s.classList.remove('active'));slides[i].classList.add('active');
+  window.scrollTo(0,0);update();
+}
+function go(d){
+  if(document.body.classList.contains('mode-guide')){window.scrollBy({top:d*window.innerHeight*.85,behavior:'smooth'});return;}
+  cur=Math.max(0,Math.min(slides.length-1,cur+d));show(cur);
+}
+function update(){
+  document.getElementById('counter').textContent=(cur+1)+' / '+slides.length;
+  document.getElementById('pbar').style.width=((cur+1)/slides.length*100)+'%';
+}
+function toggleMode(){
+  const b=document.body,btn=document.getElementById('modeBtn');
+  if(b.classList.contains('mode-slides')){
+    b.classList.remove('mode-slides');b.classList.add('mode-guide');
+    slides.forEach(s=>s.classList.add('active'));
+    btn.querySelector('[lang="en"]').textContent='🖥 Slides';btn.querySelector('[lang="ms"]').textContent='🖥 Slaid';
+    document.getElementById('pbar').style.width='100%';
+  }else{b.classList.remove('mode-guide');b.classList.add('mode-slides');
+    btn.querySelector('[lang="en"]').textContent='📖 Guide';btn.querySelector('[lang="ms"]').textContent='📖 Panduan';show(cur);}
+}
+/* ===== Self-check engine ===== */
+function pick(btn,idx){
+  const q=btn.closest('.q'),ans=parseInt(q.dataset.answer,10);
+  q.querySelectorAll('.opt').forEach(o=>o.disabled=true);
+  const chosen=Array.from(q.querySelectorAll('.opt')).indexOf(btn);
+  q.querySelectorAll('.feedback').forEach(f=>f.classList.remove('show'));
+  if(chosen===ans){btn.classList.add('correct');q.querySelector('.feedback.ok').classList.add('show');}
+  else{btn.classList.add('wrong');q.querySelectorAll('.opt')[ans].classList.add('correct');q.querySelector('.feedback.no').classList.add('show');}
+}
+/* ===== Prompt tabs ===== */
+function showP(btn,id){
+  const lab=btn.closest('.prompt-lab');
+  lab.querySelectorAll('.pl-tab').forEach(t=>t.classList.remove('on'));
+  lab.querySelectorAll('.pl-panel').forEach(p=>p.classList.remove('on'));
+  btn.classList.add('on');
+  document.getElementById(id).classList.add('on');
+  filterNotes(lab.closest('.slide'),id);
+}
+/* Show only the notes cited by the visible panel; hide the block if none. */
+function filterNotes(slide,id){
+  if(!slide)return;
+  const box=slide.querySelector('.footnotes');
+  if(!box)return;
+  let shown=0;
+  box.querySelectorAll('li[data-p]').forEach(li=>{
+    const on=li.dataset.p.split(' ').indexOf(id)>-1;
+    li.style.display=on?'list-item':'none';
+    if(on)shown++;
+  });
+  box.style.display=shown?'block':'none';
+}
+/* ===== Copy prompt ===== */
+function copyPrompt(btn){
+  const panel=btn.closest('.pl-panel')||btn.closest('.prompt-lab');
+  const node=panel.querySelector('.pl-prompt');
+  const text=node.innerText;
+  const done=()=>{const en=btn.querySelector('[lang="en"]'),ms=btn.querySelector('[lang="ms"]');
+    const oe=en.textContent,om=ms.textContent;en.textContent='✓ Copied';ms.textContent='✓ Disalin';btn.classList.add('done');
+    setTimeout(()=>{en.textContent=oe;ms.textContent=om;btn.classList.remove('done');},1600);};
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(done).catch(()=>fallbackCopy(text,done));}
+  else{fallbackCopy(text,done);}
+}
+function fallbackCopy(text,cb){
+  const ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';
+  document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(e){}document.body.removeChild(ta);cb&&cb();
+}
+init();
+</script>
+</body>
+</html>
