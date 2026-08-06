@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Workshops &amp; self-paced series — Mohd Nor Akmal Khalid</title>
+    <!-- Deliberately unlisted: nothing in the portfolio nav points here, and the
+         page tells crawlers to skip it. It exists so a single link can be shared
+         with a cohort instead of three separate ones. -->
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600&family=JetBrains+Mono:wght@400;500;600&display=swap"
+    />
+    <style>
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        background: #faf9f7;
+        color: #1c1917;
+        font-family: 'Inter', system-ui, sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+      ::selection { background: #16142e; color: #fff; }
+      .wrap { max-width: 940px; margin: 0 auto; padding: 0 28px; }
+      .mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+      h1, h2 { font-family: 'Space Grotesk', system-ui, sans-serif; letter-spacing: -0.02em; }
+
+      header.bar {
+        position: sticky; top: 0; z-index: 5;
+        background: rgba(250, 249, 247, 0.85);
+        backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+        border-bottom: 1px solid #e7e3dd;
+      }
+      .bar-in {
+        max-width: 940px; margin: 0 auto; padding: 13px 28px;
+        display: flex; align-items: center; justify-content: space-between; gap: 16px;
+      }
+      .brand { display: flex; align-items: center; gap: 9px; text-decoration: none; color: #1c1917; font-weight: 600; font-size: 14px; }
+      .dot { width: 10px; height: 10px; border-radius: 50%; background: #16142e; }
+
+      .langs { display: flex; gap: 4px; }
+      .langs button {
+        font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600;
+        letter-spacing: .06em; cursor: pointer; padding: 5px 11px; border-radius: 6px;
+        border: 1px solid #ddd6cc; background: #fff; color: #57514b;
+      }
+      .langs button[aria-pressed='true'] { background: #16142e; border-color: #16142e; color: #fff; }
+
+      .intro { padding: 52px 0 8px; }
+      .eyebrow { font-size: 11.5px; letter-spacing: .14em; text-transform: uppercase; color: #a39a8f; margin: 0 0 14px; }
+      h1 { font-weight: 600; font-size: clamp(30px, 5vw, 46px); line-height: 1.05; margin: 0 0 16px; text-wrap: balance; }
+      .lede { font-size: 17px; line-height: 1.6; color: #57514b; max-width: 620px; margin: 0; }
+
+      .note {
+        margin: 26px 0 0; padding: 13px 16px; border-radius: 10px;
+        background: #fbf3ea; border: 1px solid #f0dcc4;
+        font-size: 13.5px; line-height: 1.55; color: #6b4f2a;
+      }
+      .note b { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: #a8703a; }
+
+      .cards { display: flex; flex-direction: column; gap: 16px; padding: 34px 0 10px; }
+      .card {
+        position: relative;
+        display: block; text-decoration: none; color: #1c1917;
+        background: #fff; border: 1px solid #e7e3dd; border-radius: 15px;
+        padding: 24px 26px; transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+      }
+      .card:hover { transform: translateY(-2px); box-shadow: 0 16px 36px -24px rgba(28, 25, 23, .5); }
+      .card:focus-visible { outline: 2px solid #8b7bf0; outline-offset: 3px; }
+      .kicker { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 12px; padding-right: 34px; }
+      .tag { font-size: 10.5px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; padding: 3px 9px; border-radius: 5px; }
+      .card h2 { font-weight: 600; font-size: clamp(19px, 2.6vw, 24px); line-height: 1.18; margin: 0 0 9px; }
+      .card p { font-size: 14.5px; line-height: 1.6; color: #57514b; margin: 0 0 14px; max-width: 640px; }
+      .facts { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 18px; }
+      .fact { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: #6b6560; background: #f4f1ec; border: 1px solid #e7e3dd; padding: 3px 9px; border-radius: 5px; }
+
+      /* The whole panel is the link; the button is the affordance that says so. */
+      .btn {
+        display: inline-block; font-family: 'JetBrains Mono', monospace;
+        font-size: 12px; font-weight: 600; color: #fff; background: #16142e;
+        padding: 9px 16px; border-radius: 8px; transition: background .2s ease;
+      }
+      .card:hover .btn { background: #2a2650; }
+
+      /* Corner chevron — a second, quieter cue that the panel itself is clickable. */
+      .arrow {
+        position: absolute; top: 22px; right: 24px;
+        font-family: 'JetBrains Mono', monospace; font-size: 17px; line-height: 1;
+        color: #d5cec4; transition: transform .2s ease, color .2s ease;
+      }
+      .card:hover .arrow { transform: translateX(4px); }
+
+      footer { padding: 38px 0 64px; color: #a39a8f; font-size: 12.5px; line-height: 1.6; }
+      footer a { color: #57514b; }
+
+      [data-bm] { display: none; }
+      body.bm [data-en] { display: none; }
+      body.bm [data-bm] { display: revert; }
+
+      @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+    </style>
+  </head>
+  <body>
+    <header class="bar">
+      <div class="bar-in">
+        <a class="brand" href="/"><span class="dot"></span> Dr. Akmal</a>
+        <div class="langs" role="group" aria-label="Language">
+          <button type="button" id="btn-en" aria-pressed="true">EN</button>
+          <button type="button" id="btn-bm" aria-pressed="false">BM</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="wrap">
+      <section class="intro">
+        <p class="eyebrow mono" data-en>/ workshops · self-paced series</p>
+        <p class="eyebrow mono" data-bm>/ bengkel · siri pembelajaran kendiri</p>
+
+        <h1 data-en>Workshops and self-paced series.</h1>
+        <h1 data-bm>Bengkel dan siri pembelajaran kendiri.</h1>
+
+        <p class="lede" data-en>
+          Open-access teaching materials, each one a complete self-contained site you can work through
+          alone at your own pace. Free, bilingual, and nothing to sign up for.
+        </p>
+        <p class="lede" data-bm>
+          Bahan pengajaran akses terbuka, setiap satunya laman lengkap yang boleh anda ikuti sendiri
+          mengikut kadar anda. Percuma, dwibahasa, dan tiada pendaftaran diperlukan.
+        </p>
+
+        <p class="note">
+          <b data-en>Unlisted</b><b data-bm>Tidak tersenarai</b><br />
+          <span data-en>
+            This index is not linked from anywhere on the portfolio and is hidden from search engines.
+            It exists so one link can be shared with a cohort instead of three.
+          </span>
+          <span data-bm>
+            Indeks ini tidak dipautkan dari mana-mana bahagian portfolio dan disembunyikan daripada enjin
+            carian. Ia wujud supaya satu pautan boleh dikongsi dengan kohort, bukan tiga.
+          </span>
+        </p>
+      </section>
+
+      <section class="cards">
+        <!-- Prompt Engineering Architect -->
+        <a class="card" href="/workshops/prompt-engineering-architect/" style="border-top: 3px solid #8b7bf0">
+          <span class="arrow" aria-hidden="true" style="color: #b8afe8">→</span>
+          <div class="kicker">
+            <span class="tag mono" style="background: #eeedfe; color: #3c3489" data-en>Self-instructional module</span>
+            <span class="tag mono" style="background: #eeedfe; color: #3c3489" data-bm>Modul pembelajaran kendiri</span>
+            <span class="tag mono" style="background: #eaf3de; color: #27500a">FREE · OPEN ACCESS</span>
+          </div>
+          <h2 data-en>Prompt Engineering Architect</h2>
+          <h2 data-bm>Arkitek Kejuruteraan Prompt</h2>
+          <p data-en>
+            The architecture of AI dialogue — generating precise, robust, hallucination-free output through
+            structured constraints and cognitive topologies. Interactive throughout: quizzes, drag-and-drop
+            exercises, live analytics and a global leaderboard.
+          </p>
+          <p data-bm>
+            Seni bina dialog AI — menjana output yang tepat, teguh dan bebas halusinasi melalui kekangan
+            berstruktur dan topologi kognitif. Interaktif sepenuhnya: kuiz, latihan seret-dan-lepas,
+            analitik langsung dan papan pendahulu global.
+          </p>
+          <div class="facts">
+            <span class="fact">165 min TLT</span>
+            <span class="fact">EN · BM</span>
+            <span class="fact" data-en>Quizzes &amp; exercises</span>
+            <span class="fact" data-bm>Kuiz &amp; latihan</span>
+            <span class="fact">CAIT, FTSM, UKM</span>
+          </div>
+          <span class="btn" data-en>Open the module</span>
+          <span class="btn" data-bm>Buka modul</span>
+        </a>
+
+        <!-- Integrating AI into Research & Pedagogy -->
+        <a class="card" href="/workshops/ai-research-pedagogy/" style="border-top: 3px solid #4d8df0">
+          <span class="arrow" aria-hidden="true" style="color: #a8c8f5">→</span>
+          <div class="kicker">
+            <span class="tag mono" style="background: #e6f1fb; color: #0c447c" data-en>Workshop · 2 sessions</span>
+            <span class="tag mono" style="background: #e6f1fb; color: #0c447c" data-bm>Bengkel · 2 sesi</span>
+            <span class="tag mono" style="background: #eaf3de; color: #27500a">FREE · OPEN ACCESS</span>
+          </div>
+          <h2 data-en>Integrating AI into Research &amp; Pedagogy</h2>
+          <h2 data-bm>Mengintegrasikan AI dalam Penyelidikan &amp; Pedagogi</h2>
+          <p data-en>
+            An outcome-based, problem-driven workshop for researchers, lecturers and postgraduates — built so
+            you can also work through it alone afterwards, at your own pace. Session A covers prompting,
+            teaching materials and evidence; Session B covers proposal writing, data analysis and integrity.
+          </p>
+          <p data-bm>
+            Bengkel berasaskan hasil dan berpacukan masalah untuk penyelidik, pensyarah dan pelajar
+            pascasiswazah — dibina supaya anda juga boleh mengikutinya sendiri selepas itu, mengikut kadar
+            anda. Sesi A merangkumi prompting, bahan pengajaran dan bukti; Sesi B merangkumi penulisan
+            cadangan, analisis data dan integriti.
+          </p>
+          <div class="facts">
+            <span class="fact" data-en>Session A → B</span>
+            <span class="fact" data-bm>Sesi A → B</span>
+            <span class="fact">EN · BM</span>
+            <span class="fact" data-en>Carry your code across</span>
+            <span class="fact" data-bm>Bawa kod anda merentas sesi</span>
+          </div>
+          <span class="btn" data-en>Start with Session A</span>
+          <span class="btn" data-bm>Mulakan dengan Sesi A</span>
+        </a>
+
+        <!-- SIM Builder -->
+        <a class="card" href="/workshops/sim-builder/" style="border-top: 3px solid #21b3a0">
+          <span class="arrow" aria-hidden="true" style="color: #96ddd2">→</span>
+          <div class="kicker">
+            <span class="tag mono" style="background: #e1f5ee; color: #085041" data-en>Series · 4 units</span>
+            <span class="tag mono" style="background: #e1f5ee; color: #085041" data-bm>Siri · 4 unit</span>
+            <span class="tag mono" style="background: #eaf3de; color: #27500a">FREE · OPEN ACCESS</span>
+          </div>
+          <h2 data-en>SIM Builder</h2>
+          <h2 data-bm>SIM Builder</h2>
+          <p data-en>
+            Build your own course SIMs — with AI, without losing the plot. Four units that take you from an
+            approved curriculum to a complete series of outcome-aligned, connectivist, self-instructional
+            weekly materials, using any AI tool, one small step at a time.
+          </p>
+          <p data-bm>
+            Bina SIM kursus anda sendiri — dengan AI, tanpa hilang jejak. Empat unit yang membawa anda
+            daripada kurikulum yang diluluskan kepada satu siri lengkap bahan mingguan yang terjajar dengan
+            hasil pembelajaran, bersifat konektivis dan boleh belajar sendiri, menggunakan mana-mana alat AI.
+          </p>
+          <div class="facts">
+            <span class="fact" data-en>4 units · 56 screens</span>
+            <span class="fact" data-bm>4 unit · 56 skrin</span>
+            <span class="fact">≈ 2 h + ~5 h</span>
+            <span class="fact">OBE · Connectivism</span>
+            <span class="fact">EN · BM</span>
+          </div>
+          <span class="btn" data-en>Open the series</span>
+          <span class="btn" data-bm>Buka siri</span>
+        </a>
+      </section>
+
+      <footer>
+        <p data-en>
+          Mohd Nor Akmal Khalid · FTSM, UKM · <a href="/">akmal.app</a><br />
+          Materials are free to use and adapt for teaching. Questions or a request?
+          <a href="/contact">Get in touch</a>.
+        </p>
+        <p data-bm>
+          Mohd Nor Akmal Khalid · FTSM, UKM · <a href="/">akmal.app</a><br />
+          Bahan ini percuma untuk digunakan dan disesuaikan bagi tujuan pengajaran. Ada pertanyaan atau
+          permintaan? <a href="/contact">Hubungi saya</a>.
+        </p>
+      </footer>
+    </main>
+
+    <script>
+      ;(function () {
+        var en = document.getElementById('btn-en')
+        var bm = document.getElementById('btn-bm')
+        function set(lang) {
+          var isBM = lang === 'bm'
+          document.body.classList.toggle('bm', isBM)
+          document.documentElement.lang = isBM ? 'ms' : 'en'
+          en.setAttribute('aria-pressed', String(!isBM))
+          bm.setAttribute('aria-pressed', String(isBM))
+        }
+        en.addEventListener('click', function () { set('en') })
+        bm.addEventListener('click', function () { set('bm') })
+        // ?lang=bm lets a link open straight into Bahasa Melayu
+        if (/[?&]lang=(bm|ms)\b/i.test(location.search)) set('bm')
+      })()
+    </script>
+  </body>
+</html>
