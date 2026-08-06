@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from 'react'
 import { s } from '@/lib/style'
 import { PCOL, PNAME, PBADGE, QCOL, CATNAME, type Code } from '@/lib/view'
 import ResearchShowreel from '@/components/paper-demos/ResearchShowreel'
+import DemoThumb from '@/components/pillar-demos/DemoThumb'
+import type { PillarKey } from '@/lib/demos/registry'
 
 type PubNode = { t: string; y: number; pills: Code[]; q: string; cat: string; citation: string; scholar: string }
 type Funded = { role: string; title: string; agency: string; years: string; dots: string[] }
@@ -287,25 +289,28 @@ export default function HomeClient({
       <section id="research" style={s('max-width:1120px;margin:0 auto;padding:30px 28px 64px')}>
         <p style={s("font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#a39a8f;margin:0 0 10px")}>/ research program</p>
         <h2 style={s(`font-family:${stack};font-weight:600;font-size:clamp(28px,3.6vw,40px);letter-spacing:-.02em;margin:0 0 32px`)}>Three pillars, one connected agenda.</h2>
-        <div style={s('display:grid;grid-template-columns:repeat(3,1fr);gap:18px')}>
+        <div className="pillar-grid">
           {[
-            { n: '01', accent: PCOL.evo, title: 'Computational Intelligence & Optimization', blurb: 'Evolutionary and immune algorithms, swarm intelligence and metaheuristics — the search and optimization methods at the core of my work, applied to scheduling, assembly-line balancing and large-scale combinatorial problems.', tags: ['evo', 'opt'] as Code[] },
-            { n: '02', accent: PCOL.gam, title: 'Games Informatics & Engagement Modelling', blurb: 'Game refinement theory and the “motion in mind” model, agent-based simulation and procedural content — measuring and optimizing what makes play engaging.', tags: ['gam', 'sim'] as Code[] },
-            { n: '03', accent: PCOL.gen, title: 'Generative & Agentic AI', blurb: 'The emerging frontier — generative models, LLM foundation models and agentic content generation, extending the optimization-of-engagement programme into new domains.', tags: ['gen', 'exp'] as Code[] },
+            { n: '01', accent: PCOL.evo, demoKey: 'swarm-landscape' as PillarKey, labBg: 'radial-gradient(120% 120% at 50% 0%,#142420 0%,#0c1614 72%)', title: 'Computational Intelligence & Optimization', blurb: 'Evolutionary and immune algorithms, swarm intelligence and metaheuristics — the search and optimization methods at the core of my work, applied to scheduling, assembly-line balancing and large-scale combinatorial problems.', tags: ['evo', 'opt'] as Code[] },
+            { n: '02', accent: PCOL.gam, demoKey: 'procedural-dungeon' as PillarKey, labBg: 'radial-gradient(120% 120% at 50% 0%,#241410 0%,#160c0a 72%)', title: 'Games Informatics & Engagement Modelling', blurb: 'Game refinement theory and the “motion in mind” model, agent-based simulation and procedural content — measuring and optimizing what makes play engaging.', tags: ['gam', 'sim'] as Code[] },
+            { n: '03', accent: PCOL.gen, demoKey: 'flow-field' as PillarKey, labBg: 'radial-gradient(120% 120% at 50% 0%,#1b1830 0%,#100e1a 72%)', title: 'Generative & Agentic AI', blurb: 'The emerging frontier — generative models, LLM foundation models and agentic content generation, extending the optimization-of-engagement programme into new domains.', tags: ['gen', 'exp'] as Code[] },
           ].map((p) => (
-            <a key={p.n} href="/research" style={s(`display:block;text-decoration:none;color:#1c1917;background:#fff;border:1px solid #e7e3dd;border-top:3px solid ${p.accent};border-radius:14px;padding:24px;transition:transform .2s,box-shadow .2s`)}>
-              <div style={s('display:flex;align-items:center;justify-content:space-between;margin-bottom:16px')}>
+            <div key={p.n} className="pillar-card" style={s(`border-top:3px solid ${p.accent}`)}>
+              <div style={s('display:flex;align-items:center;justify-content:space-between;margin-bottom:14px')}>
                 <span style={s(`font-family:'JetBrains Mono',monospace;font-size:12px;color:${p.accent};font-weight:600`)}>PILLAR {p.n}</span>
                 <span style={s(`width:9px;height:9px;border-radius:50%;background:${p.accent}`)} />
               </div>
-              <h3 style={s(`font-family:${stack};font-weight:600;font-size:21px;line-height:1.18;letter-spacing:-.01em;margin:0 0 12px`)}>{p.title}</h3>
-              <p style={s('font-size:14px;line-height:1.6;color:#57514b;margin:0 0 18px')}>{p.blurb}</p>
-              <div style={s('display:flex;flex-wrap:wrap;gap:7px')}>
+              <DemoThumb demoKey={p.demoKey} accent={p.accent} height={126} bg={p.labBg} />
+              <a href="/research" style={s('display:block;text-decoration:none;color:#1c1917;margin-top:16px')}>
+                <h3 style={s(`font-family:${stack};font-weight:600;font-size:19px;line-height:1.18;letter-spacing:-.01em;margin:0 0 10px`)}>{p.title}</h3>
+                <p style={s('font-size:13.5px;line-height:1.6;color:#57514b;margin:0 0 16px')}>{p.blurb}</p>
+              </a>
+              <div style={s('display:flex;flex-wrap:wrap;gap:7px;margin-top:auto')}>
                 {p.tags.map((t) => (
                   <span key={t} style={s(`font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;padding:3px 9px;border-radius:6px;background:${PBADGE[t].bg};color:${PBADGE[t].fg}`)}>{PNAME[t]}</span>
                 ))}
               </div>
-            </a>
+            </div>
           ))}
         </div>
       </section>
