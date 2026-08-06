@@ -9,8 +9,9 @@ import { useEffect, useRef } from 'react'
 import { s } from '@/lib/style'
 import { EvacSim, DEFAULTS } from '@/lib/evac-sim'
 
-export default function CrowdEvacuation({ accent = '#4d8df0' }: { accent?: string }) {
+export default function CrowdEvacuation({ accent = '#4d8df0', height }: { accent?: string; height?: number }) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const H = height ?? 300
 
   useEffect(() => {
     const cv = canvasRef.current
@@ -22,7 +23,6 @@ export default function CrowdEvacuation({ accent = '#4d8df0' }: { accent?: strin
       window.matchMedia &&
       window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-    const H = 300
     let dpr = 1
     const sim = new EvacSim(accent)
     sim.setParams({ ...DEFAULTS, crowd: 200, panic: 0.35 })
@@ -74,13 +74,13 @@ export default function CrowdEvacuation({ accent = '#4d8df0' }: { accent?: strin
       io.disconnect()
       window.removeEventListener('resize', onResize)
     }
-  }, [accent])
+  }, [accent, H])
 
   return (
     <canvas
       ref={canvasRef}
       aria-label="Looping crowd-evacuation simulation (illustrative)"
-      style={s('display:block;width:100%;height:300px;border-radius:10px')}
+      style={s(`display:block;width:100%;height:${H}px;border-radius:10px`)}
     />
   )
 }

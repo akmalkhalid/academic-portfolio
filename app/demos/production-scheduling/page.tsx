@@ -27,7 +27,7 @@ export default function ProductionSchedulingDemoPage() {
   return (
     <div data-screen-label="Demo" style={s('min-height:100vh')}>
       <article style={s('max-width:900px;margin:0 auto;padding:44px 28px 80px')}>
-        <a href="/demos" style={label('font-size:12.5px;font-weight:500;text-decoration:none;color:#8a8279;display:inline-block;margin-bottom:22px')}>← All demos</a>
+        <a href="/playground/" style={label('font-size:12.5px;font-weight:500;text-decoration:none;color:#8a8279;display:inline-block;margin-bottom:22px')}>← Back to the Playground</a>
 
         <p style={label(`font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:${ACCENT};margin:0 0 10px`)}>Interactive optimizer</p>
         <h1 style={s(`font-family:${stack};font-weight:600;font-size:clamp(28px,4.4vw,44px);line-height:1.1;letter-spacing:-.02em;margin:0 0 16px;text-wrap:balance`)}>
@@ -106,7 +106,7 @@ export default function ProductionSchedulingDemoPage() {
         )}
 
         <p style={s('font-size:13.5px;line-height:1.6;color:#6b6560;margin:26px 0 0')}>
-          See also the <a href="/demos/assembly-line-balancing/" style={s('color:#16142e;font-weight:500')}>assembly-line-balancing optimizer</a> and the <a href="/demos" style={s('color:#16142e;font-weight:500')}>full demo gallery</a>.
+          See also the <a href="/demos/assembly-line-balancing/" style={s('color:#16142e;font-weight:500')}>assembly-line-balancing optimizer</a> and the <a href="/playground/" style={s('color:#16142e;font-weight:500')}>Playground</a>.
         </p>
       </article>
     </div>

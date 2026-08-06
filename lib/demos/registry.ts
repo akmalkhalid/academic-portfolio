@@ -2,7 +2,13 @@
 // be imported by server components for the /demos index and per-demo pages). The
 // engine factories live in components/pillar-demos/engines.ts (client-only).
 
-export type PillarKey = 'flow-field' | 'maze-search' | 'swarm-landscape' | 'boids' | 'procedural-dungeon'
+export type PillarKey =
+  | 'flow-field'
+  | 'maze-search'
+  | 'swarm-landscape'
+  | 'boids'
+  | 'procedural-dungeon'
+  | 'game-of-life'
 
 export type PillarMeta = {
   key: PillarKey
@@ -89,6 +95,20 @@ export const PILLAR_DEMOS: Record<PillarKey, PillarMeta> = {
     fullHeight: 344,
     how: 'The generator repeatedly proposes a randomly sized room at a random spot and keeps it only if it does not overlap any existing room, giving a sparse, non-uniform layout. It then connects consecutive rooms with L-shaped corridors carved between their centres, guaranteeing the whole level is traversable. Because every placement is random, no two levels are alike — the core idea behind procedural content generation.',
   },
+  'game-of-life': {
+    key: 'game-of-life',
+    pillar: 'Games Informatics & Engagement Modelling',
+    accent: '#84b53a',
+    eyebrow: 'Emergence · cellular automata',
+    title: 'A universe from four rules',
+    caption: "Conway's Game of Life — gliders and oscillators nobody encoded, from four rules about neighbours.",
+    blurb:
+      "Conway's Game of Life: every cell lives, dies or is born according to four rules about how many neighbours it has, and that is the entire specification. Gliders, blinkers and still lifes appear anyway. On the full demo, click and drag the grid to paint your own seed.",
+    chips: ['Four local rules', 'Toroidal grid', 'Paintable seed'],
+    height: 200,
+    fullHeight: 344,
+    how: 'The board wraps at every edge, so the world has no boundary. Each generation, a live cell with two or three live neighbours survives, a live cell with any other count dies, and a dead cell with exactly three live neighbours is born — that is all four rules. Structure is never designed in: gliders that walk across the grid, oscillators that beat on a fixed period, and still lifes that never change all fall out of those rules alone, which is why Life is the standard illustration of emergence. A board that dies out reseeds itself.',
+  },
 }
 
 export const PILLAR_ORDER: PillarKey[] = [
@@ -97,4 +117,5 @@ export const PILLAR_ORDER: PillarKey[] = [
   'swarm-landscape',
   'boids',
   'procedural-dungeon',
+  'game-of-life',
 ]

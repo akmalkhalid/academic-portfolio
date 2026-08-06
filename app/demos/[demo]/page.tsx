@@ -33,7 +33,7 @@ export default function PillarDemoPage({ params }: { params: { demo: string } })
   return (
     <div data-screen-label="Demo" style={s('min-height:100vh')}>
       <article style={s('max-width:900px;margin:0 auto;padding:44px 28px 80px')}>
-        <a href="/demos" style={label('font-size:12.5px;font-weight:500;text-decoration:none;color:#8a8279;display:inline-block;margin-bottom:22px')}>← All demos</a>
+        <a href="/playground/" style={label('font-size:12.5px;font-weight:500;text-decoration:none;color:#8a8279;display:inline-block;margin-bottom:22px')}>← Back to the Playground</a>
 
         <p style={label(`font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:${meta.accent};margin:0 0 10px`)}>{meta.eyebrow}</p>
         <h1 style={s(`font-family:${stack};font-weight:600;font-size:clamp(28px,4.4vw,44px);line-height:1.1;letter-spacing:-.02em;margin:0 0 14px;text-wrap:balance`)}>{meta.title}</h1>

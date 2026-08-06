@@ -8,6 +8,7 @@ import { createMazeSearch } from '@/lib/demos/maze-search'
 import { createSwarmLandscape } from '@/lib/demos/swarm-landscape'
 import { createBoids } from '@/lib/demos/boids'
 import { createProceduralDungeon } from '@/lib/demos/procedural-dungeon'
+import { createGameOfLife } from '@/lib/demos/game-of-life'
 
 export const PILLAR_ENGINES: Record<PillarKey, DemoFactory> = {
   'flow-field': createFlowField,
@@ -15,4 +16,5 @@ export const PILLAR_ENGINES: Record<PillarKey, DemoFactory> = {
   'swarm-landscape': createSwarmLandscape,
   boids: createBoids,
   'procedural-dungeon': createProceduralDungeon,
+  'game-of-life': createGameOfLife,
 }

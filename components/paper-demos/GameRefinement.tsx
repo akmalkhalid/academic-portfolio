@@ -10,8 +10,9 @@ import { useEffect, useRef } from 'react'
 import { s } from '@/lib/style'
 import { GRSim, DEFAULTS } from '@/lib/game-refinement-sim'
 
-export default function GameRefinement({ accent = '#f2683f' }: { accent?: string }) {
+export default function GameRefinement({ accent = '#f2683f', height }: { accent?: string; height?: number }) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const H = height ?? 320
 
   useEffect(() => {
     const cv = canvasRef.current
@@ -23,7 +24,6 @@ export default function GameRefinement({ accent = '#f2683f' }: { accent?: string
       window.matchMedia &&
       window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-    const H = 320
     let dpr = 1
     const sim = new GRSim(accent)
     sim.setParams({ ...DEFAULTS })
@@ -70,13 +70,13 @@ export default function GameRefinement({ accent = '#f2683f' }: { accent?: string
       io.disconnect()
       window.removeEventListener('resize', onResize)
     }
-  }, [accent])
+  }, [accent, H])
 
   return (
     <canvas
       ref={canvasRef}
       aria-label="Looping game-refinement self-play (illustrative)"
-      style={s('display:block;width:100%;height:320px;border-radius:10px')}
+      style={s(`display:block;width:100%;height:${H}px;border-radius:10px`)}
     />
   )
 }

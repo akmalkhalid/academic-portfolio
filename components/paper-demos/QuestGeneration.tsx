@@ -10,8 +10,9 @@ import { useEffect, useRef } from 'react'
 import { s } from '@/lib/style'
 import { QuestGenSim, DEFAULTS } from '@/lib/quest-gen-sim'
 
-export default function QuestGeneration({ accent = '#8b7bf0' }: { accent?: string }) {
+export default function QuestGeneration({ accent = '#8b7bf0', height }: { accent?: string; height?: number }) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const H = height ?? 300
 
   useEffect(() => {
     const cv = canvasRef.current
@@ -23,7 +24,6 @@ export default function QuestGeneration({ accent = '#8b7bf0' }: { accent?: strin
       window.matchMedia &&
       window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-    const H = 300
     let dpr = 1
     const sim = new QuestGenSim(accent)
     sim.setParams({ ...DEFAULTS })
@@ -78,13 +78,13 @@ export default function QuestGeneration({ accent = '#8b7bf0' }: { accent?: strin
       io.disconnect()
       window.removeEventListener('resize', onResize)
     }
-  }, [accent])
+  }, [accent, H])
 
   return (
     <canvas
       ref={canvasRef}
       aria-label="Looping agentic quest-generation (illustrative)"
-      style={s('display:block;width:100%;height:300px;border-radius:10px')}
+      style={s(`display:block;width:100%;height:${H}px;border-radius:10px`)}
     />
   )
 }

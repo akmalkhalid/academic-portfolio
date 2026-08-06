@@ -75,7 +75,7 @@ export default function PageTransition() {
     }
     // App routes use Next's client router; everything else under a leading slash
     // (the /courses/* and /tools/* static microsites in /public) gets a full load.
-    const APP_ROUTES = ['/', '/about', '/research', '/publications', '/tools', '/teaching', '/contact', '/postgraduate-guide']
+    const APP_ROUTES = ['/', '/about', '/research', '/publications', '/playground', '/teaching', '/contact', '/postgraduate-guide']
     const routeOf = (raw: string) => { let p = raw.split('#')[0].split('?')[0]; if (p.length > 1 && p.endsWith('/')) p = p.slice(0, -1); return p }
     let leaving = false
     function outro(href: string, label: string, spa: boolean) {
