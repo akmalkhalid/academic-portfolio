@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dek Slaid — Bertanya, Berbantu, atau Berautomasi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1F2430; --ink-soft:#5A6172; --paper:#FFFFFF; --card:#FFFFFF; --mist:#F4F6F9; --line:#E3E7EE;
+  --stage:#E7EAF1;
+  --navy:#16213E; --navy-ink:#FFFFFF;
+  --blue:#3B6FE0; --blue-soft:#EAF0FC;
+  --green:#2E9E5B; --green-soft:#E9F6EE;
+  --amber:#C77A00; --amber-soft:#FDF3E1;
+  --red:#D24545; --red-soft:#FBECEC;
+  --purple:#7A5AF0; --purple-soft:#EEE9FD;
+  --mono:'IBM Plex Mono',monospace;
+}
+body.theme-dark{
+  --ink:#E7ECF5; --ink-soft:#9AA6BC; --paper:#0E1420; --card:#151D2C; --mist:#1B2434; --line:#2B3648;
+  --stage:#070B13;
+  --navy:#0A1120; --navy-ink:#E7ECF5;
+  --blue:#7FA4F5; --blue-soft:#182640;
+  --green:#6FD69A; --green-soft:#15281D;
+  --amber:#F0AE4B; --amber-soft:#2C2213;
+  --red:#E87B7B; --red-soft:#2E1919;
+  --purple:#B49CF7; --purple-soft:#221A3A;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden}
+body{font-family:'IBM Plex Sans',sans-serif;color:var(--ink);background:var(--stage);line-height:1.5;transition:background .3s}
+h1,h2,h3{font-family:'Bricolage Grotesque',sans-serif;line-height:1.12}
+
+/* ---------- Language system ---------- */
+.en{color:var(--ink-soft);font-style:italic}
+body.lang-ms .en{display:none!important}
+body.lang-en .ms{display:none!important}
+body.lang-en .en{font-style:normal;color:inherit}
+.dark .en{color:#8F99B8}
+body.lang-en .dark .en{color:inherit}
+
+/* ---------- Deck chrome ---------- */
+.lang-toggle{display:flex;gap:2px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:4px;box-shadow:0 6px 18px rgba(0,0,0,.25)}
+.deck-ctrl{position:fixed;top:14px;right:14px;z-index:99;display:flex;gap:8px}
+.lang-toggle button{border:none;background:none;font-family:var(--mono);font-size:.72rem;padding:6px 13px;border-radius:999px;cursor:pointer;color:var(--ink-soft)}
+.lang-toggle button.active{background:var(--navy);color:var(--navy-ink)}
+.progress{position:fixed;bottom:0;left:0;height:4px;background:linear-gradient(90deg,var(--blue),var(--green),var(--amber));z-index:99;transition:width .3s ease}
+.counter{position:fixed;bottom:14px;right:16px;z-index:99;font-family:var(--mono);font-size:.75rem;color:var(--ink-soft)}
+.navhint{position:fixed;bottom:14px;left:16px;z-index:99;font-family:var(--mono);font-size:.72rem;color:var(--ink-soft)}
+.navbtn{position:fixed;top:50%;transform:translateY(-50%);z-index:98;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--card);cursor:pointer;font-size:1.1rem;color:var(--ink);display:flex;align-items:center;justify-content:center}
+.navbtn:hover{filter:brightness(1.05)}
+#prevBtn{left:14px}#nextBtn{right:14px}
+
+/* ---------- Slides ---------- */
+.slide{position:absolute;inset:0;padding:72px 100px;display:none;flex-direction:column;justify-content:center;background:var(--paper);overflow:auto}
+.slide.active{display:flex;animation:fadein .35s ease}
+@keyframes fadein{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.slide .eyebrow{font-family:var(--mono);font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:24px}
+.slide h1{font-size:clamp(2rem,5.5vw,4rem);font-weight:800}
+.slide h2{font-size:clamp(1.6rem,3.8vw,2.6rem);font-weight:800;margin-bottom:32px;letter-spacing:-.01em}
+.slide p.big{font-size:clamp(1.05rem,2vw,1.4rem);max-width:60ch;line-height:1.62}
+.slide ul.big{font-size:clamp(1rem,1.8vw,1.3rem);max-width:62ch;padding-left:26px}
+.slide ul.big li{margin-bottom:20px;line-height:1.55}
+.dark{background:var(--navy);color:#fff}
+.dark .eyebrow{color:#9FB3E8}
+.dark p.big{color:#C6CEE3}
+.divider{align-items:flex-start}
+.divider .segnum{font-family:var(--mono);font-size:1rem;letter-spacing:.2em;margin-bottom:18px}
+.divider h1{max-width:16ch}
+.divider .segdesc{margin-top:22px;font-size:clamp(1.05rem,2vw,1.4rem);max-width:52ch}
+.div-b{background:#3B6FE0} .div-g{background:#2E9E5B} .div-a{background:#C77A00}
+.divider,.divider p,.divider .segnum{color:#fff}
+.divider .en{color:rgba(255,255,255,.75)}
+body.lang-en .divider .en{color:#fff}
+.t-tanya{color:#7FA4F5}.t-bantu{color:#6FD69A}.t-auto{color:#F5B84D}
+
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:52px;align-items:center}
+@media(max-width:820px){.cols{grid-template-columns:1fr}.slide{padding:56px 28px}}
+.kbox{border-radius:14px;padding:26px 30px;margin-bottom:20px;border:2px solid}
+.kbox h3{font-size:1.15rem;margin-bottom:4px}
+.kbox p{font-size:.98rem}
+.kb{background:var(--blue-soft);border-color:var(--blue)} .kb h3{color:var(--blue)}
+.kg{background:var(--green-soft);border-color:var(--green)} .kg h3{color:var(--green)}
+.ka{background:var(--amber-soft);border-color:var(--amber)} .ka h3{color:var(--amber)}
+.kr{background:var(--red-soft);border-color:var(--red)} .kr h3{color:var(--red)}
+
+.steps{counter-reset:s;list-style:none;max-width:70ch}
+.steps li{counter-increment:s;position:relative;padding:0 0 22px 54px;font-size:clamp(.95rem,1.6vw,1.15rem)}
+.steps li::before{content:counter(s);position:absolute;left:0;top:0;width:32px;height:32px;border-radius:50%;background:var(--ink);color:var(--paper);font-family:var(--mono);font-size:.85rem;display:flex;align-items:center;justify-content:center}
+.st-b .steps li::before{background:var(--blue)}
+.st-g .steps li::before{background:var(--green)}
+.st-a .steps li::before{background:var(--amber)}
+.ui{font-family:var(--mono);font-size:.85em;background:var(--mist);border:1px solid var(--line);border-radius:5px;padding:1px 7px;white-space:nowrap}
+.prompt{background:#101625;color:#E8EDF7;border-radius:12px;padding:18px 20px;font-family:var(--mono);font-size:clamp(.78rem,1.3vw,.95rem);line-height:1.6;white-space:pre-wrap;max-width:78ch}
+.mocksvg{width:100%;max-width:820px;height:auto}
+table{width:100%;border-collapse:collapse;font-size:clamp(.82rem,1.4vw,1rem)}
+th{background:var(--navy);color:#fff;text-align:left;padding:9px 12px}
+th .en{color:#C6CEE3} body.lang-en th .en{color:#fff}
+td{padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:nth-child(even) td{background:var(--mist)}
+.pill{display:inline-block;font-family:var(--mono);font-size:.72rem;border-radius:999px;padding:2px 10px;white-space:nowrap}
+.pill.b{background:var(--blue-soft);color:var(--blue)}
+.pill.g{background:var(--green-soft);color:var(--green)}
+.pill.a{background:var(--amber-soft);color:var(--amber)}
+.reveal-btn{margin-top:16px;border:none;background:var(--navy);color:#fff;font-family:var(--mono);font-size:.8rem;padding:9px 18px;border-radius:999px;cursor:pointer}
+.hidden-col{visibility:hidden}
+/* crossover rungs (deck) */
+.xtask{margin-bottom:28px}
+.xtask .xh{font-size:clamp(1rem,1.8vw,1.35rem);font-weight:700;font-family:'Bricolage Grotesque',sans-serif;margin-bottom:10px}
+.xtask .xh .who{font-family:'IBM Plex Sans',sans-serif;font-weight:400;font-size:.8rem;color:var(--ink-soft)}
+.xrungs{display:grid;grid-template-columns:1fr 26px 1fr 26px 1fr;align-items:stretch;gap:0}
+.xrung{border-radius:11px;padding:17px 16px;border:2px solid}
+.xrung .tag{font-family:var(--mono);font-size:.66rem;letter-spacing:.06em;text-transform:uppercase;display:block;margin-bottom:4px}
+.xrung h4{font-size:clamp(.82rem,1.3vw,.98rem);margin-bottom:4px}
+.xrung p{font-size:clamp(.74rem,1.15vw,.9rem);line-height:1.4}
+.xrung.r1{background:var(--blue-soft);border-color:var(--blue)} .xrung.r1 .tag,.xrung.r1 h4{color:var(--blue)}
+.xrung.r2{background:var(--green-soft);border-color:var(--green)} .xrung.r2 .tag,.xrung.r2 h4{color:var(--green)}
+.xrung.r3{background:var(--amber-soft);border-color:var(--amber)} .xrung.r3 .tag,.xrung.r3 h4{color:var(--amber)}
+.xarrow{display:flex;align-items:center;justify-content:center;color:var(--ink-soft);font-size:1rem}
+@media(max-width:820px){.xrungs{grid-template-columns:1fr}.xarrow{transform:rotate(90deg);padding:4px 0}}
+.access{display:flex;align-items:center;gap:34px;margin-top:30px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:24px 30px;box-shadow:0 10px 30px rgba(0,0,0,.12)}
+.access .qr{width:180px;height:180px;border-radius:12px;flex:none;background:#fff;padding:6px}
+.access-label{font-family:var(--mono);font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:8px}
+.access-link{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(1.3rem,2.6vw,2rem);color:var(--blue);text-decoration:none;letter-spacing:-.01em;word-break:break-all}
+.access-note{font-size:clamp(.9rem,1.5vw,1.05rem);color:var(--ink-soft);margin-top:10px;max-width:40ch}
+@media(max-width:820px){.access{flex-direction:column;text-align:center}.access-note{margin-left:auto;margin-right:auto}}
+.stakes-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+@media(max-width:820px){.stakes-grid{grid-template-columns:1fr}}
+.stakebox{background:var(--amber-soft);border:2px solid var(--amber);border-radius:16px;padding:28px 30px}
+.stakebox .stat{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:clamp(2.2rem,5vw,3.4rem);color:var(--amber);line-height:1}
+.stakebox .stat .unit{display:block;font-size:.92rem;font-weight:600;color:var(--ink-soft);margin-top:8px;font-family:'IBM Plex Sans',sans-serif}
+.stakebox p{margin-top:16px;font-size:clamp(.95rem,1.5vw,1.1rem);line-height:1.55}
+.factbox{margin-top:26px;background:var(--purple-soft);border:1px solid var(--purple);border-radius:13px;padding:20px 24px 20px 56px;position:relative;font-size:clamp(.92rem,1.5vw,1.08rem);line-height:1.55}
+.factbox::before{content:"✨";position:absolute;left:20px;top:18px;font-size:1.2rem}
+.factbox b{color:var(--purple)}
+.dfact{margin-top:22px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.42);border-radius:13px;padding:15px 20px 15px 48px;position:relative;color:#fff;font-size:clamp(.9rem,1.6vw,1.08rem);line-height:1.5;max-width:58ch}
+.dfact::before{content:"✨";position:absolute;left:17px;top:14px}
+.dfact .en{color:rgba(255,255,255,.82)}
+body.lang-en .dfact .en{color:#fff}
+/* prompt cards, copy buttons, output reveals */
+.promptcard{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-top:6px}
+.pc-head{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--mist);border-bottom:1px solid var(--line)}
+.pc-tool{font-family:var(--mono);font-size:.72rem;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-soft);font-weight:600}
+.copy-btn{margin-left:auto;border:1.5px solid var(--blue);background:var(--card);color:var(--blue);font-family:var(--mono);font-size:.72rem;padding:6px 13px;border-radius:999px;cursor:pointer;white-space:nowrap;transition:background .15s,color .15s,border-color .15s}
+.copy-btn:hover{background:var(--blue);color:#fff}
+.copy-btn .cdone{display:none}
+.copy-btn.copied{background:var(--green);border-color:var(--green);color:#fff}
+.copy-btn.copied .cdef{display:none}.copy-btn.copied .cdone{display:inline}
+.promptcard .prompt{margin:0;border:none;border-radius:0;max-width:none}
+.out{border-top:1px solid var(--line)}
+.out>summary{cursor:pointer;list-style:none;padding:11px 15px;font-family:var(--mono);font-size:.74rem;letter-spacing:.03em;color:var(--green);display:flex;align-items:center;gap:9px;background:var(--card)}
+.out>summary::-webkit-details-marker{display:none}
+.out>summary::before{content:"▸";transition:transform .2s;color:var(--green)}
+.out[open]>summary::before{transform:rotate(90deg)}
+.out .out-body{padding:14px 16px;border-top:1px dashed var(--line);background:var(--mist);font-size:clamp(.84rem,1.35vw,1rem);line-height:1.6}
+.out .out-label{font-family:var(--mono);font-size:.64rem;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-soft);display:block;margin-bottom:7px}
+/* case-study cards */
+.casegrid{display:grid;grid-template-columns:1fr 1fr;gap:26px;align-items:start}
+@media(max-width:820px){.casegrid{grid-template-columns:1fr}}
+.casecard{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.cc-head{padding:16px 18px 14px}
+.cc-title{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.06rem;display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.badge{font-family:var(--mono);font-size:.62rem;letter-spacing:.05em;text-transform:uppercase;border-radius:999px;padding:3px 10px;font-weight:600}
+.badge.admin{background:var(--blue-soft);color:var(--blue)}
+.badge.acad{background:var(--green-soft);color:var(--green)}
+.cc-desc{font-size:.9rem;color:var(--ink-soft);margin-top:7px;line-height:1.5}
+.casecard .promptcard{margin:0;border:none;border-top:1px solid var(--line);border-radius:0}
+.casecard .promptcard .prompt{font-size:clamp(.74rem,1.15vw,.86rem)}
+/* rich prompt lab: technique, highlighting, follow-ups, pros/cons */
+.pc-head{flex-wrap:wrap}
+.technique{font-family:var(--mono);font-size:.64rem;letter-spacing:.04em;text-transform:uppercase;background:var(--amber-soft);color:var(--amber);border:1px solid var(--amber);border-radius:999px;padding:3px 10px;font-weight:600}
+.prompt .phase{color:#F5B400;font-weight:700}
+.prompt .app{color:#8FBEFF;font-weight:600}
+.prompt .ph{color:#FFB3A7}
+.prompt .hint{color:#9DD1FF;font-style:italic}
+.followups{padding:11px 15px;border-top:1px solid var(--line);font-size:clamp(.8rem,1.2vw,.9rem);color:var(--ink-soft);background:var(--card);line-height:1.55}
+.followups b{color:var(--ink)}
+.proscons{border-top:1px solid var(--line)}
+.proscons>summary{cursor:pointer;list-style:none;padding:11px 15px;font-family:var(--mono);font-size:.74rem;color:var(--blue);display:flex;align-items:center;gap:9px;background:var(--card)}
+.proscons>summary::-webkit-details-marker{display:none}
+.proscons>summary::before{content:"▸";transition:transform .2s;color:var(--blue)}
+.proscons[open]>summary::before{transform:rotate(90deg)}
+.pc-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;border-top:1px dashed var(--line)}
+@media(max-width:700px){.pc-grid{grid-template-columns:1fr}}
+.pros,.cons{padding:14px 16px;font-size:clamp(.8rem,1.2vw,.9rem);line-height:1.65}
+.pros{background:var(--green-soft)}.cons{background:var(--red-soft)}
+.pros .h,.cons .h{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:.9rem;margin-bottom:5px;display:block}
+.pros .h{color:var(--green)}.cons .h{color:var(--red)}
+.foot-tag{position:absolute;bottom:22px;left:84px;font-family:var(--mono);font-size:.7rem;color:var(--ink-soft);letter-spacing:.08em}
+.dark .foot-tag,.divider .foot-tag{color:rgba(255,255,255,.5)}
+@media(max-width:820px){.foot-tag{left:28px}}
+</style>
+</head>
+<body class="lang-ms">
+
+<div class="deck-ctrl">
+  <div class="lang-toggle" role="group" aria-label="Bahasa / Language">
+    <button type="button" data-mode="lang-ms" class="active">BM</button>
+    <button type="button" data-mode="lang-en">EN</button>
+  </div>
+  <div class="lang-toggle" role="group" aria-label="Tema / Theme">
+    <button type="button" data-theme="light" class="active">☀︎</button>
+    <button type="button" data-theme="dark">☾</button>
+  </div>
+</div>
+<button class="navbtn" id="prevBtn" aria-label="Slaid sebelumnya / Previous">‹</button>
+<button class="navbtn" id="nextBtn" aria-label="Slaid seterusnya / Next">›</button>
+<div class="progress" id="progress"></div>
+<div class="counter" id="counter"></div>
+<div class="navhint">← → / klik / click</div>
+
+<!-- 1 · TITLE -->
+<section class="slide dark active">
+  <div class="eyebrow"><span class="ms">Sesi Perkongsian Inisiatif AI Universiti · Google AI Champion</span><span class="en">University AI Initiative Sharing Session · Google AI Champion</span></div>
+  <h1><span class="t-tanya">Bertanya</span>,<br><span class="t-bantu">Berbantu</span>, atau<br><span class="t-auto">Berautomasi</span></h1>
+  <p class="big" style="margin-top:22px"><span class="ms">Gemini sebagai Pemacu Produktiviti Digital Anda</span><br><span class="en">Gemini as the Driver of Your Digital Productivity</span></p>
+  <p class="big" style="margin-top:30px;font-size:1rem;color:#8F99B8">60 minit · Gemini · Gems · Google Workspace Studio</p>
+  <div class="foot-tag" data-label="PEMBUKAAN / OPENING"></div>
+</section>
+
+<!-- 2 · HOOK -->
+<section class="slide dark">
+  <h2 style="max-width:24ch"><span class="ms">Siapa yang minggu lepas menaip e-mel yang sama… buat kali kesepuluh?</span><span class="en">Who typed the same email last week… for the tenth time?</span></h2>
+  <p class="big"><span class="ms">Hari ini kita belajar tiga tahap penggunaan AI — dan bila setiap satu patut digunakan.</span><span class="en">Today we learn three levels of using AI — and when each one is the right choice.</span></p>
+  <div class="foot-tag" data-label="PEMBUKAAN / OPENING"></div>
+</section>
+
+<!-- 3 · LADDER -->
+<section class="slide">
+  <h2><span class="ms">Tangga Produktiviti AI</span><span class="en">The AI Productivity Ladder</span></h2>
+  <svg class="mocksvg" viewBox="0 0 900 330" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Tangga tiga anak / Three-rung ladder">
+    <defs><marker id="arrL" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M1,1 L11,6 L1,11 Z" fill="#8894AB"/></marker></defs>
+    <rect x="30" y="200" width="260" height="100" rx="12" fill="#EAF0FC" stroke="#3B6FE0" stroke-width="2"/>
+    <text x="160" y="238" text-anchor="middle" font-family="Bricolage Grotesque,sans-serif" font-size="24" font-weight="800" fill="#3B6FE0">1 · BERTANYA</text>
+    <text x="160" y="262" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="14" fill="#1F2430">Gemini &amp; panel sisi Workspace</text>
+    <text x="160" y="282" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="12" font-style="italic" fill="#5A6172">Ask — one-off prompts</text>
+    <rect x="320" y="130" width="260" height="100" rx="12" fill="#E9F6EE" stroke="#2E9E5B" stroke-width="2"/>
+    <text x="450" y="168" text-anchor="middle" font-family="Bricolage Grotesque,sans-serif" font-size="24" font-weight="800" fill="#2E9E5B">2 · BERBANTU</text>
+    <text x="450" y="192" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="14" fill="#1F2430">Gems — pembantu AI tersuai</text>
+    <text x="450" y="212" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="12" font-style="italic" fill="#5A6172">Assist — reusable custom experts</text>
+    <rect x="610" y="60" width="260" height="100" rx="12" fill="#FDF3E1" stroke="#DE8A00" stroke-width="2"/>
+    <text x="740" y="98" text-anchor="middle" font-family="Bricolage Grotesque,sans-serif" font-size="24" font-weight="800" fill="#DE8A00">3 · BERAUTOMASI</text>
+    <text x="740" y="122" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="14" fill="#1F2430">Google Workspace Studio</text>
+    <text x="740" y="142" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="12" font-style="italic" fill="#5A6172">Automate — flows that run themselves</text>
+    <path d="M292 250 H305 V180 H316" fill="none" stroke="#8894AB" stroke-width="2.5" marker-end="url(#arrL)"/>
+    <path d="M582 180 H595 V110 H606" fill="none" stroke="#8894AB" stroke-width="2.5" marker-end="url(#arrL)"/>
+    <text x="30" y="30" font-family="IBM Plex Mono,monospace" font-size="12" fill="#5A6172">USAHA SEKALI ➜ PULANGAN BERULANG · EFFORT ONCE ➜ RECURRING RETURN</text>
+    <line x1="30" y1="42" x2="870" y2="42" stroke="#E3E7EE" stroke-width="2"/>
+  </svg>
+  <p class="big" style="margin-top:18px"><span class="ms">Satu soalan panduan: <b>"Tugas ini patut saya tanya, saya bantu, atau saya automasikan?"</b></span><span class="en">One guiding question: <b>"Should I ask, assist, or automate this task?"</b></span></p>
+  <div class="foot-tag" data-label="KERANGKA / FRAMEWORK"></div>
+</section>
+
+<!-- CROSSOVER SPINE -->
+<section class="slide">
+  <div class="eyebrow"><span class="ms">Tulang belakang sesi · Ikuti dua tugas ini sepanjang tiga segmen</span><span class="en">The session's spine · Follow these two tasks across all three segments</span></div>
+  <h2><span class="ms">Satu Tugas, Tiga Anak Tangga</span><span class="en">One Task, Three Rungs</span></h2>
+  <div class="xtask">
+    <div class="xh">🗂️ <span class="ms">Tugas A — Minit Mesyuarat</span><span class="en">Task A — Meeting Minutes</span> <span class="who"><span class="ms">(setiausaha, pegawai tadbir)</span><span class="en">(secretaries, admin officers)</span></span></div>
+    <div class="xrungs">
+      <div class="xrung r1"><span class="tag">1 · <span class="ms">Bertanya</span><span class="en">Ask</span></span><h4><span class="ms">Selepas satu mesyuarat</span><span class="en">After one meeting</span></h4><p><span class="ms">Tampal catatan kasar → minit berformat, sekali.</span><span class="en">Paste rough notes → formatted minutes, once.</span></p></div>
+      <div class="xarrow">➜</div>
+      <div class="xrung r2"><span class="tag">2 · <span class="ms">Berbantu</span><span class="en">Assist</span></span><h4><span class="ms">Setiap bulan</span><span class="en">Every month</span></h4><p><span class="ms">Gem "Pembantu Minit" + templat &amp; glosari.</span><span class="en">"Minutes Assistant" Gem + template &amp; glossary.</span></p></div>
+      <div class="xarrow">➜</div>
+      <div class="xrung r3"><span class="tag">3 · <span class="ms">Berautomasi</span><span class="en">Automate</span></span><h4><span class="ms">Tanpa campur tangan</span><span class="en">Hands-off</span></h4><p><span class="ms">Nota masuk folder → flow panggil Gem → e-mel ahli JK.</span><span class="en">Notes land in folder → flow calls Gem → emails committee.</span></p></div>
+    </div>
+  </div>
+  <div class="xtask">
+    <div class="xh">🎓 <span class="ms">Tugas B — Pertanyaan Pelajar</span><span class="en">Task B — Student Enquiries</span> <span class="who"><span class="ms">(pensyarah, pejabat akademik)</span><span class="en">(lecturers, academic office)</span></span></div>
+    <div class="xrungs">
+      <div class="xrung r1"><span class="tag">1 · <span class="ms">Bertanya</span><span class="en">Ask</span></span><h4><span class="ms">Satu e-mel rumit</span><span class="en">One tricky email</span></h4><p><span class="ms">Gemini dalam Gmail deraf balasan, sekali.</span><span class="en">Gemini in Gmail drafts a reply, once.</span></p></div>
+      <div class="xarrow">➜</div>
+      <div class="xrung r2"><span class="tag">2 · <span class="ms">Berbantu</span><span class="en">Assist</span></span><h4><span class="ms">Soalan berulang</span><span class="en">Recurring questions</span></h4><p><span class="ms">Gem "Penasihat FAQ" + buku panduan &amp; polisi.</span><span class="en">"FAQ Advisor" Gem + handbook &amp; policies.</span></p></div>
+      <div class="xarrow">➜</div>
+      <div class="xrung r3"><span class="tag">3 · <span class="ms">Berautomasi</span><span class="en">Automate</span></span><h4><span class="ms">Triaj automatik</span><span class="en">Auto-triage</span></h4><p><span class="ms">Borang → Ask a Gem (FAQ) → e-mel + Chat.</span><span class="en">Form → Ask a Gem (FAQ) → email + Chat.</span></p></div>
+    </div>
+  </div>
+  <p class="big" style="font-size:.98rem;margin-top:6px"><span class="ms">💡 Gem yang <b>sama</b> dari Anak Tangga 2 ialah "otak" yang dipanggil di Anak Tangga 3 — satu tugas matang merentas tiga tahap, bukan tiga alat berasingan.</span><span class="en">💡 The <b>same</b> Gem from Rung 2 is the "brain" called on Rung 3 — one task maturing across three levels, not three separate tools.</span></p>
+  <div class="foot-tag" data-label="TULANG BELAKANG / SPINE"></div>
+</section>
+
+<!-- 4 · NAMING NOTE -->
+<section class="slide">
+  <h2><span class="ms">Sebelum bermula: dua nama, jangan keliru</span><span class="en">Before we start: two names, don't confuse them</span></h2>
+  <div class="cols">
+    <div class="kbox ka">
+      <h3>Google Workspace <u>Studio</u></h3>
+      <p><span class="ms">Alat <b>automasi</b> kerja (dahulunya "Workspace Flows"). Inilah yang kita gunakan hari ini.</span><span class="en">The work <b>automation</b> tool (formerly "Workspace Flows"). This is what we use today.</span></p>
+    </div>
+    <div class="kbox kr">
+      <h3>Google <u>Flow</u></h3>
+      <p><span class="ms">Alat penjanaan <b>video</b> AI (Veo) — produk berbeza sama sekali.</span><span class="en">The AI <b>video</b>-generation tool (Veo) — an entirely different product.</span></p>
+    </div>
+  </div>
+  <div class="foot-tag" data-label="KERANGKA / FRAMEWORK"></div>
+</section>
+
+<!-- REAL-WORLD STAKES -->
+<section class="slide">
+  <div class="eyebrow"><span class="ms">Mengapa ini penting</span><span class="en">Why this matters</span></div>
+  <h2><span class="ms">Kepentingan Sebenar</span><span class="en">Real-World Stakes</span></h2>
+  <div class="stakes-grid">
+    <div class="stakebox">
+      <div class="stat">30+ <span class="unit"><span class="ms">jam / tahun</span><span class="en">hours / year</span></span></div>
+      <p><span class="ms">Setiausaha yang menyiapkan minit 2–3 jam selepas <i>setiap</i> mesyuarat bulanan kehilangan lebih 30 jam setahun — untuk satu tugas sahaja.</span><span class="en">A secretary spending 2–3 hours on minutes after <i>every</i> monthly meeting loses 30+ hours a year — to one task alone.</span></p>
+    </div>
+    <div class="stakebox">
+      <div class="stat">40 <span class="unit"><span class="ms">pertanyaan / minggu</span><span class="en">enquiries / week</span></span></div>
+      <p><span class="ms">Pejabat akademik yang mentriaj 40 pertanyaan pelajar seminggu secara manual kehilangan masa yang sepatutnya untuk pelajar.</span><span class="en">An academic office triaging 40 student enquiries a week by hand loses time that should go to students.</span></p>
+    </div>
+  </div>
+  <div class="factbox"><span class="ms"><b>Fakta menarik:</b> "Produktiviti" berasal daripada bidang pertanian sebelum menjadi ukuran ekonomi. Alat AI menjimatkan masa nyata untuk tugas menulis &amp; meringkas rutin — <i>tetapi hanya apabila anda tahu bila hendak menggunakannya.</i> Tangga ini ialah "bila" anda.</span><span class="en"><b>Fun fact:</b> "Productivity" comes from agriculture before it became an economic measure. AI tools save real time on routine writing &amp; summarising — <i>but only when you know when to reach for them.</i> This ladder is your "when".</span></div>
+  <div class="foot-tag" data-label="KERANGKA / FRAMEWORK"></div>
+</section>
+
+<!-- 5 · DIVIDER 1 -->
+<section class="slide divider div-b">
+  <div class="segnum">SEGMEN 1 / SEGMENT 1 · 05:00–20:00</div>
+  <h1><span class="ms">Bertanya</span><span class="en">Ask</span></h1>
+  <p class="segdesc"><span class="ms">Anda tidak perlu meninggalkan Gmail, Docs, atau Sheets — Gemini sudah berada di dalamnya.</span><span class="en">You never need to leave Gmail, Docs, or Sheets — Gemini is already inside them.</span></p>
+  <p class="segdesc" style="font-size:1rem;margin-top:14px;opacity:.85">↕ <span class="ms"><b>Anak Tangga 1</b> untuk kedua-dua tugas spine — Minit Mesyuarat &amp; Pertanyaan Pelajar. Masih menekan butang setiap kali.</span><span class="en"><b>Rung 1</b> for both spine tasks — Meeting Minutes &amp; Student Enquiries. Still pressing a button every time.</span></p>
+  <div class="foot-tag" data-label=""></div>
+</section>
+
+<!-- 6 · PKTF -->
+<section class="slide">
+  <h2><span class="ms">Formula Prom PKTF</span><span class="en">The PKTF Prompt Formula</span></h2>
+  <div class="cols" style="align-items:start">
+    <div>
+      <div class="kbox kb"><h3>P · <span class="ms">Peranan</span><span class="en">Persona</span></h3><p><span class="ms">"Anda pegawai tadbir universiti yang berpengalaman…"</span><span class="en">"You are an experienced university administrative officer…"</span></p></div>
+      <div class="kbox kb"><h3>K · <span class="ms">Konteks</span><span class="en">Context</span></h3><p><span class="ms">"…mesyuarat JK Kurikulum membincangkan tiga perkara…"</span><span class="en">"…the Curriculum Committee discussed three matters…"</span></p></div>
+    </div>
+    <div>
+      <div class="kbox kb"><h3>T · <span class="ms">Tugasan</span><span class="en">Task</span></h3><p><span class="ms">"…sediakan draf minit mesyuarat…"</span><span class="en">"…prepare a draft of the minutes…"</span></p></div>
+      <div class="kbox kb"><h3>F · Format</h3><p><span class="ms">"…dalam Bahasa Melayu rasmi, berjadual, satu halaman."</span><span class="en">"…in formal Bahasa Melayu, tabulated, one page."</span></p></div>
+    </div>
+  </div>
+  <div class="foot-tag" data-label="SEGMEN 1 / SEGMENT 1"></div>
+</section>
+
+<!-- 7 · DEMO 1A -->
+<section class="slide st-b">
+  <div class="eyebrow"><span class="ms">Demo Langsung 1A · Gmail → Calendar → Tasks</span><span class="en">Live Demo 1A · Gmail → Calendar → Tasks</span></div>
+  <h2><span class="ms">Dari peti masuk terus ke tindakan</span><span class="en">From inbox straight to action</span></h2>
+  <div class="promptcard">
+    <div class="pc-head"><span class="pc-tool">✦ Gemini</span><span class="technique"><span class="ms">Teknik: Prom rentas-apl</span><span class="en">Technique: cross-app prompting</span></span><button class="copy-btn" type="button"><span class="cdef">⧉ <span class="ms">Salin prom</span><span class="en">Copy prompt</span></span><span class="cdone">✓ <span class="ms">Disalin</span><span class="en">Copied</span></span></button></div>
+    <div class="prompt"><span class="ms"><span class="phase">① DALAM GMAIL</span> (buka thread → panel Gemini ✨):
+Ringkaskan thread ini dalam 5 poin. Senaraikan setiap keputusan, kemudian item tindakan sebagai: tugas — pemilik — tarikh akhir. Tandai apa yang perlukan balasan saya.
+
+<span class="phase">② DALAM APP GEMINI</span> (apl Workspace dihidupkan):
+<span class="app">@Gmail</span> ringkaskan thread terkini daripada <span class="ph">[nama]</span> tentang <span class="ph">[topik]</span>. Kemudian <span class="app">@Calendar</span> cipta acara 30 minit <span class="ph">"[tajuk]"</span> pada <span class="ph">[hari, masa]</span>, dan <span class="app">@Tasks</span> tambah <span class="ph">"[tindakan]"</span> perlu siap <span class="ph">[tarikh]</span>.
+
+<span class="hint">↳ Gemini tunjuk draf acara/tugas dahulu — sahkan sebelum ia dicipta.</span></span><span class="en"><span class="phase">① IN GMAIL</span> (open the thread → Gemini side panel ✨):
+Summarise this thread in 5 bullets. List every decision made, then action items as: task — owner — deadline. Flag anything that needs my reply.
+
+<span class="phase">② IN THE GEMINI APP</span> (Workspace apps switched on):
+<span class="app">@Gmail</span> summarise the latest thread from <span class="ph">[name]</span> about <span class="ph">[topic]</span>. Then <span class="app">@Calendar</span> create a 30-min event <span class="ph">"[title]"</span> on <span class="ph">[day, time]</span>, and <span class="app">@Tasks</span> add <span class="ph">"[action]"</span> due <span class="ph">[date]</span>.
+
+<span class="hint">↳ Gemini shows a draft event/task first — confirm before it's created.</span></span></div>
+    <details class="out"><summary><span class="ms">Lihat output dijangka</span><span class="en">See expected output</span></summary>
+      <div class="out-body"><span class="out-label"><span class="ms">Yang Gemini pulangkan</span><span class="en">What Gemini returns</span></span><span class="ms"><b>Ringkasan:</b> 3 keputusan, 2 perlu balasan.<br><b>Tindakan:</b> Sahkan raptai — <i>Puan Ainun</i> — <i>14 Ogos</i>; Hantar senarai petugas — <i>anda</i> — <i>30 Julai</i>.<br><b>📅 Draf acara:</b> "Raptai Konvokesyen" · 14 Ogos, 10:00–10:30 — <i>Cipta?</i><br><b>✅ Draf tugas:</b> "Kumpul senarai petugas" · tarikh akhir 30 Julai — <i>Tambah?</i></span><span class="en"><b>Summary:</b> 3 decisions, 2 need a reply.<br><b>Actions:</b> Confirm rehearsal — <i>Ms Ainun</i> — <i>14 Aug</i>; Send duty list — <i>you</i> — <i>30 Jul</i>.<br><b>📅 Draft event:</b> "Convocation Rehearsal" · 14 Aug, 10:00–10:30 — <i>Create?</i><br><b>✅ Draft task:</b> "Collect duty list" · due 30 Jul — <i>Add?</i></span></div>
+    </details>
+    <div class="followups">💡 <b><span class="ms">Susulan berguna:</span><span class="en">Handy follow-ups:</span></b> <span class="ms">"Draf balasan setuju opsyen B" · "Cari e-mel belum dibaca dari Dekan minggu ini" · "Apa jadual saya esok?"</span><span class="en">"Draft a reply agreeing to option B" · "Find unread emails from the Dean this week" · "What's on my calendar tomorrow?"</span></div>
+    <details class="proscons"><summary><span class="ms">Kelebihan &amp; Kelemahan</span><span class="en">Benefits &amp; Weaknesses</span></summary>
+      <div class="pc-grid">
+        <div class="pros"><span class="h">👍 <span class="ms">Kelebihan</span><span class="en">Benefits</span></span><span class="ms">✔ Peti masuk → ringkasan → tindakan dalam satu aliran<br>✔ Tarikh akhir terus masuk Calendar/Tasks<br>✔ Kurang lompat apl<br>✔ Kekal dalam domain Workspace UKM</span><span class="en">✔ Inbox → summary → action in one flow<br>✔ Deadlines land straight in Calendar/Tasks<br>✔ Far less app-switching<br>✔ Stays inside UKM's Workspace domain</span></div>
+        <div class="cons"><span class="h">⚠️ <span class="ms">Kelemahan</span><span class="en">Weaknesses</span></span><span class="ms">✘ Sahkan tarikh/kehadiran sebelum menjemput<br>✘ @app perlu apl didayakan pentadbir<br>✘ Boleh tersilap baca thread panjang — semak<br>✘ Jangan auto-hantar balasan tanpa baca</span><span class="en">✘ Confirm dates/attendees before inviting<br>✘ @app actions need admin-enabled apps<br>✘ Can misread a long thread — verify<br>✘ Never auto-send a reply unread</span></div>
+      </div>
+    </details>
+  </div>
+  <div class="foot-tag" data-label="SEGMEN 1 / SEGMENT 1"></div>
+</section>
+
+<!-- 8 · DEMO 1B -->
+<section class="slide st-b">
+  <div class="eyebrow"><span class="ms">Demo Langsung 1B · Google Docs</span><span class="en">Live Demo 1B · Google Docs</span></div>
+  <h2><span class="ms">Surat makluman rasmi dalam 3 minit</span><span class="en">A formal notice letter in 3 minutes</span></h2>
+  <ol class="steps">
+    <li><span class="ms">Taip <span class="ui">docs.new</span> dalam pelayar.</span><span class="en">Type <span class="ui">docs.new</span> in the browser.</span></li>
+    <li><span class="ms">Klik <span class="ui">✦ Help me write</span> pada halaman kosong.</span><span class="en">Click <span class="ui">✦ Help me write</span> on the blank page.</span></li>
+    <li><span class="ms">Taip prom PKTF (surat lawatan akademik TTTC6544) → <span class="ui">Create</span>.</span><span class="en">Type the PKTF prompt (TTTC6544 academic-visit letter) → <span class="ui">Create</span>.</span></li>
+    <li><span class="ms">Tala dengan <span class="ui">Refine</span> atau arahan susulan.</span><span class="en">Tune with <span class="ui">Refine</span> or a follow-up instruction.</span></li>
+    <li><span class="ms"><span class="ui">Insert</span>, kemudian semak fakta secara manual — <b>AI mendraf, manusia mengesahkan</b>.</span><span class="en"><span class="ui">Insert</span>, then verify facts manually — <b>AI drafts, humans verify</b>.</span></li>
+  </ol>
+  <div class="foot-tag" data-label="SEGMEN 1 / SEGMENT 1"></div>
+</section>
+
+<!-- 9 · DEMO 1C -->
+<section class="slide st-b">
+  <div class="eyebrow"><span class="ms">Demo Langsung 1C · Google Sheets</span><span class="en">Live Demo 1C · Google Sheets</span></div>
+  <h2><span class="ms">Analisis markah 120 pelajar — tanpa satu formula pun</span><span class="en">Analyse 120 students' marks — without a single formula</span></h2>
+  <ol class="steps">
+    <li><span class="ms">Buka Sheets markah (nama samaran).</span><span class="en">Open the marks Sheet (pseudonyms).</span></li>
+    <li><span class="ms">Buka panel <span class="ui">✦ Gemini</span>.</span><span class="en">Open the <span class="ui">✦ Gemini</span> panel.</span></li>
+    <li><span class="ms">Tanya: <i>"Senaraikan pelajar bawah 40 markah dan tiga corak yang patut saya perhatikan."</i></span><span class="en">Ask: <i>"List students below 40 marks and three patterns I should watch."</i></span></li>
+    <li><span class="ms">Minta carta taburan gred → <span class="ui">Insert</span>.</span><span class="en">Request a grade-distribution chart → <span class="ui">Insert</span>.</span></li>
+    <li><span class="ms">Semak semula angka kritikal sebelum keputusan rasmi.</span><span class="en">Re-verify critical numbers before official decisions.</span></li>
+  </ol>
+  <div class="foot-tag" data-label="SEGMEN 1 / SEGMENT 1"></div>
+</section>
+
+<!-- 10 · DIVIDER 2 -->
+<section class="slide divider div-g">
+  <div class="segnum">SEGMEN 2 / SEGMENT 2 · 20:00–35:00</div>
+  <h1><span class="ms">Berbantu</span><span class="en">Assist</span></h1>
+  <p class="segdesc"><span class="ms">Menaip prom yang sama lebih tiga kali? Jadikan ia sebuah <b>Gem</b>.</span><span class="en">Typing the same prompt more than three times? Turn it into a <b>Gem</b>.</span></p>
+  <p class="segdesc" style="font-size:1rem;margin-top:14px;opacity:.85">↕ <span class="ms"><b>Anak Tangga 2 bagi Tugas A (Minit Mesyuarat)</b> — dan Gem ini akan dipanggil semula secara automatik dalam Segmen 3.</span><span class="en"><b>Rung 2 of Task A (Meeting Minutes)</b> — and this Gem gets called automatically in Segment 3.</span></p>
+  <div class="dfact"><span class="ms"><b>Fakta menarik:</b> Gem ialah <i>makro</i> untuk zaman AI — seperti makro Excel menyimpan langkah berulang, Gem menyimpan <i>kepakaran</i> berulang: peranan, peraturan &amp; rujukan yang tak perlu diterangkan lagi.</span><span class="en"><b>Fun fact:</b> a Gem is a <i>macro</i> for the AI age — as an Excel macro stores repeated steps, a Gem stores repeated <i>expertise</i>: the role, rules &amp; references you never re-explain.</span></div>
+  <div class="foot-tag" data-label=""></div>
+</section>
+
+<!-- 11 · WHAT IS A GEM -->
+<section class="slide">
+  <h2><span class="ms">Apa itu Gem?</span><span class="en">What is a Gem?</span></h2>
+  <p class="big"><span class="ms">Pembantu AI tersuai yang <b>mengingati secara kekal</b>:</span><span class="en">A custom AI assistant that <b>permanently remembers</b>:</span></p>
+  <div class="cols" style="margin-top:20px;align-items:start">
+    <div class="kbox kg"><h3><span class="ms">Arahan</span><span class="en">Instructions</span></h3><p><span class="ms">Peranan, peraturan, dan gaya — "kad pekerjaan" tetapnya.</span><span class="en">Role, rules, and style — its permanent "job card".</span></p></div>
+    <div class="kbox kg"><h3><span class="ms">Fail Rujukan</span><span class="en">Knowledge Files</span></h3><p><span class="ms">Templat, glosari, polisi — dokumen Drive yang sentiasa dirujuk.</span><span class="en">Templates, glossaries, policies — Drive documents it always consults.</span></p></div>
+  </div>
+  <p class="big" style="margin-top:18px"><span class="ms">Sekali bina, guna selamanya — di <span class="ui">gemini.google.com</span>.</span><span class="en">Build once, use forever — at <span class="ui">gemini.google.com</span>.</span></p>
+  <div class="foot-tag" data-label="SEGMEN 2 / SEGMENT 2"></div>
+</section>
+
+<!-- 12 · DEMO 2 STEPS -->
+<section class="slide st-g">
+  <div class="eyebrow"><span class="ms">Demo Langsung 2 · Bina Gem</span><span class="en">Live Demo 2 · Build a Gem</span></div>
+  <h2><span class="ms">"Pembantu Minit Mesyuarat" — 2–3 jam kerja → 10 minit</span><span class="en">"Meeting-Minutes Assistant" — 2–3 hours of work → 10 minutes</span></h2>
+  <div class="cols" style="align-items:start">
+  <ol class="steps">
+    <li><span class="ms"><span class="ui">gemini.google.com</span> → <span class="ui">Explore Gems</span> → <span class="ui">+ New Gem</span>.</span><span class="en"><span class="ui">gemini.google.com</span> → <span class="ui">Explore Gems</span> → <span class="ui">+ New Gem</span>.</span></li>
+    <li><span class="ms">Namakan: <i>Pembantu Minit Mesyuarat</i>.</span><span class="en">Name it: <i>Meeting-Minutes Assistant</i>.</span></li>
+    <li><span class="ms"><b>Salin arahan</b> di sebelah → tampal ke <span class="ui">Instructions</span>.</span><span class="en"><b>Copy the instructions</b> at right → paste into <span class="ui">Instructions</span>.</span></li>
+    <li><span class="ms"><span class="ui">Knowledge</span>: muat naik templat + glosari <b>dari Drive</b>.</span><span class="en"><span class="ui">Knowledge</span>: upload template + glossary <b>from Drive</b>.</span></li>
+    <li><span class="ms">Uji → <span class="ui">Save</span>. <b>Giliran anda (4 min).</b></span><span class="en">Test → <span class="ui">Save</span>. <b>Your turn (4 min).</b></span></li>
+  </ol>
+  <div class="promptcard">
+    <div class="pc-head"><span class="pc-tool">Gem · Instructions</span><button class="copy-btn" type="button"><span class="cdef">⧉ <span class="ms">Salin arahan</span><span class="en">Copy instructions</span></span><span class="cdone">✓ <span class="ms">Disalin</span><span class="en">Copied</span></span></button></div>
+    <div class="prompt"><span class="ms">Anda ialah Pembantu Minit Mesyuarat untuk sebuah jabatan universiti awam Malaysia. Tukar catatan kasar kepada minit rasmi. Peraturan: (1) Bahasa Melayu rasmi &amp; istilah pentadbiran. (2) Ikut struktur: Kehadiran, Perutusan Pengerusi, Perkara Berbangkit, Perbincangan, Tindakan. (3) Setiap keputusan perlu kolum "Tindakan oleh" &amp; "Tarikh akhir"; jika tiada, tulis "[SILA LENGKAPKAN]". (4) Jangan reka maklumat. (5) Akhiri dengan jadual ringkasan tindakan.</span><span class="en">You are the Meeting-Minutes Assistant for a Malaysian public-university department. Convert rough notes into formal minutes. Rules: (1) Formal Bahasa Melayu &amp; administrative terms. (2) Follow: Attendance, Chair's Remarks, Matters Arising, Discussion, Actions. (3) Every decision needs "Action by" &amp; "Deadline" columns; if missing, write "[PLEASE COMPLETE]". (4) Never invent information. (5) End with an action-summary table.</span></div>
+    <details class="out"><summary><span class="ms">Lihat output dijangka</span><span class="en">See expected output</span></summary>
+      <div class="out-body"><span class="out-label"><span class="ms">Petikan minit</span><span class="en">Minutes excerpt</span></span><span class="ms"><b>MINIT JK KURIKULUM BIL. 3/2026</b><br>1. Kehadiran: 12 orang<br>2. Perutusan Pengerusi …<br>3. Perbincangan: semakan silibus TTTC6544<br><b>Jadual Tindakan:</b> semakan CLO — <i>Dr. Lim</i> — <i>15 Ogos</i></span><span class="en"><b>CURRICULUM CTTE MINUTES No. 3/2026</b><br>1. Attendance: 12<br>2. Chair's Remarks …<br>3. Discussion: TTTC6544 syllabus review<br><b>Action table:</b> CLO revision — <i>Dr. Lim</i> — <i>15 Aug</i></span></div>
+    </details>
+  </div>
+  </div>
+  <div class="foot-tag" data-label="SEGMEN 2 / SEGMENT 2"></div>
+</section>
+
+<!-- 13 · GEM IDEAS -->
+<section class="slide">
+  <h2><span class="ms">Bank Idea Gem untuk Universiti</span><span class="en">Gem Ideas Bank for the University</span></h2>
+  <table>
+    <tr><th>Gem</th><th><span class="ms">Untuk siapa</span><span class="en">For whom</span></th><th><span class="ms">Fail rujukan</span><span class="en">Knowledge files</span></th></tr>
+    <tr><td><b><span class="ms">Penyemak Rubrik Penilaian</span><span class="en">Rubric Checker</span></b></td><td><span class="ms">Pensyarah</span><span class="en">Lecturers</span></td><td><span class="ms">Silibus, rubrik, taksonomi Bloom</span><span class="en">Syllabus, rubric, Bloom's taxonomy</span></td></tr>
+    <tr><td><b><span class="ms">Pembantu Surat Rasmi</span><span class="en">Official Letter Assistant</span></b></td><td><span class="ms">Staf pentadbiran</span><span class="en">Administrative staff</span></td><td><span class="ms">Contoh surat, panduan gaya</span><span class="en">Sample letters, style guide</span></td></tr>
+    <tr><td><b><span class="ms">Penasihat Soalan Lazim Pelajar</span><span class="en">Student FAQ Advisor</span></b></td><td><span class="ms">Pejabat akademik</span><span class="en">Academic office</span></td><td><span class="ms">Buku panduan, kalendar, polisi</span><span class="en">Handbook, calendar, policies</span></td></tr>
+    <tr><td><b><span class="ms">Penterjemah Dwibahasa Rasmi</span><span class="en">Formal Bilingual Translator</span></b></td><td><span class="ms">Semua</span><span class="en">Everyone</span></td><td><span class="ms">Glosari istilah, contoh dwibahasa</span><span class="en">Terminology glossary, bilingual samples</span></td></tr>
+  </table>
+  <p class="big" style="margin-top:16px;font-size:1rem"><span class="ms">⚠️ Untuk Segmen 3: hanya Gem berfail <b>Google Drive</b> boleh digunakan dalam Workspace Studio.</span><span class="en">⚠️ For Segment 3: only Gems with <b>Google Drive</b> files can be used inside Workspace Studio.</span></p>
+  <div class="foot-tag" data-label="SEGMEN 2 / SEGMENT 2"></div>
+</section>
+
+<!-- 14 · DIVIDER 3 -->
+<section class="slide divider div-a">
+  <div class="segnum">SEGMEN 3 / SEGMENT 3 · 35:00–50:00</div>
+  <h1><span class="ms">Berautomasi</span><span class="en">Automate</span></h1>
+  <p class="segdesc"><span class="ms">Kerja yang berlaku walaupun anda sedang mengajar, bermesyuarat, atau bercuti.</span><span class="en">Work that happens even while you are teaching, in a meeting, or on leave.</span></p>
+  <p class="segdesc" style="font-size:1rem;margin-top:14px;opacity:.85">↕ <span class="ms"><b>Anak Tangga 3 bagi Tugas B</b> — di sini kedua-dua tugas bertemu: kita panggil Gem Segmen 2 melalui <b>Ask a Gem</b>.</span><span class="en"><b>Rung 3 of Task B</b> — where both tasks meet: we call the Segment-2 Gem via <b>Ask a Gem</b>.</span></p>
+  <div class="dfact"><span class="ms"><b>Fakta menarik:</b> Automasi bersyarat (jika "Segera" → buat X) ialah idea sama di sebalik termostat rumah dan sistem kawalan trafik. Anda menulis logik itu — dalam bahasa biasa, bukan kod.</span><span class="en"><b>Fun fact:</b> conditional automation (if "Urgent" → do X) is the same idea behind home thermostats and traffic-control systems. You're writing that logic — in plain language, not code.</span></div>
+  <div class="foot-tag" data-label=""></div>
+</section>
+
+<!-- 15 · FLOW ANATOMY -->
+<section class="slide">
+  <h2><span class="ms">Anatomi sebuah flow — 3 jenis blok</span><span class="en">Anatomy of a flow — 3 block types</span></h2>
+  <div class="kbox ka"><h3><span class="ms">Pemula</span><span class="en">Starter</span></h3><p><span class="ms">Peristiwa pencetus: borang diterima, e-mel masuk, jadual waktu.</span><span class="en">The trigger event: form received, incoming email, schedule.</span></p></div>
+  <div class="kbox kg"><h3><span class="ms">Langkah AI (Ask Gemini / Ask a Gem)</span><span class="en">AI Step (Ask Gemini / Ask a Gem)</span></h3><p><span class="ms">Otak flow: meringkas, mengelas, mendraf.</span><span class="en">The flow's brain: summarise, classify, draft.</span></p></div>
+  <div class="kbox kb"><h3><span class="ms">Tindakan</span><span class="en">Action</span></h3><p><span class="ms">Hasil dalam apl Workspace: hantar e-mel, kemas kini Sheets, mesej Chat.</span><span class="en">The output in a Workspace app: send email, update Sheets, Chat message.</span></p></div>
+  <div class="foot-tag" data-label="SEGMEN 3 / SEGMENT 3"></div>
+</section>
+
+<!-- 16 · DEMO 3 FLOW CANVAS -->
+<section class="slide st-a">
+  <div class="eyebrow"><span class="ms">Demo Langsung 3 · studio.google.com</span><span class="en">Live Demo 3 · studio.google.com</span></div>
+  <h2><span class="ms">Flow "Triaj Borang Pertanyaan Pelajar"</span><span class="en">The "Student Enquiry Triage" Flow</span></h2>
+  <svg class="mocksvg" viewBox="0 0 720 452" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Flow triaj berlapis / Layered triage flow">
+  <defs><marker id="arrV" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M1,1 L11,6 L1,11 Z" fill="#8894AB"/></marker>
+  <marker id="arrR" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M1,1 L11,6 L1,11 Z" fill="#C8102E"/></marker></defs>
+
+  <rect x="24" y="14" width="672" height="98" rx="14" fill="#FDF6EA"/>
+  <text x="42" y="38" font-family="IBM Plex Mono,monospace" font-size="11" letter-spacing="1" fill="#B9791A">LAPISAN 1 · PEMULA / TRIGGER</text>
+  <rect x="210" y="48" width="300" height="52" rx="10" fill="#FFFFFF" stroke="#DE8A00" stroke-width="2"/>
+  <text x="360" y="72" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="13" font-weight="700" fill="#1F2430">📋 Borang “Pertanyaan Pelajar”</text>
+  <text x="360" y="90" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="12" fill="#5A6172">respons baharu diterima / new response</text>
+
+  <line x1="360" y1="100" x2="360" y2="158" stroke="#8894AB" stroke-width="2.5" marker-end="url(#arrV)"/>
+
+  <rect x="24" y="130" width="672" height="98" rx="14" fill="#EDF7F0"/>
+  <text x="42" y="154" font-family="IBM Plex Mono,monospace" font-size="11" letter-spacing="1" fill="#1E7A46">LAPISAN 2 · LANGKAH AI / ASK A GEM ✦</text>
+  <rect x="190" y="162" width="340" height="52" rx="10" fill="#FFFFFF" stroke="#2E9E5B" stroke-width="2"/>
+  <text x="360" y="186" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="13" font-weight="700" fill="#1F2430">✦ Ask a Gem — Penasihat FAQ Pelajar</text>
+  <text x="360" y="204" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="12" fill="#5A6172">ringkas + kelaskan: Segera / Biasa</text>
+
+  <rect x="24" y="246" width="672" height="192" rx="14" fill="#EEF3FC"/>
+  <text x="42" y="270" font-family="IBM Plex Mono,monospace" font-size="11" letter-spacing="1" fill="#274C87">LAPISAN 3 · TINDAKAN / ACTIONS</text>
+
+  <line x1="360" y1="214" x2="360" y2="292" stroke="#8894AB" stroke-width="2.5"/>
+  <line x1="196" y1="292" x2="524" y2="292" stroke="#8894AB" stroke-width="2.5"/>
+  <text x="196" y="286" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="10" fill="#1E7A46">SENTIASA / ALWAYS</text>
+  <text x="524" y="286" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="10" fill="#C8102E">JIKA “SEGERA” / IF “URGENT”</text>
+  <line x1="196" y1="292" x2="196" y2="322" stroke="#8894AB" stroke-width="2.5" marker-end="url(#arrV)"/>
+  <line x1="524" y1="292" x2="524" y2="322" stroke="#C8102E" stroke-width="2.5" stroke-dasharray="7 4" marker-end="url(#arrR)"/>
+
+  <rect x="56" y="324" width="280" height="98" rx="10" fill="#FFFFFF" stroke="#3B6FE0" stroke-width="2"/>
+  <text x="196" y="356" text-anchor="middle" font-size="22">✉️</text>
+  <text x="196" y="384" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="13" font-weight="700" fill="#1F2430">E-mel pegawai unit akademik</text>
+  <text x="196" y="404" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="12" fill="#5A6172">ringkasan + kelas keutamaan</text>
+
+  <rect x="384" y="324" width="280" height="98" rx="10" fill="#FFFFFF" stroke="#D24545" stroke-width="2" stroke-dasharray="7 4"/>
+  <text x="524" y="356" text-anchor="middle" font-size="22">💬</text>
+  <text x="524" y="384" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="13" font-weight="700" fill="#1F2430">Mesej ke ruang Chat</text>
+  <text x="524" y="404" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="12" fill="#5A6172">“Triaj Akademik”</text>
+</svg>
+  <div class="foot-tag" data-label="SEGMEN 3 / SEGMENT 3"></div>
+</section>
+
+<!-- 17 · DEMO 3 STEPS -->
+<section class="slide st-a">
+  <div class="eyebrow"><span class="ms">Demo Langsung 3 · Langkah</span><span class="en">Live Demo 3 · Steps</span></div>
+  <h2><span class="ms">Terangkan sahaja — Studio membina rangkanya</span><span class="en">Just describe it — Studio builds the scaffold</span></h2>
+  <div class="cols" style="align-items:start">
+    <ol class="steps">
+      <li><span class="ms"><span class="ui">studio.google.com</span> → <span class="ui">+ Create</span>.</span><span class="en"><span class="ui">studio.google.com</span> → <span class="ui">+ Create</span>.</span></li>
+      <li><span class="ms">Taip penerangan flow dalam bahasa biasa ➜</span><span class="en">Type the flow description in plain language ➜</span></li>
+      <li><span class="ms">Semak pemula, langkah AI, dan tindakan yang dijana.</span><span class="en">Review the generated starter, AI step, and actions.</span></li>
+      <li><span class="ms">Tukar <span class="ui">Ask Gemini</span> → <span class="ui">Ask a Gem</span>: pilih Gem Segmen 2. <b>Tangga bersambung!</b></span><span class="en">Switch <span class="ui">Ask Gemini</span> → <span class="ui">Ask a Gem</span>: select the Segment-2 Gem. <b>The ladder connects!</b></span></li>
+      <li><span class="ms"><span class="ui">Test</span> — hantar satu respons borang secara langsung.</span><span class="en"><span class="ui">Test</span> — submit one live form response.</span></li>
+      <li><span class="ms"><span class="ui">Turn on</span> — flow kini berjalan 24/7.</span><span class="en"><span class="ui">Turn on</span> — the flow now runs 24/7.</span></li>
+    </ol>
+    <div class="promptcard">
+      <div class="pc-head"><span class="pc-tool">Workspace Studio · Flow</span><span class="technique"><span class="ms">Teknik: Automasi bersyarat</span><span class="en">Technique: conditional automation</span></span><button class="copy-btn" type="button"><span class="cdef">⧉ <span class="ms">Salin prom</span><span class="en">Copy prompt</span></span><span class="cdone">✓ <span class="ms">Disalin</span><span class="en">Copied</span></span></button></div>
+      <div class="prompt"><span class="ms">Apabila borang <span class="ph">"[nama borang]"</span> menerima respons baharu, ringkaskan pertanyaan itu dan kelaskan sebagai <span class="ph">[Segera / Biasa]</span>. Hantar e-mel kepada <span class="ph">[pegawai unit]</span> dengan ringkasan dan kelas tersebut. Jika <span class="ph">[Segera]</span>, hantar juga mesej ke ruang Google Chat <span class="ph">"[ruang triaj]"</span>.</span><span class="en">When the <span class="ph">"[form name]"</span> form receives a new response, summarise the enquiry and classify it as <span class="ph">[Urgent / Routine]</span>. Email <span class="ph">[the unit officer]</span> with the summary and classification. If <span class="ph">[Urgent]</span>, also post a message to the <span class="ph">"[triage room]"</span> Google Chat space.</span></div>
+      <details class="out"><summary><span class="ms">Lihat output dijangka</span><span class="en">See expected output</span></summary>
+        <div class="out-body"><span class="out-label"><span class="ms">Flow yang dijana Studio</span><span class="en">Flow scaffolded by Studio</span></span><span class="ms"><b>Pemula:</b> Respons borang baharu → <b>Ask a Gem</b> (Penasihat FAQ): ringkas + label <i>Segera/Biasa</i> → <b>Tindakan 1:</b> e-mel pegawai unit → <b>Jika Segera:</b> mesej ke ruang Chat. Contoh: "Pelajar tanya tarikh tutup rayuan gred — <b>Segera</b>; e-mel dihantar + Chat dimaklum."</span><span class="en"><b>Starter:</b> New form response → <b>Ask a Gem</b> (FAQ Advisor): summary + <i>Urgent/Routine</i> label → <b>Action 1:</b> email the unit officer → <b>If Urgent:</b> post to Chat. Sample: "Student asks the grade-appeal deadline — <b>Urgent</b>; email sent + Chat notified."</span></div>
+      </details>
+      <div class="followups">💡 <b><span class="ms">Variasi:</span><span class="en">Variations:</span></b> <span class="ms">"Tambah cabang: jika 'Kewangan' → e-mel Bendahari" · "Simpan setiap pertanyaan ke Sheets" · "Balas auto-akuan terima kepada pelajar"</span><span class="en">"Add a branch: if 'Finance' → email the Bursar" · "Log every enquiry to Sheets" · "Auto-acknowledge receipt to the student"</span></div>
+      <details class="proscons"><summary><span class="ms">Kelebihan &amp; Kelemahan</span><span class="en">Benefits &amp; Weaknesses</span></summary>
+        <div class="pc-grid">
+          <div class="pros"><span class="h">👍 <span class="ms">Kelebihan</span><span class="en">Benefits</span></span><span class="ms">✔ Berjalan 24/7 tanpa campur tangan<br>✔ Setiap pertanyaan diringkas + dikelas seragam<br>✔ Kes segera timbul serta-merta di Chat<br>✔ Guna semula Gem sedia ada (Ask a Gem)</span><span class="en">✔ Runs 24/7, unattended<br>✔ Every enquiry summarised + classified consistently<br>✔ Urgent cases surface instantly in Chat<br>✔ Reuses your existing Gem (Ask a Gem)</span></div>
+          <div class="cons"><span class="h">⚠️ <span class="ms">Kelemahan</span><span class="en">Weaknesses</span></span><span class="ms">✘ Uji dengan data contoh dahulu<br>✘ Tertakluk had langkah ikut pelan<br>✘ Semak klasifikasi terpencil sebelum bergantung penuh<br>✘ Pastikan pemilik &amp; semakan setiap semester</span><span class="en">✘ Test with sample data first<br>✘ Subject to per-plan step limits<br>✘ Spot-check classifications before fully relying<br>✘ Assign an owner &amp; review each semester</span></div>
+        </div>
+      </details>
+    </div>
+  </div>
+  <div class="foot-tag" data-label="SEGMEN 3 / SEGMENT 3"></div>
+</section>
+
+<!-- 18a · CASE STUDIES (ADMIN) -->
+<section class="slide">
+  <div class="eyebrow"><span class="ms">Kajian Kes Automasi · Salin, tampal, ubah suai</span><span class="en">Automation Case Studies · Copy, paste, adapt</span></div>
+  <h2><span class="ms">Untuk Staf Pentadbiran</span><span class="en">For Administrative Staff</span></h2>
+  <div class="casegrid">
+    <div class="casecard">
+      <div class="cc-head">
+        <div class="cc-title">📬 <span class="ms">Pelabel E-mel AI</span><span class="en">AI Email Labeler</span> <span class="badge admin"><span class="ms">Pentadbiran</span><span class="en">Admin</span></span></div>
+        <p class="cc-desc"><span class="ms">Susun peti masuk pejabat secara automatik mengikut kategori.</span><span class="en">Auto-organise the office inbox by category.</span></p>
+      </div>
+      <div class="promptcard">
+        <div class="pc-head"><span class="pc-tool">Workspace Studio</span><span class="technique"><span class="ms">Teknik: Pemula → AI → Tindakan</span><span class="en">Technique: Trigger → AI → Action</span></span><button class="copy-btn" type="button"><span class="cdef">⧉ <span class="ms">Salin prom</span><span class="en">Copy prompt</span></span><span class="cdone">✓ <span class="ms">Disalin</span><span class="en">Copied</span></span></button></div>
+        <div class="prompt"><span class="ms">Apabila e-mel baharu tiba di peti masuk pejabat, baca kandungannya dan kelaskan kepada satu kategori: <span class="ph">[Kewangan / Akademik / Aduan / Pertanyaan Pelajar]</span>. Sapukan label Gmail yang sepadan, dan tandakan sebagai penting jika mengandungi "segera" atau "tuntutan".</span><span class="en">When a new email arrives in the office inbox, read it and classify it into one of: <span class="ph">[Finance / Academic / Complaint / Student Enquiry]</span>. Apply the matching Gmail label, and flag as important if it contains "urgent" or "claim".</span></div>
+        <details class="out"><summary><span class="ms">Lihat output dijangka</span><span class="en">See expected output</span></summary>
+          <div class="out-body"><span class="out-label"><span class="ms">Hasil</span><span class="en">Result</span></span><span class="ms">Setiap e-mel masuk dilabel automatik (cth. 🏷️ <i>Kewangan</i>) &amp; yang mendesak ditanda penting — peti masuk tersusun tanpa sentuhan.</span><span class="en">Every incoming email auto-labelled (e.g. 🏷️ <i>Finance</i>) &amp; urgent ones flagged — an organised inbox, untouched.</span></div>
+        </details>
+      </div>
+    </div>
+    <div class="casecard">
+      <div class="cc-head">
+        <div class="cc-title">📅 <span class="ms">Penjemput Mesyuarat</span><span class="en">Meeting Inviter</span> <span class="badge admin"><span class="ms">Pentadbiran</span><span class="en">Admin</span></span></div>
+        <p class="cc-desc"><span class="ms">Tiada lagi pautan Meet yang hilang atau jemputan tertinggal.</span><span class="en">No more lost Meet links or missed invites.</span></p>
+      </div>
+      <div class="promptcard">
+        <div class="pc-head"><span class="pc-tool">Workspace Studio</span><span class="technique"><span class="ms">Teknik: Pemula → AI → Tindakan</span><span class="en">Technique: Trigger → AI → Action</span></span><button class="copy-btn" type="button"><span class="cdef">⧉ <span class="ms">Salin prom</span><span class="en">Copy prompt</span></span><span class="cdone">✓ <span class="ms">Disalin</span><span class="en">Copied</span></span></button></div>
+        <div class="prompt"><span class="ms">Apabila borang <span class="ph">"[nama borang]"</span> diterima, cipta acara Google Calendar pada tarikh &amp; masa yang dinyatakan, tambah pautan Google Meet, dan e-mel jemputan beserta agenda kepada semua kehadiran yang disenaraikan.</span><span class="en">When the <span class="ph">"[form name]"</span> form is received, create a Google Calendar event at the stated date &amp; time, add a Google Meet link, and email the invitation with the agenda to all listed attendees.</span></div>
+        <details class="out"><summary><span class="ms">Lihat output dijangka</span><span class="en">See expected output</span></summary>
+          <div class="out-body"><span class="out-label"><span class="ms">Hasil</span><span class="en">Result</span></span><span class="ms">Acara kalendar + pautan Meet dijana serta-merta; setiap ahli menerima jemputan beragenda automatik.</span><span class="en">A calendar event + Meet link generated instantly; every attendee receives an agenda invite automatically.</span></div>
+        </details>
+      </div>
+    </div>
+  </div>
+  <div class="foot-tag" data-label="SEGMEN 3 / SEGMENT 3"></div>
+</section>
+
+<!-- 18b · CASE STUDIES (ACADEMIC) -->
+<section class="slide">
+  <div class="eyebrow"><span class="ms">Kajian Kes Automasi · Salin, tampal, ubah suai</span><span class="en">Automation Case Studies · Copy, paste, adapt</span></div>
+  <h2><span class="ms">Untuk Staf Akademik</span><span class="en">For Academic Staff</span></h2>
+  <div class="casegrid">
+    <div class="casecard">
+      <div class="cc-head">
+        <div class="cc-title">🧑‍🎓 <span class="ms">Penyaring Pemohon</span><span class="en">Applicant Screener</span> <span class="badge acad"><span class="ms">Akademik</span><span class="en">Academic</span></span></div>
+        <p class="cc-desc"><span class="ms">Saringan pertama pemohon GRA/tutor sebelum anda buka fail.</span><span class="en">First-pass screening of GRA/tutor applicants before you open a file.</span></p>
+      </div>
+      <div class="promptcard">
+        <div class="pc-head"><span class="pc-tool">Workspace Studio</span><span class="technique"><span class="ms">Teknik: Pemula → AI → Tindakan</span><span class="en">Technique: Trigger → AI → Action</span></span><button class="copy-btn" type="button"><span class="cdef">⧉ <span class="ms">Salin prom</span><span class="en">Copy prompt</span></span><span class="cdone">✓ <span class="ms">Disalin</span><span class="en">Copied</span></span></button></div>
+        <div class="prompt"><span class="ms">Apabila borang permohonan Pembantu Penyelidik Siswazah (GRA) diterima, bandingkan jawapan dengan kriteria <span class="ph">[CGPA ≥ 3.00, bidang berkaitan, kemahiran]</span>. Ringkaskan pemohon, beri status "Layak / Perlu Semakan / Tidak Layak", dan e-mel ringkasan kepada penyelidik utama.</span><span class="en">When a Graduate Research Assistant (GRA) application form is received, compare answers against criteria <span class="ph">[CGPA ≥ 3.00, relevant field, skills]</span>. Summarise the applicant, assign "Qualified / Review / Not Qualified", and email the summary to the principal investigator.</span></div>
+        <details class="out"><summary><span class="ms">Lihat output dijangka</span><span class="en">See expected output</span></summary>
+          <div class="out-body"><span class="out-label"><span class="ms">Hasil</span><span class="en">Result</span></span><span class="ms">Setiap pemohon diringkas + status kelayakan dalam satu e-mel — senarai pendek separuh siap secara automatik.</span><span class="en">Each applicant summarised + a qualification status in one email — a half-built shortlist, automatically.</span></div>
+        </details>
+      </div>
+    </div>
+    <div class="casecard">
+      <div class="cc-head">
+        <div class="cc-title">📰 <span class="ms">Taklimat Penyelidikan Mingguan</span><span class="en">Weekly Research Briefing</span> <span class="badge acad"><span class="ms">Akademik</span><span class="en">Academic</span></span></div>
+        <p class="cc-desc"><span class="ms">Kumpulan sentiasa terkini tanpa carian manual.</span><span class="en">Keep the group current without manual searching.</span></p>
+      </div>
+      <div class="promptcard">
+        <div class="pc-head"><span class="pc-tool">Workspace Studio</span><span class="technique"><span class="ms">Teknik: Pemula → AI → Tindakan</span><span class="en">Technique: Trigger → AI → Action</span></span><button class="copy-btn" type="button"><span class="cdef">⧉ <span class="ms">Salin prom</span><span class="en">Copy prompt</span></span><span class="cdone">✓ <span class="ms">Disalin</span><span class="en">Copied</span></span></button></div>
+        <div class="prompt"><span class="ms"><span class="ph">[Setiap Isnin 8 pagi]</span>, cari perkembangan terkini bagi topik dalam helaian <span class="ph">"[Topik]"</span>, ringkaskan 5 perkara utama dengan pautan sumber, dan e-mel taklimat kepada ahli kumpulan penyelidikan.</span><span class="en"><span class="ph">[Every Monday 8 a.m.]</span>, search for the latest developments on the topics in the <span class="ph">"[Topics]"</span> sheet, summarise the top 5 with source links, and email the briefing to the research-group members.</span></div>
+        <details class="out"><summary><span class="ms">Lihat output dijangka</span><span class="en">See expected output</span></summary>
+          <div class="out-body"><span class="out-label"><span class="ms">Hasil</span><span class="en">Result</span></span><span class="ms">Satu e-mel taklimat berpautan sumber tiba setiap Isnin — pemantauan literatur yang berjalan sendiri.</span><span class="en">A source-linked briefing email arrives every Monday — literature monitoring that runs itself.</span></div>
+        </details>
+      </div>
+    </div>
+  </div>
+  <p class="big" style="font-size:.98rem;margin-top:20px"><span class="ms">➕ Sudah dibina hari ini: <b>Pembantu E-mel Pangkalan Pengetahuan</b> = flow Pertanyaan Pelajar (Segmen 3). Bonus pentadbiran: <b>Penjana Dokumen Rasmi/Tuntutan</b> daripada templat.</span><span class="en">➕ Already built today: the <b>Knowledge-Base Email Assistant</b> = the Student-Enquiry flow (Segment 3). Admin bonus: an <b>Official-Document/Claim Generator</b> from a template.</span></p>
+  <div class="foot-tag" data-label="SEGMEN 3 / SEGMENT 3"></div>
+</section>
+
+<!-- 19 · ACTIVITY -->
+<section class="slide">
+  <div class="eyebrow"><span class="ms">Aktiviti · 50:00–57:00 · Angkat 1, 2, atau 3 jari</span><span class="en">Activity · 50:00–57:00 · Raise 1, 2, or 3 fingers</span></div>
+  <h2><span class="ms">Tanya, Bantu, atau Automasi?</span><span class="en">Ask, Assist, or Automate?</span></h2>
+  <table id="quizTable">
+    <tr><th style="width:62%"><span class="ms">Senario</span><span class="en">Scenario</span></th><th><span class="ms">Jawapan</span><span class="en">Answer</span></th></tr>
+    <tr><td><span class="ms">Terjemah satu perenggan abstrak — sekali sahaja.</span><span class="en">Translate one abstract paragraph — once.</span></td><td class="ans hidden-col"><span class="pill b">1 · <span class="ms">TANYA</span><span class="en">ASK</span></span></td></tr>
+    <tr><td><span class="ms">Semak 40 draf soalan peperiksaan setiap semester.</span><span class="en">Check 40 exam-question drafts every semester.</span></td><td class="ans hidden-col"><span class="pill g">2 · <span class="ms">BANTU</span><span class="en">ASSIST</span></span></td></tr>
+    <tr><td><span class="ms">Setiap aduan makmal perlu diringkas &amp; dimajukan.</span><span class="en">Every lab complaint must be summarised &amp; routed.</span></td><td class="ans hidden-col"><span class="pill a">3 · <span class="ms">AUTOMASI</span><span class="en">AUTOMATE</span></span></td></tr>
+    <tr><td><span class="ms">Idea ais pemecah untuk kelas esok.</span><span class="en">Icebreaker ideas for tomorrow's class.</span></td><td class="ans hidden-col"><span class="pill b">1 · <span class="ms">TANYA</span><span class="en">ASK</span></span></td></tr>
+    <tr><td><span class="ms">Soalan rayuan peperiksaan yang sama setiap minggu.</span><span class="en">The same exam-appeal questions every week.</span></td><td class="ans hidden-col"><span class="pill g">2</span> → <span class="pill a">3</span></td></tr>
+    <tr><td><span class="ms">Peringatan mingguan laporan kemajuan kepada penyelia.</span><span class="en">Weekly progress-report reminders to supervisors.</span></td><td class="ans hidden-col"><span class="pill a">3 · <span class="ms">AUTOMASI</span><span class="en">AUTOMATE</span></span></td></tr>
+  </table>
+  <button class="reveal-btn" id="revealBtn" type="button"><span class="ms">Dedahkan jawapan satu demi satu</span><span class="en">Reveal answers one by one</span></button>
+  <div class="foot-tag" data-label="AKTIVITI / ACTIVITY"></div>
+</section>
+
+<!-- 20 · DECISION MATRIX -->
+<section class="slide">
+  <h2><span class="ms">Matriks Keputusan</span><span class="en">The Decision Matrix</span></h2>
+  <div class="kbox kb"><h3><span class="ms">BERTANYA</span><span class="en">ASK</span></h3><p><span class="ms">Kekerapan rendah + konteks umum.</span><span class="en">Low frequency + generic context.</span></p></div>
+  <div class="kbox kg"><h3><span class="ms">BERBANTU</span><span class="en">ASSIST</span></h3><p><span class="ms">Kekerapan tinggi + konteks/gaya khusus (rujukan tetap).</span><span class="en">High frequency + specific context/style (fixed references).</span></p></div>
+  <div class="kbox ka"><h3><span class="ms">BERAUTOMASI</span><span class="en">AUTOMATE</span></h3><p><span class="ms">Kekerapan tinggi + berstruktur + tanpa pertimbangan manusia setiap kali.</span><span class="en">High frequency + structured + no human judgment needed each time.</span></p></div>
+  <div class="foot-tag" data-label="AKTIVITI / ACTIVITY"></div>
+</section>
+
+<!-- 21 · ETHICS -->
+<section class="slide">
+  <h2><span class="ms">Etika &amp; Keselamatan Data</span><span class="en">Data Ethics &amp; Safety</span></h2>
+  <ul class="big">
+    <li><span class="ms">Patuhi <b>PDPA 2010</b> &amp; polisi data universiti — jangan masukkan data peribadi sensitif pelajar/staf ke dalam prom melainkan dibenarkan polisi.</span><span class="en">Comply with <b>PDPA 2010</b> &amp; university data policy — no sensitive student/staff personal data in prompts unless policy permits.</span></li>
+    <li><span class="ms">Gunakan hanya <b>akaun Workspace universiti</b> supaya data kekal dalam domain organisasi.</span><span class="en">Use only the <b>university Workspace account</b> so data stays within the organisation's domain.</span></li>
+    <li><span class="ms">Setiap flow automatik mesti ada <b>pemilik</b> dan disemak setiap semester.</span><span class="en">Every automated flow must have an <b>owner</b> and be reviewed each semester.</span></li>
+    <li><span class="ms"><b>AI mendraf dan menjalankan; manusia menyemak dan bertanggungjawab.</b></span><span class="en"><b>AI drafts and runs; humans verify and remain accountable.</b></span></li>
+  </ul>
+  <div class="foot-tag" data-label="PENUTUP / CLOSING"></div>
+</section>
+
+<!-- 22 · TAKE-HOME -->
+<section class="slide dark">
+  <h2 style="color:#fff"><span class="ms">Tiga Mesej Pulang</span><span class="en">Three Take-Home Messages</span></h2>
+  <ul class="big" style="list-style:none;padding:0">
+    <li style="margin-bottom:20px"><span style="color:#7FA4F5;font-family:var(--mono)">01</span> &nbsp;<span class="ms"><b style="color:#fff">Bertanya</b> menjimatkan minit; <b style="color:#fff">berbantu</b> menjimatkan jam; <b style="color:#fff">berautomasi</b> menjimatkan diri anda.</span><span class="en"><b style="color:#fff">Asking</b> saves minutes; <b style="color:#fff">assisting</b> saves hours; <b style="color:#fff">automating</b> saves you.</span></li>
+    <li style="margin-bottom:20px"><span style="color:#6FD69A;font-family:var(--mono)">02</span> &nbsp;<span class="ms">Naik <b style="color:#fff">satu anak tangga</b> minggu ini — jadikan satu tugas berulang sebagai Gem.</span><span class="en">Climb <b style="color:#fff">one rung</b> this week — turn one repetitive task into a Gem.</span></li>
+    <li><span style="color:#F5B84D;font-family:var(--mono)">03</span> &nbsp;<span class="ms">AI mendraf; <b style="color:#fff">manusia mengesahkan</b> setiap output rasmi.</span><span class="en">AI drafts; <b style="color:#fff">humans verify</b> every official output.</span></li>
+  </ul>
+  <div class="foot-tag" data-label="PENUTUP / CLOSING"></div>
+</section>
+
+<!-- 23 · NEXT STEPS -->
+<section class="slide">
+  <h2><span class="ms">Langkah Seterusnya</span><span class="en">Next Steps</span></h2>
+  <table>
+    <tr><th style="width:180px"><span class="ms">Bila</span><span class="en">When</span></th><th><span class="ms">Tindakan</span><span class="en">Action</span></th></tr>
+    <tr><td><span class="ms">Hari ini</span><span class="en">Today</span></td><td><span class="ms">Imbas kod QR folder sumber: panduan penuh, templat prom PKTF, arahan Gem, penerangan flow + tinjauan pasca-sesi.</span><span class="en">Scan the resource-folder QR code: full guide, PKTF prompt templates, Gem instructions, flow description + post-session survey.</span></td></tr>
+    <tr><td><span class="ms">Minggu 1</span><span class="en">Week 1</span></td><td><span class="ms">Cabaran "Satu Gem Seminggu" dalam ruangan Chat komuniti.</span><span class="en">The "One Gem a Week" challenge in the community Chat space.</span></td></tr>
+    <tr><td><span class="ms">Minggu 2–4</span><span class="en">Weeks 2–4</span></td><td><span class="ms">Klinik 30 minit: bina flow sebenar jabatan anda bersama-sama.</span><span class="en">A 30-minute clinic: build your department's real flow together.</span></td></tr>
+  </table>
+  <div class="access">
+    <img class="qr" src="data:image/png;base64,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" alt="Kod QR akses bahan / Material access QR code">
+    <div class="access-info">
+      <div class="access-label">📁 <span class="ms">Akses semua bahan</span><span class="en">Access all materials</span></div>
+      <a class="access-link" href="https://tinyurl.com/GeminiFlow2026">tinyurl.com/GeminiFlow2026</a>
+      <p class="access-note"><span class="ms">Imbas atau layari — SIM penuh, templat PKTF, arahan Gem, penerangan flow &amp; tinjauan.</span><span class="en">Scan or visit — the full SIM, PKTF templates, Gem instructions, the flow description &amp; survey.</span></p>
+    </div>
+  </div>
+  <div class="foot-tag" data-label="PENUTUP / CLOSING"></div>
+</section>
+
+<!-- 24 · THANK YOU -->
+<section class="slide dark">
+  <h1><span class="ms">Terima kasih.</span><span class="en">Thank you.</span></h1>
+  <p class="big" style="margin-top:20px"><span class="ms">Soalan? Atau lebih baik lagi — apakah <b style="color:#fff">satu tugas</b> yang akan anda naikkan ke anak tangga seterusnya minggu ini?</span><span class="en">Questions? Or better yet — what is the <b style="color:#fff">one task</b> you will move up a rung this week?</span></p>
+  <p class="big" style="margin-top:26px;font-size:1rem;color:#8F99B8"><span class="t-tanya">Bertanya</span> · <span class="t-bantu">Berbantu</span> · <span class="t-auto">Berautomasi</span></p>
+  <p class="big" style="margin-top:22px;font-size:1.05rem"><span class="ms">Bahan penuh:</span><span class="en">All materials:</span> <a href="https://tinyurl.com/GeminiFlow2026" style="color:#7FA4F5;font-weight:600;text-decoration:none">tinyurl.com/GeminiFlow2026</a></p>
+  <div class="foot-tag" data-label="PENUTUP / CLOSING"></div>
+</section>
+
+<script>
+(function(){
+  const body=document.body;
+  const langButtons=document.querySelectorAll('[data-mode]');
+  function setMode(mode){
+    body.classList.remove('lang-ms','lang-en','lang-both');
+    body.classList.add(mode);
+    document.documentElement.lang=(mode==='lang-en')?'en':'ms';
+    langButtons.forEach(b=>b.classList.toggle('active',b.dataset.mode===mode));
+  }
+  langButtons.forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();setMode(b.dataset.mode);}));
+
+  const themeButtons=document.querySelectorAll('[data-theme]');
+  function setTheme(t){
+    body.classList.toggle('theme-dark',t==='dark');
+    themeButtons.forEach(b=>b.classList.toggle('active',b.dataset.theme===t));
+  }
+  themeButtons.forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();setTheme(b.dataset.theme);}));
+  if(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches){setTheme('dark');}
+
+  const slides=[...document.querySelectorAll('.slide')];
+  let i=0;
+  const progress=document.getElementById('progress');
+  const counter=document.getElementById('counter');
+  // Auto-number foot-tags: "NN · LABEL"
+  slides.forEach((s,k)=>{
+    const ft=s.querySelector('.foot-tag');
+    if(ft){const lbl=ft.getAttribute('data-label')||'';const num=String(k+1).padStart(2,'0');ft.textContent=lbl?num+' · '+lbl:num;}
+  });
+  function show(n){
+    i=Math.max(0,Math.min(slides.length-1,n));
+    slides.forEach((s,k)=>s.classList.toggle('active',k===i));
+    progress.style.width=((i+1)/slides.length*100)+'%';
+    counter.textContent=(i+1)+' / '+slides.length;
+  }
+  function next(){show(i+1)} function prev(){show(i-1)}
+  document.getElementById('nextBtn').addEventListener('click',e=>{e.stopPropagation();next();});
+  document.getElementById('prevBtn').addEventListener('click',e=>{e.stopPropagation();prev();});
+  document.addEventListener('keydown',e=>{
+    if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){e.preventDefault();next();}
+    else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();prev();}
+    else if(e.key==='Home'){show(0);} else if(e.key==='End'){show(slides.length-1);}
+  });
+  document.addEventListener('click',e=>{
+    if(e.target.closest('.lang-toggle,.navbtn,.reveal-btn,a,button,.promptcard,.casecard,details,summary'))return;
+    next();
+  });
+
+  // Quiz reveal
+  // Copy-to-clipboard for prompt cards
+  function promptText(card){
+    const p=card&&card.querySelector('.prompt'); if(!p) return '';
+    const en=document.body.classList.contains('lang-en');
+    const span=p.querySelector(en?'.en':'.ms');
+    return (span?span.textContent:p.textContent).trim();
+  }
+  function doCopy(btn){
+    const text=promptText(btn.closest('.promptcard'));
+    const ok=t=>{btn.classList.add('copied');setTimeout(()=>btn.classList.remove('copied'),1400);};
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(ok).catch(()=>fallback(text,ok));
+    } else { fallback(text,ok); }
+  }
+  function fallback(text,ok){
+    try{const ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.focus();ta.select();document.execCommand('copy');document.body.removeChild(ta);ok();}catch(_){}
+  }
+  document.querySelectorAll('.copy-btn').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();doCopy(b);}));
+
+  const revealBtn=document.getElementById('revealBtn');
+  if(revealBtn){
+    const answers=[...document.querySelectorAll('#quizTable .ans')];
+    let r=0;
+    revealBtn.addEventListener('click',e=>{
+      e.stopPropagation();
+      if(r<answers.length){answers[r].classList.remove('hidden-col');r++;}
+      if(r>=answers.length){revealBtn.style.display='none';}
+    });
+  }
+  show(0);
+})();
+</script>
+</body>
+</html>

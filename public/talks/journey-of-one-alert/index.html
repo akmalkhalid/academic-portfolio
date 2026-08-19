@@ -1,0 +1,1389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Journey of One Alert — Computer Science, Basic Programming &amp; Digital Technology</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Source+Sans+3:wght@400;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --night:#0B1622;--panel:#F2F5F7;--panel-deep:#E1E8ED;
+  --amber:#F0A929;--signal:#D64533;--teal:#1F7A6D;--ink:#152430;--line:#B9C6D0;
+  --prog:#6B4B7A;--dt:#3F5570;
+  --disp:'Space Grotesk','Segoe UI',system-ui,sans-serif;
+  --body:'Source Sans 3','Segoe UI',system-ui,sans-serif;
+  --mono:'IBM Plex Mono','Courier New',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow:hidden;background:var(--night);color:var(--ink);font-family:var(--body)}
+#stage{position:fixed;inset:0}
+.slide{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:4.5vh 6vw;opacity:0;transform:scale(.96);filter:blur(5px);
+  transition:opacity .5s ease,transform .5s ease,filter .5s ease;pointer-events:none;visibility:hidden}
+.slide.active{opacity:1;transform:scale(1);filter:blur(0);pointer-events:auto;visibility:visible}
+@media (prefers-reduced-motion: reduce){.slide{transition:opacity .2s linear;transform:none;filter:none}.pulse{animation:none !important}}
+.scene{background:
+  linear-gradient(180deg, rgba(11,22,34,0) 55%, rgba(31,122,109,.12) 100%),
+  radial-gradient(ellipse 75% 60% at 50% 42%, #14283A 0%, var(--night) 75%);color:var(--panel)}
+.cloth{background:var(--night)}
+.cloth .frame{background:linear-gradient(180deg,var(--panel),var(--panel-deep));
+  border:1px solid rgba(240,169,41,.5);box-shadow:0 0 54px rgba(240,169,41,.15);
+  border-radius:8px;width:min(1120px,93vw);max-height:90vh;overflow:auto;
+  padding:clamp(22px,4vh,44px) clamp(24px,4.4vw,54px)}
+h1{font-family:var(--disp);font-weight:700;font-size:clamp(2rem,5vw,3.8rem);line-height:1.08;letter-spacing:-.5px}
+h2{font-family:var(--disp);font-weight:500;font-size:clamp(1.35rem,2.9vw,2.15rem);line-height:1.16;color:var(--ink)}
+.scene h2{color:var(--amber)}
+p,li{font-size:clamp(.95rem,1.55vw,1.18rem);line-height:1.48}
+.sub{font-size:.86em;color:#4d6273;display:block;margin-top:.35em}
+.scene .sub{color:#9db4c4}
+.eyebrow{font-family:var(--mono);font-size:clamp(.68rem,1.05vw,.8rem);letter-spacing:.2em;text-transform:uppercase;color:var(--amber);margin-bottom:.9em;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.tag-deep{font-family:var(--mono);font-size:.62rem;letter-spacing:.12em;background:var(--teal);color:#fff;padding:2px 7px;border-radius:3px;text-transform:uppercase}
+.tag-prog{background:var(--prog)}.tag-dt{background:var(--dt)}
+.tag-live{background:var(--amber);color:var(--night)}
+.big{font-size:clamp(1.12rem,1.9vw,1.5rem)}
+ul,ol{margin-top:.6em}
+ul{list-style:none}
+ul li{padding-left:1.35em;position:relative;margin:.4em 0}
+ul li::before{content:"";position:absolute;left:0;top:.6em;width:.5em;height:.5em;background:var(--amber);border-radius:1px;transform:rotate(45deg)}
+ol{margin-left:1.4em}ol li{margin:.4em 0}
+.kterm{color:var(--signal);font-weight:700}
+.timer{font-family:var(--mono);display:inline-block;margin-top:.9em;border:1.5px solid var(--teal);color:var(--teal);
+  padding:.4em .95em;border-radius:999px;font-size:clamp(.82rem,1.3vw,.98rem);letter-spacing:.06em}
+.quote{border-left:3px solid var(--amber);padding-left:1em;margin-top:.9em;font-style:italic;color:#31485a}
+.scene .quote{color:#c7d5e0}
+.rule{width:120px;height:2px;background:linear-gradient(90deg,transparent,var(--amber),transparent);margin:1.1em auto}
+.smscard{font-family:var(--mono);background:#fff;border:1px solid var(--line);border-left:5px solid var(--signal);border-radius:8px;
+  padding:.85em 1em;margin-top:.9em;font-size:clamp(.8rem,1.3vw,.98rem);color:#233240;text-align:left;box-shadow:0 4px 14px rgba(11,22,34,.12)}
+.smscard b{color:var(--signal)}
+.codecard{font-family:var(--mono);background:#0f1d2b;color:#d6e2ea;border:1px solid #24384a;border-radius:8px;padding:.8em 1em;margin-top:.7em;font-size:clamp(.72rem,1.12vw,.9rem);white-space:pre;text-align:left;overflow-x:auto;line-height:1.5}
+.codecard .cm{color:#6f8598}.codecard .kw{color:var(--amber)}.codecard .st{color:#7fc8b6}.codecard .fn{color:#e88a6f}
+.bit{font-family:var(--mono);display:inline-block;width:1.6em;height:1.6em;line-height:1.6em;text-align:center;border-radius:4px;margin:.08em;font-weight:700;font-size:clamp(.72rem,1.2vw,.95rem)}
+.bit.on{background:var(--amber);color:var(--night)}
+.bit.off{background:var(--night);color:var(--amber)}
+.pulse{animation:pul 3.2s ease-in-out infinite}
+@keyframes pul{0%,100%{opacity:1}50%{opacity:.55}}
+.glow{filter:drop-shadow(0 0 20px rgba(240,169,41,.4))}
+.mini{width:100%;border-collapse:collapse;margin-top:.6em;font-family:var(--mono);font-size:clamp(.68rem,1.02vw,.84rem)}
+.mini th{background:var(--night);color:var(--panel);padding:5px 8px;text-align:left}
+.mini td{border:1px solid var(--line);padding:5px 8px;background:#fff;color:#233240}
+.mini td.c,.mini th.c{text-align:center}
+.mini tr.hit td{background:#fbe7e3;font-weight:700}
+.tbl{width:100%;border-collapse:collapse;margin-top:.6em;font-size:clamp(.74rem,1.15vw,.96rem)}
+.tbl th{background:var(--night);color:var(--panel);padding:6px 9px;text-align:left}
+.tbl td{border:1px solid var(--line);padding:6px 9px;background:#fff;vertical-align:top}
+.tbl td.c{text-align:center;font-family:var(--mono)}
+.tbl td.no{color:#9a5b2a}.tbl td.yes{color:var(--teal);font-weight:700}
+.stack{display:flex;flex-direction:column;gap:3px;max-width:640px;margin:.7em auto 0}
+.layer{display:grid;grid-template-columns:110px 1fr;border-radius:5px;overflow:hidden;font-size:clamp(.74rem,1.12vw,.93rem);text-align:left}
+.layer .l{background:var(--dt);color:#fff;padding:7px 10px;font-family:var(--mono);font-size:.8em;display:flex;align-items:center}
+.layer .r{background:#fff;padding:7px 12px;border:1px solid var(--line);border-left:none;color:#233240}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:1em;margin-top:.6em;text-align:left}
+.two h3{font-family:var(--disp);font-weight:600;font-size:1.02em;color:var(--signal);margin-bottom:.2em}
+.fig{margin-top:.5em;text-align:center}
+.svgbox{background:#fff;border:1px solid var(--line);border-radius:8px;padding:.6em .7em;margin-top:.5em}
+.cap{font-size:.82em;color:#4d6273;font-style:italic;margin-top:.4em}
+.scene .cap{color:#9db4c4}
+.impact{margin-top:.7em;border-left:4px solid var(--signal);background:rgba(214,69,51,.07);border-radius:0 6px 6px 0;padding:.55em .85em;text-align:left;font-size:.9em}
+.impact .lab{font-family:var(--mono);font-size:.64rem;letter-spacing:.14em;text-transform:uppercase;color:var(--signal);display:block;margin-bottom:.15em;font-weight:600}
+.scene .impact{background:rgba(214,69,51,.16);color:var(--panel)}
+.link{margin-top:.7em;border-left:4px solid var(--teal);background:rgba(31,122,109,.08);border-radius:0 6px 6px 0;padding:.55em .85em;text-align:left;font-size:.9em}
+.link .lab{font-family:var(--mono);font-size:.64rem;letter-spacing:.14em;text-transform:uppercase;color:var(--teal);display:block;margin-bottom:.15em;font-weight:600}
+.scene .link{background:rgba(31,122,109,.2);color:var(--panel)}
+.oc{display:grid;grid-template-columns:auto 1fr;gap:.4em .8em;margin-top:.7em;text-align:left}
+.oc .n{font-family:var(--mono);font-weight:700;color:var(--teal);font-size:.95em;white-space:nowrap}
+.oc .n.done::before{content:"✓ ";color:var(--teal)}
+.oc .t{font-size:.98em}.oc .t b{color:var(--ink)}
+.scene .oc .t{color:var(--panel)}.scene .oc .t b{color:var(--amber)}
+/* interactive widgets */
+.ix{margin-top:.6em;background:#fff;border:1px solid var(--line);border-radius:8px;padding:.8em 1em;text-align:left}
+.ix label{font-size:.9em;color:#31485a;font-weight:600}
+.ix input[type=range]{width:100%;accent-color:var(--signal);margin:.5em 0}
+.ix .out{font-family:var(--mono);font-size:clamp(.76rem,1.15vw,.95rem);color:#233240;line-height:1.7}
+.ix .out b{color:var(--signal)}
+.ix .stat{display:inline-block;font-family:var(--mono);font-weight:700;padding:.2em .7em;border-radius:5px;margin-top:.4em;font-size:.88em}
+.ix .stat.go{background:#fbe7e3;color:var(--signal)}
+.ix .stat.ok{background:#e3f1ee;color:var(--teal)}
+.borow{display:grid;grid-template-columns:70px 88px 1fr;gap:.6em;align-items:center;margin:.28em 0;font-family:var(--mono);font-size:clamp(.74rem,1.1vw,.88rem)}
+.borow .bl{font-weight:700;color:#233240}
+.borow .bv{text-align:right;color:#31485a}
+.btrack{height:13px;background:#eef2f5;border-radius:3px;overflow:hidden}
+.bfill{height:100%;width:1%;border-radius:3px;background:var(--teal);transition:width .12s ease}
+.borow.exp .bl{color:var(--signal)}
+.borow.exp .bv{color:var(--signal);font-weight:700}
+.borow.exp .bfill{background:var(--signal)}
+.btn{font-family:var(--mono);cursor:pointer;background:var(--night);color:var(--amber);border:1px solid var(--amber);border-radius:6px;padding:.4em .9em;font-size:.85em;margin:.5em .4em 0 0;transition:.15s}
+.btn:hover,.btn:focus-visible{background:var(--amber);color:var(--night);outline:none}
+.reveal{font-family:var(--mono);cursor:pointer;background:transparent;color:var(--teal);border:1px dashed var(--teal);border-radius:6px;padding:.3em .8em;font-size:.82em;margin-top:.55em}
+.reveal:hover{background:rgba(31,122,109,.08)}
+.answer{display:none;margin-top:.55em}
+.answer.show{display:block;animation:fade .3s ease}
+@keyframes fade{from{opacity:0;transform:translateY(-4px)}to{opacity:1}}
+#hud{position:fixed;left:0;right:0;bottom:14px;display:flex;justify-content:center;gap:5px;z-index:50;flex-wrap:wrap;max-width:80vw;margin:0 auto}
+#hud .dot{width:9px;height:9px;background:#2a3f52;border-radius:2px;transform:rotate(45deg);opacity:.5;cursor:pointer;transition:.25s}
+#hud .dot.on{background:var(--amber);opacity:1;filter:drop-shadow(0 0 6px rgba(240,169,41,.8))}
+#count{position:fixed;right:18px;bottom:12px;font-family:var(--mono);font-size:.75rem;color:#5d7284;z-index:50}
+.navbtn{position:fixed;top:50%;transform:translateY(-50%);z-index:50;background:none;border:none;color:#42586b;font-size:2.2rem;cursor:pointer;padding:16px;transition:.2s}
+.navbtn:hover,.navbtn:focus-visible{color:var(--amber);outline:none}
+#prev{left:6px}#next{right:6px}
+.hint{position:fixed;left:18px;bottom:12px;font-family:var(--mono);font-size:.72rem;color:#42586b;z-index:50}
+:focus-visible{outline:2px solid var(--amber);outline-offset:3px}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<defs>
+<symbol id="gauge" viewBox="0 0 120 220">
+  <rect x="52" y="10" width="16" height="190" rx="4" fill="none" stroke="currentColor" stroke-width="3"/>
+  <line x1="40" y1="40" x2="80" y2="40" stroke="#D64533" stroke-width="4"/>
+  <rect x="55" y="96" width="10" height="101" rx="3" fill="currentColor" opacity=".85"/>
+  <line x1="46" y1="70" x2="52" y2="70" stroke="currentColor" stroke-width="2"/>
+  <line x1="46" y1="100" x2="52" y2="100" stroke="currentColor" stroke-width="2"/>
+  <line x1="46" y1="130" x2="52" y2="130" stroke="currentColor" stroke-width="2"/>
+  <line x1="46" y1="160" x2="52" y2="160" stroke="currentColor" stroke-width="2"/>
+  <path d="M20 205 Q40 197 60 205 T100 205" fill="none" stroke="currentColor" stroke-width="3"/>
+</symbol>
+<symbol id="tower" viewBox="0 0 160 200">
+  <path d="M80 30 L64 180 M80 30 L96 180 M68 130 L92 130 M71 95 L89 95 M74 62 L86 62" stroke="currentColor" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <circle cx="80" cy="24" r="7" fill="currentColor"/>
+  <path d="M104 12 a26 26 0 0 1 14 12" stroke="currentColor" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <path d="M110 2 a40 40 0 0 1 22 22" stroke="currentColor" stroke-width="4" fill="none" stroke-linecap="round" opacity=".65"/>
+  <path d="M56 12 a26 26 0 0 0 -14 12" stroke="currentColor" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <path d="M50 2 a40 40 0 0 0 -22 22" stroke="currentColor" stroke-width="4" fill="none" stroke-linecap="round" opacity=".65"/>
+</symbol>
+<symbol id="chip" viewBox="0 0 160 160">
+  <rect x="40" y="40" width="80" height="80" rx="10" fill="none" stroke="currentColor" stroke-width="4"/>
+  <rect x="62" y="62" width="36" height="36" rx="5" fill="currentColor" opacity=".85"/>
+  <g stroke="currentColor" stroke-width="4" stroke-linecap="round">
+    <line x1="60" y1="40" x2="60" y2="20"/><line x1="80" y1="40" x2="80" y2="20"/><line x1="100" y1="40" x2="100" y2="20"/>
+    <line x1="60" y1="120" x2="60" y2="140"/><line x1="80" y1="120" x2="80" y2="140"/><line x1="100" y1="120" x2="100" y2="140"/>
+    <line x1="40" y1="60" x2="20" y2="60"/><line x1="40" y1="80" x2="20" y2="80"/><line x1="40" y1="100" x2="20" y2="100"/>
+    <line x1="120" y1="60" x2="140" y2="60"/><line x1="120" y1="80" x2="140" y2="80"/><line x1="120" y1="100" x2="140" y2="100"/>
+  </g>
+</symbol>
+<symbol id="shield" viewBox="0 0 160 190">
+  <path d="M80 12 L142 36 C142 96 126 146 80 176 C34 146 18 96 18 36 Z" fill="none" stroke="currentColor" stroke-width="5"/>
+  <path d="M56 88 L74 108 L108 64" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+</symbol>
+</defs>
+</svg>
+
+<div id="stage">
+
+<!-- 1 · TITLE -->
+<section class="slide scene active">
+  <svg class="glow pulse" width="120" height="220" style="color:var(--amber)"><use href="#gauge"/></svg>
+  <div style="text-align:center;margin-top:2vh">
+    <p class="eyebrow" style="justify-content:center">Computer Science · Basic Programming · Digital Technology</p>
+    <h1>The Journey of One Alert</h1>
+    <p class="big" style="margin-top:.5em;color:var(--panel)">A compact, in-depth tour of computing — traced through a single flood-warning SMS.</p>
+    <p class="sub" style="margin-top:.8em">Some slides are live — drag the sliders, step the code, tap <span style="color:var(--amber)">Reveal</span>. This deck is meant to be poked.</p>
+  </div>
+</section>
+
+<!-- 2 · HOOK -->
+<section class="slide cloth"><div class="frame" style="text-align:center">
+  <p class="eyebrow" style="justify-content:center">December 2021 · Klang Valley</p>
+  <h2>The rain did not stop for three days.</h2>
+  <p class="big" style="margin-top:.6em">Rivers rose faster than anyone expected. Tens of thousands had to leave their homes. For some, the difference between losing <em>things</em> and losing far more was a single message:</p>
+  <div class="smscard" style="max-width:560px;margin:.9em auto 0"><b>⚠ AMARAN BANJIR</b> — Paras Sungai Klang melepasi tahap bahaya. Sila berpindah ke pusat pemindahan SMK Taman Desa. — <em>Flood warning: river past danger level. Move to the relief centre now.</em></div>
+  <p class="quote" style="text-align:left;max-width:680px;margin:1em auto 0">We will follow that one message through the machine — <strong>sensed, decided, computed, delivered, defended</strong> — and open up the real computer science at each step. The same design that delivers it is the one criminals forge.</p>
+</div></section>
+
+<!-- 3 · AGENDA -->
+<section class="slide cloth"><div class="frame">
+  <p class="eyebrow">The route</p>
+  <h2>One alert, four stations — three fields</h2>
+  <ul>
+    <li><strong>Block A — The decision.</strong> When should the siren sound? <span class="kterm">Computer Science</span>: algorithms, computational thinking, correctness, cost.</li>
+    <li><strong>Block B — Measurement &amp; the machine.</strong> How a river becomes numbers, and what computes them. <span class="kterm">CS + Digital Tech</span>: data representation, architecture.</li>
+    <li><strong>Block C — The script.</strong> Programming the controller. <span class="kterm">Basic Programming</span>: control flow, types, state machines, debugging.</li>
+    <li><strong>Block D — Delivery &amp; deception.</strong> Moving the alert — and why it can be faked. <span class="kterm">Digital Technology</span>: networks, security, cryptography.</li>
+  </ul>
+  <p class="sub" style="margin-top:.6em"><span class="tag-deep">deep dive</span> = the in-depth layer (trim for a tight run) · <span class="tag-live">live</span> = a slide you can interact with · <span style="color:var(--teal);font-weight:700">⇄</span> marks a link between ideas.</p>
+</div></section>
+
+<!-- 4 · LEARNING OUTCOMES (OBE) -->
+<section class="slide cloth"><div class="frame">
+  <p class="eyebrow">Outcomes · what you'll walk out able to do</p>
+  <h2>Four questions you'll be able to answer</h2>
+  <div class="oc">
+    <div class="n">CLO 1 · A</div><div class="t"><b>Formulate</b> a real problem as a precise algorithm and <b>defend its edge cases</b> — the crazy readings, not the easy ones.</div>
+    <div class="n">CLO 2 · B</div><div class="t"><b>Explain</b> how the physical world becomes data, and <b>identify where that representation breaks</b> — resolution and precision limits.</div>
+    <div class="n">CLO 3 · C</div><div class="t"><b>Trace and debug</b> a small program — follow its control flow and state, and reason about why it does what it does.</div>
+    <div class="n">CLO 4 · D</div><div class="t"><b>Follow</b> a message across a network and <b>judge whether to trust it</b> — the difference between an address and an identity.</div>
+  </div>
+  <p class="quote" style="margin-top:.6em">Keep these four in view. Every idea today is a <em>node</em>; the arrows between them are the point. We'll draw the whole network at the end.</p>
+</div></section>
+
+<!-- 5 · BLOCK A DIVIDER -->
+<section class="slide scene">
+  <svg class="glow pulse" width="110" height="202" style="color:var(--amber)"><use href="#gauge"/></svg>
+  <div style="text-align:center;margin-top:2vh">
+    <p class="eyebrow" style="justify-content:center">Block A · Computer Science · CLO 1</p>
+    <h2>The decision</h2>
+    <p class="big sub">When should the siren sound?</p>
+  </div>
+</section>
+
+<!-- 6 · ENGAGE -->
+<section class="slide cloth"><div class="frame">
+  <p class="eyebrow">Block A</p>
+  <h2>Both mistakes cost lives — differently</h2>
+  <ul>
+    <li><strong>Warn too late</strong> — people are trapped by rising water.</li>
+    <li><strong>Warn too often</strong> — after three false alarms, nobody moves for the fourth. The real one.</li>
+  </ul>
+  <p class="quote">A computer makes this call at 3 a.m., in the rain, with nobody watching. What <em>exactly</em> should it do? Someone must write it down — completely.</p>
+</div></section>
+
+<!-- 7 · EXPLORE + REVEAL -->
+<section class="slide cloth"><div class="frame">
+  <p class="eyebrow">Block A · Your turn</p>
+  <h2>Write the alert rule</h2>
+  <p>Every 15 min you get two numbers: river level (m) and rainfall upstream (mm/h). Danger is <strong>28.0 m</strong>.</p>
+  <p style="margin-top:.3em"><strong>In pairs — write the exact, numbered rule.</strong> It must satisfy all four:</p>
+  <ol>
+    <li>fire <em>once</em> per flood (never spam), yet still fire <em>afresh</em> if a second flood arrives later;</li>
+    <li>use the rainfall too — warn <em>earlier</em> when the level is rising fast under heavy rain;</li>
+    <li>survive a sensor returning −3 m, or a flat unchanging value (is the river calm, or the gauge dead?);</li>
+    <li>never hinge on a difference the gauge can't actually see (you'll test this next block).</li>
+  </ol>
+  <p class="timer">⏱ 8 minutes</p>
+  <button class="reveal" data-show="▸ Push further (Advanced)" data-hide="▾ Hide">▸ Push further (Advanced)</button>
+  <div class="answer">
+    <ul style="margin-top:.2em">
+      <li>What single condition — an <em>invariant</em> — makes requirements ① and ② true at once? <span class="sub">Tie "already warned" to a level that must first fall back below a <em>lower</em> line before you re-arm.</span></li>
+      <li>Why must the warn line (28.0) and the re-arm line (say 27.5) <strong>differ</strong>? What flicker does that gap kill when the river hovers right at 28.0?</li>
+      <li>The reading never arrives — pure silence. Should your rule treat "no data" as safe, or as its own alarm?</li>
+    </ul>
+  </div>
+</div></section>
+
+<!-- 8 · EXPLAIN: ALGORITHM + IMPACT -->
+<section class="slide cloth"><div class="frame">
+  <p class="eyebrow">Block A</p>
+  <h2>You just wrote an <span class="kterm">algorithm</span> — under pressure</h2>
+  <p>An <strong>algorithm</strong> is a precise, ordered, complete procedure an executor with <em>no judgment</em> can follow. The hard part was never the arithmetic — it was making <em>one</em> rule meet all four demands at once.</p>
+  <div class="codecard"><span class="cm"># sanity FIRST · use rainfall · fire once · re-arm below a lower line</span>
+<span class="kw">if</span> level &lt; 0 <span class="kw">or</span> level &gt; 35:   log(<span class="st">"sensor fault"</span>); skip cycle   <span class="cm"># ③</span>
+rise = level − level_prev
+<span class="kw">if not</span> alerted:
+    <span class="kw">if</span> level &gt;= 28.0:                                  send(<span class="st">"EVACUATE"</span>); alerted = <span class="kw">True</span>   <span class="cm"># ①</span>
+    <span class="kw">elif</span> level &gt;= 27.0 <span class="kw">and</span> (rise &gt;= 0.15 <span class="kw">or</span> rain_mmh &gt;= 20):  send(<span class="st">"ADVISORY"</span>)   <span class="cm"># ② rain warns earlier</span>
+<span class="kw">if</span> alerted <span class="kw">and</span> level &lt; 27.5:           alerted = <span class="kw">False</span>   <span class="cm"># ① re-arm for the next flood</span></div>
+  <p class="sub">Warn at 28.0, stand down only below 27.5 — that gap (<strong>hysteresis</strong>) stops the siren flickering when the river sits right at the line. ④ waits for the next block: never hinge on a difference the gauge can't see.</p>
+  <div class="impact"><span class="lab">◉ Real-world stakes</span>Boeing's <strong>737 MAX</strong> let one system act on a <em>single</em> sensor reading with no sanity cross-check. Two crashes, <strong>346 lives</strong>. The "handle the crazy reading" line you wrote is the line they were missing.</div>
+</div></section>
+
+<!-- 9 · EXPLAIN: CT -->
+<section class="slide cloth"><div class="frame">
+  <p class="eyebrow">Block A</p>
+  <h2>Four moves of <span class="kterm">computational thinking</span></h2>
+  <table class="tbl">
+    <tr><th>Move</th><th>What it is</th><th>Where you did it</th></tr>
+    <tr><td><strong>Decompose</strong></td><td>break one hard problem into smaller ones</td><td>sanity / level / rate — three checks designed separately</td></tr>
+    <tr><td><strong>Patterns</strong></td><td>notice repeated structure</td><td>"rising fast" is one shape at 27.2 or 27.8</td></tr>
+    <tr><td><strong>Abstraction</strong></td><td>keep what matters, drop the rest</td><td>the whole Klang river → two numbers</td></tr>
+    <tr><td><strong>Algorithm</strong></td><td>order the steps for a machine</td><td>you sequenced the checks — and order mattered</td></tr>
+  </table>
+  <div class="link"><span class="lab">⇄ Connects forward</span>Abstraction — "the river becomes two numbers" — is the hinge of the whole day. In Block B those numbers become <em>bits</em>; in Block D those bits become <em>packets</em>. One idea runs the length of the talk.</div>
+</div></section>
+
+<!-- 10 · DEEP: CORRECTNESS + IMPACT + LINK -->
+<section class="slide cloth"><div class="frame">
+  <p class="eyebrow">Block A <span class="tag-deep">deep dive</span></p>
+  <h2>How do you <em>know</em> a rule is right?</h2>
+  <ul>
+    <li><span class="kterm">Precondition</span> — what must hold before a step (the level passed the sanity check).</li>
+    <li><span class="kterm">Postcondition</span> — what the step guarantees after (EVACUATE sent iff level ≥ 28.0 and not already alerted).</li>
+    <li><span class="kterm">Invariant</span> — true after <em>every</em> cycle: <em>"alerted is true exactly when an SMS was sent and the level hasn't since dropped below 27.5."</em></li>
+  </ul>
+  <div class="impact"><span class="lab">◉ Real-world stakes</span>The <strong>Therac-25</strong> radiation machine was "tested and working" — but an unreasoned timing flaw delivered fatal overdoses. Running it once is not knowing it's correct.</div>
+  <div class="link"><span class="lab">⇄ Connects to Block C</span>This invariant is not abstract — in an hour it becomes the literal line <code style="font-family:var(--mono)">and not alert_sent</code>. The proof and the code are the same thought.</div>
+</div></section>
+
+<!-- 11 · DEEP: COMPLEXITY + CURVE + VARIANTS + LINK -->
+<section class="slide cloth"><div class="frame">
+  <p class="eyebrow">Block A <span class="tag-deep">deep dive</span></p>
+  <h2>How much <em>work</em> is your rule?</h2>
+  <div class="two" style="align-items:center">
+    <div class="fig svgbox" style="margin-top:0">
+    <svg viewBox="0 0 300 160" width="100%" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono, monospace" font-size="11">
+      <line x1="40" y1="16" x2="40" y2="138" stroke="#152430" stroke-width="1.4"/>
+      <line x1="40" y1="138" x2="284" y2="138" stroke="#152430" stroke-width="1.4"/>
+      <text x="8" y="26" fill="#5d7284" font-size="9">work</text>
+      <text x="212" y="154" fill="#5d7284" font-size="9">input size →</text>
+      <path d="M40 128 Q160 124 280 120" fill="none" stroke="#1F7A6D" stroke-width="3"/>
+      <text x="210" y="114" fill="#1F7A6D" font-weight="bold">O(1)</text>
+      <path d="M40 136 Q170 133 280 24" fill="none" stroke="#D64533" stroke-width="3"/>
+      <text x="250" y="40" fill="#D64533" font-weight="bold">O(n²)</text>
+    </svg>
+    </div>
+    <div>
+      <p style="margin-top:0"><span class="kterm">Big-O</span> names how work <em>grows</em> with input. A few checks per reading is <strong>O(1)</strong> — instant forever. Re-scanning the whole flood history each reading is <strong>O(n²)</strong> — fine in a demo, ruinous in a monsoon.</p>
+    </div>
+  </div>
+  <div class="link"><span class="lab">⇄ Connects to Block D · security</span>The extreme is <strong>exponential</strong>, O(2ⁿ): cracking an <em>n</em>-character password. Each extra character doubles the attacker's work — which is <em>why length beats cleverness</em>, and why the padlock's 2¹²⁸ key is safe. Complexity is a security tool.</div>
+</div></section>
+
+<!-- 11B · LIVE: BIG-O EXPLODES -->
+<section class="slide cloth"><div class="frame">
+  <p class="eyebrow">Block A <span class="tag-live">live</span> · watch it explode</p>
+  <h2>Drag <em>n</em> up — and watch O(2ⁿ) leave the planet</h2>
+  <p>The same task, five growth rates. Slide the input size; read the operation counts. The bottom row is exponential — keep an eye on it.</p>
+  <div class="ix" id="bigo">
+    <label>Input size &nbsp;n = <b><span id="bo-n">30</span></b></label>
+    <input type="range" id="bo-r" min="1" max="100" step="1" value="30">
+    <div class="borow"><span class="bl">O(1)</span><span class="bv" id="bo-c1">1</span><div class="btrack"><div class="bfill" id="bo-b1"></div></div></div>
+    <div class="borow"><span class="bl">O(log n)</span><span class="bv" id="bo-cl">4.9</span><div class="btrack"><div class="bfill" id="bo-bl"></div></div></div>
+    <div class="borow"><span class="bl">O(n)</span><span class="bv" id="bo-cn">30</span><div class="btrack"><div class="bfill" id="bo-bn"></div></div></div>
+    <div class="borow"><span class="bl">O(n²)</span><span class="bv" id="bo-c2">900</span><div class="btrack"><div class="bfill" id="bo-b2"></div></div></div>
+    <div class="borow exp"><span class="bl">O(2ⁿ)</span><span class="bv" id="bo-ce">1.1B</span><div class="btrack"><div class="bfill" id="bo-be"></div></div></div>
+    <div class="stat go" id="bo-time" style="margin-top:.5em">at 1 billion ops/sec, O(2ⁿ) takes ≈ 1 s</div>
+  </div>
+  <div class="link"><span class="lab">⇄ Connects to Block D · security</span>This is why an 8-character password falls in seconds but a long passphrase outlives you — each extra character multiplies the attacker's O(2ⁿ) mountain. Complexity theory is the wall that guards your account.</div>
+</div></section>
+
+<!-- 11C · FORMATIVE A -->
+<section class="slide cloth"><div class="frame">
+  <p class="eyebrow">Block A · formative check</p>
+  <h2>Apply it (before the break)</h2>
+  <ol>
+    <li>Here is a whole "rule": <code style="font-family:var(--mono)">if level &gt; 28.0: send()</code>. Name <strong>two</strong> things wrong with it as a real alert rule.</li>
+    <li>A colleague says "I ran it on last month's data and it worked, so it's correct." What is the flaw in that reasoning?</li>
+    <li>Readings start arriving 10× more often. Does your per-reading cost change? What if each reading re-scanned <em>all</em> past readings?</li>
+  </ol>
+  <button class="reveal" data-show="▸ Reveal answers" data-hide="▾ Hide">▸ Reveal answers</button>
+  <div class="answer">
+    <ol style="margin-top:.2em">
+      <li>It re-fires every cycle (<strong>no guard</strong>), and <code style="font-family:var(--mono)">&gt;</code> ignores a reading of <strong>exactly 28.0</strong>. (It also trusts a crazy value — no sanity check.)</li>
+      <li>Passing one test ≠ correct. The failures hide in the <strong>edge cases</strong> last month didn't contain — the −3 m glitch, the exact-threshold reading (cf. Therac-25).</li>
+      <li>Per reading it stays <strong>O(1)</strong> — 10× more readings is just 10× total, fine. Re-scanning all history each time makes it <strong>O(n²)</strong> — that is what melts down in a long flood.</li>
+    </ol>
+  </div>
+</div></section>
+
+<!-- 12 · EVALUATE + BREAK -->
+<section class="slide scene">
+  <div style="text-align:center">
+    <p class="eyebrow" style="justify-content:center">Before we rest</p>
+    <h2>Tell your neighbour: the four moves —<br>and which one turned the river into two numbers.</h2>
+    <div class="rule"></div>
+    <p class="big" style="color:var(--amber)">☕ Break — 5 minutes</p>
+  </div>
+</section>
+
+<!-- 13 · BLOCK B DIVIDER -->
+<section class="slide scene">
+  <svg class="glow pulse" width="130" height="130" style="color:var(--amber)"><use href="#chip"/></svg>
+  <div style="text-align:center;margin-top:2vh">
+    <p class="eyebrow" style="justify-content:center">Block B · Computer Science + Digital Technology · CLO 2</p>
+    <h2>The measurement &amp; the machine</h2>
+    <p class="big sub">How a river becomes numbers</p>
+  </div>
+</section>
+
+<!-- 14 · EXPLORE -->
+<section class="slide cloth"><div class="frame">
+  <p class="eyebrow">Block B · Your turn</p>
+  <h2>What does the river say to the machine?</h2>
+  <p>The gauge sends the level as a <strong>12-bit number</strong> (0–4095) mapped onto 0–35 m.</p>
+  <ul>
+    <li><strong>In pairs:</strong> (a) how big is one step, in mm? (b) the town must catch a <strong>1 cm</strong> rise — can 12 bits see it? (c) the gauge also jitters by <strong>±2 steps</strong> of noise — now what is the smallest change you can actually <em>trust</em>?</li>
+  </ul>
+  <p class="timer">⏱ 6 minutes</p>
+  <button class="reveal" data-show="▸ Reveal working" data-hide="▾ Hide">▸ Reveal working</button>
+  <div class="answer">
+    <p style="margin-top:.2em">(a) 35 m ÷ 4096 ≈ <strong>8.5 mm</strong>. (b) 1 cm = 10 mm is bigger than one step, so a <em>clean</em> sensor can just see it. (c) but ±2 steps ≈ <strong>±17 mm</strong> of noise swamps a 10 mm change — you can only trust a jump beyond ~4 steps ≈ <strong>3.4 cm</strong>, unless you average many readings. Resolution is the ceiling; noise pulls the real limit lower.</p>
+  </div>
+  <button class="reveal" data-show="▸ Push further" data-hide="▾ Hide">▸ Push further</button>
+  <div class="answer">
+    <p style="margin-top:.2em">To resolve <strong>1 mm</strong> across 0–35 m you'd need 35,000 levels → <strong>16 bits</strong> (2¹⁶ = 65,536). Storage: 12 bits × 96 readings/day = <strong>144 bytes/day</strong> — which is why the sensor log is nearly free while the CCTV is not.</p>
+  </div>
+  <p class="sub" style="margin-top:.4em">Next slide is live — check part (a) by dragging the river yourself.</p>
+</div></section>
+
+<!-- 15 · EXPLAIN: RESOLUTION + STAIRSTEP + IMPACT -->
+<section class="slide cloth"><div class="frame">
+  <p class="eyebrow">Block B</p>
+  <h2>The map is not the river</h2>
+  <div class="two" style="align-items:center">
+    <div class="svgbox" style="margin-top:0">
+    <svg viewBox="0 0 300 160" width="100%" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono, monospace" font-size="10">
+      <line x1="34" y1="14" x2="34" y2="138" stroke="#152430" stroke-width="1.3"/>
+      <line x1="34" y1="138" x2="288" y2="138" stroke="#152430" stroke-width="1.3"/>
+      <path d="M34 132 C110 112 150 66 288 22" fill="none" stroke="#1F7A6D" stroke-width="2.5"/>
+      <path d="M34 126 H80 V108 H126 V88 H172 V68 H218 V46 H264 V28 H288" fill="none" stroke="#D64533" stroke-width="2" stroke-linejoin="round"/>
+      <line x1="264" y1="28" x2="264" y2="46" stroke="#152430" stroke-width="1"/>
+      <text x="270" y="40" fill="#152430">1 step</text><text x="270" y="52" fill="#152430">8.5mm</text>
+      <text x="120" y="126" fill="#1F7A6D">true level</text><text x="58" y="102" fill="#D64533">reading</text>
+    </svg>
+    </div>
+    <div>
+    <div class="codecard" style="margin-top:0">2^12 = 4096 values
+ over 0–35 m
+step   ≈ <span class="kw">8.5 mm</span>
+error  ≈ <span class="kw">±4.3 mm</span>
++noise ±2 steps
+→ trust ≥ <span class="kw">~3.4 cm</span></div>
+    </div>
+  </div>
+  <p style="margin-top:.4em">28.000 and 28.004 m differ by 4 mm — <strong>smaller than one step</strong>, so they share one code. And 8.5 mm is only the <em>ceiling</em>: with ±2 steps of noise, the smallest change you can actually <strong>trust</strong> is ~4 steps ≈ <strong>3.4 cm</strong>. <strong>Resolution caps precision; noise lowers it further.</strong></p>
+  <button class="reveal" data-show="▸ The same trade-off, everywhere" data-hide="▾ Hide">▸ The same trade-off, everywhere</button>
+  <div class="answer">
+    <table class="mini" style="margin-top:.2em">
+      <tr><th>Where</th><th class="c">bits</th><th>what one step means</th></tr>
+      <tr><td>This flood gauge</td><td class="c">12</td><td>≈ 8.5 mm of river</td></tr>
+      <tr><td>CD audio</td><td class="c">16</td><td>1/65,536 of the volume range — quieter detail is lost</td></tr>
+      <tr><td>Phone camera (per colour)</td><td class="c">8</td><td>256 shades — too few and a clear sky shows "banding"</td></tr>
+      <tr><td>Medical ECG</td><td class="c">16–24</td><td>fine enough to catch a murmur a 12-bit sensor would miss</td></tr>
+    </table>
+    <p class="sub">More bits = finer truth, but more data to store and move. Every sensor design picks a point on this line.</p>
+  </div>
+  <div class="impact"><span class="lab">◉ Real-world stakes</span>The same limit sets what an <strong>ECG</strong> sees in a heartbeat, what a bridge's strain sensor detects before a crack, and how finely a self-driving car ranges a pedestrian. Too few bits, and the danger is invisible.</div>
+</div></section>
+
+<!-- 16 · LIVE: RIVER → BITS -->
+<section class="slide cloth"><div class="frame">
+  <p class="eyebrow">Block B <span class="tag-live">live</span> · try it</p>
+  <h2>Turn the river into bits</h2>
+  <p>Drag the level. Watch the 12-bit code, its binary and hex, and the alert fire at 28.0 m. Then nudge by a millimetre or two — and watch the code <em>not move</em>.</p>
+  <div class="ix" id="adc">
+    <label>River level: <b><span id="adc-m">28.00</span> m</b></label>
+    <input type="range" id="adc-r" min="0" max="35" step="0.001" value="28.00">
+    <div class="out">
+      code = <b><span id="adc-code">3276</span></b> / 4095 &nbsp;·&nbsp; binary <b><span id="adc-bin">110011001100</span></b> &nbsp;·&nbsp; hex <b>0x<span id="adc-hex">CCC</span></b>
+    </div>
+    <span class="stat go" id="adc-stat">⚠ ALERT — evacuate</span>
+    <div class="sub" id="adc-note">At 28.0 m the code is 3276 = 0xCCC.</div>
+  </div>
+  <div class="link"><span class="lab">⇄ Connects to Block A</span>See the flat steps? That's why your Block A rule must use <code style="font-family:var(--mono)">≥</code> and a reset gap, never exact equality — the sensor literally cannot represent "exactly 28.000".</div>
+</div></section>
+
+<!-- 17 · EXPLAIN: BINARY+HEX + LINK -->
+<section class="slide cloth"><div class="frame">
+  <p class="eyebrow">Block B</p>
+  <h2>Two symbols carry everything</h2>
+  <p>Inside the machine every switch is on or off. One choice = a <span class="kterm">bit</span>; eight = a <span class="kterm">byte</span>; four bits = one <span class="kterm">hex</span> digit (so <code style="font-family:var(--mono)">3276 = 0xCCC</code>, and every <code style="font-family:var(--mono)">#F0A929</code> colour).</p>
+  <p style="text-align:center;margin:.5em 0">
+    <span class="bit on">1</span><span class="bit on">1</span><span class="bit off">0</span><span class="bit off">0</span><span class="bit on">1</span><span class="bit on">1</span><span class="bit off">0</span><span class="bit off">0</span><span class="bit on">1</span><span class="bit on">1</span><span class="bit off">0</span><span class="bit off">0</span>
+  </p>
+  <p>CCTV frame, SMS text, siren command — <strong>all become numbers, all numbers become bits.</strong> One alphabet: <span class="kterm">binary</span>.</p>
+  <div class="link"><span class="lab">⇄ Connects to Block D</span>Because everything is <em>the same</em> bits, a message can be chopped into numbered packets and rebuilt anywhere. Data representation is the quiet precondition that makes the entire internet possible.</div>
+</div></section>
+
+<!-- 18 · DEEP: NEGATIVE + FLOAT -->
+<section class="slide cloth"><div class="frame">
+  <p class="eyebrow">Block B <span class="tag-deep">deep dive</span></p>
+  <h2>Representing the impossible — and the imprecise</h2>
+  <div class="two">
+    <div><h3>The −3 m fault</h3>
+      <p><span class="kterm">Two's complement</span>: invert the bits of +3, add 1.</p>
+      <div class="codecard">+3 = 0000 0011
+ →   1111 1100  (invert)
+ →   1111 1101  (+1) = −3</div>
+      <p class="sub">Addition works across zero with no extra circuit.</p>
+    </div>
+    <div><h3>The 28.1 m reading</h3>
+      <p>28.1 has no exact finite binary form — like ⅓ in decimal. As <span class="kterm">floating point</span> it rounds:</p>
+      <div class="codecard">0.1 + 0.2
+ = 0.30000000000000004</div>
+      <p class="sub">Never test a level for <em>exact</em> equality. Use ≥ and a tolerance.</p>
+    </div>
+  </div>
+</div></section>
+
+<!-- 19 · REAL-WORLD: WHEN PRECISION FAILS (3 variants) -->
+<section class="slide cloth"><div class="frame">
+  <p class="eyebrow">Block B · why this is not a footnote</p>
+  <h2>When a rounding error costs everything</h2>
+  <div class="two">
+    <div><h3>Patriot missile · 1991</h3><p>Time in a fixed-point counter; 0.1 s isn't exact in binary. After ~100 h the clock drifted ~0.34 s — a Scud flies ~500 m in that gap. The interceptor missed. <strong>28 soldiers died.</strong></p></div>
+    <div><h3>Ariane 5 · 1996</h3><p>A 64-bit float velocity crammed into a 16-bit integer overflowed; guidance shut down; the rocket tore itself apart 37 s after launch. <strong>~US$370 million.</strong></p></div>
+  </div>
+  <button class="reveal" data-show="▸ One more — closer to money" data-hide="▾ Hide">▸ One more — closer to money</button>
+  <div class="answer">
+    <div class="impact" style="border-color:var(--dt);background:rgba(63,85,112,.08)"><span class="lab" style="color:var(--dt)">◉ Vancouver Stock Exchange · 1983</span>Its index <em>truncated</em> instead of rounding on every recalculation. Over ~22 months the error compounded: the index read ~520 while the market had actually risen. Corrected overnight to ~1098 — the "missing" half was pure rounding. Same bug in your bank balance, at scale.</div>
+  </div>
+  <p class="quote" style="margin-top:.5em">The ±4 mm blindness in your gauge — scaled up — is a war casualty, a lost rocket, and a broken stock index. Precision is a discipline, not pedantry.</p>
+</div></section>
+
+<!-- 20 · DEEP: TEXT + IMAGE -->
+<section class="slide cloth"><div class="frame">
+  <p class="eyebrow">Block B <span class="tag-deep">deep dive</span></p>
+  <h2>One alphabet: text and images too</h2>
+  <div class="two">
+    <div><h3>Text → <span class="kterm">ASCII</span> / Unicode</h3>
+      <div class="codecard"><span class="st">'S'</span> = 83 = 0101 0011
+<span class="st">'O'</span> = 79 = 0100 1111
+<span class="st">'S'</span> = 83 = 0101 0011</div>
+      <p class="sub">Unicode extends it to 中文, عربي, emoji — 140,000+ characters, one scheme.</p>
+    </div>
+    <div><h3>Image → pixels</h3>
+      <p>Each pixel = 3 numbers (R,G,B) × 8 bits = 24 bits. A 1920×1080 still:</p>
+      <div class="codecard">1920×1080×24 ÷ 8
+ ≈ 6.22 MB raw
+ ≈ 597 MB / day (96 stills)</div>
+    </div>
+  </div>
+  <p class="sub" style="margin-top:.4em">Sensor log = 144 bytes/day, image = megabytes — three media, <strong>two symbols</strong>. That's "digital".</p>
+</div></section>
+
+<!-- 21 · DEEP: THE MACHINE + IPOS DIAGRAM + LINK -->
+<section class="slide cloth"><div class="frame">
+  <p class="eyebrow">Block B <span class="tag-deep">deep dive</span></p>
+  <h2>The machine that reads them</h2>
+  <div class="fig svgbox">
+  <svg viewBox="0 0 560 150" width="100%" style="max-width:560px" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono, monospace" font-size="11">
+    <g stroke-width="2" fill="#fff">
+      <rect x="14" y="52" width="96" height="42" rx="6" stroke="#3F5570"/>
+      <rect x="180" y="30" width="150" height="86" rx="6" stroke="#152430"/>
+      <rect x="196" y="42" width="118" height="26" rx="4" stroke="#6B4B7A"/>
+      <rect x="196" y="78" width="118" height="26" rx="4" stroke="#1F7A6D"/>
+      <rect x="400" y="52" width="96" height="42" rx="6" stroke="#3F5570"/></g>
+    <text x="62" y="70" text-anchor="middle" fill="#3F5570" font-weight="bold">INPUT</text>
+    <text x="62" y="84" text-anchor="middle" fill="#5d7284" font-size="9">gauge</text>
+    <text x="255" y="59" text-anchor="middle" fill="#6B4B7A" font-weight="bold">CPU (control+ALU)</text>
+    <text x="255" y="95" text-anchor="middle" fill="#1F7A6D" font-weight="bold">MEMORY (data+code)</text>
+    <text x="255" y="22" text-anchor="middle" fill="#152430" font-size="9">von Neumann: one memory holds both</text>
+    <text x="448" y="70" text-anchor="middle" fill="#3F5570" font-weight="bold">OUTPUT</text>
+    <text x="448" y="84" text-anchor="middle" fill="#5d7284" font-size="9">siren / SMS</text>
+    <line x1="110" y1="73" x2="178" y2="73" stroke="#152430" stroke-width="2"/><polygon points="180,73 172,69 172,77" fill="#152430"/>
+    <line x1="330" y1="73" x2="398" y2="73" stroke="#152430" stroke-width="2"/><polygon points="400,73 392,69 392,77" fill="#152430"/>
+    <line x1="255" y1="116" x2="255" y2="138" stroke="#5d7284" stroke-width="2"/><polygon points="255,140 251,132 259,132" fill="#5d7284"/>
+    <text x="300" y="146" fill="#5d7284" font-size="9">→ STORAGE (the log)</text>
+  </svg>
+  </div>
+  <p><span class="kterm">Input→Process→Output→Storage</span>; the CPU runs <span class="kterm">fetch→decode→execute</span> billions of times a second. <span class="kterm">Von Neumann's</span> idea — code and data share one memory — is why software is so powerful… and why a virus (data treated as code) is even possible.</p>
+  <button class="reveal" data-show="▸ Watch one instruction actually run" data-hide="▾ Hide">▸ Watch one instruction actually run</button>
+  <div class="answer">
+    <p style="margin-top:.2em">One turn of the cycle for "is the level past danger?" — repeated billions of times a second:</p>
+    <div class="codecard"><span class="kw">FETCH</span>    grab the next instruction from memory   (compare level, 28.0)
+<span class="kw">DECODE</span>   work out what it means                 ("subtract, then check the sign")
+<span class="kw">EXECUTE</span>  do it in the ALU                       (level − 28.0 → set a flag)
+           store result · advance · repeat</div>
+    <p style="margin-top:.4em"><strong>Memory hierarchy</strong> (fast+tiny → slow+huge): <code style="font-family:var(--mono)">registers → cache → RAM → disk</code>. Each step is ~10–100× slower but far larger, so the CPU keeps hot data close. That gap is why "the program feels slow" is usually a memory story, not a CPU one.</p>
+  </div>
+</div></section>
+
+<!-- 22 · WHOLE FIELD -->
+<section class="slide cloth"><div class="frame">
+  <p class="eyebrow">Block B</p>
+  <h2>The whole field, in one station</h2>
+  <ul>
+    <li><strong>Software engineering</strong> wrote the controller · <strong>architecture</strong> is the chip · <strong>data representation</strong> is the 12-bit code.</li>
+    <li><strong>Networks</strong> carry the alert · <strong>cybersecurity</strong> defends it · <strong>databases &amp; data science</strong> store the log and tune next year's thresholds.</li>
+    <li><strong>HCI</strong> designed a message a frightened person can obey at 3 a.m. · <strong>theory</strong> tells you which rules can even be computed in time.</li>
+  </ul>
+  <p class="quote">One SMS touches all of it.</p>
+  <button class="reveal" data-show="▸ Which subfield failed, in each disaster today?" data-hide="▾ Hide">▸ Which subfield failed, in each disaster today?</button>
+  <div class="answer">
+    <table class="mini" style="margin-top:.2em">
+      <tr><th>Subfield</th><th>…when it's neglected</th></tr>
+      <tr><td>Data representation</td><td>Patriot missile — a rounding error, 28 lives</td></tr>
+      <tr><td>Testing / software engineering</td><td>Knight Capital — one stale path, US$440M</td></tr>
+      <tr><td>Correctness / verification</td><td>Therac-25 — "it worked in the demo"</td></tr>
+      <tr><td>Types &amp; interfaces</td><td>Mars Climate Orbiter — metric vs imperial</td></tr>
+      <tr><td>Security</td><td>the scam that empties a bank account</td></tr>
+    </table>
+    <p class="sub">Each branch is a branch <em>because</em> getting it wrong has a price. That's why the field is this big.</p>
+  </div>
+</div></section>
+
+<!-- 22B · FORMATIVE B -->
+<section class="slide cloth"><div class="frame">
+  <p class="eyebrow">Block B · formative check</p>
+  <h2>Apply it (before the break)</h2>
+  <ol>
+    <li>A budget cut swaps the 12-bit gauge for an <strong>8-bit</strong> one over the same 0–35 m. Does one step get bigger or smaller — roughly how much?</li>
+    <li>A manager wants the CCTV stored in the same <strong>144 bytes/day</strong> as the sensor log. If it's all "just bits", why is that impossible?</li>
+    <li>How can simply <em>opening a file</em> infect a computer? Which architectural idea makes that possible?</li>
+  </ol>
+  <button class="reveal" data-show="▸ Reveal answers" data-hide="▾ Hide">▸ Reveal answers</button>
+  <div class="answer">
+    <ol style="margin-top:.2em">
+      <li><strong>Bigger</strong> — 8 bits = 256 levels, so a step is 35 m ÷ 256 ≈ <strong>137 mm</strong>, about 16× coarser. Far blinder.</li>
+      <li>Same <em>alphabet</em>, wildly different <em>amount</em>: one image is ~6 MB — roughly <strong>40,000×</strong> the daily sensor log. Bits are universal; volume is not.</li>
+      <li>A file is data, but on a <strong>von Neumann</strong> machine data and code share memory — a booby-trapped file can get its bytes executed as instructions.</li>
+    </ol>
+  </div>
+</div></section>
+
+<!-- 23 · EVALUATE + BREAK (HOUR BOUNDARY) -->
+<section class="slide scene">
+  <div style="text-align:center">
+    <p class="eyebrow" style="justify-content:center">End of Hour 1</p>
+    <h2>From memory: the four stages, with the station's example for each.<br>And: why can't the sensor tell 28.000 from 28.004?</h2>
+    <div class="rule"></div>
+    <p class="big" style="color:var(--amber)">☕ Break — 5 minutes · Hour 2: you write the controller.</p>
+  </div>
+</section>
+
+<!-- 24 · BLOCK C DIVIDER -->
+<section class="slide scene">
+  <svg class="glow pulse" width="130" height="130" style="color:var(--amber)"><use href="#chip"/></svg>
+  <div style="text-align:center;margin-top:2vh">
+    <p class="eyebrow" style="justify-content:center">Block C · Basic Programming · CLO 3</p>
+    <h2>The script</h2>
+    <p class="big sub">Programming the alert controller</p>
+  </div>
+</section>
+
+<!-- 25 · ENGAGE -->
+<section class="slide cloth"><div class="frame">
+  <p class="eyebrow">Block C</p>
+  <h2>Your rule had human readers. The controller does not.</h2>
+  <p class="big" style="margin-top:.4em">A <span class="kterm">program</span> is an algorithm written in a language a machine performs <strong>exactly</strong>. It cannot guess. It forgives nothing.</p>
+  <p class="quote">At 3 a.m., in the rain, that is precisely what you want.</p>
+</div></section>
+
+<!-- 26 · EXPLORE: BUG HUNT + REVEAL -->
+<section class="slide cloth"><div class="frame">
+  <p class="eyebrow">Block C · Your turn</p>
+  <h2>The controller — it runs, and it is wrong</h2>
+  <div class="codecard">danger = 28.0
+alert_sent = <span class="kw">False</span>
+<span class="kw">while</span> running:
+    level = read_gauge()
+    <span class="kw">if</span> level &gt; danger:
+        send_sms(<span class="st">"EVACUATE"</span>)
+    <span class="kw">if</span> level &lt; -1 <span class="kw">or</span> level &gt; 35:
+        log(<span class="st">"sensor fault"</span>)</div>
+  <p style="margin-top:.35em"><strong>In pairs:</strong></p>
+  <ul>
+    <li>① Find <strong>three</strong> flaws — one floods, one trusts a broken sensor, and one lets a real danger slip through <em>silently</em>.</li>
+    <li>② Hand-trace it on <code style="font-family:var(--mono)">[28.0, 28.3, 28.2, 27.4, 28.1]</code> — how many SMS does this <em>buggy</em> version send, and does it warn at the right moments?</li>
+  </ul>
+  <p class="timer">⏱ 9 minutes</p>
+  <button class="reveal" data-show="▸ Reveal" data-hide="▾ Hide">▸ Reveal</button>
+  <div class="answer">
+    <ul style="margin-top:.2em">
+      <li><strong>Three flaws:</strong> no guard (re-sends every cycle); the sanity check runs <em>after</em> the alert (a 40 m glitch fires first); and <code style="font-family:var(--mono)">&gt;</code> should be <code style="font-family:var(--mono)">&gt;=</code> — a reading of <em>exactly</em> 28.0 is ignored.</li>
+      <li><strong>Buggy trace → 3 SMS</strong> (28.3, 28.2, 28.1) — and it <em>misses the real onset at 28.0</em>, then floods. A correct controller sends <strong>2</strong>: at 28.0, then again at 28.1 after the 27.4 reset. Wrong count <em>and</em> wrong moments.</li>
+    </ul>
+  </div>
+</div></section>
+
+<!-- 27 · EXPLAIN: THE FIX + IMPACT + LINK -->
+<section class="slide cloth"><div class="frame">
+  <p class="eyebrow">Block C</p>
+  <h2>Three bugs — and the fix</h2>
+  <div class="codecard"><span class="kw">while</span> running:
+    level = read_gauge()
+    <span class="kw">if</span> level &lt; -1 <span class="kw">or</span> level &gt; 35: log(<span class="st">"fault"</span>); <span class="kw">continue</span>   <span class="cm"># sanity FIRST</span>
+    <span class="kw">if</span> level &gt;= danger <span class="kw">and not</span> alert_sent: send_sms(<span class="st">"EVACUATE"</span>); alert_sent = <span class="kw">True</span>   <span class="cm"># guard + &gt;= catches exactly 28.0</span>
+    <span class="kw">if</span> level &lt; 27.5: alert_sent = <span class="kw">False</span>                    <span class="cm"># reset re-arms</span></div>
+  <p class="sub">Three fixes in three lines: sanity <em>first</em>; the guard so it fires <em>once</em>; and <code style="font-family:var(--mono)">&gt;=</code> not <code style="font-family:var(--mono)">&gt;</code>, so a reading of exactly 28.0 still counts.</p>
+  <div class="impact"><span class="lab">◉ Real-world stakes</span>Hospitals log hundreds of alarms per patient per day; overwhelmed staff tune them out. <strong>"Alarm fatigue"</strong> is a recognised cause of patient deaths — Bug 1, in a ward.</div>
+  <div class="link"><span class="lab">⇄ Connects back to Block A</span>Look at <code style="font-family:var(--mono)">and not alert_sent</code> — that's the <em>invariant</em> you reasoned about an hour ago, now written as code. You didn't learn two things; you learned one thing twice.</div>
+</div></section>
+
+<!-- 28 · DEEP: TRACE -->
+<section class="slide cloth"><div class="frame">
+  <p class="eyebrow">Block C <span class="tag-deep">deep dive</span></p>
+  <h2>Trace it — proving exactly two SMS</h2>
+  <p>Readings <code style="font-family:var(--mono)">[27.6, 27.9, 28.2, 28.3, 27.8, 27.4, 28.1]</code> · alert ≥ 28.0 · reset &lt; 27.5:</p>
+  <table class="mini">
+    <tr><th class="c">Reading</th><th class="c">sent before</th><th>Action</th><th class="c">sent after</th></tr>
+    <tr><td class="c">27.6 / 27.9</td><td class="c">False</td><td>below danger — silence</td><td class="c">False</td></tr>
+    <tr class="hit"><td class="c">28.2</td><td class="c">False</td><td>SEND SMS #1</td><td class="c">True</td></tr>
+    <tr><td class="c">28.3</td><td class="c">True</td><td>already sent — suppressed</td><td class="c">True</td></tr>
+    <tr><td class="c">27.8</td><td class="c">True</td><td>≥ 27.5 — still armed</td><td class="c">True</td></tr>
+    <tr><td class="c">27.4</td><td class="c">True</td><td>&lt; 27.5 — reset (all clear)</td><td class="c">False</td></tr>
+    <tr class="hit"><td class="c">28.1</td><td class="c">False</td><td>SEND SMS #2</td><td class="c">True</td></tr>
+  </table>
+  <p class="sub" style="margin-top:.5em">Next slide: run this yourself, one reading at a time.</p>
+</div></section>
+
+<!-- 29 · LIVE: RUN THE CONTROLLER -->
+<section class="slide cloth"><div class="frame">
+  <p class="eyebrow">Block C <span class="tag-live">live</span> · run it</p>
+  <h2>Step the controller yourself</h2>
+  <p>Press <strong>Step</strong> to feed one reading at a time into the fixed controller. Watch <code style="font-family:var(--mono)">alert_sent</code> flip and the SMS count climb — and stop at exactly two.</p>
+  <div class="ix" id="ctrl">
+    <div class="out" style="color:#5d7284">readings = [27.6, 27.9, 28.2, 28.3, 27.8, 27.4, 28.1]</div>
+    <div class="out" style="margin-top:.3em">
+      reading <b><span id="c-idx">–</span></b> = <b><span id="c-lvl">–</span></b> m &nbsp;·&nbsp; alert_sent = <b><span id="c-flag">False</span></b> &nbsp;·&nbsp; SMS sent = <b><span id="c-count">0</span></b>
+    </div>
+    <div id="c-msg" class="sub" style="min-height:1.3em;margin-top:.4em">Ready. Press Step ▶</div>
+    <button class="btn" id="c-step">Step ▶</button>
+    <button class="btn" id="c-reset">Reset ↺</button>
+  </div>
+  <div class="link"><span class="lab">⇄ Connects to the trace table</span>Same seven readings, same two SMS — the hand-trace and the running machine agree. That agreement <em>is</em> what "the code is correct" means.</div>
+</div></section>
+
+<!-- 30 · DEEP: THREE STRUCTURES -->
+<section class="slide cloth"><div class="frame">
+  <p class="eyebrow">Block C <span class="tag-prog">deep dive</span></p>
+  <h2>Every program is three structures</h2>
+  <div class="fig svgbox">
+  <svg viewBox="0 0 620 132" width="100%" style="max-width:600px" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono, monospace" font-size="11">
+    <g fill="none" stroke="#1F7A6D" stroke-width="2">
+      <rect x="20" y="34" width="120" height="26" rx="4"/><rect x="20" y="70" width="120" height="26" rx="4"/>
+      <line x1="80" y1="60" x2="80" y2="70" stroke="#152430"/><polygon points="80,70 76,63 84,63" fill="#152430" stroke="none"/>
+      <path d="M320 26 l30 24 -30 24 -30 -24 z" stroke="#B06A1F"/>
+      <line x1="290" y1="50" x2="232" y2="50" stroke="#152430"/><rect x="172" y="37" width="60" height="26" rx="4" stroke="#B06A1F"/>
+      <line x1="350" y1="50" x2="408" y2="50" stroke="#152430"/><rect x="408" y="37" width="60" height="26" rx="4" stroke="#B06A1F"/>
+      <ellipse cx="560" cy="50" rx="40" ry="24" stroke="#6B4B7A"/>
+      <path d="M560 74 l0 12" stroke="#6B4B7A"/><path d="M520 50 q-18 -6 0 -11" stroke="#6B4B7A"/>
+      <polygon points="522,42 528,45 522,49" fill="#6B4B7A" stroke="none"/>
+    </g>
+    <text x="80" y="24" text-anchor="middle" fill="#1F7A6D" font-weight="bold">SEQUENCE</text>
+    <text x="80" y="51" text-anchor="middle" fill="#233240">step 1</text><text x="80" y="87" text-anchor="middle" fill="#233240">step 2</text>
+    <text x="320" y="14" text-anchor="middle" fill="#B06A1F" font-weight="bold">SELECTION</text>
+    <text x="202" y="53" text-anchor="middle" fill="#233240" font-size="10">no</text><text x="438" y="53" text-anchor="middle" fill="#233240" font-size="10">yes</text>
+    <text x="560" y="14" text-anchor="middle" fill="#6B4B7A" font-weight="bold">ITERATION</text>
+    <text x="560" y="53" text-anchor="middle" fill="#233240" font-size="10">repeat</text>
+  </svg>
+  <p class="cap">Böhm–Jacopini (1966): <em>any</em> computable procedure needs only these three, nested.</p>
+  </div>
+  <p class="sub"><span class="kterm">Sequence</span> = the guarded steps · <span class="kterm">Selection</span> = each <code style="font-family:var(--mono)">if</code> · <span class="kterm">Iteration</span> = the <code style="font-family:var(--mono)">while</code>. Your controller, WhatsApp, and a Mars rover — same three.</p>
+</div></section>
+
+<!-- 31 · DEEP: VARIABLES, TYPES, LOGIC + IMPACT + LINK -->
+<section class="slide cloth"><div class="frame">
+  <p class="eyebrow">Block C <span class="tag-prog">deep dive</span></p>
+  <h2>Variables, types, and logic</h2>
+  <p>A <span class="kterm">variable</span> is a named box that remembers; its <span class="kterm">type</span> says what fits: <code style="font-family:var(--mono)">float</code> level, <code style="font-family:var(--mono)">bool</code> alert_sent, <code style="font-family:var(--mono)">str</code> "EVACUATE". The "faulty" test negates by <span class="kterm">De Morgan's law</span>:</p>
+  <div class="codecard"><span class="kw">not</span> (level &lt; -1 <span class="kw">or</span> level &gt; 35)  ≡  (level &gt;= -1) <span class="kw">and</span> (level &lt;= 35)</div>
+  <button class="reveal" data-show="▸ More logic — prove it, then scale it" data-hide="▾ Hide">▸ More logic — prove it, then scale it</button>
+  <div class="answer">
+    <p style="margin-top:.2em"><strong>Prove De Morgan by truth table</strong> — the two columns match in all four rows:</p>
+    <table class="mini">
+      <tr><th class="c">A</th><th class="c">B</th><th class="c">¬(A ∨ B)</th><th class="c">(¬A) ∧ (¬B)</th></tr>
+      <tr><td class="c">F</td><td class="c">F</td><td class="c">T</td><td class="c">T</td></tr>
+      <tr><td class="c">F</td><td class="c">T</td><td class="c">F</td><td class="c">F</td></tr>
+      <tr><td class="c">T</td><td class="c">F</td><td class="c">F</td><td class="c">F</td></tr>
+      <tr><td class="c">T</td><td class="c">T</td><td class="c">F</td><td class="c">F</td></tr>
+    </table>
+    <p style="margin-top:.4em">The mirror law: <code style="font-family:var(--mono)">¬(A ∧ B) ≡ (¬A) ∨ (¬B)</code>. Now lift it from one reading to a whole stream, with <strong>quantifiers</strong> (<span class="kterm">predicate logic</span>):</p>
+    <div class="codecard">∀ r ∈ window:  −1 ≤ r ≤ 35        <span class="cm"># FOR ALL readings, sane</span>
+∃ r ∈ window:  r ≥ 28.0            <span class="cm"># THERE EXISTS a danger reading</span>
+¬(∀ r: sane(r))  ≡  ∃ r: ¬sane(r)  <span class="cm"># De Morgan, quantified</span></div>
+    <p class="sub">"All readings sane" fails exactly when "some reading is faulty" — the same law, over a stream. This is the logic that formal-verification tools run on real safety-critical systems.</p>
+  </div>
+  <div class="impact"><span class="lab">◉ Real-world stakes</span>NASA's <strong>Mars Climate Orbiter</strong> (1999) burned up because one team used imperial units and another metric — a type/unit mismatch nobody caught. <strong>US$327 million</strong>, gone.</div>
+  <div class="link"><span class="lab">⇄ Connects to Block D · security</span>When a <em>string</em> is mistakenly run as <em>code</em>, that's <strong>SQL injection</strong> — the internet's most common attack, and just a type confusion an attacker triggers on purpose. Types are a safety boundary.</div>
+</div></section>
+
+<!-- 32 · DEEP: STATE MACHINE + LINK -->
+<section class="slide cloth"><div class="frame">
+  <p class="eyebrow">Block C <span class="tag-prog">deep dive</span></p>
+  <h2>The controller is a <span class="kterm">finite state machine</span></h2>
+  <div class="fig svgbox">
+  <svg viewBox="0 0 520 158" width="100%" style="max-width:490px" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono, monospace" font-size="12">
+    <circle cx="128" cy="80" r="46" fill="#eef3f6" stroke="#1F7A6D" stroke-width="2.5"/>
+    <circle cx="392" cy="80" r="46" fill="#fbeae6" stroke="#D64533" stroke-width="2.5"/>
+    <text x="128" y="77" text-anchor="middle" fill="#152430" font-weight="bold">NORMAL</text>
+    <text x="128" y="93" text-anchor="middle" fill="#5d7284" font-size="10">silent</text>
+    <text x="392" y="77" text-anchor="middle" fill="#152430" font-weight="bold">ALERTED</text>
+    <text x="392" y="93" text-anchor="middle" fill="#5d7284" font-size="10">SMS sent</text>
+    <path d="M176 62 q80 -36 168 0" fill="none" stroke="#152430" stroke-width="2"/>
+    <polygon points="344,62 334,57 337,66" fill="#152430"/>
+    <text x="260" y="26" text-anchor="middle" fill="#D64533">level ≥ 28.0</text>
+    <text x="260" y="40" text-anchor="middle" fill="#5d7284" font-size="10">→ send EVACUATE</text>
+    <path d="M344 98 q-80 36 -168 0" fill="none" stroke="#152430" stroke-width="2"/>
+    <polygon points="176,98 186,93 183,102" fill="#152430"/>
+    <text x="260" y="142" text-anchor="middle" fill="#1F7A6D">level &lt; 27.5</text>
+  </svg>
+  <p class="cap">Two states, two transitions. The 28.0 / 27.5 gap is the <strong>hysteresis</strong> that stops the flicker.</p>
+  </div>
+  <button class="reveal" data-show="▸ Grow the machine — add a FAULT state" data-hide="▾ Hide">▸ Grow the machine — add a FAULT state</button>
+  <div class="answer">
+    <p style="margin-top:.2em">Real controllers hold more states. Add <strong>FAULT</strong> (a bad sensor) and the whole behaviour is just a small table:</p>
+    <table class="mini">
+      <tr><th>In state</th><th>event</th><th>→ go to</th></tr>
+      <tr><td>NORMAL</td><td>level ≥ 28.0</td><td>ALERTED (send SMS)</td></tr>
+      <tr><td>NORMAL / ALERTED</td><td>reading out of range</td><td>FAULT (log, page a human)</td></tr>
+      <tr><td>ALERTED</td><td>level &lt; 27.5</td><td>NORMAL (all clear)</td></tr>
+      <tr><td>FAULT</td><td>readings sane again</td><td>NORMAL</td></tr>
+    </table>
+    <p class="sub">A finite state machine <em>is</em> this table. Draw it and you've specified the program before writing a single line.</p>
+  </div>
+  <div class="link"><span class="lab">⇄ Connects to Block D</span><strong>TCP is a finite state machine too</strong> — same circles-and-arrows diagram, new domain. Learn the shape once and you see it in traffic lights, vending machines, and the protocol carrying your alert.</div>
+</div></section>
+
+<!-- 33 · DEEP: TESTING & DEBUGGING + IMPACT -->
+<section class="slide cloth"><div class="frame">
+  <p class="eyebrow">Block C <span class="tag-prog">deep dive</span></p>
+  <h2>Testing &amp; debugging — a discipline, not luck</h2>
+  <ul>
+    <li><span class="kterm">Testing</span>: run against inputs whose answer you already know (a <em>test oracle</em>) — the storm must give exactly 2 SMS. Good tests hit <strong>edge cases</strong>: exactly 28.0, a fault mid-flood, a value on the reset line.</li>
+    <li><span class="kterm">Debugging</span>: reproduce → isolate the smallest failing case → hypothesise → fix → re-run <em>every</em> test (a fix that breaks an old case is a <em>regression</em>).</li>
+  </ul>
+  <div class="impact"><span class="lab">◉ Real-world stakes</span><strong>Knight Capital</strong> (2012) deployed a change without catching one stale code path. Bad trades poured out for 45 minutes — <strong>US$440 million</strong>, and the firm nearly collapsed by lunch.</div>
+</div></section>
+
+<!-- 33B · FORMATIVE C -->
+<section class="slide cloth"><div class="frame">
+  <p class="eyebrow">Block C · formative check</p>
+  <h2>Apply it (before the break)</h2>
+  <ol>
+    <li>Trace the <em>correct</em> controller (alert ≥ 28.0, reset &lt; 27.5) on <code style="font-family:var(--mono)">[28.0, 27.4, 28.1]</code> — how many SMS?</li>
+    <li>In that controller, which structure is the <code style="font-family:var(--mono)">while</code> loop, and which is the guard <code style="font-family:var(--mono)">if</code>?</li>
+    <li>Someone changes <code style="font-family:var(--mono)">&gt;=</code> to <code style="font-family:var(--mono)">&gt;</code> in the danger test. Which exact reading now slips through in silence?</li>
+  </ol>
+  <button class="reveal" data-show="▸ Reveal answers" data-hide="▾ Hide">▸ Reveal answers</button>
+  <div class="answer">
+    <ol style="margin-top:.2em">
+      <li><strong>2</strong> — send at 28.0 (armed); 27.4 &lt; 27.5 resets; 28.1 sends again.</li>
+      <li><code style="font-family:var(--mono)">while</code> = <strong>iteration</strong>; the guard <code style="font-family:var(--mono)">if</code> = <strong>selection</strong>.</li>
+      <li>A reading of <strong>exactly 28.0</strong> — the danger threshold itself — is now missed.</li>
+    </ol>
+  </div>
+</div></section>
+
+<!-- 34 · EVALUATE + BREAK -->
+<section class="slide scene">
+  <div style="text-align:center">
+    <p class="eyebrow" style="justify-content:center">Before we rest</p>
+    <h2>Three structures, to your neighbour —<br>and which one prevents the SMS flood.</h2>
+    <div class="rule"></div>
+    <p class="big" style="color:var(--amber)">☕ Break — 5 minutes</p>
+  </div>
+</section>
+
+<!-- 35 · BLOCK D DIVIDER -->
+<section class="slide scene">
+  <svg class="glow pulse" width="150" height="187" style="color:var(--amber)"><use href="#tower"/></svg>
+  <div style="text-align:center;margin-top:2vh">
+    <p class="eyebrow" style="justify-content:center">Block D · Digital Technology · CLO 4</p>
+    <h2>Delivery &amp; deception</h2>
+    <p class="big sub">The internet, and who abuses it</p>
+  </div>
+</section>
+
+<!-- 36 · EXPLAIN: TRAVEL + PACKET DIAGRAM + IMPACT + LINK -->
+<section class="slide cloth"><div class="frame">
+  <p class="eyebrow">Block D</p>
+  <h2>Your alert travels as pieces, not as a message</h2>
+  <div class="fig svgbox">
+  <svg viewBox="0 0 560 132" width="100%" style="max-width:560px" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono, monospace" font-size="11">
+    <rect x="10" y="52" width="70" height="30" rx="5" fill="#fff" stroke="#152430" stroke-width="2"/>
+    <text x="45" y="71" text-anchor="middle" fill="#152430" font-weight="bold">ALERT</text>
+    <rect x="480" y="52" width="72" height="30" rx="5" fill="#fff" stroke="#152430" stroke-width="2"/>
+    <text x="516" y="71" text-anchor="middle" fill="#152430" font-weight="bold">ALERT</text>
+    <g><circle cx="210" cy="28" r="4" fill="#3F5570"/><circle cx="300" cy="24" r="4" fill="#3F5570"/><circle cx="225" cy="66" r="4" fill="#3F5570"/><circle cx="310" cy="78" r="4" fill="#3F5570"/><circle cx="240" cy="106" r="4" fill="#3F5570"/><circle cx="340" cy="102" r="4" fill="#3F5570"/></g>
+    <path d="M82 62 L210 28 L300 24 L480 58" fill="none" stroke="#F0A929" stroke-width="1.6"/>
+    <path d="M82 68 L225 66 L310 78 L480 66" fill="none" stroke="#1F7A6D" stroke-width="1.6"/>
+    <path d="M82 74 L240 106 L340 102 L480 74" fill="none" stroke="#D64533" stroke-width="1.6"/>
+    <rect x="120" y="20" width="16" height="14" rx="2" fill="#F0A929"/><text x="128" y="31" text-anchor="middle" fill="#0B1622" font-size="9">1</text>
+    <rect x="120" y="60" width="16" height="14" rx="2" fill="#1F7A6D"/><text x="128" y="71" text-anchor="middle" fill="#fff" font-size="9">2</text>
+    <rect x="120" y="100" width="16" height="14" rx="2" fill="#D64533"/><text x="128" y="111" text-anchor="middle" fill="#fff" font-size="9">3</text>
+    <text x="285" y="128" text-anchor="middle" fill="#5d7284" font-size="9">one message · numbered packets · different routes · reassembled in order</text>
+  </svg>
+  </div>
+  <p>Each device has an <span class="kterm">IP address</span> (the delivery label). Your phone (<span class="kterm">client</span>) asks; the alert system's big computer (<span class="kterm">server</span>) answers. "The cloud" is that server — <strong>someone else's computer, in a building</strong>.</p>
+  <button class="reveal" data-show="▸ See the actual hops (a traceroute)" data-hide="▾ Hide">▸ See the actual hops (a traceroute)</button>
+  <div class="answer">
+    <p style="margin-top:.2em">Ask any computer to trace the path to a server and it lists every device the packets pass through:</p>
+    <div class="codecard"><span class="cm"># traceroute to the alert server</span>
+ 1  192.168.0.1     1 ms    <span class="cm"># your home router (private)</span>
+ 2  10.x.x.x        8 ms    <span class="cm"># your ISP</span>
+ 3  ...            15 ms    <span class="cm"># national backbone</span>
+ 7  103.x.x.x      42 ms    <span class="cm"># the data centre</span>
+ 8  server         43 ms    <span class="cm"># "the cloud" — a real machine</span></div>
+    <p class="sub">No magic — just a chain of other people's computers, each a hop closer. And every hop is a place a packet could be delayed, dropped, or watched.</p>
+  </div>
+  <div class="impact"><span class="lab">◉ Real-world stakes</span>Packets picking their own routes is <em>why</em> the internet survives cut cables and dead routers — knock out one path, the pieces flow around it. Resilience was the design goal.</div>
+</div></section>
+
+<!-- 37 · DEEP: LAYERS -->
+<section class="slide cloth"><div class="frame">
+  <p class="eyebrow">Block D <span class="tag-dt">deep dive</span></p>
+  <h2>The layered internet</h2>
+  <div class="stack">
+    <div class="layer"><div class="l">Application</div><div class="r">the alert itself — SMS, web, email. What humans care about.</div></div>
+    <div class="layer"><div class="l">Transport</div><div class="r">TCP (reliable, ordered) or UDP (fast, lossy). Splits data into segments.</div></div>
+    <div class="layer"><div class="l">Internet</div><div class="r">IP — addressing and routing. Labels each packet and finds a path.</div></div>
+    <div class="layer"><div class="l">Link</div><div class="r">the actual wire, fibre, or radio to the next device (wifi, 4G).</div></div>
+  </div>
+  <p class="sub" style="margin-top:.5em">Each layer trusts the one below and serves the one above — so new wifi hardware never disturbs the SMS app. Envelopes inside envelopes.</p>
+</div></section>
+
+<!-- 38 · DEEP: ADDRESSING -->
+<section class="slide cloth"><div class="frame">
+  <p class="eyebrow">Block D <span class="tag-dt">deep dive</span></p>
+  <h2>Your two addresses, explained</h2>
+  <div class="two">
+    <div><h3>Private · 192.168.x.x</h3><p>The label <em>inside</em> your network (wifi settings). Reused in every home; unreachable from outside.</p></div>
+    <div><h3>Public · what-is-my-IP</h3><p>The one address your router shows the world, shared by everyone behind it. <span class="kterm">NAT</span> translates between them.</p></div>
+  </div>
+  <p style="margin-top:.4em"><span class="kterm">IPv4</span> = 32 bits ≈ 4.3 billion, now exhausted → NAT and 128-bit <span class="kterm">IPv6</span>. A <span class="kterm">port</span> says which program; <span class="kterm">DNS</span> is the phone book turning <code style="font-family:var(--mono)">bank.com.my</code> into a number.</p>
+  <p class="sub"><strong>Try it (2 min):</strong> wifi settings vs "what is my IP" — you'll see both addresses.</p>
+</div></section>
+
+<!-- 39 · DEEP: TCP + UDP + SEQUENCE + LINK -->
+<section class="slide cloth"><div class="frame">
+  <p class="eyebrow">Block D <span class="tag-dt">deep dive</span></p>
+  <h2>Reliability from unreliable parts</h2>
+  <div class="two" style="align-items:center">
+    <div class="svgbox" style="margin-top:0">
+    <svg viewBox="0 0 300 200" width="100%" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono, monospace" font-size="10">
+      <text x="60" y="14" text-anchor="middle" fill="#152430" font-weight="bold">Sender</text>
+      <text x="240" y="14" text-anchor="middle" fill="#152430" font-weight="bold">Receiver</text>
+      <line x1="60" y1="20" x2="60" y2="192" stroke="#B9C6D0" stroke-width="1.5"/>
+      <line x1="240" y1="20" x2="240" y2="192" stroke="#B9C6D0" stroke-width="1.5"/>
+      <line x1="60" y1="34" x2="238" y2="46" stroke="#1F7A6D" stroke-width="2"/><polygon points="240,46 231,42 233,50" fill="#1F7A6D"/>
+      <text x="150" y="32" text-anchor="middle" fill="#1F7A6D" font-size="9">DATA #1</text>
+      <line x1="240" y1="58" x2="62" y2="70" stroke="#3F5570" stroke-width="2"/><polygon points="60,70 69,66 67,74" fill="#3F5570"/>
+      <text x="150" y="56" text-anchor="middle" fill="#3F5570" font-size="9">ACK #1</text>
+      <line x1="60" y1="86" x2="150" y2="92" stroke="#D64533" stroke-width="2"/>
+      <text x="170" y="93" fill="#D64533" font-size="10">✕ lost</text>
+      <text x="150" y="82" text-anchor="middle" fill="#D64533" font-size="9">DATA #2</text>
+      <text x="30" y="118" fill="#5d7284" font-size="8">timeout…</text>
+      <line x1="60" y1="130" x2="238" y2="142" stroke="#D64533" stroke-width="2"/><polygon points="240,142 231,138 233,146" fill="#D64533"/>
+      <text x="150" y="128" text-anchor="middle" fill="#D64533" font-size="9">DATA #2 resend</text>
+      <line x1="240" y1="154" x2="62" y2="166" stroke="#3F5570" stroke-width="2"/><polygon points="60,166 69,162 67,170" fill="#3F5570"/>
+      <text x="150" y="152" text-anchor="middle" fill="#3F5570" font-size="9">ACK #2</text>
+    </svg>
+    </div>
+    <div>
+      <p style="margin-top:0"><span class="kterm">TCP</span> rebuilds guaranteed delivery from <strong>sequence numbers</strong>, <strong>acknowledgements</strong>, and <strong>timeout + retransmit</strong>.</p>
+      <p style="margin-top:.4em"><strong>TCP</strong> — the SMS: must arrive, in order, even late. <strong>UDP</strong> — live flood video: a late frame is useless, so drop it.</p>
+    </div>
+  </div>
+  <div class="link"><span class="lab">⇄ Connects to Block C</span>That "lost → resend" logic is a <em>finite state machine</em> — the same circles-and-arrows you drew for the controller. You already know how to read this.</div>
+</div></section>
+
+<!-- 40 · THE HINGE -->
+<section class="slide scene">
+  <div style="text-align:center;max-width:820px">
+    <p class="eyebrow" style="justify-content:center">Block D · the hinge</p>
+    <h2>The network delivers by <span style="color:var(--signal)">address</span>.<br>It verifies nothing about <span style="color:var(--signal)">honesty</span>.</h2>
+    <p class="big" style="margin-top:.6em;color:var(--panel)">That single design fact is why Malaysians lose <strong>billions of ringgit a year</strong> to scams. Anyone can send a message that <em>claims</em> to be your bank, LHDN, or a flood authority.</p>
+  </div>
+</section>
+
+<!-- 41 · EXPLORE: SCAM -->
+<section class="slide cloth"><div class="frame">
+  <p class="eyebrow">Block D · Your turn</p>
+  <h2>Which alert do you obey?</h2>
+  <p>Three messages on your sheet — a flood alert, an "LHDN tax refund", a "bank verification". At least one is a forgery.</p>
+  <ul>
+    <li>① Rank them by trust, and mark which clues a careful attacker could fake.</li>
+    <li>② For the one you'd act on, name the exact <strong>out-of-band</strong> check you'd do first — <em>not</em> by replying to the message.</li>
+    <li>③ Now <strong>design</strong> the hardest fake you can: perfect sender, perfect spelling, calm tone. What single thing still gives it away?</li>
+  </ul>
+  <p class="timer">⏱ 7 minutes</p>
+  <button class="reveal" data-show="▸ Reveal" data-hide="▾ Hide">▸ Reveal</button>
+  <div class="answer">
+    <p style="margin-top:.2em">① The flood alert <em>asks for nothing</em>, so acting costs nothing; the other two want a click or a code — rank them last. ② Verify through a channel <em>you</em> chose: the number on your bank card or its official app — never the message's link or number. ③ The only unfakeable tell is <strong>the ask</strong>: a flawless-looking message that still requests a TAC, password, or transfer is still a scam. A fake that asks for nothing can't take anything.</p>
+  </div>
+  <button class="reveal" data-show="▸ Push further" data-hide="▾ Hide">▸ Push further</button>
+  <div class="answer">
+    <p style="margin-top:.2em">Which part of <strong>CIA</strong> is under attack? The scammer impersonates a trusted sender (defeating <em>authentication</em>) to break the <em>confidentiality</em> and <em>integrity</em> of your account. <strong>2FA</strong> is why a stolen password isn't enough — so the attacker must trick <em>you</em> into surrendering the second factor. That is the whole reason "the ask" exists.</p>
+  </div>
+</div></section>
+
+<!-- 42 · DEEP: FAKEABLE + LINK -->
+<section class="slide cloth"><div class="frame">
+  <p class="eyebrow">Block D <span class="tag-dt">deep dive</span></p>
+  <h2>The ask is the tell</h2>
+  <table class="tbl">
+    <tr><th>Clue</th><th class="c">Fakeable?</th><th>Why</th></tr>
+    <tr><td>Sender name / "your bank"</td><td class="c no">yes</td><td>the network verifies addresses, not identities</td></tr>
+    <tr><td>Spelling, logos</td><td class="c no">yes</td><td>good forgeries are word-perfect</td></tr>
+    <tr><td>Urgency ("24 hours")</td><td class="c no">yes</td><td>the best fakes are calm</td></tr>
+    <tr><td>Link domain</td><td class="c no">partly</td><td>look-alikes are cheap; exact official domains are not</td></tr>
+    <tr><td><strong>The ask — TAC / password</strong></td><td class="c yes">NO</td><td>no legitimate party ever needs these from you</td></tr>
+  </table>
+  <p class="sub" style="margin-top:.5em">So the goal is never "spot the fake" — a perfect fake can exist. It's <strong>out-of-band verification</strong>: stop, and check through a channel <em>you</em> chose (the number on your card, the official app), never the one the message handed you.</p>
+  <div class="link"><span class="lab">⇄ Connects back to Block A</span>"Never trust an unverified <em>reading</em>" (the −3 m sensor) and "never trust an unverified <em>sender</em>" are the same instinct — <strong>input validation</strong>. The flood taught it; the scam needs it.</div>
+</div></section>
+
+<!-- 43 · DEEP: SECURITY PRINCIPLES + CIA + IMPACT -->
+<section class="slide cloth"><div class="frame">
+  <p class="eyebrow">Block D <span class="tag-dt">deep dive</span></p>
+  <h2>Security principles</h2>
+  <div class="two" style="align-items:center">
+    <div class="svgbox" style="margin-top:0">
+    <svg viewBox="0 0 240 176" width="100%" xmlns="http://www.w3.org/2000/svg" font-family="Space Grotesk, sans-serif" font-size="12">
+      <polygon points="120,24 214,156 26,156" fill="none" stroke="#3F5570" stroke-width="2.5"/>
+      <circle cx="120" cy="24" r="4" fill="#D64533"/><circle cx="214" cy="156" r="4" fill="#1F7A6D"/><circle cx="26" cy="156" r="4" fill="#6B4B7A"/>
+      <text x="120" y="16" text-anchor="middle" fill="#D64533" font-weight="bold">Confidentiality</text>
+      <text x="214" y="172" text-anchor="middle" fill="#1F7A6D" font-weight="bold">Availability</text>
+      <text x="26" y="172" text-anchor="middle" fill="#6B4B7A" font-weight="bold">Integrity</text>
+      <text x="120" y="106" text-anchor="middle" fill="#152430" font-weight="bold" font-size="14">CIA</text>
+    </svg>
+    </div>
+    <div>
+      <ul style="margin-top:0">
+        <li><strong>Confidentiality</strong> — only the intended reader.</li>
+        <li><strong>Integrity</strong> — unaltered in transit.</li>
+        <li><strong>Availability</strong> — there when needed.</li>
+      </ul>
+      <p class="sub"><span class="kterm">2FA</span> = something you <em>know</em> + <em>have</em> + <em>are</em>. That's why the scammer must <em>ask</em> for your TAC — the one factor they can't steal remotely.</p>
+    </div>
+  </div>
+  <div class="impact"><span class="lab">◉ Real-world stakes</span>A flood-alert server knocked offline by a <strong>denial-of-service</strong> attack fails <em>Availability</em> — true, correct, and never arrives. All three legs must hold at once.</div>
+</div></section>
+
+<!-- 44 · DEEP: CRYPTO + CAESAR + IMPACT -->
+<section class="slide cloth"><div class="frame">
+  <p class="eyebrow">Block D <span class="tag-dt">deep dive</span></p>
+  <h2>Caesar → Kerckhoffs → the padlock</h2>
+  <div class="fig svgbox">
+  <svg viewBox="0 0 520 88" width="100%" style="max-width:520px" xmlns="http://www.w3.org/2000/svg" font-family="IBM Plex Mono, monospace" font-size="13">
+    <text x="14" y="26" fill="#5d7284" font-size="10">plain</text>
+    <text x="14" y="70" fill="#5d7284" font-size="10">+3 →</text>
+    <g font-weight="bold">
+      <text x="70" y="26" fill="#152430">H</text><text x="130" y="26" fill="#152430">E</text><text x="190" y="26" fill="#152430">L</text><text x="250" y="26" fill="#152430">P</text>
+      <text x="70" y="70" fill="#D64533">K</text><text x="130" y="70" fill="#D64533">H</text><text x="190" y="70" fill="#D64533">O</text><text x="250" y="70" fill="#D64533">S</text>
+    </g>
+    <g stroke="#B9C6D0" stroke-width="1.3"><line x1="72" y1="34" x2="72" y2="58"/><line x1="132" y1="34" x2="132" y2="58"/><line x1="192" y1="34" x2="192" y2="58"/><line x1="252" y1="34" x2="252" y2="58"/></g>
+    <text x="380" y="50" fill="#5d7284" font-size="11">only 25 keys — broken in seconds</text>
+  </svg>
+  </div>
+  <p><span class="kterm">Kerckhoffs's principle</span>: assume the enemy knows the algorithm; only the <em>key</em> stays secret. Modern ciphers publish the method and keep the key at 2¹²⁸. The browser <span class="kterm">padlock</span> (TLS) certifies an encrypted line to the <em>named domain</em> — <strong>not</strong> that the domain is honest.</p>
+  <div class="impact"><span class="lab">◉ Real-world stakes</span>Most phishing sites now carry a <strong>valid padlock</strong>. <code style="font-family:var(--mono)">bank-verify-my.com</code> can be fully encrypted and a pure scam. The padlock means "no one is eavesdropping" — never "trust this site."</div>
+</div></section>
+
+<!-- 45 · DEFENCES -->
+<section class="slide cloth"><div class="frame">
+  <p class="eyebrow">Block D</p>
+  <h2>Three habits, one phone number</h2>
+  <ul>
+    <li><strong>Phishing tells:</strong> manufactured urgency, authority-claiming names, mismatched links — and the unfakeable one, the <em>ask</em> for a password or TAC.</li>
+    <li><strong>Passphrases + 2FA:</strong> long beats clever; never reused; second factor on email first. Never read a TAC aloud — a spoken TAC is money leaving.</li>
+    <li><strong>Digital footprint:</strong> what you post stays reachable and searchable — future employers included.</li>
+    <li>If money moved: call the <strong>National Scam Response Centre — 997</strong> — immediately. Minutes matter.</li>
+  </ul>
+  <button class="reveal" data-show="▸ Dissect a real-style scam SMS" data-hide="▾ Hide">▸ Dissect a real-style scam SMS</button>
+  <div class="answer">
+    <div class="smscard" style="margin-top:.2em"><b>BANK:</b> Akaun anda digantung. Sahkan segera di <u>bank-verify-my.com</u> atau akaun ditutup dalam 24 jam. Kongsi TAC untuk pengesahan.</div>
+    <ul style="margin-top:.4em">
+      <li><strong>"digantung… 24 jam"</strong> — manufactured urgency, to stop you thinking.</li>
+      <li><strong>bank-verify-my.com</strong> — a look-alike domain, not the bank's real one.</li>
+      <li><strong>a link to "confirm"</strong> — the real bank never sends you to one.</li>
+      <li><strong>"Kongsi TAC"</strong> — the unfakeable tell: no honest party asks for your code.</li>
+    </ul>
+    <p class="sub">Every surface detail can be perfected. The <em>ask</em> is the one thing a forgery can't hide.</p>
+  </div>
+</div></section>
+
+<!-- 45B · FORMATIVE D -->
+<section class="slide cloth"><div class="frame">
+  <p class="eyebrow">Block D · formative check</p>
+  <h2>Apply it (last check)</h2>
+  <ol>
+    <li>A call from your bank's <em>real</em> number (caller ID) asks for your TAC. Give <strong>two</strong> reasons from today it is still a scam.</li>
+    <li>A site has a valid padlock <em>and</em> reads <code style="font-family:var(--mono)">bank-verify-my.com</code>. Do you enter your password? Why?</li>
+    <li>A friend reused one password everywhere and it leaked. Why does 2FA on their <em>email</em> still save them?</li>
+  </ol>
+  <button class="reveal" data-show="▸ Reveal answers" data-hide="▾ Hide">▸ Reveal answers</button>
+  <div class="answer">
+    <ol style="margin-top:.2em">
+      <li>Caller ID is an <strong>address</strong> — spoofable, since the network checks address not identity; and asking for a <strong>TAC</strong> is the unfakeable tell no honest party needs.</li>
+      <li><strong>No.</strong> The padlock only means the line is encrypted <em>to that domain</em> — and that domain is a look-alike, not the bank.</li>
+      <li>The leaked password alone can't pass the <strong>second factor</strong>; email is the recovery hub for everything else, so protecting it first contains the damage.</li>
+    </ol>
+  </div>
+</div></section>
+
+<!-- 46 · FINAL QUIZ + REVEAL -->
+<section class="slide cloth"><div class="frame">
+  <p class="eyebrow">Final check</p>
+  <h2>Three questions, two hours</h2>
+  <ul>
+    <li><strong>1.</strong> Algorithm vs. program — and why the edge cases matter more than the happy path. <em>(A, C)</em></li>
+    <li><strong>2.</strong> The four stages — and why a 12-bit sensor puts a floor under your decision rule. <em>(B)</em></li>
+    <li><strong>3.</strong> The internet checks addresses, not honesty. Connect that to a message asking your friend for their TAC. <em>(D)</em></li>
+  </ul>
+  <p class="timer">⏱ 5 minutes · memory first</p>
+  <button class="reveal" data-show="▸ Reveal the through-line" data-hide="▾ Hide">▸ Reveal the through-line</button>
+  <div class="answer">
+    <p class="sub" style="margin-top:.2em">All three are the same lesson wearing different clothes: <strong>a computer does exactly what its rules say, and trusts exactly what it's told to trust</strong> — so the whole craft is choosing those rules and that trust with care.</p>
+  </div>
+</div></section>
+
+<!-- 47 · CONNECTIVISM: CONCEPT NETWORK -->
+<section class="slide cloth"><div class="frame">
+  <p class="eyebrow">The big picture · a network, not a list</p>
+  <h2>Every arrow is a link we drew today</h2>
+  <div class="fig svgbox">
+  <svg viewBox="0 0 700 300" width="100%" style="max-width:700px" xmlns="http://www.w3.org/2000/svg" font-family="Space Grotesk, sans-serif" font-size="12">
+    <g stroke="#B9C6D0" stroke-width="1.6" fill="none">
+      <line x1="90" y1="70" x2="240" y2="60"/>
+      <line x1="90" y1="70" x2="130" y2="185"/>
+      <line x1="240" y1="60" x2="410" y2="110"/>
+      <line x1="240" y1="60" x2="240" y2="155"/>
+      <line x1="240" y1="155" x2="410" y2="110"/>
+      <line x1="410" y1="110" x2="370" y2="245"/>
+      <line x1="130" y1="185" x2="370" y2="245"/>
+      <line x1="130" y1="185" x2="560" y2="80"/>
+      <line x1="410" y1="110" x2="520" y2="190"/>
+      <line x1="520" y1="190" x2="560" y2="80"/>
+      <line x1="560" y1="80" x2="620" y2="255"/>
+    </g>
+    <path d="M620 255 Q480 300 240 60" stroke="#D64533" stroke-width="1.6" fill="none" stroke-dasharray="5 4"/>
+    <g font-weight="bold" text-anchor="middle">
+      <circle cx="90" cy="70" r="7" fill="#F0A929"/><text x="90" y="52" fill="#152430" font-size="11">Abstraction</text>
+      <circle cx="240" cy="60" r="7" fill="#F0A929"/><text x="240" y="42" fill="#152430" font-size="11">Algorithm</text>
+      <circle cx="240" cy="155" r="7" fill="#1F7A6D"/><text x="240" y="176" fill="#152430" font-size="11">Invariant</text>
+      <circle cx="130" cy="185" r="7" fill="#3F5570"/><text x="130" y="206" fill="#152430" font-size="11">Data · bits</text>
+      <circle cx="410" cy="110" r="7" fill="#6B4B7A"/><text x="410" y="92" fill="#152430" font-size="11">Control flow</text>
+      <circle cx="370" cy="245" r="7" fill="#6B4B7A"/><text x="370" y="266" fill="#152430" font-size="11">Machine</text>
+      <circle cx="520" cy="190" r="7" fill="#6B4B7A"/><text x="520" y="211" fill="#152430" font-size="11">State machine</text>
+      <circle cx="560" cy="80" r="7" fill="#3F5570"/><text x="560" y="62" fill="#152430" font-size="11">Network</text>
+      <circle cx="620" cy="255" r="7" fill="#D64533"/><text x="620" y="276" fill="#152430" font-size="11">Trust</text>
+    </g>
+  </svg>
+  <p class="cap">The red dashed link — <strong>Trust ↔ Algorithm</strong> — is the loop that closes the day: validating a sensor and validating a sender are one idea.</p>
+  </div>
+  <p class="sub">Connectivist take: you didn't collect nine facts. You wired a <strong>network</strong> — and its value is the edges, not the nodes.</p>
+</div></section>
+
+<!-- 48 · OBE RECAP: OUTCOMES CLOSED -->
+<section class="slide cloth"><div class="frame">
+  <p class="eyebrow">Outcomes · the loop, closed</p>
+  <h2>You did the four things — here's the proof</h2>
+  <div class="oc">
+    <div class="n done">CLO 1 · A</div><div class="t">You <b>wrote the alert rule</b> and defended the −3 m reading — a precise algorithm, edge cases and all.</div>
+    <div class="n done">CLO 2 · B</div><div class="t">You <b>dragged the river into bits</b> and found the 8.5 mm dead zone — the point where the number stops tracking the world.</div>
+    <div class="n done">CLO 3 · C</div><div class="t">You <b>stepped the controller</b> to exactly two SMS and named its two bugs — control flow and state, reasoned about.</div>
+    <div class="n done">CLO 4 · D</div><div class="t">You ranked three messages and found the <b>unfakeable tell</b> — you judged trust across a network.</div>
+  </div>
+  <p class="quote" style="margin-top:.5em">Four outcomes promised at the start; four things you actually did.</p>
+</div></section>
+
+<!-- 49 · CONNECTIVISM: CONNECT ONWARD -->
+<section class="slide cloth"><div class="frame">
+  <p class="eyebrow">Keep the network growing</p>
+  <h2>What you can't hold, you connect to</h2>
+  <p>No one carries all of computing in their head. The skill is knowing <em>where the knowledge lives</em> and staying wired in:</p>
+  <ul>
+    <li><strong>Play the logic:</strong> <code style="font-family:var(--mono)">blockly.games</code> — the three structures as a puzzle, no setup.</li>
+    <li><strong>Watch code think:</strong> <code style="font-family:var(--mono)">pythontutor.com</code> — step any program and see variables and state change, exactly like slide 29.</li>
+    <li><strong>Go deeper, free:</strong> <code style="font-family:var(--mono)">csfieldguide.org.nz</code> — every concept today, with more depth.</li>
+    <li><strong>Stay safe:</strong> Malaysia's <strong>NSRC — 997</strong>, and your bank's official app, never a link.</li>
+    <li><strong>Your closest nodes:</strong> your instructors, and each other. The person beside you learned a different half.</li>
+  </ul>
+  <p class="sub" style="margin-top:.4em">A network you plug into keeps teaching you long after the room empties.</p>
+</div></section>
+
+<!-- 49B · HOMEWORK -->
+<section class="slide cloth"><div class="frame">
+  <p class="eyebrow">Take it home · your escorting instructor will check this</p>
+  <h2>Homework — the journey of your <em>own</em> alert</h2>
+  <p>Pick one automated alert you rely on — a low-battery warning, a step-goal buzz, a bank fraud-SMS — and trace <em>its</em> journey. Do your tier:</p>
+  <p style="margin:.35em 0 .1em"><strong style="color:var(--teal)">Core · everyone</strong></p>
+  <ol style="margin-top:.1em">
+    <li><strong>Five-stage table</strong> (SENSED · DECIDED · COMPUTED · DELIVERED · DEFENDED): what happens, the concept — and <em>one way that stage could fail</em>.</li>
+    <li><strong>Two edge cases</strong> — for one, the handling rule and the <em>invariant</em>, in words, that stops it spamming or misfiring.</li>
+    <li><strong>Spot the scam</strong> — two fakeable clues, the one that isn't, and <em>why the network itself can't block it</em>.</li>
+  </ol>
+  <p style="margin:.3em 0 0"><strong style="color:var(--prog)">Advanced (+)</strong> — a resolution/precision estimate for your device; then run the controller in <code style="font-family:var(--mono)">pythontutor.com</code>, comment out the reset, and watch 2 SMS become 1.</p>
+  <p style="margin:.25em 0 0"><strong style="color:var(--signal)">Research (+)</strong> — Big-O + why an exponential approach is hopeless; predicate logic (∀/∃) + De Morgan + an informal no-double-send proof; a concept map + one cross-domain link.</p>
+  <p class="sub" style="margin-top:.35em">Marked out of <strong>15 / 25 / 40</strong> by tier · ≈1–2 pages, to your escorting instructor within a week. Brief: <code style="font-family:var(--mono)">session-homework-student.html</code> · instructors mark with <code style="font-family:var(--mono)">session-homework-instructor.html</code>.</p>
+</div></section>
+
+<!-- 50 · CLOSE: THE CHAIN, TIED TO THE TITLE -->
+<section class="slide scene">
+  <div style="text-align:center;max-width:900px">
+    <p class="eyebrow" style="justify-content:center">The journey of one alert</p>
+    <h2 style="margin-bottom:.3em">Computing is one chain</h2>
+    <div class="svgbox" style="background:rgba(255,255,255,.04);border-color:rgba(240,169,41,.3)">
+    <svg viewBox="0 0 660 118" width="100%" style="max-width:660px" xmlns="http://www.w3.org/2000/svg" font-family="Space Grotesk, sans-serif">
+      <g font-size="13" font-weight="bold">
+        <g><path d="M14 36 h96 l16 24 -16 24 h-96 l16 -24 z" fill="#14283A" stroke="#F0A929" stroke-width="1.5"/><text x="66" y="56" text-anchor="middle" fill="#F0A929">SENSED</text><text x="66" y="72" text-anchor="middle" fill="#9db4c4" font-size="9" font-weight="normal">gauge → data</text></g>
+        <g><path d="M134 36 h96 l16 24 -16 24 h-96 l16 -24 z" fill="#14283A" stroke="#F0A929" stroke-width="1.5"/><text x="186" y="56" text-anchor="middle" fill="#F0A929">DECIDED</text><text x="186" y="72" text-anchor="middle" fill="#9db4c4" font-size="9" font-weight="normal">algorithm · A</text></g>
+        <g><path d="M254 36 h96 l16 24 -16 24 h-96 l16 -24 z" fill="#14283A" stroke="#F0A929" stroke-width="1.5"/><text x="306" y="56" text-anchor="middle" fill="#F0A929">COMPUTED</text><text x="306" y="72" text-anchor="middle" fill="#9db4c4" font-size="9" font-weight="normal">machine · B/C</text></g>
+        <g><path d="M374 36 h104 l16 24 -16 24 h-104 l16 -24 z" fill="#14283A" stroke="#F0A929" stroke-width="1.5"/><text x="430" y="56" text-anchor="middle" fill="#F0A929">DELIVERED</text><text x="430" y="72" text-anchor="middle" fill="#9db4c4" font-size="9" font-weight="normal">network · D</text></g>
+        <g><path d="M502 36 h104 l16 24 -16 24 h-104 l16 -24 z" fill="#14283A" stroke="#D64533" stroke-width="1.8"/><text x="558" y="56" text-anchor="middle" fill="#D64533">DEFENDED</text><text x="558" y="72" text-anchor="middle" fill="#9db4c4" font-size="9" font-weight="normal">security · D</text></g>
+      </g>
+    </svg>
+    </div>
+    <p style="color:var(--panel);margin-top:.5em">A real thing is <strong>abstracted</strong> into data → a <strong>decision</strong> is made → run on a <strong>machine</strong> → <strong>delivered</strong> across a network → and <strong>defended</strong>, because that network trusts addresses, not honesty.</p>
+    <p class="sub" style="margin-top:.4em;color:#c7d5e0">Master the chain on one flood alert and you can follow it through anything — a bank transfer, a heartbeat monitor, a self-driving car. <strong style="color:var(--amber)">Now go build one link.</strong></p>
+  </div>
+</section>
+
+<!-- 51 · SHARE: GET THE MATERIALS -->
+<section class="slide scene">
+  <div style="text-align:center;max-width:860px">
+    <p class="eyebrow" style="justify-content:center">Take it all with you</p>
+    <h2 style="margin-bottom:.6em">Get the materials</h2>
+    <div class="two" style="align-items:center">
+      <div style="justify-self:center;background:#fff;border-radius:16px;padding:16px;box-shadow:0 10px 30px rgba(0,0,0,.35)">
+        <img src="data:image/png;base64,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" alt="QR code linking to the workshop materials at tinyurl.com/CSDigital2026" width="248" height="248" style="display:block;width:248px;height:248px">
+      </div>
+      <div style="text-align:left">
+        <p style="color:var(--panel);margin-top:0">Scan the code, or open:</p>
+        <p style="font-family:var(--mono);color:var(--amber);font-size:1.15rem;margin:.15em 0"><strong>tinyurl.com/CSDigital2026</strong></p>
+        <p class="sub" style="color:#c7d5e0">Slides, field guide, practice problems, and the homework brief — everything from today, in one place.</p>
+      </div>
+    </div>
+    <p class="sub" style="margin-top:.7em;color:#c7d5e0">Bookmark it before you leave the room — your closest nodes are still your instructors and each other.</p>
+  </div>
+</section>
+
+</div>
+
+<button id="prev" class="navbtn" aria-label="Previous slide">‹</button>
+<button id="next" class="navbtn" aria-label="Next slide">›</button>
+<div id="hud" role="tablist" aria-label="Slides"></div>
+<div id="count"></div>
+<div class="hint">← → / space / click · F fullscreen</div>
+
+<script>
+const slides=[...document.querySelectorAll('.slide')];
+const hud=document.getElementById('hud');
+const count=document.getElementById('count');
+let i=0;
+slides.forEach((s,k)=>{
+  const d=document.createElement('div');
+  d.className='dot';d.setAttribute('role','tab');d.setAttribute('aria-label','Slide '+(k+1));
+  d.tabIndex=0;
+  d.addEventListener('click',()=>go(k));
+  d.addEventListener('keydown',e=>{if(e.key==='Enter')go(k)});
+  hud.appendChild(d);
+});
+const dots=[...hud.children];
+function go(n){
+  i=Math.max(0,Math.min(slides.length-1,n));
+  slides.forEach((s,k)=>s.classList.toggle('active',k===i));
+  dots.forEach((d,k)=>d.classList.toggle('on',k===i));
+  count.textContent=(i+1)+' / '+slides.length;
+  const f=document.querySelector('.slide.active .frame');
+  if(f)f.scrollTop=0;
+}
+function next(){go(i+1)} function prev(){go(i-1)}
+document.getElementById('next').addEventListener('click',next);
+document.getElementById('prev').addEventListener('click',prev);
+document.addEventListener('keydown',e=>{
+  if(e.target && e.target.matches && e.target.matches('input,textarea,select,button'))return;
+  if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();next()}
+  else if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();prev()}
+  else if(e.key==='Home')go(0);
+  else if(e.key==='End')go(slides.length-1);
+  else if(e.key.toLowerCase()==='f'){document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen()}
+});
+document.getElementById('stage').addEventListener('click',e=>{
+  if(e.target.closest('.navbtn,#hud,a,button,.ix,input,label,.reveal,.answer'))return;
+  if(window.getSelection && String(window.getSelection()))return;
+  next();
+});
+let tx=null;
+document.addEventListener('touchstart',e=>{if(e.target.closest('.ix,.reveal'))return;tx=e.touches[0].clientX},{passive:true});
+document.addEventListener('touchend',e=>{
+  if(tx===null)return;
+  const dx=e.changedTouches[0].clientX-tx;
+  if(dx<-40)next(); else if(dx>40)prev();
+  tx=null;
+},{passive:true});
+
+/* ---- click-to-reveal ---- */
+document.querySelectorAll('.reveal').forEach(b=>{
+  b.addEventListener('click',ev=>{
+    ev.stopPropagation();
+    const a=b.nextElementSibling;
+    if(a&&a.classList.contains('answer')){
+      const shown=a.classList.toggle('show');
+      b.textContent=shown?(b.dataset.hide||'Hide'):(b.dataset.show||'Reveal');
+    }
+  });
+});
+
+/* ---- live widget: river -> bits ---- */
+(function(){
+  const r=document.getElementById('adc-r');if(!r)return;
+  const m=document.getElementById('adc-m'),code=document.getElementById('adc-code'),
+        bin=document.getElementById('adc-bin'),hex=document.getElementById('adc-hex'),
+        stat=document.getElementById('adc-stat'),note=document.getElementById('adc-note');
+  let lastCode=null;
+  function upd(){
+    const v=parseFloat(r.value);
+    const c=Math.max(0,Math.min(4095,Math.round(v/35*4095)));
+    m.textContent=v.toFixed(2);
+    code.textContent=c;
+    bin.textContent=c.toString(2).padStart(12,'0');
+    hex.textContent=c.toString(16).toUpperCase().padStart(3,'0');
+    if(v>=28.0){stat.className='stat go';stat.textContent='⚠ ALERT — evacuate';}
+    else{stat.className='stat ok';stat.textContent='✓ below danger';}
+    if(lastCode===c){note.textContent='Same code as the last position — you moved less than one 8.5 mm step. The sensor is blind to it.';}
+    else{note.textContent='Code changed — you crossed a step boundary (~8.5 mm).';}
+    lastCode=c;
+  }
+  r.addEventListener('input',upd);upd();lastCode=null;upd();
+})();
+
+/* ---- live widget: run the controller ---- */
+(function(){
+  const step=document.getElementById('c-step');if(!step)return;
+  const reset=document.getElementById('c-reset');
+  const readings=[27.6,27.9,28.2,28.3,27.8,27.4,28.1];
+  const DANGER=28.0,RESET=27.5;
+  const idxEl=document.getElementById('c-idx'),lvlEl=document.getElementById('c-lvl'),
+        flagEl=document.getElementById('c-flag'),cntEl=document.getElementById('c-count'),
+        msgEl=document.getElementById('c-msg');
+  let p=0,flag=false,count=0;
+  function render(){flagEl.textContent=flag?'True':'False';cntEl.textContent=count;}
+  function init(){p=0;flag=false;count=0;idxEl.textContent='–';lvlEl.textContent='–';msgEl.textContent='Ready. Press Step ▶';render();}
+  step.addEventListener('click',ev=>{
+    ev.stopPropagation();
+    if(p>=readings.length){msgEl.textContent='Done — exactly '+count+' SMS sent. Press Reset ↺ to run again.';return;}
+    const lvl=readings[p];idxEl.textContent=(p+1);lvlEl.textContent=lvl.toFixed(1);
+    let msg='';
+    if(lvl<-1||lvl>35){msg='sensor fault — skipped.';}
+    else{
+      if(lvl>=DANGER&&!flag){flag=true;count++;msg='≥ 28.0 and armed → SEND SMS #'+count+'.';}
+      else if(lvl>=DANGER&&flag){msg='≥ 28.0 but already sent → suppressed.';}
+      else{msg='below danger.';}
+      if(lvl<RESET&&flag){flag=false;msg+=' Level < 27.5 → reset (re-armed).';}
+      else if(lvl<RESET){msg+=' Level < 27.5 → stays reset.';}
+    }
+    msgEl.textContent=msg;render();p++;
+  });
+  reset.addEventListener('click',ev=>{ev.stopPropagation();init();});
+  init();
+})();
+
+/* ---- live widget: Big-O explosion ---- */
+(function(){
+  const r=document.getElementById('bo-r');if(!r)return;
+  const nEl=document.getElementById('bo-n'),
+        c1=document.getElementById('bo-c1'),cl=document.getElementById('bo-cl'),cn=document.getElementById('bo-cn'),c2=document.getElementById('bo-c2'),ce=document.getElementById('bo-ce'),
+        b1=document.getElementById('bo-b1'),bl=document.getElementById('bo-bl'),bn=document.getElementById('bo-bn'),b2=document.getElementById('bo-b2'),be=document.getElementById('bo-be'),
+        tEl=document.getElementById('bo-time');
+  const MAXLOG=Math.log10(Math.pow(2,100));
+  function fmt(x){
+    if(x<1000) return Math.round(x).toString();
+    if(x<1e6) return (x/1e3).toFixed(1)+'K';
+    if(x<1e9) return (x/1e6).toFixed(1)+'M';
+    if(x<1e12) return (x/1e9).toFixed(1)+'B';
+    return x.toExponential(1).replace('e+','×10^');
+  }
+  function bar(x){return Math.max(1,Math.min(100,Math.log10(x+1)/MAXLOG*100));}
+  function htime(sec){
+    if(sec<1e-3) return (sec*1e6).toFixed(0)+' µs';
+    if(sec<1) return (sec*1e3).toFixed(0)+' ms';
+    if(sec<60) return sec.toFixed(1)+' s';
+    if(sec<3600) return (sec/60).toFixed(1)+' min';
+    if(sec<86400) return (sec/3600).toFixed(1)+' hours';
+    const yr=sec/31557600;
+    if(yr<1) return (sec/86400).toFixed(1)+' days';
+    if(yr<1e3) return yr.toFixed(0)+' years';
+    if(yr<1e6) return (yr/1e3).toFixed(1)+' thousand years';
+    if(yr<1e9) return (yr/1e6).toFixed(1)+' million years';
+    if(yr<1.38e10) return (yr/1e9).toFixed(1)+' billion years';
+    return (yr/1.38e10).toFixed(0)+'× the age of the universe';
+  }
+  function upd(){
+    const n=parseInt(r.value,10);
+    const logn=Math.max(1,Math.log2(n)),n2=n*n,ex=Math.pow(2,n);
+    nEl.textContent=n;
+    c1.textContent='1';cl.textContent=logn.toFixed(1);cn.textContent=n;c2.textContent=fmt(n2);ce.textContent=fmt(ex);
+    b1.style.width=bar(1)+'%';bl.style.width=bar(logn)+'%';bn.style.width=bar(n)+'%';b2.style.width=bar(n2)+'%';be.style.width=bar(ex)+'%';
+    tEl.textContent='at 1 billion ops/sec, O(2ⁿ) takes ≈ '+htime(ex/1e9);
+  }
+  r.addEventListener('input',upd);upd();
+})();
+
+go(0);
+</script>
+</body>
+</html>

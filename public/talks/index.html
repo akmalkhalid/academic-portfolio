@@ -1,0 +1,514 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Talks &amp; seminars — Mohd Nor Akmal Khalid</title>
+    <!-- Deliberately unlisted, on the same terms as /workshops: nothing in the
+         portfolio nav points here, and the page tells crawlers to skip it. It
+         exists so one link can be shared with a host, a panel or a cohort
+         instead of five separate deck files. -->
+    <meta name="robots" content="noindex,nofollow,noarchive" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;600&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap"
+    />
+    <style>
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        background: #faf9f7;
+        color: #1c1917;
+        font-family: 'Inter', system-ui, sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+      ::selection { background: #16142e; color: #fff; }
+      .wrap { max-width: 940px; margin: 0 auto; padding: 0 28px; }
+      .mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
+      h1, h2 { font-family: 'Space Grotesk', system-ui, sans-serif; letter-spacing: -0.02em; }
+
+      header.bar {
+        position: sticky; top: 0; z-index: 5;
+        background: rgba(250, 249, 247, 0.85);
+        backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+        border-bottom: 1px solid #e7e3dd;
+      }
+      .bar-in {
+        max-width: 940px; margin: 0 auto; padding: 13px 28px;
+        display: flex; align-items: center; justify-content: space-between; gap: 16px;
+      }
+      .brand { display: flex; align-items: center; gap: 9px; text-decoration: none; color: #1c1917; font-weight: 600; font-size: 14px; }
+      .dot { width: 10px; height: 10px; border-radius: 50%; background: #16142e; }
+
+      .langs { display: flex; gap: 4px; }
+      .langs button {
+        font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600;
+        letter-spacing: .06em; cursor: pointer; padding: 5px 11px; border-radius: 6px;
+        border: 1px solid #ddd6cc; background: #fff; color: #57514b;
+      }
+      .langs button[aria-pressed='true'] { background: #16142e; border-color: #16142e; color: #fff; }
+
+      .intro { padding: 52px 0 8px; }
+      .eyebrow { font-size: 11.5px; letter-spacing: .14em; text-transform: uppercase; color: #a39a8f; margin: 0 0 14px; }
+      h1 { font-weight: 600; font-size: clamp(30px, 5vw, 46px); line-height: 1.05; margin: 0 0 16px; text-wrap: balance; }
+      .lede { font-size: 17px; line-height: 1.6; color: #57514b; max-width: 620px; margin: 0; }
+
+      .note {
+        margin: 26px 0 0; padding: 13px 16px; border-radius: 10px;
+        background: #fbf3ea; border: 1px solid #f0dcc4;
+        font-size: 13.5px; line-height: 1.55; color: #6b4f2a;
+      }
+      .note b { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: #a8703a; }
+
+      /* Year rules break the reverse-chronological run into readable groups. */
+      .year {
+        display: flex; align-items: center; gap: 14px;
+        margin: 38px 0 2px; color: #a39a8f;
+        font-family: 'JetBrains Mono', monospace; font-size: 11.5px;
+        letter-spacing: .14em; text-transform: uppercase;
+      }
+      .year::after { content: ''; flex: 1; height: 1px; background: #e7e3dd; }
+
+      .cards { display: flex; flex-direction: column; gap: 16px; padding: 18px 0 10px; }
+      .card {
+        position: relative;
+        display: block; text-decoration: none; color: #1c1917;
+        background: #fff; border: 1px solid #e7e3dd; border-radius: 15px;
+        padding: 24px 26px; transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+      }
+      .card:hover { transform: translateY(-2px); box-shadow: 0 16px 36px -24px rgba(28, 25, 23, .5); }
+      .card:focus-visible { outline: 2px solid #8b7bf0; outline-offset: 3px; }
+      .kicker { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 12px; padding-right: 34px; }
+      .tag { font-size: 10.5px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; padding: 3px 9px; border-radius: 5px; }
+      .card h2 { font-weight: 600; font-size: clamp(19px, 2.6vw, 24px); line-height: 1.18; margin: 0 0 4px; }
+      .subtitle { font-size: 14.5px; line-height: 1.45; color: #7a736c; margin: 0 0 10px; font-style: italic; }
+      .card p.abstract { font-size: 14.5px; line-height: 1.6; color: #57514b; margin: 0 0 16px; max-width: 660px; }
+
+      /* The record fields — what a panel or a host actually wants to read. */
+      .meta {
+        display: grid; grid-template-columns: max-content 1fr; gap: 7px 16px;
+        margin: 0 0 16px; padding: 14px 16px;
+        background: #faf9f7; border: 1px solid #efece6; border-radius: 10px;
+        font-size: 13.5px; line-height: 1.5;
+      }
+      .meta dt {
+        font-family: 'JetBrains Mono', monospace; font-size: 10.5px;
+        letter-spacing: .08em; text-transform: uppercase; color: #a39a8f;
+        padding-top: 2px;
+      }
+      .meta dd { margin: 0; color: #453f3a; }
+
+      .facts { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 18px; }
+      .fact { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: #6b6560; background: #f4f1ec; border: 1px solid #e7e3dd; padding: 3px 9px; border-radius: 5px; }
+
+      .cta { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+      /* The whole panel is the link; the button is the affordance that says so. */
+      .btn {
+        display: inline-block; font-family: 'JetBrains Mono', monospace;
+        font-size: 12px; font-weight: 600; color: #fff; background: #16142e;
+        padding: 9px 16px; border-radius: 8px; transition: background .2s ease;
+      }
+      .card:hover .btn { background: #2a2650; }
+      .rights { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: #a39a8f; line-height: 1.5; }
+
+      /* Corner chevron — a second, quieter cue that the panel itself is clickable. */
+      .arrow {
+        position: absolute; top: 22px; right: 24px;
+        font-family: 'JetBrains Mono', monospace; font-size: 17px; line-height: 1;
+        color: #d5cec4; transition: transform .2s ease, color .2s ease;
+      }
+      .card:hover .arrow { transform: translateX(4px); }
+
+      .licence {
+        margin: 30px 0 0; padding: 16px 18px; border-radius: 12px;
+        background: #fff; border: 1px solid #e7e3dd;
+        font-size: 13.5px; line-height: 1.6; color: #57514b;
+      }
+      .licence h3 {
+        font-family: 'JetBrains Mono', monospace; font-size: 10.5px; font-weight: 600;
+        letter-spacing: .08em; text-transform: uppercase; color: #a39a8f;
+        margin: 0 0 8px;
+      }
+      .licence code {
+        font-family: 'JetBrains Mono', monospace; font-size: 12px;
+        background: #f4f1ec; border: 1px solid #e7e3dd; border-radius: 5px; padding: 1px 6px;
+      }
+
+      footer { padding: 38px 0 64px; color: #a39a8f; font-size: 12.5px; line-height: 1.6; }
+      footer a { color: #57514b; }
+
+      [data-bm] { display: none; }
+      body.bm [data-en] { display: none; }
+      body.bm [data-bm] { display: revert; }
+
+      @media (max-width: 560px) {
+        .meta { grid-template-columns: 1fr; gap: 2px 0; }
+        .meta dd { margin-bottom: 8px; }
+      }
+      @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+    </style>
+  </head>
+  <body>
+    <header class="bar">
+      <div class="bar-in">
+        <a class="brand" href="/"><span class="dot"></span> Dr. Akmal</a>
+        <div class="langs" role="group" aria-label="Language">
+          <button type="button" id="btn-en" aria-pressed="true">EN</button>
+          <button type="button" id="btn-bm" aria-pressed="false">BM</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="wrap">
+      <section class="intro">
+        <p class="eyebrow mono" data-en>/ talks · seminars · sharing sessions</p>
+        <p class="eyebrow mono" data-bm>/ ceramah · seminar · sesi perkongsian</p>
+
+        <h1 data-en>Talks, seminars and sharing sessions.</h1>
+        <h1 data-bm>Ceramah, seminar dan sesi perkongsian.</h1>
+
+        <p class="lede" data-en>
+          Invited talks and sessions I have delivered, each one presented from a self-contained
+          slide deck that runs in the browser. The decks are here in full — navigate them with the
+          arrow keys exactly as the room saw them.
+        </p>
+        <p class="lede" data-bm>
+          Ceramah dan sesi yang telah saya sampaikan, setiap satunya dibentangkan daripada dek slaid
+          lengkap yang berjalan dalam pelayar. Dek tersebut disediakan sepenuhnya di sini — gunakan
+          kekunci anak panah untuk menavigasinya seperti yang dilihat oleh hadirin.
+        </p>
+
+        <p class="note">
+          <b data-en>Unlisted</b><b data-bm>Tidak tersenarai</b><br />
+          <span data-en>
+            This index is not linked from anywhere on the portfolio and is hidden from search
+            engines. It exists so one link can be shared with a host, a panel or a cohort instead
+            of five separate files.
+          </span>
+          <span data-bm>
+            Indeks ini tidak dipautkan dari mana-mana bahagian portfolio dan disembunyikan daripada
+            enjin carian. Ia wujud supaya satu pautan boleh dikongsi dengan penganjur, panel atau
+            kohort, bukan lima fail berasingan.
+          </span>
+        </p>
+      </section>
+
+      <p class="year">2026</p>
+
+      <section class="cards">
+        <!-- ================= 18 August 2026 · FEP UKM ================= -->
+        <a class="card" href="/talks/ai-in-research/" style="border-top: 3px solid #5645d4">
+          <span class="arrow" aria-hidden="true" style="color: #b7addf">→</span>
+          <div class="kicker">
+            <span class="tag mono" style="background: #ece9fb; color: #382b8f" data-en>Invited talk · seminar series</span>
+            <span class="tag mono" style="background: #ece9fb; color: #382b8f" data-bm>Ceramah jemputan · siri seminar</span>
+            <span class="tag mono" style="background: #f4f1ec; color: #6b6560">EN</span>
+          </div>
+          <h2 data-en>The Use of Artificial Intelligence in Research</h2>
+          <h2 data-bm>Penggunaan Kecerdasan Buatan dalam Penyelidikan</h2>
+          <p class="subtitle" data-en>FEP Research Ethics Series No. 1/2026 · Slot 5</p>
+          <p class="subtitle" data-bm>Siri Etika Penyelidikan FEP No. 1/2026 · Slot 5</p>
+          <p class="abstract" data-en>
+            A research-integrity talk on where AI use quietly becomes misconduct. Opens with the
+            measured rise of fabricated citations in the published record, then works through
+            confidentiality, authorship, disclosure and verification — treating AI not as a fifth
+            ethics topic but as a stress test on the four that came before it.
+          </p>
+          <p class="abstract" data-bm>
+            Ceramah integriti penyelidikan tentang bila penggunaan AI secara senyap menjadi salah
+            laku. Bermula dengan peningkatan terukur rujukan rekaan dalam rekod penerbitan, kemudian
+            menelusuri kerahsiaan, kepengarangan, pendedahan dan pengesahan — memperlakukan AI bukan
+            sebagai topik etika kelima, tetapi sebagai ujian tekanan ke atas empat topik sebelumnya.
+          </p>
+          <dl class="meta">
+            <dt data-en>Date</dt><dt data-bm>Tarikh</dt>
+            <dd>18 August 2026 · 3.15 – 4.30 pm</dd>
+            <dt data-en>Venue</dt><dt data-bm>Tempat</dt>
+            <dd data-en>Seminar Room 19, Level 2, FEP UKM</dd>
+            <dd data-bm>Bilik Seminar 19, Aras 2, FEP UKM</dd>
+            <dt data-en>Organiser</dt><dt data-bm>Penganjur</dt>
+            <dd data-en>Faculty of Economics &amp; Management (FEP), UKM</dd>
+            <dd data-bm>Fakulti Ekonomi &amp; Pengurusan (FEP), UKM</dd>
+            <dt data-en>Audience</dt><dt data-bm>Hadirin</dt>
+            <dd data-en>Academic staff and postgraduate researchers</dd>
+            <dd data-bm>Staf akademik dan penyelidik pascasiswazah</dd>
+          </dl>
+          <div class="facts">
+            <span class="fact">75 min</span>
+            <span class="fact">54 <span data-en>slides</span><span data-bm>slaid</span></span>
+            <span class="fact">EN</span>
+            <span class="fact" data-en>Animated · keyboard-driven</span>
+            <span class="fact" data-bm>Beranimasi · dipacu papan kekunci</span>
+          </div>
+          <div class="cta">
+            <span class="btn" data-en>Open the deck</span>
+            <span class="btn" data-bm>Buka dek</span>
+            <span class="rights">© 2026 Mohd Nor Akmal Khalid · CC BY 4.0</span>
+          </div>
+        </a>
+
+        <!-- ================= 7 August 2026 · Faculty of Pharmacy UKM ================= -->
+        <a class="card" href="/talks/ai-literature-review/" style="border-top: 3px solid #0f9d8f">
+          <span class="arrow" aria-hidden="true" style="color: #8fd4cc">→</span>
+          <div class="kicker">
+            <span class="tag mono" style="background: #e1f5f1; color: #0a5a52" data-en>Invited clinic · hands-on</span>
+            <span class="tag mono" style="background: #e1f5f1; color: #0a5a52" data-bm>Klinik jemputan · amali</span>
+            <span class="tag mono" style="background: #f4f1ec; color: #6b6560">EN · BM</span>
+          </div>
+          <h2 data-en>AI for Literature Review &amp; Bibliography Management</h2>
+          <h2 data-bm>AI untuk Sorotan Literatur &amp; Pengurusan Bibliografi</h2>
+          <p class="subtitle" data-en>A one-hour clinic for clinical students and researchers</p>
+          <p class="subtitle" data-bm>Klinik satu jam untuk pelajar dan penyelidik klinikal</p>
+          <p class="abstract" data-en>
+            From a clinical question to a verified reference list in an hour. PICO and MeSH framing,
+            grounded AI search, synthesis rather than summary, a live literature matrix, and Zotero
+            as the anchor — held together by one rule: AI finds and drafts, you verify and own every
+            citation.
+          </p>
+          <p class="abstract" data-bm>
+            Daripada soalan klinikal kepada senarai rujukan yang disahkan dalam satu jam. Rangka
+            PICO dan MeSH, carian AI yang berasas, sintesis dan bukan ringkasan, matriks literatur
+            secara langsung, dan Zotero sebagai tunjang — disatukan oleh satu peraturan: AI mencari
+            dan mendraf, anda mengesahkan dan bertanggungjawab atas setiap rujukan.
+          </p>
+          <dl class="meta">
+            <dt data-en>Date</dt><dt data-bm>Tarikh</dt>
+            <dd>7 August 2026 · 3.30 – 4.30 pm</dd>
+            <dt data-en>Venue</dt><dt data-bm>Tempat</dt>
+            <dd data-en>Online · Zoom</dd>
+            <dd data-bm>Dalam talian · Zoom</dd>
+            <dt data-en>Organiser</dt><dt data-bm>Penganjur</dt>
+            <dd data-en>Centre for Drug &amp; Herbal Development, Faculty of Pharmacy, UKM</dd>
+            <dd data-bm>Pusat Pembangunan Ubat &amp; Herba, Fakulti Farmasi, UKM</dd>
+            <dt data-en>Audience</dt><dt data-bm>Hadirin</dt>
+            <dd data-en>Clinical students and researchers</dd>
+            <dd data-bm>Pelajar dan penyelidik klinikal</dd>
+          </dl>
+          <div class="facts">
+            <span class="fact">60 min</span>
+            <span class="fact">24 <span data-en>slides</span><span data-bm>slaid</span></span>
+            <span class="fact">EN · BM</span>
+            <span class="fact" data-en>Live poll · editable matrix</span>
+            <span class="fact" data-bm>Undian langsung · matriks boleh sunting</span>
+          </div>
+          <div class="cta">
+            <span class="btn" data-en>Open the deck</span>
+            <span class="btn" data-bm>Buka dek</span>
+            <span class="rights">© 2026 Mohd Nor Akmal Khalid · CC BY 4.0</span>
+          </div>
+        </a>
+
+        <!-- ================= 29 July 2026 (morning) · FKAB ================= -->
+        <a class="card" href="/talks/intelligence-unpacked/" style="border-top: 3px solid #7c3aed">
+          <span class="arrow" aria-hidden="true" style="color: #c4aef5">→</span>
+          <div class="kicker">
+            <span class="tag mono" style="background: #f0e9fd; color: #4c2192" data-en>Facilitated session · guest lecture</span>
+            <span class="tag mono" style="background: #f0e9fd; color: #4c2192" data-bm>Sesi terpandu · kuliah jemputan</span>
+            <span class="tag mono" style="background: #f4f1ec; color: #6b6560">EN</span>
+          </div>
+          <h2 data-en>Intelligence, Unpacked</h2>
+          <h2 data-bm>Kecerdasan, Dirungkai</h2>
+          <p class="subtitle" data-en>Introduction to AI — and how it is reshaping education, business and daily life</p>
+          <p class="subtitle" data-bm>Pengenalan kepada AI — dan bagaimana ia membentuk semula pendidikan, perniagaan dan kehidupan harian</p>
+          <p class="abstract" data-en>
+            A two-hour working session, not a lecture: what AI, machine learning and large language
+            models actually are, how next-token prediction produces text, where models fail, and how
+            to build a responsible workflow with a human in the loop. Outcome-based and connectivist
+            by design, with formative checks and a graded capstone.
+          </p>
+          <p class="abstract" data-bm>
+            Sesi kerja dua jam, bukan kuliah: apa sebenarnya AI, pembelajaran mesin dan model bahasa
+            besar, bagaimana ramalan token seterusnya menghasilkan teks, di mana model gagal, dan
+            bagaimana membina aliran kerja bertanggungjawab dengan manusia dalam gelung. Berasaskan
+            hasil dan konektivis, dengan semakan formatif dan tugasan puncak berpemarkahan.
+          </p>
+          <dl class="meta">
+            <dt data-en>Date</dt><dt data-bm>Tarikh</dt>
+            <dd>29 July 2026 · 10.00 am – 12.00 pm</dd>
+            <dt data-en>Venue</dt><dt data-bm>Tempat</dt>
+            <dd data-en>Seminar Room 5, Academic Building, FKAB, UKM</dd>
+            <dd data-bm>Bilik Seminar 5, Bangunan Akademik, FKAB, UKM</dd>
+            <!-- CONFIRM: organiser not stated in the deck — inferred from the venue. -->
+            <dt data-en>Organiser</dt><dt data-bm>Penganjur</dt>
+            <dd data-en>Faculty of Engineering &amp; Built Environment (FKAB), UKM</dd>
+            <dd data-bm>Fakulti Kejuruteraan &amp; Alam Bina (FKAB), UKM</dd>
+            <dt data-en>Audience</dt><dt data-bm>Hadirin</dt>
+            <dd data-en>Undergraduate, MSc and PhD students · international cohort</dd>
+            <dd data-bm>Pelajar prasiswazah, MSc dan PhD · kohort antarabangsa</dd>
+          </dl>
+          <div class="facts">
+            <span class="fact">2 h</span>
+            <span class="fact">50 <span data-en>slides</span><span data-bm>slaid</span></span>
+            <span class="fact">EN</span>
+            <span class="fact">OBE · <span data-en>Connectivism</span><span data-bm>Konektivisme</span></span>
+            <span class="fact" data-en>Live demos · formative checks</span>
+            <span class="fact" data-bm>Demo langsung · semakan formatif</span>
+          </div>
+          <div class="cta">
+            <span class="btn" data-en>Open the deck</span>
+            <span class="btn" data-bm>Buka dek</span>
+            <span class="rights">© 2026 Mohd Nor Akmal Khalid · CC BY 4.0</span>
+          </div>
+        </a>
+
+        <!-- ================= 29 July 2026 (afternoon) · Zoom ================= -->
+        <a class="card" href="/talks/gemini-productivity/" style="border-top: 3px solid #3b6fe0">
+          <span class="arrow" aria-hidden="true" style="color: #a8c1f2">→</span>
+          <div class="kicker">
+            <span class="tag mono" style="background: #e8effc; color: #17408f" data-en>Sharing session · Google AI Champion</span>
+            <span class="tag mono" style="background: #e8effc; color: #17408f" data-bm>Sesi perkongsian · Google AI Champion</span>
+            <span class="tag mono" style="background: #f4f1ec; color: #6b6560">BM · EN</span>
+          </div>
+          <h2 data-en>Ask, Assist, or Automate</h2>
+          <h2 data-bm>Bertanya, Berbantu, atau Berautomasi</h2>
+          <p class="subtitle" data-en>Gemini as the driver of your digital productivity</p>
+          <p class="subtitle" data-bm>Gemini sebagai pemacu produktiviti digital anda</p>
+          <p class="abstract" data-en>
+            Three rungs of an AI productivity ladder — ask a one-off prompt, build a reusable Gem,
+            or automate the whole flow in Workspace Studio — and one guiding question for choosing
+            between them. Two real tasks, meeting minutes and student enquiries, are carried across
+            all three rungs.
+          </p>
+          <p class="abstract" data-bm>
+            Tiga anak tangga produktiviti AI — bertanya sekali, membina Gem yang boleh diguna semula,
+            atau mengautomasikan keseluruhan aliran dalam Workspace Studio — dan satu soalan panduan
+            untuk memilih antaranya. Dua tugas sebenar, minit mesyuarat dan pertanyaan pelajar,
+            dibawa merentas ketiga-tiga anak tangga.
+          </p>
+          <dl class="meta">
+            <dt data-en>Date</dt><dt data-bm>Tarikh</dt>
+            <dd>29 July 2026 · 3.00 – 4.00 pm</dd>
+            <dt data-en>Venue</dt><dt data-bm>Tempat</dt>
+            <dd data-en>Online · Zoom</dd>
+            <dd data-bm>Dalam talian · Zoom</dd>
+            <dt data-en>Organiser</dt><dt data-bm>Penganjur</dt>
+            <dd data-en>University AI Initiative · Google AI Champion programme, UKM</dd>
+            <dd data-bm>Inisiatif AI Universiti · program Google AI Champion, UKM</dd>
+            <dt data-en>Audience</dt><dt data-bm>Hadirin</dt>
+            <dd data-en>Staff, administrative officers, lecturers and students</dd>
+            <dd data-bm>Staf, pegawai tadbir, pensyarah dan pelajar</dd>
+          </dl>
+          <div class="facts">
+            <span class="fact">60 min</span>
+            <span class="fact">BM · EN</span>
+            <span class="fact" data-en>Bilingual toggle · light/dark</span>
+            <span class="fact" data-bm>Togol dwibahasa · terang/gelap</span>
+            <span class="fact">Gemini · Gems · Workspace Studio</span>
+          </div>
+          <div class="cta">
+            <span class="btn" data-en>Open the deck</span>
+            <span class="btn" data-bm>Buka dek</span>
+            <span class="rights">© 2026 Mohd Nor Akmal Khalid · CC BY 4.0</span>
+          </div>
+        </a>
+
+        <!-- ================= 16 July 2026 · UKM SHAPE ================= -->
+        <a class="card" href="/talks/journey-of-one-alert/" style="border-top: 3px solid #f0a929">
+          <span class="arrow" aria-hidden="true" style="color: #f5cf8e">→</span>
+          <div class="kicker">
+            <span class="tag mono" style="background: #fdf1dc; color: #8a5a06" data-en>Outreach talk · interactive</span>
+            <span class="tag mono" style="background: #fdf1dc; color: #8a5a06" data-bm>Ceramah jangkauan · interaktif</span>
+            <span class="tag mono" style="background: #f4f1ec; color: #6b6560">EN</span>
+          </div>
+          <h2 data-en>The Journey of One Alert</h2>
+          <h2 data-bm>Perjalanan Satu Amaran</h2>
+          <p class="subtitle" data-en>Computer science, basic programming and digital technology — traced through a single flood-warning SMS</p>
+          <p class="subtitle" data-bm>Sains komputer, pengaturcaraan asas dan teknologi digital — ditelusuri melalui satu SMS amaran banjir</p>
+          <p class="abstract" data-en>
+            One flood-warning message from the December 2021 Klang Valley floods, followed all the
+            way through the machine: the decision to sound the siren, the sensor that turns a river
+            into numbers, the program that runs the controller, and the network that delivers the
+            alert — along with the reason the same design can be forged.
+          </p>
+          <p class="abstract" data-bm>
+            Satu mesej amaran banjir daripada banjir Lembah Klang Disember 2021, ditelusuri sepenuhnya
+            melalui mesin: keputusan untuk membunyikan siren, penderia yang menukar sungai menjadi
+            nombor, atur cara yang menjalankan pengawal, dan rangkaian yang menyampaikan amaran —
+            berserta sebab reka bentuk yang sama boleh dipalsukan.
+          </p>
+          <dl class="meta">
+            <dt data-en>Date</dt><dt data-bm>Tarikh</dt>
+            <dd>16 July 2026 · 10.00 am – 12.00 pm</dd>
+            <dt data-en>Venue</dt><dt data-bm>Tempat</dt>
+            <dd data-en>Ballroom, UKM SHAPE</dd>
+            <dd data-bm>Dewan Utama, UKM SHAPE</dd>
+            <!-- CONFIRM: organiser and audience not stated in the deck — please replace. -->
+            <dt data-en>Organiser</dt><dt data-bm>Penganjur</dt>
+            <dd data-en>UKM SHAPE</dd>
+            <dd data-bm>UKM SHAPE</dd>
+            <dt data-en>Audience</dt><dt data-bm>Hadirin</dt>
+            <dd data-en>Pre-university and foundation students</dd>
+            <dd data-bm>Pelajar prauniversiti dan asasi</dd>
+          </dl>
+          <div class="facts">
+            <span class="fact">2 h</span>
+            <span class="fact">EN</span>
+            <span class="fact" data-en>Live sliders · steppable code</span>
+            <span class="fact" data-bm>Peluncur langsung · kod boleh dilangkah</span>
+            <span class="fact" data-en>4 learning outcomes</span>
+            <span class="fact" data-bm>4 hasil pembelajaran</span>
+          </div>
+          <div class="cta">
+            <span class="btn" data-en>Open the deck</span>
+            <span class="btn" data-bm>Buka dek</span>
+            <span class="rights">© 2026 Mohd Nor Akmal Khalid · CC BY 4.0</span>
+          </div>
+        </a>
+      </section>
+
+      <section class="licence">
+        <h3 data-en>Use and attribution</h3>
+        <h3 data-bm>Penggunaan dan atribusi</h3>
+        <p data-en>
+          These decks are © 2026 Mohd Nor Akmal Khalid and are shared under
+          <a href="https://creativecommons.org/licenses/by/4.0/" rel="license noopener" target="_blank">Creative Commons
+          Attribution 4.0 International (CC BY 4.0)</a>. You may reuse, adapt and build on them, including
+          for teaching, provided you credit the source. A line such as
+          <code>Adapted from “title” by Mohd Nor Akmal Khalid, akmal.app, CC BY 4.0</code>
+          is enough. Third-party logos, product names and cited figures remain the property of their
+          respective owners and are not covered by this licence.
+        </p>
+        <p data-bm>
+          Dek ini © 2026 Mohd Nor Akmal Khalid dan dikongsi di bawah
+          <a href="https://creativecommons.org/licenses/by/4.0/" rel="license noopener" target="_blank">Creative Commons
+          Attribution 4.0 Antarabangsa (CC BY 4.0)</a>. Anda boleh menggunakan semula, menyesuaikan dan
+          membina di atasnya, termasuk untuk pengajaran, dengan syarat sumbernya dikreditkan. Satu baris
+          seperti <code>Disesuaikan daripada “tajuk” oleh Mohd Nor Akmal Khalid, akmal.app, CC BY 4.0</code>
+          sudah memadai. Logo pihak ketiga, nama produk dan angka yang dipetik kekal milik pemilik
+          masing-masing dan tidak dilindungi lesen ini.
+        </p>
+      </section>
+
+      <footer>
+        <p data-en>
+          Mohd Nor Akmal Khalid · FTSM &amp; CAIT, UKM · <a href="/">akmal.app</a><br />
+          Looking for the self-paced teaching series instead? <a href="/workshops/">Workshops</a>.
+          Interested in a session for your faculty or unit? <a href="/contact">Get in touch</a>.
+        </p>
+        <p data-bm>
+          Mohd Nor Akmal Khalid · FTSM &amp; CAIT, UKM · <a href="/">akmal.app</a><br />
+          Mencari siri pengajaran kendiri pula? <a href="/workshops/">Bengkel</a>.
+          Berminat dengan sesi untuk fakulti atau unit anda? <a href="/contact">Hubungi saya</a>.
+        </p>
+      </footer>
+    </main>
+
+    <script>
+      ;(function () {
+        var en = document.getElementById('btn-en')
+        var bm = document.getElementById('btn-bm')
+        function set(lang) {
+          var isBM = lang === 'bm'
+          document.body.classList.toggle('bm', isBM)
+          document.documentElement.lang = isBM ? 'ms' : 'en'
+          en.setAttribute('aria-pressed', String(!isBM))
+          bm.setAttribute('aria-pressed', String(isBM))
+        }
+        en.addEventListener('click', function () { set('en') })
+        bm.addEventListener('click', function () { set('bm') })
+        // ?lang=bm lets a link open straight into Bahasa Melayu
+        if (/[?&]lang=(bm|ms)\b/i.test(location.search)) set('bm')
+      })()
+    </script>
+  </body>
+</html>
