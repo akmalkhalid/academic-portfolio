@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nano Unit · Write One Assessable Outcome — SIM Builder</title>
+<style>
+/* ============================================================
+   SIM BUILDER — SHARED DESIGN SYSTEM v3 (derived from LMCRXXX2)
+   Bilingual EN/BM. Every translatable node has an EN twin
+   (lang="en") and a BM twin (lang="ms"); CSS shows the active
+   one only. Prompt bodies stay in English by design.
+   ============================================================ */
+:root{
+  --ink:#111629; --ink-soft:#333a5c; --muted:#565d80;
+  --bg:#f5f6fb; --panel:#ffffff; --line:#e2e5f1;
+  --accent:#3b4cc0; --accent-2:#5a34b8; --accent-soft:#eef0ff;
+  --amber:#a85e00; --amber-soft:#fff3de; --amber-ink:#5c3400;
+  --green:#137a4b; --green-soft:#e4f6ec; --green-ink:#0c5233;
+  --red:#c23434; --red-soft:#fcebeb; --red-ink:#8a1f1f;
+  --radius:16px; --shadow:0 10px 34px rgba(20,26,60,.10);
+  --maxw:1010px;
+  --font:'DM Sans',"Segoe UI",system-ui,-apple-system,Roboto,"Helvetica Neue",Arial,sans-serif;
+  --mono:"SF Mono",Consolas,"Roboto Mono",ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:var(--font);color:var(--ink);
+  background:radial-gradient(1200px 600px at 85% -10%,var(--accent-soft),transparent 60%),var(--bg);
+  line-height:1.62;-webkit-font-smoothing:antialiased}
+body[data-accent="u1"]{--accent:#0f5257;--accent-2:#08383c;--accent-soft:#e2f1f1}
+body[data-accent="n0"]{--accent:#8a5a12;--accent-2:#5f3d0a;--accent-soft:#f9efdb}
+
+/* ===== LANGUAGE TOGGLE ===== */
+body.lang-en [lang="ms"]{display:none!important}
+body.lang-ms [lang="en"]{display:none!important}
+.langtog{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden;background:var(--panel)}
+.langtog button{border:none;background:transparent;color:var(--muted);font-weight:800;font-size:.76rem;
+  padding:6px 11px;cursor:pointer;font-family:inherit;transition:.15s}
+.langtog button.on{background:var(--accent);color:#fff}
+/* ---------- Top bar ---------- */
+.topbar{position:fixed;top:0;left:0;right:0;z-index:50;height:56px;display:flex;align-items:center;
+  gap:12px;padding:0 16px;background:rgba(255,255,255,.9);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.brand{font-weight:800;letter-spacing:.3px;font-size:.95rem;color:var(--accent-2);white-space:nowrap}
+.brand span{color:var(--muted);font-weight:600}
+.progress-wrap{flex:1;height:7px;background:var(--line);border-radius:99px;overflow:hidden;min-width:40px}
+.progress-bar{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--accent-2));transition:width .3s}
+.counter{font-variant-numeric:tabular-nums;font-size:.82rem;color:var(--muted);white-space:nowrap}
+.btn{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:10px;padding:7px 11px;
+  font-size:.8rem;font-weight:600;cursor:pointer;transition:.15s;white-space:nowrap}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn.solid{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn.solid:hover{background:var(--accent-2);color:#fff}
+.nav-arrows{display:flex;gap:6px}
+/* ---------- Deck / slides ---------- */
+.deck{max-width:var(--maxw);margin:0 auto;padding:78px 20px 120px}
+.slide{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);
+  padding:38px 40px;margin:0 0 26px;scroll-margin-top:70px}
+body.mode-slides .slide{display:none}
+body.mode-slides .slide.active{display:block;animation:fade .35s ease}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.slide-kicker{display:inline-flex;align-items:center;gap:8px;font-size:.72rem;font-weight:800;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--accent-2);background:var(--accent-soft);padding:5px 11px;border-radius:99px;margin-bottom:14px}
+h1{font-size:2.15rem;line-height:1.15;margin:.1em 0 .15em}
+h2{font-size:1.62rem;line-height:1.2;margin:.1em 0 .3em}
+h3{font-size:1.16rem;margin:1.3em 0 .4em;color:var(--ink)}
+h4{margin:.2em 0 .3em;font-size:1rem}
+.ms-tag{color:var(--muted);font-weight:600;font-style:italic;font-size:.96rem}
+.lead{font-size:1.08rem;color:var(--ink-soft)}
+p{margin:.6em 0}
+strong{color:var(--ink)}
+a{color:var(--accent-2);text-decoration:none;border-bottom:1px solid transparent}
+a:hover{border-bottom-color:var(--accent-2)}
+ul,ol{margin:.5em 0;padding-left:1.25em}
+li{margin:.32em 0}
+code{font-family:var(--mono);font-size:.88em;background:var(--accent-soft);color:var(--accent-2);padding:1px 6px;border-radius:5px}
+/* ---------- Cover ---------- */
+.cover{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;border:none}
+.cover .slide-kicker{background:rgba(255,255,255,.2);color:#fff}
+.cover h1,.cover h2,.cover h3,.cover strong{color:#fff}
+.cover .lead,.cover p{color:rgba(255,255,255,.95)}
+.cover em{color:#fff}
+.cover .meta-grid{display:flex;flex-wrap:wrap;gap:10px 26px;margin-top:22px;font-size:.9rem}
+.cover .meta-grid div{opacity:.97}
+.cover .meta-grid b{display:block;font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;opacity:.78}
+/* ---------- Blocks ---------- */
+.block{border-radius:14px;padding:18px 20px;margin:16px 0;border:1px solid var(--line)}
+.tag{display:inline-flex;align-items:center;gap:7px;font-size:.7rem;font-weight:800;letter-spacing:.1em;
+  text-transform:uppercase;padding:4px 10px;border-radius:99px;margin-bottom:6px}
+.concept{background:var(--accent-soft);border-color:transparent}
+.concept .tag{background:var(--accent);color:#fff}
+.fact{background:var(--amber-soft);border-color:#f0d9ac}
+.fact .tag{background:var(--amber);color:#fff}
+.realworld{background:var(--green-soft);border-color:#bce6cd}
+.realworld .tag{background:var(--green);color:#fff}
+.practical{background:#f1edff;border-color:#d8ccfa}
+.practical .tag{background:var(--accent-2);color:#fff}
+.example{background:#fbfbfe;border-color:var(--line)}
+.example .tag{background:var(--ink-soft);color:#fff}
+.callout-vary{border-left:4px solid var(--accent);padding:2px 0 2px 14px;margin:10px 0;color:var(--ink-soft)}
+.callout-vary strong{color:var(--ink)}
+.owncase{background:#0f1836;color:#eef1ff;border:1px solid #26325f;border-radius:14px;padding:18px 20px;margin:16px 0}
+.owncase .tag{background:#f0b93c;color:#3a2a00}
+.owncase strong{color:#fff}
+.owncase em{color:#ffd977;font-style:normal;font-weight:700}
+/* ---------- Outcomes ---------- */
+.outcomes{display:grid;gap:12px;grid-template-columns:1fr}
+.outcome{display:flex;gap:14px;align-items:flex-start;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.outcome .num{flex:none;width:34px;height:34px;border-radius:9px;display:grid;place-items:center;font-weight:800;color:#fff;
+  background:linear-gradient(135deg,var(--accent),var(--accent-2))}
+.clo-chip{display:inline-block;font-size:.68rem;font-weight:800;color:#fff;background:var(--accent-2);
+  border-radius:6px;padding:2px 8px;margin-left:6px;letter-spacing:.04em}
+/* ---------- Columns / cards ---------- */
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:720px){.cols{grid-template-columns:1fr}}
+.figure{margin:18px 0;text-align:center}
+.figure svg{max-width:100%;height:auto;border-radius:12px;border:1px solid var(--line);background:#fff}
+.figcap{font-size:.85rem;color:var(--muted);margin-top:8px}
+.cardgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;margin:14px 0}
+.card{border:1px solid var(--line);border-radius:12px;padding:15px 16px;background:var(--panel);transition:.15s}
+.card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:var(--shadow)}
+.card .name{font-weight:700;display:flex;align-items:center;gap:8px}
+.card .use{font-size:.85rem;color:var(--muted);margin-top:5px}
+.card a{font-size:.82rem;font-weight:700}
+.pill{display:inline-block;font-size:.72rem;font-weight:700;padding:3px 10px;border-radius:99px;background:var(--accent-soft);color:var(--accent-2);margin:2px 4px 2px 0}
+.divider{height:1px;background:var(--line);margin:26px 0}
+/* ---------- Data table ---------- */
+.dtab{width:100%;border-collapse:collapse;margin:14px 0;font-size:.88rem}
+.dtab th{background:var(--accent-2);color:#fff;text-align:left;padding:9px 11px;font-size:.74rem;
+  text-transform:uppercase;letter-spacing:.07em}
+.dtab td{border-bottom:1px solid var(--line);padding:9px 11px;color:var(--ink-soft);vertical-align:top}
+.dtab tr:last-child td{border-bottom:none}
+.dtab td b{color:var(--ink)}
+.dtab code{font-size:.82em}
+/* ---------- Quiz ---------- */
+.quiz{background:var(--panel);border:2px solid var(--accent-soft);border-radius:14px;padding:20px 22px;margin:18px 0}
+.q{margin:16px 0}
+.q .stem{font-weight:600;margin-bottom:10px}
+.opt{display:block;width:100%;text-align:left;border:1px solid var(--line);background:#fff;border-radius:10px;
+  padding:11px 14px;margin:8px 0;cursor:pointer;font-size:.95rem;transition:.15s;font-family:inherit;color:var(--ink)}
+.opt:hover{border-color:var(--accent);background:var(--accent-soft)}
+.opt.correct{border-color:var(--green);background:var(--green-soft);font-weight:600;color:var(--green-ink)}
+.opt.wrong{border-color:var(--red);background:var(--red-soft);color:var(--red-ink)}
+.opt.correct::after{content:" ✓";font-weight:800}
+.opt.wrong::after{content:" ✕";font-weight:800}
+.opt:disabled{cursor:default}
+.feedback{display:none;margin-top:10px;padding:12px 14px;border-radius:10px;font-size:.92rem}
+.feedback.show{display:block;animation:fade .3s}
+.feedback.ok{background:var(--green-soft);border:1px solid #bfe7d1;color:var(--green-ink)}
+.feedback.no{background:var(--red-soft);border:1px solid #f2c4c4;color:var(--red-ink)}
+body.lang-en .feedback [lang="ms"],body.lang-ms .feedback [lang="en"]{display:none}
+/* ---------- Prompt Lab ---------- */
+.prompt-lab{border:1px solid var(--line);border-radius:16px;overflow:hidden;margin:18px 0;box-shadow:var(--shadow);background:var(--panel)}
+.pl-tabs{display:flex;flex-wrap:wrap;gap:6px;background:var(--accent-soft);padding:11px 13px;border-bottom:1px solid var(--line)}
+.pl-tab{border:1px solid var(--line);background:var(--panel);color:var(--ink-soft);border-radius:8px;padding:5px 12px;
+  font-size:.76rem;font-weight:800;cursor:pointer;font-family:var(--mono);transition:.15s}
+.pl-tab:hover{border-color:var(--accent);color:var(--accent-2)}
+.pl-tab.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.pl-panel{display:none}
+.pl-panel.on{display:block}
+.pl-head{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--accent-2);color:#fff;padding:13px 18px}
+.pl-title{font-weight:800;font-size:.94rem;letter-spacing:.02em}
+.pl-sub{font-size:.74rem;color:rgba(255,255,255,.86);font-weight:600}
+.copy-btn{border:1px solid rgba(255,255,255,.5);background:rgba(255,255,255,.14);color:#fff;border-radius:9px;padding:7px 14px;
+  font-size:.8rem;font-weight:700;cursor:pointer;transition:.15s;font-family:inherit;white-space:nowrap}
+.copy-btn:hover{background:#fff;color:var(--accent-2);border-color:#fff}
+.copy-btn.done{background:var(--green);border-color:var(--green);color:#fff}
+/* Light, high-legibility prompt surface. Readable on screen AND on paper: if a browser
+   drops backgrounds when printing, dark text on white still reads correctly. */
+.pl-prompt{margin:0;background:#fcfcfe;color:#151b2e;font-family:var(--mono);font-size:.88rem;line-height:1.78;
+  padding:18px 20px 18px 22px;white-space:pre-wrap;overflow-x:auto;tab-size:2;
+  border-left:5px solid var(--accent);border-bottom:1px solid var(--line);max-height:520px;overflow-y:auto}
+.pl-prompt .ph{background:#fff0c8;color:#67380a;font-weight:800;border:1px solid #e3bd68;
+  border-radius:5px;padding:0 5px;white-space:nowrap}
+.pl-prompt .kw{background:var(--accent-soft);color:var(--accent-2);font-weight:800;border-radius:5px;padding:0 5px}
+.pl-cols{display:grid;grid-template-columns:1fr 1fr;gap:0;background:#fff;border-top:1px solid var(--line)}
+@media(max-width:720px){.pl-cols{grid-template-columns:1fr}}
+.pl-anno{padding:16px 18px;border-right:1px solid var(--line)}
+@media(max-width:720px){.pl-anno{border-right:none;border-bottom:1px solid var(--line)}}
+.pl-anno h4,.pl-out h4{font-size:.74rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent-2);margin:0 0 8px}
+.pl-anno ul{list-style:none;padding:0;margin:0}
+.pl-anno li{font-size:.86rem;color:var(--ink-soft);padding:6px 0;border-bottom:1px dashed var(--line);display:flex;gap:8px}
+.pl-anno li:last-child{border-bottom:none}
+.pl-anno .ln{flex:none;font-family:var(--mono);font-size:.72rem;font-weight:700;color:#fff;background:var(--accent);border-radius:5px;padding:1px 6px;height:fit-content;margin-top:1px}
+.pl-out{padding:16px 18px;background:#f7f9ff}
+.pl-outbox{font-size:.85rem;color:var(--ink-soft);background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.pl-outbox b{color:var(--ink)}
+.pl-note{background:#fff8e8;color:#5c3400;border-top:1px solid #f0d9ac;padding:11px 16px;font-size:.85rem}
+/* ---------- Dark mode ---------- */
+/* Session-only: no storage is used, per the contract. Toggle with the button or the D key. */
+body.dark{--ink:#eaeefb;--ink-soft:#c0c7de;--muted:#98a1c0;--bg:#0d1120;--panel:#151b2d;--line:#2a3350;
+  --amber-soft:#3a2b12;--amber-ink:#f2d9a8;--green-soft:#12301f;--green-ink:#a8e5c1;
+  --red-soft:#33161a;--red-ink:#f3b8b8;--shadow:0 10px 34px rgba(0,0,0,.5)}
+body.dark[data-accent]{--accent-soft:#1d2742}
+body.dark .topbar{background:rgba(13,17,32,.92)}
+body.dark code{background:#222c4a;color:#c6d8ff}
+body.dark .fn{background:#222c4a;color:#cfe0ff}
+body.dark .example{background:#131a2b}
+body.dark .practical{background:#1b1733;border-color:#332a55}
+body.dark .opt{background:var(--panel);color:var(--ink)}
+body.dark .quiz{border-color:#2a3350}
+body.dark .pl-prompt{background:#0f1526;color:#e8ecf8}
+body.dark .pl-prompt .kw{background:#22304f;color:#c6d8ff}
+body.dark .pl-out{background:#111729}
+body.dark .pl-outbox{background:var(--panel)}
+body.dark .pl-note{background:#3a2b12;color:#f2d9a8;border-top-color:#5a4420}
+body.dark .pl-cols{background:var(--panel)}
+body.dark .ucard,body.dark section.hs{background:var(--panel)}
+/* Hand-authored SVGs keep their light canvas so every label stays legible. */
+body.dark .figure svg{background:#ffffff}
+/* ---------- Footnotes ---------- */
+.fn{font-size:.64em;font-weight:800;vertical-align:super;line-height:0;color:var(--accent-2);
+  background:var(--accent-soft);border-radius:4px;padding:2px 5px;margin-left:2px;
+  text-decoration:none;border-bottom:none!important;white-space:nowrap}
+.fn:hover{background:var(--accent);color:#fff}
+.footnotes{margin-top:28px;padding-top:14px;border-top:2px solid var(--line)}
+.footnotes h4{font-size:.7rem;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin:0 0 10px}
+.footnotes ol{margin:0;padding-left:1.4em}
+.footnotes li{font-size:.82rem;line-height:1.55;color:var(--muted);margin:.45em 0;scroll-margin-top:74px}
+.footnotes li:target{background:var(--accent-soft);border-radius:6px;padding:2px 6px;margin-left:-6px}
+.footnotes li em{color:var(--ink-soft)}
+.footnotes a{font-weight:700;font-size:.95em}
+.pl-anno .fn{background:var(--accent);color:#fff}
+.pl-anno .fn:hover{background:var(--accent-2)}
+/* ---------- Resources ---------- */
+.reslist{list-style:none;padding:0;margin:8px 0}
+.reslist li{padding:10px 0;border-bottom:1px dashed var(--line)}
+.reslist .k{font-size:.66rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#fff;background:var(--accent-2);padding:2px 8px;border-radius:6px;margin-right:8px}
+.reslist .doi{display:inline-block;font-size:.78rem;font-weight:700;margin-left:4px}
+.reslist .fnum{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:6px;
+  background:var(--accent);color:#fff;font-size:.72rem;font-weight:800;margin-right:8px;vertical-align:middle}
+.reslist .cited{display:block;font-size:.72rem;color:var(--muted);font-style:italic;margin-top:3px}
+.reslist .doi::before{content:"🔗 "}
+/* ---------- Connectivism ---------- */
+.connections{background:linear-gradient(135deg,#0d2a2d,#123f45);color:#eef8f8;border:none}
+.connections .tag{background:rgba(255,255,255,.2);color:#fff}
+.connections h3,.connections strong{color:#fff}
+.connections a{color:#a8e0e4;border-bottom-color:transparent}
+.connections a:hover{border-bottom-color:#a8e0e4}
+.connections .cols p{color:#cfe8ea}
+.node-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+.node{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);border-radius:99px;padding:8px 15px;font-size:.85rem;color:#fff}
+footer.deckfoot{text-align:center;color:var(--muted);font-size:.8rem;padding:20px}
+@media print{.topbar{display:none}.deck{padding-top:10px}body.mode-slides .slide{display:block!important}
+.slide{break-inside:avoid;box-shadow:none}.pl-panel{display:block!important}.pl-prompt{max-height:none}
+.footnotes,.footnotes li{display:block!important}.footnotes li{display:list-item!important}
+.prompt-lab,.pl-prompt,.pl-note,.block,.card{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.pl-head{background:#fff!important;color:#111629!important;border-bottom:2px solid #111629}
+.pl-sub{color:#565d80!important}.copy-btn{display:none}
+.pl-tabs{background:#fff!important;border-bottom:1px solid #111629}
+.pl-tab{background:#fff!important;color:#111629!important;border-color:#111629!important}
+.connections,.owncase{background:#fff!important;color:#111629!important;border:2px solid #111629!important}
+.connections h3,.connections strong,.owncase strong,.connections a{color:#111629!important}
+.connections .cols p,.owncase em{color:#333a5c!important}
+.connections .tag,.owncase .tag{background:#111629!important;color:#fff!important}
+.node{background:#fff!important;color:#111629!important;border:1px solid #111629!important}}
+</style>
+</head>
+
+<body data-accent="n0" class="mode-slides lang-en">
+
+<div class="topbar">
+  <div class="brand"><a href="index.html" style="color:inherit;text-decoration:none" title="Course hub">SIM BUILDER</a> · <span><span lang="en">Nano Unit</span><span lang="ms">Unit Nano</span></span></div>
+  <div class="progress-wrap"><div class="progress-bar" id="pbar"></div></div>
+  <span class="counter" id="counter">1 / 1</span>
+  <button class="btn" id="darkBtn" onclick="toggleDark()" title="Dark mode / Mod gelap" aria-label="Dark mode">🌙</button>
+  <div class="langtog" title="Language / Bahasa">
+    <button data-l="en" class="on" onclick="setLang('en')">EN</button>
+    <button data-l="ms" onclick="setLang('ms')">BM</button>
+  </div>
+  <button class="btn" id="modeBtn" onclick="toggleMode()"><span lang="en">📖 Guide</span><span lang="ms">📖 Panduan</span></button>
+  <div class="nav-arrows">
+    <button class="btn" onclick="go(-1)"><span lang="en">‹ Prev</span><span lang="ms">‹ Seb</span></button>
+    <button class="btn solid" onclick="go(1)"><span lang="en">Next ›</span><span lang="ms">Seterusnya ›</span></button>
+  </div>
+</div>
+
+<main class="deck" id="deck">
+
+<section class="slide cover active">
+  <div class="slide-kicker"><span lang="en">Nano Unit · one outcome, one sitting</span><span lang="ms">Unit Nano · satu hasil, satu duduk</span></div>
+  <h1 lang="en">Write one outcome you can actually assess</h1>
+  <h1 lang="ms">Tulis satu hasil pembelajaran yang benar-benar boleh ditaksir</h1>
+  <p class="lead" lang="en" style="max-width:680px">Twenty minutes. One outcome from your own course, rewritten so that it names
+    something you could watch a student do — and so that you know what evidence would prove it.</p>
+  <p class="lead" lang="ms" style="max-width:680px">Dua puluh minit. Satu hasil pembelajaran daripada kursus anda sendiri, ditulis
+    semula supaya ia menamakan sesuatu yang boleh anda lihat pelajar lakukan — dan supaya anda tahu bukti apa yang membuktikannya.</p>
+  <div class="meta-grid">
+    <div><b lang="en">Size</b><b lang="ms">Saiz</b><span lang="en">Nano · 5 screens</span><span lang="ms">Nano · 5 skrin</span></div>
+    <div><b lang="en">Time</b><b lang="ms">Masa</b><span lang="en">≈ 20 minutes</span><span lang="ms">≈ 20 minit</span></div>
+    <div><b lang="en">You will produce</b><b lang="ms">Anda akan hasilkan</b><span lang="en">One rewritten outcome</span><span lang="ms">Satu hasil yang ditulis semula</span></div>
+    <div><b lang="en">Feeds</b><b lang="ms">Menyuap</b><span lang="en">Unit 2 · SPEC.md</span><span lang="ms">Unit 2 · SPEC.md</span></div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-kicker"><span lang="en">The one outcome · Core concept</span><span lang="ms">Satu hasil · Konsep teras</span></div>
+  <h2 lang="en">By the end of these five screens</h2>
+  <h2 lang="ms">Pada akhir lima skrin ini</h2>
+  <div class="outcomes">
+    <div class="outcome"><div class="num">1</div><div>
+      <span lang="en"><strong>Rewrite</strong> one outcome from your own course so that it names an observable performance, and <strong>state</strong> the evidence that would prove it.</span>
+      <span lang="ms"><strong>Menulis semula</strong> satu hasil pembelajaran daripada kursus anda sendiri supaya ia menamakan prestasi yang boleh diperhati, dan <strong>menyatakan</strong> bukti yang akan membuktikannya.</span>
+      <span class="clo-chip">C6 · own case</span></div></div>
+  </div>
+  <p class="ms-tag"><span lang="en">One outcome only. That restraint is what makes this finishable in one sitting.</span><span lang="ms">Satu hasil sahaja. Kekangan itulah yang menjadikannya boleh disiapkan dalam satu duduk.</span></p>
+
+  <div class="block concept">
+    <span class="tag"><span lang="en">Definition</span><span lang="ms">Takrifan</span></span>
+    <p lang="en" style="margin:.3em 0 0">An <strong>assessable outcome</strong> names a performance you could watch, mark or read —
+      and it carries, in the same breath, the evidence that would prove it. An outcome describing a state inside the learner's head
+      is not assessable, however true it may be, because nothing about it can be observed.</p>
+    <p lang="ms" style="margin:.3em 0 0">Sebuah <strong>hasil pembelajaran yang boleh ditaksir</strong> menamakan prestasi yang boleh
+      anda perhati, nilai atau baca — dan ia membawa, dalam nafas yang sama, bukti yang akan membuktikannya. Hasil yang memerihalkan
+      keadaan dalam fikiran pelajar tidak boleh ditaksir, betapa benar sekalipun, kerana tiada apa padanya yang boleh diperhati.</p>
+  </div>
+  <div class="cols">
+    <div>
+      <h3 lang="en">❌ Not assessable</h3>
+      <h3 lang="ms">❌ Tidak boleh ditaksir</h3>
+      <p lang="en"><em>“Students will understand the importance of data privacy.”</em></p>
+      <p lang="ms"><em>“Pelajar akan memahami kepentingan privasi data.”</em></p>
+      <p lang="en">Nothing here can be watched. Two students could both “understand” and produce completely different work, and you would
+        have no basis to mark one above the other.</p>
+      <p lang="ms">Tiada apa di sini boleh diperhati. Dua pelajar boleh sama-sama “memahami” dan menghasilkan kerja yang sama sekali
+        berbeza, dan anda tiada asas untuk menilai seorang lebih tinggi daripada yang lain.</p>
+    </div>
+    <div>
+      <h3 lang="en">✅ Assessable</h3>
+      <h3 lang="ms">✅ Boleh ditaksir</h3>
+      <p lang="en"><em>“Differentiate three privacy risks in a system you use, and justify which is most serious for its users.”</em></p>
+      <p lang="ms"><em>“Membezakan tiga risiko privasi dalam sistem yang anda gunakan, dan mewajarkan yang mana paling serius bagi
+        penggunanya.”</em></p>
+      <p lang="en">You can see the three. You can read the justification. And the evidence is obvious: a short written case with a
+        defended position.</p>
+      <p lang="ms">Anda boleh melihat ketiga-tiganya. Anda boleh membaca justifikasinya. Dan buktinya jelas: satu kes bertulis pendek
+        dengan pendirian yang dipertahankan.</p>
+    </div>
+  </div>
+  <div class="block fact">
+    <span class="tag"><span lang="en">The three-part test</span><span lang="ms">Ujian tiga bahagian</span></span>
+    <p lang="en" style="margin:.3em 0 0">An outcome is finished when it has all three: an <strong>observable verb</strong>, an
+      <strong>object</strong> the verb acts on, and a <strong>condition or context</strong> that bounds it. Miss the verb and it cannot
+      be marked. Miss the condition and every student answers a different question.</p>
+    <p lang="ms" style="margin:.3em 0 0">Sesuatu hasil selesai apabila ia mempunyai ketiga-tiganya: <strong>kata kerja boleh
+      diperhati</strong>, <strong>objek</strong> yang dikenakan kata kerja itu, dan <strong>syarat atau konteks</strong> yang
+      membatasinya. Tiada kata kerja, ia tidak boleh dinilai. Tiada syarat, setiap pelajar menjawab soalan yang berbeza.</p>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-kicker"><span lang="en">Worked example · Contoh dikerjakan</span><span lang="ms">Contoh dikerjakan</span></div>
+  <h2 lang="en">One rewrite, step by step</h2>
+  <h2 lang="ms">Satu penulisan semula, langkah demi langkah</h2>
+  <div class="block example">
+    <span class="tag"><span lang="en">Before</span><span lang="ms">Sebelum</span></span>
+    <p lang="en" style="margin:.3em 0 0"><em>“Students will know the principles of sustainable design.”</em></p>
+    <p lang="ms" style="margin:.3em 0 0"><em>“Pelajar akan mengetahui prinsip reka bentuk lestari.”</em></p>
+  </div>
+  <div class="block practical">
+    <span class="tag"><span lang="en">Applying the three-part test</span><span lang="ms">Menerapkan ujian tiga bahagian</span></span>
+    <p lang="en" style="margin:.3em 0 .3em"><strong>Verb</strong> — “know” cannot be watched. What would a student actually <em>do</em>
+      with these principles? Evaluate a design against them. That is the verb.</p>
+    <p lang="en" style="margin:0 0 .3em"><strong>Object</strong> — not “the principles” in the abstract, but a real design the student
+      chooses.</p>
+    <p lang="en" style="margin:0"><strong>Condition</strong> — how many principles, and what must they produce? Three, and a written
+      judgement with a recommendation.</p>
+    <p lang="ms" style="margin:.3em 0 .3em"><strong>Kata kerja</strong> — “mengetahui” tidak boleh diperhati. Apa yang pelajar akan
+      <em>lakukan</em> dengan prinsip ini? Menilai sesuatu reka bentuk berdasarkannya. Itulah kata kerjanya.</p>
+    <p lang="ms" style="margin:0 0 .3em"><strong>Objek</strong> — bukan “prinsip” secara abstrak, tetapi reka bentuk sebenar yang
+      dipilih pelajar.</p>
+    <p lang="ms" style="margin:0"><strong>Syarat</strong> — berapa prinsip, dan apa yang mesti mereka hasilkan? Tiga, dan satu
+      pertimbangan bertulis beserta cadangan.</p>
+  </div>
+  <div class="block realworld">
+    <span class="tag"><span lang="en">After</span><span lang="ms">Selepas</span></span>
+    <p lang="en" style="margin:.3em 0 .3em"><strong>“Evaluate a building or product of your choice against three principles of
+      sustainable design, and recommend one change with reasons.”</strong></p>
+    <p lang="en" style="margin:0"><em>Evidence:</em> a 600-word case with a named artefact and a defended recommendation.</p>
+    <p lang="ms" style="margin:.3em 0 .3em"><strong>“Menilai sebuah bangunan atau produk pilihan anda berdasarkan tiga prinsip reka
+      bentuk lestari, dan mencadangkan satu perubahan beserta alasannya.”</strong></p>
+    <p lang="ms" style="margin:0"><em>Bukti:</em> satu kes 600 patah perkataan dengan artifak bernama dan cadangan yang dipertahankan.</p>
+  </div>
+  <div class="callout-vary">
+    <strong lang="en">One variation — the same outcome at a higher level.</strong>
+    <strong lang="ms">Satu variasi — hasil yang sama pada aras lebih tinggi.</strong>
+    <span lang="en"> Swap “evaluate … and recommend” for “<em>design</em> a revision that satisfies all three principles, and defend the
+      trade-offs you accepted.” The object and condition barely move; the verb does all the work. This is why the verb is the first
+      thing to fix and the last thing to compromise on.</span>
+    <span lang="ms"> Tukar “menilai … dan mencadangkan” kepada “<em>mereka bentuk</em> semakan yang memenuhi ketiga-tiga prinsip, dan
+      mempertahankan pertukaran nilai yang anda terima.” Objek dan syarat hampir tidak berubah; kata kerja yang melakukan segalanya.
+      Inilah sebabnya kata kerja ialah perkara pertama untuk dibetulkan dan perkara terakhir untuk dikompromi.</span>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-kicker"><span lang="en">Practice Lab · Makmal Amali</span><span lang="ms">Makmal Amali</span></div>
+  <h2 lang="en">Now do it with your own outcome</h2>
+  <h2 lang="ms">Sekarang lakukan dengan hasil pembelajaran anda sendiri</h2>
+  <p class="lead" lang="en">Open your syllabus, find the weakest outcome in it — the one you would struggle to mark fairly — and paste
+    it into the prompt below. Ten minutes.</p>
+  <p class="lead" lang="ms">Buka sukatan anda, cari hasil pembelajaran yang paling lemah — yang anda akan sukar menilainya dengan adil
+    — dan tampalkannya ke dalam gesaan di bawah. Sepuluh minit.</p>
+  <div class="prompt-lab">
+    <div class="pl-tabs">
+      <button class="pl-tab on" onclick="showP(this,'pn')">PN · rewrite one outcome</button>
+    </div>
+    <div class="pl-panel on" id="pn">
+      <div class="pl-head">
+        <div><div class="pl-title">✏️ PN — Rewrite one outcome</div>
+          <div class="pl-sub">One outcome, one sitting. Paste your real one, not an example.</div></div>
+        <button class="copy-btn" onclick="copyPrompt(this)"><span lang="en">📋 Copy prompt</span><span lang="ms">📋 Salin gesaan</span></button>
+      </div>
+      <pre class="pl-prompt"><code>You are an instructional designer working on outcome-based course design.
+Do not ask permission to begin; produce the artefact.
+
+MY OUTCOME, exactly as it currently appears in my syllabus:
+"<span class="ph">[PASTE YOUR OUTCOME HERE]</span>"
+
+CONTEXT
+Course: <span class="ph">[CODE AND TITLE]</span>
+Learners: <span class="ph">[WHO THEY ARE, AND WHAT THEY WILL NOT HAVE]</span>
+Taxonomy level this outcome is mapped to: <span class="ph">[e.g. C4 analyse, A4 organise]</span>
+Language of learner-facing text: <span class="ph">[LANGUAGE(S)]</span>
+
+TASK — do all four steps, in this order, and show your working.
+
+<span class="kw">STEP 1 — DIAGNOSE.</span>
+Test my outcome against three parts and report PASS or FAIL for each,
+quoting the exact words that carry it:
+  VERB      — is it a performance that can be watched, marked or read?
+  OBJECT    — is there something specific the verb acts on?
+  CONDITION — is there a context or limit that stops every learner
+              answering a different question?
+Banned verbs, which automatically FAIL the verb test:
+understand, know, be aware of, appreciate, learn about, be familiar with.
+
+<span class="kw">STEP 2 — REWRITE.</span>
+Produce THREE rewrites at the taxonomy level I named. Each must:
+  - open with an observable verb at that level;
+  - act on something the learner CHOOSES for themselves, so that no two
+    learners could submit the same work;
+  - state a condition — a number, a context, a required product.
+Label them A, B, C. Do not rank them; they are alternatives, not drafts.
+
+<span class="kw">STEP 3 — NAME THE EVIDENCE.</span>
+For each rewrite, state in one line what a learner would hand in that
+would prove it, and roughly how long that artefact is.
+If a rewrite has no plausible evidence, say so and discard it.
+
+<span class="kw">STEP 4 — COST IT.</span>
+Estimate the learner hours each rewrite would demand, including the
+reading and the producing. Flag any that will not fit a normal week.
+
+RULES
+- Do not soften my original to make it look acceptable. If it fails, say it fails.
+- Do not invent facts about my course. If you need something I have not given,
+  write [CHECK: ...] rather than guessing.
+- Output the four steps only. No preamble, no closing summary.</code></pre>
+      <div class="pl-cols">
+        <div class="pl-anno">
+          <h4><span lang="en">Why it is shaped this way</span><span lang="ms">Mengapa ia berbentuk begini</span></h4>
+          <ul>
+            <li><span class="ln">S1</span><span><span lang="en">Diagnosing <b>before</b> rewriting forces the model to name what is broken. Ask only for a rewrite and you get a polished sentence with no explanation you can reuse on the next outcome.</span><span lang="ms">Mendiagnosis <b>sebelum</b> menulis semula memaksa model menamakan apa yang rosak. Minta penulisan semula sahaja dan anda dapat ayat yang licin tanpa penjelasan yang boleh diguna semula pada hasil seterusnya.</span></span></li>
+            <li><span class="ln">S2</span><span><span lang="en"><b>Three alternatives, not ranked.</b> Ranked drafts invite you to take the top one. Alternatives make you choose — and choosing is where your judgement about your own learners enters.</span><span lang="ms"><b>Tiga alternatif, tidak disusun.</b> Draf yang disusun mengundang anda mengambil yang teratas. Alternatif memaksa anda memilih — dan pemilihan itulah tempat pertimbangan anda tentang pelajar anda masuk.</span></span></li>
+            <li><span class="ln">S3</span><span><span lang="en">An outcome with <b>no plausible evidence</b> is not an outcome, it is an aspiration. Making the model discard those is cheaper than discovering it at marking time.</span><span lang="ms">Hasil yang <b>tiada bukti munasabah</b> bukan hasil, ia cita-cita. Membiarkan model membuangnya lebih murah daripada menemuinya ketika penilaian.</span></span></li>
+            <li><span class="ln">S4</span><span><span lang="en">Costing it early stops you writing an outcome that quietly demands eight hours in a week that has three.</span><span lang="ms">Menganggar kosnya lebih awal menghalang anda menulis hasil yang senyap-senyap menuntut lapan jam dalam minggu yang hanya ada tiga.</span></span></li>
+            <li><span class="ln">Rule</span><span><span lang="en">“<b>Do not soften my original</b>” is the line that matters most. Without it, models are agreeable — and an agreeable diagnosis is worthless.</span><span lang="ms">“<b>Jangan lembutkan hasil asal saya</b>” ialah baris paling penting. Tanpanya, model bersifat menyenangkan — dan diagnosis yang menyenangkan tidak bernilai.</span></span></li>
+          </ul>
+        </div>
+        <div class="pl-out">
+          <h4><span lang="en">Expected output (illustrative)</span><span lang="ms">Output dijangka (ilustrasi)</span></h4>
+          <div class="pl-outbox">
+            <b>STEP 1</b><br>
+            VERB — <span style="color:#8a1f1f">FAIL</span> · “know” · not observable<br>
+            OBJECT — PASS · “the principles of sustainable design”<br>
+            CONDITION — <span style="color:#8a1f1f">FAIL</span> · no number, no context<br><br>
+            <b>STEP 2 · A</b> — Evaluate a building or product of your choice against three principles…<br>
+            <b>STEP 3 · A</b> — 600-word case, named artefact, defended recommendation<br>
+            <b>STEP 4 · A</b> — ≈ 2.5 h · fits a normal week
+          </div>
+        </div>
+      </div>
+      <div class="pl-note"><span lang="en">💡 The rewrite is a proposal, not a verdict. You know your learners and your programme; the
+        model does not. Take what is right and overrule what is not.</span><span lang="ms">💡 Penulisan semula itu cadangan, bukan
+        keputusan muktamad. Anda kenal pelajar dan program anda; model tidak. Ambil yang betul dan tolak yang tidak.</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="slide-kicker"><span lang="en">Check &amp; close · Semak &amp; tutup</span><span lang="ms">Semak &amp; tutup</span></div>
+  <h2 lang="en">Two questions, then you are done</h2>
+  <h2 lang="ms">Dua soalan, kemudian anda selesai</h2>
+  <div class="quiz">
+    <div class="q" data-answer="1">
+      <div class="stem"><span lang="en">1. Which of these outcomes could you mark fairly?</span><span lang="ms">1. Antara hasil berikut, yang manakah boleh anda nilai dengan adil?</span></div>
+      <button class="opt" onclick="pick(this,0)"><span lang="en">Appreciate the role of statistics in public policy</span><span lang="ms">Menghargai peranan statistik dalam dasar awam</span></button>
+      <button class="opt" onclick="pick(this,1)"><span lang="en">Compare two published statistics on a policy you choose, and judge which better supports its claim</span><span lang="ms">Membandingkan dua statistik terbitan tentang dasar pilihan anda, dan menilai yang mana lebih menyokong dakwaannya</span></button>
+      <button class="opt" onclick="pick(this,2)"><span lang="en">Be familiar with the main statistical methods used in policy work</span><span lang="ms">Membiasakan diri dengan kaedah statistik utama dalam kerja dasar</span></button>
+      <button class="opt" onclick="pick(this,3)"><span lang="en">Understand why statistics can mislead</span><span lang="ms">Memahami mengapa statistik boleh mengelirukan</span></button>
+      <div class="feedback ok"><span lang="en">✓ Yes. It has all three parts: an observable verb (compare, judge), an object the learner chooses, and a condition that bounds it. You could put two students' answers side by side and defend a difference in mark.</span><span lang="ms">✓ Ya. Ia mempunyai ketiga-tiga bahagian: kata kerja boleh diperhati (membandingkan, menilai), objek yang dipilih pelajar, dan syarat yang membatasinya. Anda boleh meletakkan jawapan dua pelajar bersebelahan dan mempertahankan perbezaan markah.</span></div>
+      <div class="feedback no"><span lang="en">Look at the opening verb. Appreciate, be familiar with and understand all describe something inside the learner's head — you cannot watch any of them, so you cannot defend a mark. Only one option names a performance.</span><span lang="ms">Lihat kata kerja pembuka. Menghargai, membiasakan diri dan memahami semuanya memerihalkan sesuatu dalam fikiran pelajar — anda tidak dapat melihatnya, jadi anda tidak dapat mempertahankan markah. Hanya satu pilihan menamakan prestasi.</span></div>
+    </div>
+    <div class="q" data-answer="2">
+      <div class="stem"><span lang="en">2. Your rewrite reads: “Analyse a case study of your choice using the framework taught in week 4.” What is still missing?</span><span lang="ms">2. Penulisan semula anda berbunyi: “Menganalisis kajian kes pilihan anda menggunakan kerangka yang diajar pada minggu 4.” Apa yang masih tiada?</span></div>
+      <button class="opt" onclick="pick(this,0)"><span lang="en">An observable verb</span><span lang="ms">Kata kerja boleh diperhati</span></button>
+      <button class="opt" onclick="pick(this,1)"><span lang="en">An object for the verb to act on</span><span lang="ms">Objek untuk dikenakan kata kerja</span></button>
+      <button class="opt" onclick="pick(this,2)"><span lang="en">The evidence — what the learner actually hands in</span><span lang="ms">Bukti — apa yang pelajar sebenarnya serahkan</span></button>
+      <button class="opt" onclick="pick(this,3)"><span lang="en">Nothing; it is complete</span><span lang="ms">Tiada; ia sudah lengkap</span></button>
+      <div class="feedback ok"><span lang="en">✓ Right. The verb, object and condition are all there — but “analyse” could be a paragraph or a portfolio. Naming the artefact and its rough size is what makes the outcome markable and what lets you cost it against the week's hours.</span><span lang="ms">✓ Betul. Kata kerja, objek dan syarat semuanya ada — tetapi “menganalisis” boleh jadi satu perenggan atau satu portfolio. Menamakan artifak dan saiz anggarannya menjadikan hasil itu boleh dinilai dan membolehkan anda menganggarkan kosnya berbanding jam minggu itu.</span></div>
+      <div class="feedback no"><span lang="en">Check the three parts again: “analyse” is observable, “a case study of your choice” is the object, “using the framework from week 4” is the condition. All three are present. What is missing sits outside the three-part test — it is what the learner hands you.</span><span lang="ms">Semak semula tiga bahagian: “menganalisis” boleh diperhati, “kajian kes pilihan anda” ialah objek, “menggunakan kerangka minggu 4” ialah syarat. Ketiga-tiganya ada. Yang tiada berada di luar ujian tiga bahagian — iaitu apa yang diserahkan pelajar kepada anda.</span></div>
+    </div>
+  </div>
+
+  <div class="block fact">
+    <span class="tag"><span lang="en">In one line</span><span lang="ms">Dalam satu baris</span></span>
+    <p lang="en" style="margin:.2em 0 0"><em>“If you cannot watch it, you cannot mark it — and if you cannot name the evidence, you have
+      not finished writing it.”</em></p>
+    <p lang="ms" style="margin:.2em 0 0"><em>“Jika anda tidak boleh melihatnya, anda tidak boleh menilainya — dan jika anda tidak boleh
+      menamakan buktinya, anda belum selesai menulisnya.”</em></p>
+  </div>
+
+  <div class="block connections">
+    <span class="tag"><span lang="en">Where this sits</span><span lang="ms">Di mana ia berada</span></span>
+    <div class="cols" style="margin-top:6px">
+      <div><h3 lang="en">← Needs nothing before it</h3><h3 lang="ms">← Tiada prasyarat</h3>
+        <p lang="en">This is a deliberate entry point. You need one syllabus and twenty minutes — no prior unit, no setup, no account.</p>
+        <p lang="ms">Ini titik masuk yang disengajakan. Anda perlukan satu sukatan dan dua puluh minit — tiada unit terdahulu, tiada
+          persediaan, tiada akaun.</p></div>
+      <div><h3 lang="en">Feeds forward to →</h3><h3 lang="ms">Menyuap ke hadapan →</h3>
+        <p lang="en"><strong>Unit 2 — Compiling your curriculum.</strong> The outcome you just rewrote goes straight into the CLO field
+          of your <code>SPEC.md</code>. Do this for every weak outcome and half of P1's work is already done.</p>
+        <p lang="ms"><strong>Unit 2 — Mengkompil kurikulum anda.</strong> Hasil yang baru anda tulis semula terus masuk ke medan HPK
+          dalam <code>SPEC.md</code> anda. Lakukan ini untuk setiap hasil yang lemah dan separuh kerja P1 sudah selesai.</p></div>
+    </div>
+    <div class="node-row">
+      <span class="node"><span lang="en">👥 Show your rewrite to whoever teaches the next course in the sequence</span><span lang="ms">👥 Tunjukkan penulisan semula anda kepada pengajar kursus seterusnya dalam turutan</span></span>
+      <span class="node"><span lang="en">🔁 Do one more tomorrow. Two a week finishes a syllabus in a month.</span><span lang="ms">🔁 Buat satu lagi esok. Dua seminggu menyiapkan satu sukatan dalam sebulan.</span></span>
+    </div>
+  </div>
+
+  <div class="block owncase" style="margin-top:16px">
+    <span class="tag"><span lang="en">Before you close this</span><span lang="ms">Sebelum anda menutupnya</span></span>
+    <p lang="en" style="margin:.2em 0 0">Paste your chosen rewrite into a file called <code>SPEC.md</code> under a heading
+      <code>## CLOs</code>. That file is now started. It is a small thing — but the small thing done regularly is what finishes a
+      course, and the one done all at once is what never gets started.</p>
+    <p lang="ms" style="margin:.2em 0 0">Tampalkan penulisan semula pilihan anda ke dalam fail bernama <code>SPEC.md</code> di bawah
+      tajuk <code>## CLOs</code>. Fail itu kini sudah bermula. Ia perkara kecil — tetapi perkara kecil yang dilakukan secara berterusan
+      itulah yang menyiapkan sesebuah kursus, dan yang dilakukan sekali gus itulah yang tidak pernah bermula.</p>
+  </div>
+</section>
+
+<footer class="deckfoot">
+  <span lang="en">SIM Builder · Nano Unit · one outcome, one sitting · Design system derived from the SIMs deck series owned by Dr. Akmal.</span>
+  <span lang="ms">SIM Builder · Unit Nano · satu hasil, satu duduk · Sistem reka bentuk diterbitkan daripada siri deck SIM milik Dr. Akmal.</span>
+</footer>
+</main>
+
+<script>
+/* ===== Language toggle ===== */
+/* ===== Dark mode (session only, no storage) ===== */
+function toggleDark(){
+  const on=document.body.classList.toggle('dark');
+  const b=document.getElementById('darkBtn');
+  if(b){b.textContent=on?'☀':'🌙';}
+}
+function setLang(l){
+  document.body.classList.remove('lang-en','lang-ms');
+  document.body.classList.add('lang-'+l);
+  document.documentElement.lang = (l==='ms')?'ms':'en';
+  document.querySelectorAll('.langtog button').forEach(b=>b.classList.toggle('on', b.dataset.l===l));
+}
+/* ===== Deck engine ===== */
+let slides=[],cur=0;
+function init(){
+  slides=Array.from(document.querySelectorAll('.slide'));cur=0;show(0);
+  document.querySelectorAll('.prompt-lab').forEach(lab=>{
+    const active=lab.querySelector('.pl-panel.on');
+    if(active)filterNotes(lab.closest('.slide'),active.id);
+  });
+  document.addEventListener('keydown',e=>{
+    if(e.target.tagName==='TEXTAREA'||e.target.tagName==='INPUT')return;
+    if(e.key==='ArrowRight'||e.key==='PageDown'){go(1)}
+    if(e.key==='ArrowLeft'||e.key==='PageUp'){go(-1)}
+    if(e.key.toLowerCase()==='g'){toggleMode()}
+    if(e.key.toLowerCase()==='d'){toggleDark()}
+  });
+}
+function show(i){
+  if(document.body.classList.contains('mode-guide'))return;
+  slides.forEach(s=>s.classList.remove('active'));slides[i].classList.add('active');
+  window.scrollTo(0,0);update();
+}
+function go(d){
+  if(document.body.classList.contains('mode-guide')){window.scrollBy({top:d*window.innerHeight*.85,behavior:'smooth'});return;}
+  cur=Math.max(0,Math.min(slides.length-1,cur+d));show(cur);
+}
+function update(){
+  document.getElementById('counter').textContent=(cur+1)+' / '+slides.length;
+  document.getElementById('pbar').style.width=((cur+1)/slides.length*100)+'%';
+}
+function toggleMode(){
+  const b=document.body,btn=document.getElementById('modeBtn');
+  if(b.classList.contains('mode-slides')){
+    b.classList.remove('mode-slides');b.classList.add('mode-guide');
+    slides.forEach(s=>s.classList.add('active'));
+    btn.querySelector('[lang="en"]').textContent='🖥 Slides';btn.querySelector('[lang="ms"]').textContent='🖥 Slaid';
+    document.getElementById('pbar').style.width='100%';
+  }else{b.classList.remove('mode-guide');b.classList.add('mode-slides');
+    btn.querySelector('[lang="en"]').textContent='📖 Guide';btn.querySelector('[lang="ms"]').textContent='📖 Panduan';show(cur);}
+}
+/* ===== Self-check engine ===== */
+function pick(btn,idx){
+  const q=btn.closest('.q'),ans=parseInt(q.dataset.answer,10);
+  q.querySelectorAll('.opt').forEach(o=>o.disabled=true);
+  const chosen=Array.from(q.querySelectorAll('.opt')).indexOf(btn);
+  q.querySelectorAll('.feedback').forEach(f=>f.classList.remove('show'));
+  if(chosen===ans){btn.classList.add('correct');q.querySelector('.feedback.ok').classList.add('show');}
+  else{btn.classList.add('wrong');q.querySelectorAll('.opt')[ans].classList.add('correct');q.querySelector('.feedback.no').classList.add('show');}
+}
+/* ===== Prompt tabs ===== */
+function showP(btn,id){
+  const lab=btn.closest('.prompt-lab');
+  lab.querySelectorAll('.pl-tab').forEach(t=>t.classList.remove('on'));
+  lab.querySelectorAll('.pl-panel').forEach(p=>p.classList.remove('on'));
+  btn.classList.add('on');
+  document.getElementById(id).classList.add('on');
+  filterNotes(lab.closest('.slide'),id);
+}
+/* Show only the notes cited by the visible panel; hide the block if none. */
+function filterNotes(slide,id){
+  if(!slide)return;
+  const box=slide.querySelector('.footnotes');
+  if(!box)return;
+  let shown=0;
+  box.querySelectorAll('li[data-p]').forEach(li=>{
+    const on=li.dataset.p.split(' ').indexOf(id)>-1;
+    li.style.display=on?'list-item':'none';
+    if(on)shown++;
+  });
+  box.style.display=shown?'block':'none';
+}
+/* ===== Copy prompt ===== */
+function copyPrompt(btn){
+  const panel=btn.closest('.pl-panel')||btn.closest('.prompt-lab');
+  const node=panel.querySelector('.pl-prompt');
+  const text=node.innerText;
+  const done=()=>{const en=btn.querySelector('[lang="en"]'),ms=btn.querySelector('[lang="ms"]');
+    const oe=en.textContent,om=ms.textContent;en.textContent='✓ Copied';ms.textContent='✓ Disalin';btn.classList.add('done');
+    setTimeout(()=>{en.textContent=oe;ms.textContent=om;btn.classList.remove('done');},1600);};
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(done).catch(()=>fallbackCopy(text,done));}
+  else{fallbackCopy(text,done);}
+}
+function fallbackCopy(text,cb){
+  const ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';
+  document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(e){}document.body.removeChild(ta);cb&&cb();
+}
+init();
+</script>
+</body>
+</html>

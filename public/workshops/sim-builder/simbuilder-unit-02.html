@@ -20,7 +20,7 @@
   --red:#c23434; --red-soft:#fcebeb; --red-ink:#8a1f1f;
   --radius:16px; --shadow:0 10px 34px rgba(20,26,60,.10);
   --maxw:1010px;
-  --font:"Segoe UI",system-ui,-apple-system,Roboto,"Helvetica Neue",Arial,sans-serif;
+  --font:'DM Sans',"Segoe UI",system-ui,-apple-system,Roboto,"Helvetica Neue",Arial,sans-serif;
   --mono:"SF Mono",Consolas,"Roboto Mono",ui-monospace,monospace;
 }
 *{box-sizing:border-box}
@@ -185,6 +185,28 @@ body.lang-en .feedback [lang="ms"],body.lang-ms .feedback [lang="en"]{display:no
 .pl-outbox{font-size:.85rem;color:var(--ink-soft);background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px 14px}
 .pl-outbox b{color:var(--ink)}
 .pl-note{background:#fff8e8;color:#5c3400;border-top:1px solid #f0d9ac;padding:11px 16px;font-size:.85rem}
+/* ---------- Dark mode ---------- */
+/* Session-only: no storage is used, per the contract. Toggle with the button or the D key. */
+body.dark{--ink:#eaeefb;--ink-soft:#c0c7de;--muted:#98a1c0;--bg:#0d1120;--panel:#151b2d;--line:#2a3350;
+  --amber-soft:#3a2b12;--amber-ink:#f2d9a8;--green-soft:#12301f;--green-ink:#a8e5c1;
+  --red-soft:#33161a;--red-ink:#f3b8b8;--shadow:0 10px 34px rgba(0,0,0,.5)}
+body.dark[data-accent]{--accent-soft:#1d2742}
+body.dark .topbar{background:rgba(13,17,32,.92)}
+body.dark code{background:#222c4a;color:#c6d8ff}
+body.dark .fn{background:#222c4a;color:#cfe0ff}
+body.dark .example{background:#131a2b}
+body.dark .practical{background:#1b1733;border-color:#332a55}
+body.dark .opt{background:var(--panel);color:var(--ink)}
+body.dark .quiz{border-color:#2a3350}
+body.dark .pl-prompt{background:#0f1526;color:#e8ecf8}
+body.dark .pl-prompt .kw{background:#22304f;color:#c6d8ff}
+body.dark .pl-out{background:#111729}
+body.dark .pl-outbox{background:var(--panel)}
+body.dark .pl-note{background:#3a2b12;color:#f2d9a8;border-top-color:#5a4420}
+body.dark .pl-cols{background:var(--panel)}
+body.dark .ucard,body.dark section.hs{background:var(--panel)}
+/* Hand-authored SVGs keep their light canvas so every label stays legible. */
+body.dark .figure svg{background:#ffffff}
 /* ---------- Footnotes ---------- */
 .fn{font-size:.64em;font-weight:800;vertical-align:super;line-height:0;color:var(--accent-2);
   background:var(--accent-soft);border-radius:4px;padding:2px 5px;margin-left:2px;
@@ -240,6 +262,7 @@ footer.deckfoot{text-align:center;color:var(--muted);font-size:.8rem;padding:20p
   <div class="brand"><a href="index.html" style="color:inherit;text-decoration:none" title="Course hub">SIM BUILDER</a> · <span>Unit 2 / 4</span></div>
   <div class="progress-wrap"><div class="progress-bar" id="pbar"></div></div>
   <span class="counter" id="counter">1 / 1</span>
+  <button class="btn" id="darkBtn" onclick="toggleDark()" title="Dark mode / Mod gelap" aria-label="Dark mode">🌙</button>
   <div class="langtog" title="Language / Bahasa">
     <button data-l="en" class="on" onclick="setLang('en')">EN</button>
     <button data-l="ms" onclick="setLang('ms')">BM</button>
@@ -907,7 +930,12 @@ Output the map, then the briefs, then the accent list. Nothing else.</code></pre
           stay short.</p>
         <p lang="ms"><strong>Unit 1</strong>, yang menetapkan empat fail dan peraturan bahawa kad termampat — bukan artifak — yang membawa
           keadaan. <code>SPEC.md</code> dan <code>BRIEFS.md</code> ialah dua yang pertama daripada empat itu, dan peraturan pemampatan itulah
-          sebabnya kedua-duanya mesti kekal pendek.</p></div>
+          sebabnya kedua-duanya mesti kekal pendek.</p>
+        <p lang="en">Optionally also the <strong>Nano Unit — “Write one outcome you can actually assess”</strong>. Anyone who has worked
+          through it arrives here with one outcome already rewritten and evidenced, which is the field P1 most often flags.</p>
+        <p lang="ms">Secara pilihan juga <strong>Unit Nano — “Tulis satu hasil pembelajaran yang benar-benar boleh ditaksir”</strong>.
+          Sesiapa yang telah melaluinya tiba di sini dengan satu hasil yang sudah ditulis semula dan dibuktikan, iaitu medan yang paling
+          kerap ditandakan P1.</p></div>
       <div><h3 lang="en">Feeds forward to →</h3><h3 lang="ms">Menyuap ke hadapan →</h3>
         <p lang="en"><strong>Unit 3 — The golden template and the build loop</strong>, which consumes the unit-1 brief to build the template
           and then one brief per session · <strong>Unit 4</strong> reconciles the finished material back against the learning-hours table
@@ -978,6 +1006,12 @@ Output the map, then the briefs, then the accent list. Nothing else.</code></pre
 
 <script>
 /* ===== Language toggle ===== */
+/* ===== Dark mode (session only, no storage) ===== */
+function toggleDark(){
+  const on=document.body.classList.toggle('dark');
+  const b=document.getElementById('darkBtn');
+  if(b){b.textContent=on?'☀':'🌙';}
+}
 function setLang(l){
   document.body.classList.remove('lang-en','lang-ms');
   document.body.classList.add('lang-'+l);
@@ -997,6 +1031,7 @@ function init(){
     if(e.key==='ArrowRight'||e.key==='PageDown'){go(1)}
     if(e.key==='ArrowLeft'||e.key==='PageUp'){go(-1)}
     if(e.key.toLowerCase()==='g'){toggleMode()}
+    if(e.key.toLowerCase()==='d'){toggleDark()}
   });
 }
 function show(i){
