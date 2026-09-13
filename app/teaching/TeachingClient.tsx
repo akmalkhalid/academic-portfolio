@@ -50,33 +50,8 @@ export default function TeachingClient({
       {/* Prompt Engineering Architect used to be featured here. It now lives with
           the other self-paced series under /workshops/, which are unlisted —
           shared directly with a cohort rather than linked from the site.
-          Kopi & Prompt is the opposite: public, indexed and linked, because the
-          archive is meant to be found. Static page under /public/newsletter/. */}
-
-      {/* OPEN LEARNING — Kopi & Prompt archive */}
-      <section style={s('max-width:1120px;margin:0 auto;padding:34px 28px 0')}>
-        <a
-          href="/newsletter/kopi-prompt/"
-          style={s('display:block;text-decoration:none;color:#1c1917;background:#fff;border:1px solid #e7e3dd;border-top:3px solid #c58a1a;border-radius:15px;padding:24px 26px')}
-        >
-          <div style={s('display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:12px')}>
-            <span style={s("font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:3px 9px;border-radius:5px;background:#fbf0dd;color:#7a5210")}>Weekly newsletter · archive</span>
-            <span style={s("font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:3px 9px;border-radius:5px;background:#eaf3de;color:#27500a")}>Free · open access</span>
-          </div>
-          <h2 style={s(`font-family:${stack};font-weight:600;font-size:clamp(21px,2.8vw,27px);line-height:1.15;letter-spacing:-.02em;margin:0 0 9px`)}>Kopi &amp; Prompt — the archive</h2>
-          <p style={s('font-size:15px;line-height:1.6;color:#57514b;margin:0 0 14px;max-width:660px')}>
-            Thirty-one Friday issues of practical AI prompts written for academic staff at FTSM. Each issue
-            takes one real teaching, research or admin headache and solves it with a specific tool, a named
-            technique and cited evidence. Searchable, filterable, and every issue readable in full.
-          </p>
-          <div style={s('display:flex;flex-wrap:wrap;gap:7px;margin-bottom:16px')}>
-            {['31 issues', 'Every Friday', 'Gemini · NotebookLM', 'Copy-ready prompts', 'CAIT, FTSM, UKM'].map((f) => (
-              <span key={f} style={s("font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#6b6560;background:#f4f1ec;border:1px solid #e7e3dd;padding:3px 9px;border-radius:5px")}>{f}</span>
-            ))}
-          </div>
-          <span style={s("display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:#fff;background:#16142e;padding:9px 16px;border-radius:8px")}>Open the archive →</span>
-        </a>
-      </section>
+          Kopi & Prompt is the opposite: public, indexed and linked — see the
+          Open learning section at the foot of this page. */}
 
       {/* COURSES */}
       <section style={s('max-width:1120px;margin:0 auto;padding:40px 28px 10px')}>
@@ -156,6 +131,33 @@ export default function TeachingClient({
             </div>
           ))}
         </div>
+      </section>
+
+      {/* OPEN LEARNING — Kopi & Prompt archive (static page under /public/newsletter/) */}
+      <section style={s('max-width:1120px;margin:0 auto;padding:46px 28px 0')}>
+        <h2 style={s(`font-family:${stack};font-weight:600;font-size:clamp(24px,3vw,32px);letter-spacing:-.02em;margin:0 0 8px`)}>Open learning</h2>
+        <p style={s('font-size:15px;line-height:1.6;color:#57514b;margin:0 0 18px;max-width:660px')}>Open-access material anyone can read, use and adapt — no sign-up, no paywall.</p>
+        <a
+          href="/newsletter/kopi-prompt/"
+          style={s('display:block;text-decoration:none;color:#1c1917;background:#fff;border:1px solid #e7e3dd;border-top:3px solid #c58a1a;border-radius:15px;padding:24px 26px')}
+        >
+          <div style={s('display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:12px')}>
+            <span style={s("font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:3px 9px;border-radius:5px;background:#fbf0dd;color:#7a5210")}>Weekly newsletter · archive</span>
+            <span style={s("font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:3px 9px;border-radius:5px;background:#eaf3de;color:#27500a")}>Free · open access</span>
+          </div>
+          <h3 style={s(`font-family:${stack};font-weight:600;font-size:clamp(19px,2.6vw,24px);line-height:1.18;letter-spacing:-.02em;margin:0 0 9px`)}>Kopi &amp; Prompt — the archive</h3>
+          <p style={s('font-size:15px;line-height:1.6;color:#57514b;margin:0 0 14px;max-width:660px')}>
+            Thirty-one Friday issues of practical AI prompts written for academic staff at FTSM. Each issue
+            takes one real teaching, research or admin headache and solves it with a specific tool, a named
+            technique and cited evidence. Searchable, filterable, and every issue readable in full.
+          </p>
+          <div style={s('display:flex;flex-wrap:wrap;gap:7px;margin-bottom:16px')}>
+            {['31 issues', 'Every Friday', 'Gemini · NotebookLM', 'Copy-ready prompts', 'CAIT, FTSM, UKM'].map((f) => (
+              <span key={f} style={s("font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#6b6560;background:#f4f1ec;border:1px solid #e7e3dd;padding:3px 9px;border-radius:5px")}>{f}</span>
+            ))}
+          </div>
+          <span style={s("display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:#fff;background:#16142e;padding:9px 16px;border-radius:8px")}>Open the archive →</span>
+        </a>
       </section>
 
       {/* CTA */}
