@@ -2,8 +2,8 @@
 title: "Financial time series forecasting using prophet"
 authors: "Yusof, Umi Kalsom and Khalid, M. N. A. and Hussain, Abir and Shamsudin, Haziqah"
 year: 2021
-venue: ""
-category: "Journal"
+venue: "Innovative Systems for Intelligent Health Informatics (IRICT 2020), Lecture Notes on Data Engineering and Communications Technologies, vol. 72, Springer"
+category: "Conference"
 pages: "485--495"
 isFirstAuthor: false
 quartile: "NA"

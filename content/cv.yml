@@ -112,6 +112,9 @@ ip:
   - { title: "AI-Assisted Systematic Literature Review", place: "FTSM, UKM", year: "2024" }
 
 journals:
+  - { q: "", cite: "A. Ullah, X. Zhang, M. A. M. Tasir, M. N. A. Khalid, A. Majid, N. Kumar, and H. Mukalazi (2026). Text-to-video generation with multi-loss sequential generative adversarial network. Scientific Reports, vol. 16." }
+  - { q: "", cite: "W. D. Ahmad, A. A. Bakar, and M. N. A. Khalid (2026). A coordinated hybrid initialization and multi-operator framework for swarm-based optimization. Engineering Research Express, vol. 8." }
+  - { q: "", cite: "M. A. Yahya, M. R. Abd Rahman, M. I. A. Mohd Arif, M. N. A. Khalid, M. S. D. Ahmad Rosli, and N. Abdul Manap (2026). Youth economic empowerment through artificial intelligence: An analysis of legal literacy needs and innovation governance. International Journal of Research and Innovation in Social Science, vol. 10." }
   - { q: "Q4", cite: "W. D. Ahmad, A. A. Bakar, and M. N. A. Khalid (2025). A systematic literature review on the sand cat swarm algorithm: Enhancements, applications, and future directions. International Journal of Advanced Computer Science and Applications, vol. 16, pp. 538–553." }
   - { q: "Q2", cite: "O. Bashaddadh, N. Omar, M. Mohd, and M. N. A. Khalid (2025). Machine learning and deep learning approaches for fake news detection: A systematic review of techniques, challenges, and advancements. IEEE Access, vol. 13, pp. 90 433–90 466." }
   - { q: "Q2", cite: "N. Gao, M. N. A. Khalid, and H. Iida (2025). The impact of performance degree on players: Exploring player enjoyment and engagement in the dynamic of game process. Entertainment Computing, vol. 52, p. 100 887." }
@@ -134,6 +137,7 @@ journals:
   - { q: "Q1", cite: "M. Numan, F. Subhan, M. N. A. Khalid, W. Z. Khan, and H. Iida (2024). Clone node detection in static wireless sensor networks: A hybrid approach. Journal of Network and Computer Applications, vol. 232, p. 104 018." }
   - { q: "Q2", cite: "N. H. S. Suhaimi, N. H. Kamarudin, M. N. A. Khalid, I. Tahir, and M. A. A. Mohamed (2024). State-of-the-art authentication measures in satellite communication networks: A comprehensive analysis. IEEE Access, vol. 12, pp. 142 241–142 264." }
   - { q: "Q4", cite: "S. Xiong, L. Zuo, Q. Chen, Z. Zeliang, and M. N. A. Khalid (2024). A serious game (“fight with virus”) for preventing covid-19 health rumors: Development and experimental study. JMIR Serious Games, vol. 12, e45546." }
+  - { q: "", cite: "M. N. A. Khalid, H. Iida, U. K. Yusof, and R. C. Mat (2023). Guest editorial: Special issue on 'Artificial intelligence and entertainment science: Empathic entertainment technology'. Entertainment Computing, vol. 44, p. 100531." }
   - { q: "Q2", cite: "P. Anunpattana, M. N. A. Khalid, and H. Iida (2023). Objectivity and subjectivity in variation of multiple choice questions: Linking the theoretical concepts using motion in mind. IEEE Access, vol. 11, pp. 35 371–35 397." }
   - { q: "Q1", cite: "A. A. Al-Kadhimi, M. M. Singh, and M. N. A. Khalid (2023). A systematic literature review and a conceptual framework proposition for advanced persistent threats (apt) detection for mobile devices using artificial intelligence techniques. Applied Sciences, vol. 13, no. 14." }
   - { q: "Q1", cite: "M. N. A. Khalid, A. A. Al-Kadhimi, and M. M. Singh (2023). Recent developments in game-theory approaches for the detection and defense against advanced persistent threats (apts): A systematic review. Mathematics, vol. 11, no. 6." }
@@ -147,6 +151,7 @@ journals:
   - { q: "Scopus", cite: "G. Naying, G. Yuexian, M. N. A. Khalid, and H. Iida (2022). A computational game experience analysis via game refinement theory. Telematics and Informatics Reports, vol. 9, p. 100 039." }
   - { q: "Q2", cite: "H. Ri, X. Kang, M. N. A. Khalid, and H. Iida (2022). The dynamics of minority versus majority behaviors: A case study of the mafia game. Information, vol. 13, no. 3, p. 134." }
   - { q: "Q2", cite: "Z. Zhang, N. Gao, S. Li, M. N. A. Khalid, and H. Iida (2022). Action games evolution analysis: A case study using the god of war series. IEEE Access, vol. 10, pp. 123 697–123 710." }
+  - { q: "", cite: "P. Anunpattana, M. N. A. Khalid, H. Iida, and W. Inchamnan (2021). Capturing potential impact of challenge-based gamification on gamified quizzing in the classroom. Heliyon, vol. 7, p. e08637." }
   - { q: "Q2", cite: "H. P. P. Aung, M. N. A. Khalid, and H. Iida (2021). What constitutes fairness in games? A case study with scrabble. Information, vol. 12, no. 9, p. 352." }
   - { q: "Q2", cite: "X. Kang, H. Ri, M. N. A. Khalid, and H. Iida (2021). Addictive games: Case study on multi-armed bandit game. Information, vol. 12, no. 12, p. 521." }
   - { q: "Q2", cite: "M. N. A. Khalid and H. Iida (2021). Objectivity and subjectivity in games: Understanding engagement and addiction mechanism. IEEE Access, vol. 9, pp. 65 187–65 205." }
@@ -186,7 +191,9 @@ journals:
 conferences:
   - "M. N. A. Khalid (2025). Exploring efficiency and solution diversity for type-E assembly line balancing problem. 2025 IEEE 15th ICCSCE, pp. 12–17."
   - "M. N. A. Khalid (2025). Simulating AI-human collaborative strategies in Sudoku puzzle generation. Int. Conf. on Entertainment Computing, Springer, pp. 468–477."
+  - "N. I. Ab Kader, U. K. Yusof, M. N. A. Khalid, and N. R. Nik Husain (2023). A review of long short-term memory approach for time series analysis and forecasting. 2nd Int. Conf. on Emerging Technologies and Intelligent Systems (ICETIS 2022), Lecture Notes in Networks and Systems, vol. 573, Springer, pp. 12-21."
   - "N. I. Ab Kader, U. K. Yusof, and M. N. A. Khalid (2023). Forecasting of outpatient hospital visits using a bidirectional LSTM model. 2023 8th ICBIR, IEEE, pp. 1003–1008."
+  - "U. K. Yusof, M. N. A. Khalid, A. Hussain, and H. Shamsudin (2021). Financial time series forecasting using Prophet. Innovative Systems for Intelligent Health Informatics (IRICT 2020), Lecture Notes on Data Engineering and Communications Technologies, vol. 72, Springer, pp. 485-495."
   - "Y. An, A. Primanita, M. N. A. Khalid, and H. Iida (2020). Ascertaining the play outcome using the single conspiracy number in Gobang. 2020 IEEE Conference on Games (CoG)."
   - "L. Jiangzhou, A. Primanita, M. N. A. Khalid, and H. Iida (2020). Analyzing the improvement process of table tennis using game refinement theory. SICONIAN 2019, Atlantis Press."
   - "M. N. A. Khalid, U. K. Yusof, and H. Iida (2020). An artificial immune system approach for solving type-E assembly line balancing problem with problem-specific information. 2020 IEEE 16th ICCA."
