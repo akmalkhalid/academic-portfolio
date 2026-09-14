@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react'
 import { s } from '@/lib/style'
+import PageBanner from '@/components/PageBanner'
 import DemoThumb from '@/components/pillar-demos/DemoThumb'
 import type { PillarKey } from '@/lib/demos/registry'
 
@@ -95,21 +96,19 @@ export default function ResearchClient({
 
   return (
     <div ref={wrapRef} data-screen-label="Research" style={s('min-height:100vh;overflow-x:hidden')}>
-      {/* HEADER */}
-      <section style={s('max-width:1120px;margin:0 auto;padding:56px 28px 20px')}>
-        <p style={s("font-family:'JetBrains Mono',monospace;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:#a39a8f;margin:0 0 16px")}>/ research · projects · funding</p>
-        <h1 style={s(`font-family:${stack};font-weight:600;font-size:clamp(38px,5.6vw,68px);line-height:1.02;letter-spacing:-.02em;margin:0 0 18px;max-width:920px;text-wrap:balance`)}>Three interconnected pillars at the convergence of AI, optimization and play.</h1>
-        <p style={s('font-size:18px;line-height:1.6;color:#57514b;max-width:680px;margin:0 0 22px')}>Each pillar carries its own signature colour and a looping preview of its demo — click any preview for the full interactive version — followed by the<a href="#projects" style={s('color:#16142e;font-weight:500;text-decoration:none;border-bottom:1px solid #cfc7bb')}>funded projects</a> where the methods meet real-world delivery. The research doesn&apos;t just describe; it runs.</p>
-        <div style={s("display:flex;flex-wrap:wrap;gap:18px;font-family:'JetBrains Mono',monospace;font-size:12px;color:#8a8279")}>
-          <a href="#evolutionary" style={s('text-decoration:none;color:inherit;border-bottom:1px solid #e0dbd2;padding-bottom:2px')}>01 · Optimization</a>
-          <a href="#games" style={s('text-decoration:none;color:inherit;border-bottom:1px solid #e0dbd2;padding-bottom:2px')}>02 · Games &amp; Simulation</a>
-          <a href="#generative-ai" style={s('text-decoration:none;color:inherit;border-bottom:1px solid #e0dbd2;padding-bottom:2px')}>03 · Generative AI</a>
-          <a href="#projects" style={s('text-decoration:none;color:inherit;border-bottom:1px solid #e0dbd2;padding-bottom:2px')}>↓ Funded projects</a>
-        </div>
-      </section>
+      <PageBanner
+        eyebrow="/ research · projects · funding"
+        title="Three interconnected pillars at the convergence of AI, optimization and play."
+        lede={<>Each pillar carries its own signature colour and a looping preview of its demo — click any preview for the full interactive version — followed by the <a href="#projects" className="banner-link">funded projects</a> where the methods meet real-world delivery. The research doesn&apos;t just describe; it runs.</>}
+      >
+        <a href="#evolutionary" className="banner-jump">01 · Optimization</a>
+        <a href="#games" className="banner-jump">02 · Games &amp; Simulation</a>
+        <a href="#generative-ai" className="banner-jump">03 · Generative AI</a>
+        <a href="#projects" className="banner-jump">↓ Funded projects</a>
+      </PageBanner>
 
       {/* PILLARS — three compact cards, side by side */}
-      <section style={s('max-width:1120px;margin:0 auto;padding:26px 28px 24px')}>
+      <section style={s('max-width:1120px;margin:0 auto;padding:56px 28px 24px')}>
         <div className="pillar-grid">
           {pillars.slice().sort((a, b) => a.n.localeCompare(b.n)).map((p) => (
             <div key={p.id} id={p.id} className="pillar-card" style={s(`border-top:3px solid ${p.accent};scroll-margin-top:90px`)}>

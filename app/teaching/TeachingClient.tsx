@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react'
 import { s } from '@/lib/style'
+import PageBanner from '@/components/PageBanner'
 
 const stack = "'Space Grotesk', system-ui, sans-serif"
 
@@ -41,11 +42,11 @@ export default function TeachingClient({
 
   return (
     <div ref={wrapRef} data-screen-label="Teaching" style={s('min-height:100vh;overflow-x:hidden')}>
-      <section style={s('max-width:1120px;margin:0 auto;padding:56px 28px 20px')}>
-        <p style={s("font-family:'JetBrains Mono',monospace;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:#a39a8f;margin:0 0 16px")}>/ teaching &amp; mentorship</p>
-        <h1 style={s(`font-family:${stack};font-weight:600;font-size:clamp(38px,5.6vw,68px);line-height:1.02;letter-spacing:-.02em;margin:0 0 18px;max-width:900px;text-wrap:balance`)}>Courses, supervision and open learning.</h1>
-        <p style={s('font-size:18px;line-height:1.6;color:#57514b;max-width:660px;margin:0')}>Undergraduate and postgraduate courses at FTSM, postgraduate researchers under supervision, and open-access materials anyone can learn from.</p>
-      </section>
+      <PageBanner
+        eyebrow="/ teaching & mentorship"
+        title="Courses, supervision and open learning."
+        lede="Undergraduate and postgraduate courses at FTSM, postgraduate researchers under supervision, and open-access materials anyone can learn from."
+      />
 
       {/* Prompt Engineering Architect used to be featured here. It now lives with
           the other self-paced series under /workshops/, which are unlisted —
@@ -54,7 +55,7 @@ export default function TeachingClient({
           Open learning section at the foot of this page. */}
 
       {/* COURSES */}
-      <section style={s('max-width:1120px;margin:0 auto;padding:40px 28px 10px')}>
+      <section style={s('max-width:1120px;margin:0 auto;padding:56px 28px 10px')}>
         <h2 style={s(`font-family:${stack};font-weight:600;font-size:clamp(24px,3vw,32px);letter-spacing:-.02em;margin:0 0 8px`)}>Courses</h2>
         <p style={s("font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#a39a8f;margin:0 0 16px")}>Currently teaching · {currentCount}</p>
         <div style={s('display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:26px')}>

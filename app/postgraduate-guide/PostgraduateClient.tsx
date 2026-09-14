@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react'
 import { s } from '@/lib/style'
+import PageBanner from '@/components/PageBanner'
 
 const stack = "'Space Grotesk', system-ui, sans-serif"
 
@@ -62,15 +63,15 @@ export default function PostgraduateClient({ email }: { email: string }) {
 
   return (
     <div ref={wrapRef} data-screen-label="Postgraduate guide" style={s('min-height:100vh;overflow-x:hidden')}>
-      {/* HERO */}
-      <section style={s('max-width:1120px;margin:0 auto;padding:58px 28px 26px;display:grid;grid-template-columns:1.4fr .6fr;gap:48px;align-items:start')}>
-        <div>
-          <p style={s("font-family:'JetBrains Mono',monospace;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:#a39a8f;margin:0 0 16px")}>/ postgraduate · supervision</p>
-          <h1 style={s(`font-family:${stack};font-weight:600;font-size:clamp(36px,5vw,60px);line-height:1.03;letter-spacing:-.02em;margin:0 0 16px;text-wrap:balance`)}>Postgraduate Application Guide</h1>
-          <p style={s(`font-family:${stack};font-size:clamp(17px,2vw,21px);color:#57514b;font-style:italic;margin:0 0 20px;max-width:640px;line-height:1.4`)}>For prospective MSc by Research and PhD candidates considering supervision under my direction at FTSM, UKM.</p>
-          <p style={s('font-size:17px;line-height:1.7;color:#44403c;max-width:640px;margin:0')}>Thank you for your interest in pursuing postgraduate research with me. This guide exists to help you decide whether we are a good research fit — before we both invest time in an application process.</p>
-        </div>
-        <aside style={s('background:#fff;border:1px solid #e7e3dd;border-radius:14px;padding:20px 22px')}>
+      <PageBanner
+        eyebrow="/ postgraduate · supervision"
+        title="Postgraduate Application Guide"
+        kicker="For prospective MSc by Research and PhD candidates considering supervision under my direction at FTSM, UKM."
+        lede="Thank you for your interest in pursuing postgraduate research with me. This guide exists to help you decide whether we are a good research fit — before we both invest time in an application process."
+      />
+
+      <section style={s('max-width:1120px;margin:0 auto;padding:48px 28px 26px')}>
+        <aside style={s('background:#fff;border:1px solid #e7e3dd;border-radius:14px;padding:20px 22px;max-width:420px')}>
           <h3 style={s("font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#a39a8f;margin:0 0 14px")}>At a glance</h3>
           {glanceFacts.map((f) => (
             <div key={f.k} style={s('display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid #f3efe9;font-size:13.5px')}>

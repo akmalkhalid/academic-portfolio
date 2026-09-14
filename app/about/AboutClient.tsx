@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react'
 import { s } from '@/lib/style'
+import PageBanner from '@/components/PageBanner'
 
 const P = { purple: '#8b7bf0', blue: '#4d8df0', teal: '#21b3a0', coral: '#f2683f', green: '#84b53a', amber: '#d99320' }
 const stack = "'Space Grotesk', system-ui, sans-serif"
@@ -72,7 +73,7 @@ export default function AboutClient({ name, jobTitle, profiles }: { name: string
       const draw = (t: number) => {
         const ctx = g.ctx; ctx.clearRect(0, 0, g.w, g.h)
         const pts = ps.map((p) => { const rr = p.r + Math.sin(t * 0.001 + p.ph) * 7; return { x: cx0() + Math.cos(p.a) * rr, y: cy0() + Math.sin(p.a) * rr, c: p.c, sz: p.sz } })
-        for (let i = 0; i < pts.length; i++) for (let j = i + 1; j < pts.length; j++) { const a = pts[i], b = pts[j], dx = a.x - b.x, dy = a.y - b.y, d = Math.sqrt(dx * dx + dy * dy); if (d < 46) { ctx.strokeStyle = 'rgba(28,25,23,' + (0.07 * (1 - d / 46)) + ')'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke() } }
+        for (let i = 0; i < pts.length; i++) for (let j = i + 1; j < pts.length; j++) { const a = pts[i], b = pts[j], dx = a.x - b.x, dy = a.y - b.y, d = Math.sqrt(dx * dx + dy * dy); if (d < 46) { ctx.strokeStyle = 'rgba(255,255,255,' + (0.16 * (1 - d / 46)) + ')'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke() } }
         ctx.globalAlpha = .9; for (const p of pts) { ctx.fillStyle = p.c; ctx.beginPath(); ctx.arc(p.x, p.y, p.sz, 0, 7); ctx.fill() } ctx.globalAlpha = 1
       }
       if (reduce) { draw(0); return }
@@ -95,28 +96,25 @@ export default function AboutClient({ name, jobTitle, profiles }: { name: string
 
   return (
     <div ref={wrapRef} data-screen-label="About" style={s('min-height:100vh;overflow-x:hidden')}>
-      {/* HERO */}
-      <section style={s('max-width:1120px;margin:0 auto;padding:58px 28px 40px;display:grid;grid-template-columns:1.25fr .75fr;gap:48px;align-items:center')}>
-        <div>
-          <p data-tw="1" style={s("font-family:'JetBrains Mono',monospace;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:#a39a8f;margin:0 0 16px")}>/ about</p>
-          <h1 data-tw="2" style={s(`font-family:${stack};font-weight:600;font-size:clamp(36px,5vw,62px);line-height:1.03;letter-spacing:-.02em;margin:0 0 10px;text-wrap:balance`)}>{name}</h1>
-          <p data-tw="3" style={s(`font-family:${stack};font-size:clamp(18px,2vw,23px);color:#57514b;margin:0 0 22px;font-weight:500`)}>{jobTitle} · FTSM, Universiti Kebangsaan Malaysia</p>
-          <p data-tw="4" style={s('font-size:17px;line-height:1.65;color:#44403c;max-width:600px;margin:0 0 26px')}>Teaching and researching at the convergence of artificial intelligence, computational intelligence and interactive systems — designing systems that adapt, optimize and create, not just compute.</p>
-          <div data-reveal style={s('display:flex;flex-wrap:wrap;gap:10px')}>
-            <a href="/research" style={s('font-size:14.5px;font-weight:500;text-decoration:none;color:#fff;background:#16142e;padding:11px 18px;border-radius:8px')}>Explore the research →</a>
-            <a href="/contact" style={s('font-size:14.5px;font-weight:500;text-decoration:none;color:#1c1917;background:#fff;border:1px solid #d9d3ca;padding:11px 18px;border-radius:8px')}>Get in touch</a>
-            <a href="/cv/Akmal_CV_2026.pdf" download style={s('font-size:14.5px;font-weight:500;text-decoration:none;color:#1c1917;background:#fff;border:1px solid #d9d3ca;padding:11px 18px;border-radius:8px')}>Download CV ↓</a>
+      <PageBanner
+        eyebrow="/ about"
+        title={name}
+        kicker={`${jobTitle} · FTSM, Universiti Kebangsaan Malaysia`}
+        lede="Teaching and researching at the convergence of artificial intelligence, computational intelligence and interactive systems — designing systems that adapt, optimize and create, not just compute."
+        aside={
+          <div className="hero-portrait">
+            <canvas ref={motifRef} style={s('position:absolute;inset:-30px;width:calc(100% + 60px);height:calc(100% + 60px)')} />
+            <img className="face" src="/profile.jpg" alt={name} />
           </div>
-        </div>
-        <div style={s('position:relative;width:300px;height:300px;justify-self:center')}>
-          <canvas ref={motifRef} style={s('position:absolute;inset:-30px;width:calc(100% + 60px);height:calc(100% + 60px)')} />
-          <img src="/profile.jpg" alt="" aria-hidden="true" style={s('position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:50%;filter:blur(36px);opacity:.4;transform:scale(1.1)')} />
-          <img src="/profile.jpg" alt={name} style={s('position:relative;width:100%;height:100%;object-fit:cover;border-radius:50%;border:5px solid #fff;box-shadow:0 20px 50px -20px rgba(28,25,23,.5)')} />
-        </div>
-      </section>
+        }
+      >
+        <a href="/research" className="btn-lume">Explore the research <span aria-hidden="true">→</span></a>
+        <a href="/contact" className="btn-ghost">Get in touch</a>
+        <a href="/cv/Akmal_CV_2026.pdf" download className="btn-ghost">Download CV <span aria-hidden="true">↓</span></a>
+      </PageBanner>
 
       {/* BIO */}
-      <section style={s('max-width:1120px;margin:0 auto;padding:24px 28px 10px;display:grid;grid-template-columns:1.6fr 1fr;gap:48px;align-items:start')}>
+      <section style={s('max-width:1120px;margin:0 auto;padding:56px 28px 10px;display:grid;grid-template-columns:1.6fr 1fr;gap:48px;align-items:start')}>
         <div style={s('max-width:680px')}>
           <h2 data-tw="5" style={s(`font-family:${stack};font-weight:600;font-size:clamp(24px,3vw,32px);letter-spacing:-.02em;margin:0 0 20px`)}>A research program built on one question.</h2>
           <p data-tw="6" style={s('font-size:16.5px;line-height:1.75;color:#44403c;margin:0 0 18px')}>My academic journey has been shaped by a single guiding question — <em style={s('color:#1c1917')}>how can we design intelligent systems that adapt, optimize and create, not just compute?</em> It runs through everything from generative AI and evolutionary computing to expert systems and games informatics.</p>

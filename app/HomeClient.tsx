@@ -5,6 +5,7 @@ import { s } from '@/lib/style'
 import { PCOL, PNAME, PBADGE, QCOL, CATNAME, type Code } from '@/lib/view'
 import ResearchShowreel from '@/components/paper-demos/ResearchShowreel'
 import DemoThumb from '@/components/pillar-demos/DemoThumb'
+import HeroSim from '@/components/HeroSim'
 import type { PillarKey } from '@/lib/demos/registry'
 
 type PubNode = { t: string; y: number; pills: Code[]; q: string; cat: string; citation: string; scholar: string }
@@ -17,7 +18,6 @@ export default function HomeClient({
   hero, pubs, funded, stats, articles,
 }: { hero: { headline: string; sub: string }; pubs: PubNode[]; funded: Funded[]; stats: Stats; articles: SelectedGroup[] }) {
   const wrapRef = useRef<HTMLDivElement>(null)
-  const heroRef = useRef<HTMLCanvasElement>(null)
   const graphRef = useRef<HTMLCanvasElement>(null)
 
   const [pillarFilter, setPillarFilter] = useState<string[]>([])
@@ -57,7 +57,7 @@ export default function HomeClient({
       const r = wrapRef.current
       if (!r) { if (tries < 300) requestAnimationFrame(() => setupTextReveal(tries + 1)); return }
       let els = ([...r.querySelectorAll('section h1, section h2, section h3, section p')] as HTMLElement[])
-        .filter((el) => !el.closest('header,footer,nav') && el.textContent!.trim().length)
+        .filter((el) => !el.closest('header,footer,nav,.dark-band') && el.textContent!.trim().length)
       if (!els.length || !els[0].offsetHeight) { if (tries < 300) requestAnimationFrame(() => setupTextReveal(tries + 1)); return }
       if (reduce) return
       els = els.filter((el) => el.offsetHeight > 0)
@@ -73,37 +73,6 @@ export default function HomeClient({
     }
 
     // ---- hero particle field ----
-    function setupHero() {
-      const cv = heroRef.current; if (!cv) return
-      if (!cv.getBoundingClientRect().width) { requestAnimationFrame(setupHero); return }
-      let g = fit(cv)
-      const cols = Object.values(PCOL)
-      const mk = () => { const a: any[] = []; const N = g.w < 640 ? 78 : 150; for (let i = 0; i < N; i++) a.push({ x: Math.random() * g.w, y: Math.random() * g.h, vx: (Math.random() - .5) * .3, vy: (Math.random() - .5) * .3, c: cols[i % cols.length], r: Math.random() * 1.5 + 1 }); return a }
-      let ps = mk()
-      const mouse = { x: -999, y: -999 }
-      cv.addEventListener('pointermove', (e) => { const r = cv.getBoundingClientRect(); mouse.x = e.clientX - r.left; mouse.y = e.clientY - r.top })
-      cv.addEventListener('pointerleave', () => { mouse.x = -999; mouse.y = -999 })
-      fits.push(() => { g = fit(cv); ps = mk() })
-      const draw = () => {
-        const ctx = g.ctx; ctx.clearRect(0, 0, g.w, g.h)
-        for (const p of ps) {
-          const a = Math.sin(p.y * 0.01 + p.x * 0.008) * 0.6
-          p.vx += Math.cos(a) * 0.01; p.vy += Math.sin(a) * 0.01
-          const dx = p.x - mouse.x, dy = p.y - mouse.y, d2 = dx * dx + dy * dy
-          if (d2 < 13000) { const d = Math.sqrt(d2) || 1; p.vx += dx / d * 0.5; p.vy += dy / d * 0.5 }
-          p.vx *= 0.95; p.vy *= 0.95; p.x += p.vx; p.y += p.vy
-          if (p.x < 0) p.x += g.w; if (p.x > g.w) p.x -= g.w; if (p.y < 0) p.y += g.h; if (p.y > g.h) p.y -= g.h
-        }
-        for (let i = 0; i < ps.length; i++) for (let j = i + 1; j < ps.length; j++) { const a = ps[i], b = ps[j], dx = a.x - b.x, dy = a.y - b.y, d = Math.sqrt(dx * dx + dy * dy); if (d < 120) { ctx.strokeStyle = 'rgba(28,25,23,' + (0.06 * (1 - d / 120)) + ')'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke() } }
-        ctx.globalAlpha = .5
-        for (const p of ps) { ctx.fillStyle = p.c; ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, 7); ctx.fill() }
-        ctx.globalAlpha = 1
-      }
-      if (reduce) { draw(); return }
-      const loop = () => { draw(); rafs.push(requestAnimationFrame(loop)) }
-      loop()
-    }
-
     // ---- stat counters ----
     function setupCounters() {
       const els = ([...root().querySelectorAll('[data-count]')] as HTMLElement[]).filter((el) => !el.hasAttribute('data-live'))
@@ -187,7 +156,7 @@ export default function HomeClient({
     const onResize = () => fits.forEach((f) => f && f())
     window.addEventListener('resize', onResize)
 
-    setupTextReveal(); setupHero(); setupCounters(); setupVisitorCounter(); setupGraph()
+    setupTextReveal(); setupCounters(); setupVisitorCounter(); setupGraph()
 
     return () => {
       rafs.forEach((r) => cancelAnimationFrame(r))
@@ -236,12 +205,20 @@ export default function HomeClient({
   }
 
   const statList = [
-    { num: stats.pubs, display: String(stats.pubs), label: 'Peer-reviewed publications', hint: '2012 — 2026', dot: '#8b7bf0', live: false },
-    { num: stats.citations, display: stats.citations.toLocaleString(), label: 'Citations', hint: `${stats.hIndex ? `Scholar · h-index ${stats.hIndex} · i10 ${stats.i10Index}` : 'Google Scholar'}${stats.autoCitations ? ` · ${stats.autoSource || 'OpenAlex'} ${stats.autoCitations.toLocaleString()}` : ''}`, dot: '#4d8df0', live: false },
-    { num: stats.grants, display: String(stats.grants), label: 'Funded grants', hint: 'FRGS · GGPM · TR-UKM', dot: '#21b3a0', live: false },
-    { num: stats.students, display: String(stats.students), label: 'Postgraduates supervised', hint: "PhD & Master's", dot: '#f2683f', live: false },
-    { num: 0, display: '—', label: 'Site visitors', hint: 'cookie-free · live count', dot: '#84b53a', live: true },
+    { num: stats.citations, display: stats.citations.toLocaleString(), label: 'Citations', hint: `Google Scholar${stats.autoCitations ? ` · ${stats.autoSource || 'OpenAlex'} ${stats.autoCitations.toLocaleString()}` : ''}`, dot: '#4d8df0', live: false },
+    { num: stats.hIndex || 0, display: stats.hIndex ? String(stats.hIndex) : '—', label: 'h-index', hint: stats.i10Index ? `i10-index ${stats.i10Index}` : 'Google Scholar', dot: '#8b7bf0', live: false },
+    { num: stats.pubs, display: String(stats.pubs), label: 'Peer-reviewed publications', hint: '2012 — 2026', dot: '#21b3a0', live: false },
+    { num: stats.grants, display: String(stats.grants), label: 'Funded grants', hint: 'FRGS · GGPM · TR-UKM', dot: '#f2683f', live: false },
+    { num: stats.students, display: String(stats.students), label: 'Postgraduates supervised', hint: "PhD & Master's", dot: '#d99320', live: false },
+    { num: 0, display: '—', label: 'Site visitors', hint: 'cookie-free · live', dot: '#84b53a', live: true },
   ]
+
+  // Headline words that get lit up. Falls back silently if the copy changes.
+  const HL: Record<string, string> = { theory: 'hl-a', play: 'hl-b' }
+  const headlineNodes = (hero.headline || '').split(/(\s+)/).map((tok, i) => {
+    const cls = HL[tok.toLowerCase().replace(/[^a-z]/g, '')]
+    return cls ? <span key={i} className={'hl ' + cls}>{tok}</span> : <span key={i}>{tok}</span>
+  })
 
   const tabOn = "font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:600;cursor:pointer;padding:7px 15px;border-radius:6px;border:none;background:#ECEAF3;color:#0f0e14"
   const tabOff = "font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:500;cursor:pointer;padding:7px 15px;border-radius:6px;border:none;background:transparent;color:#9b96aa"
@@ -250,43 +227,52 @@ export default function HomeClient({
 
   return (
     <div ref={wrapRef} data-screen-label="Home" style={s('min-height:100vh;overflow-x:hidden')}>
-      {/* HERO */}
-      <section id="top" style={s('position:relative;overflow:hidden;border-bottom:1px solid #e7e3dd')}>
-        <canvas ref={heroRef} style={s('position:absolute;inset:0;width:100%;height:100%;display:block')} />
-        <div style={s('position:relative;max-width:1120px;margin:0 auto;padding:78px 28px 70px;display:grid;grid-template-columns:1fr auto;gap:48px;align-items:center')}>
-          <div style={s('max-width:760px')}>
-            <p style={s("font-family:'JetBrains Mono',monospace;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:#8a8279;margin:0 0 22px")}>Dr. Mohd Nor Akmal Khalid · FTSM, UKM</p>
-            <h1 style={s(`font-family:${stack};font-weight:600;font-size:clamp(40px,6.4vw,76px);line-height:1.02;letter-spacing:-0.02em;margin:0 0 22px;text-wrap:balance`)}>{hero.headline}</h1>
-            <p style={s('font-size:18px;line-height:1.6;color:#57514b;max-width:600px;margin:0 0 30px')}>{hero.sub}</p>
-            <div style={s('display:flex;flex-wrap:wrap;gap:12px;margin-bottom:30px')}>
-              <a href="#research" style={s('font-size:14.5px;font-weight:500;text-decoration:none;color:#fff;background:#16142e;padding:12px 20px;border-radius:8px')}>Explore my research →</a>
-              <a href="#pubs" style={s('font-size:14.5px;font-weight:500;text-decoration:none;color:#1c1917;background:#fff;border:1px solid #d9d3ca;padding:12px 20px;border-radius:8px')}>View publications</a>
-              <a href="/cv/Akmal_CV_2026.pdf" download style={s('font-size:14.5px;font-weight:500;text-decoration:none;color:#1c1917;background:#fff;border:1px solid #d9d3ca;padding:12px 20px;border-radius:8px')}>Download CV ↓</a>
+      {/* HERO — dark cinematic band, live particle-swarm search running behind it */}
+      <section id="top" className="dark-band" data-dark-band="1">
+        <HeroSim variant="hero" />
+        <div className="band-inner">
+          <div className="hero-grid">
+            <div className="hero-in" style={s('min-width:0')}>
+              <p className="hero-eyebrow">
+                <span className="dot" />
+                <span className="txt">Dr. Mohd Nor Akmal Khalid · FTSM, UKM</span>
+              </p>
+              <h1 className="hero-title">{headlineNodes}</h1>
+              <p className="hero-sub">{hero.sub}</p>
+              <div className="hero-ctas">
+                <a href="#research" className="btn-lume">Explore my research <span aria-hidden="true">→</span></a>
+                <a href="#pubs" className="btn-ghost">View publications</a>
+                <a href="/cv/Akmal_CV_2026.pdf" download className="btn-ghost">Download CV <span aria-hidden="true">↓</span></a>
+              </div>
+              <p className="hero-foot">
+                The field behind this text is a live particle-swarm search — a real population hunting the optimum of a
+                landscape that keeps shifting under it. Move your cursor into it: you become a constraint it has to route around.
+              </p>
+            </div>
+            <div className="hero-portrait">
+              <span className="ring" aria-hidden="true" />
+              <img className="face" src="/profile.jpg" alt="Dr. Mohd Nor Akmal Khalid" />
             </div>
           </div>
-          <div style={s('position:relative;width:230px;height:230px;flex-shrink:0;justify-self:end')}>
-            <img src="/profile.jpg" alt="" aria-hidden="true" style={s('position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:50%;filter:blur(34px);opacity:.45;transform:scale(1.12)')} />
-            <img src="/profile.jpg" alt="Dr. Mohd Nor Akmal Khalid" style={s('position:relative;width:100%;height:100%;object-fit:cover;border-radius:50%;box-shadow:0 18px 50px -18px rgba(28,25,23,.5);border:5px solid #fff')} />
+
+          {/* METRICS RAIL — inside the band, so the dark fold closes on the numbers */}
+          <div className="hero-metrics" data-stats="1">
+            {statList.map((st, i) => (
+              <div key={i} style={s('position:relative;padding-left:16px;min-width:0')}>
+                <span style={s(`position:absolute;left:0;top:9px;width:7px;height:7px;border-radius:50%;background:${st.dot};box-shadow:0 0 12px ${st.dot};animation:computePulse 2.6s ease-in-out infinite`)} />
+                <div className="hero-metric-n">
+                  <span {...(st.live ? { 'data-count': 0, 'data-live': '1' } : st.num ? { 'data-count': st.num } : {})}>{st.display}</span>
+                </div>
+                <div className="hero-metric-l">{st.label}</div>
+                <div className="hero-metric-h">{st.hint}</div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* STATS */}
-      <section data-stats="1" style={s('max-width:1120px;margin:0 auto;padding:46px 28px;display:grid;grid-template-columns:repeat(5,1fr);gap:18px')}>
-        {statList.map((st, i) => (
-          <div key={i} style={s('position:relative;padding-left:16px')}>
-            <span style={s(`position:absolute;left:0;top:8px;width:7px;height:7px;border-radius:50%;background:${st.dot};animation:computePulse 2.6s ease-in-out infinite`)} />
-            <div style={s(`font-family:${stack};font-weight:600;font-size:clamp(30px,3.4vw,42px);line-height:1;letter-spacing:-.02em`)}>
-              <span {...(st.live ? { 'data-count': 0, 'data-live': '1' } : { 'data-count': st.num })}>{st.display}</span>
-            </div>
-            <div style={s('font-size:13px;color:#57514b;margin-top:8px;line-height:1.35')}>{st.label}</div>
-            <div style={s("font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.06em;color:#a39a8f;margin-top:3px;text-transform:uppercase")}>{st.hint}</div>
-          </div>
-        ))}
-      </section>
-
       {/* RESEARCH PILLARS */}
-      <section id="research" style={s('max-width:1120px;margin:0 auto;padding:30px 28px 64px')}>
+      <section id="research" style={s('max-width:1120px;margin:0 auto;padding:66px 28px 64px')}>
         <p style={s("font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#a39a8f;margin:0 0 10px")}>/ research program</p>
         <h2 style={s(`font-family:${stack};font-weight:600;font-size:clamp(28px,3.6vw,40px);letter-spacing:-.02em;margin:0 0 32px`)}>Three pillars, one connected agenda.</h2>
         <div className="pillar-grid">

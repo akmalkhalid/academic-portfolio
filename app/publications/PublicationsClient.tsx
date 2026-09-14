@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { s } from '@/lib/style'
+import PageBanner from '@/components/PageBanner'
 import { PCOL, PNAME, QCOL, CATNAME, type Code } from '@/lib/view'
 
 type PubNode = { t: string; y: number; pills: Code[]; q: string; cat: string; v: string; citation: string; scholar: string; slug: string }
@@ -132,15 +133,14 @@ export default function PublicationsClient({
 
   return (
     <div ref={wrapRef} data-screen-label="Publications" style={s('min-height:100vh;overflow-x:hidden')}>
-      {/* PAGE HEADER */}
-      <section style={s('max-width:1120px;margin:0 auto;padding:56px 28px 24px')}>
-        <p style={s("font-family:'JetBrains Mono',monospace;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:#a39a8f;margin:0 0 16px")}>/ publications · {minYearBound} — {maxYearBound}</p>
-        <h1 style={s(`font-family:${stack};font-weight:600;font-size:clamp(38px,5.6vw,68px);line-height:1.02;letter-spacing:-.02em;margin:0 0 18px;max-width:900px;text-wrap:balance`)}>A body of work, mapped.</h1>
-        <p style={s('font-size:18px;line-height:1.6;color:#57514b;max-width:660px;margin:0')}>{pubs.length} peer-reviewed papers across six research pillars. Explore the connective tissue as a living constellation, or scan the full chronological list.</p>
-      </section>
+      <PageBanner
+        eyebrow={`/ publications · ${minYearBound} — ${maxYearBound}`}
+        title="A body of work, mapped."
+        lede={`${pubs.length} peer-reviewed papers across six research pillars. Explore the connective tissue as a living constellation, or scan the full chronological list.`}
+      />
 
       {/* QUARTILE STAT STRIP */}
-      <section style={s('max-width:1120px;margin:0 auto;padding:18px 28px 8px;display:grid;grid-template-columns:repeat(6,1fr);gap:16px')}>
+      <section style={s('max-width:1120px;margin:0 auto;padding:48px 28px 8px;display:grid;grid-template-columns:repeat(6,1fr);gap:16px')}>
         {quartileStats.map((q, i) => (
           <div key={i} style={s(`border-top:2px solid ${q.color};padding-top:12px`)}>
             <div style={s(`font-family:${stack};font-weight:600;font-size:30px;line-height:1;letter-spacing:-.02em`)}>{q.num}</div>

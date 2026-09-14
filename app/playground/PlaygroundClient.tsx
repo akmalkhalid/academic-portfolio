@@ -2,6 +2,7 @@
 
 import type { JSX } from 'react'
 import { s } from '@/lib/style'
+import PageBanner from '@/components/PageBanner'
 import DemoTile from '@/components/DemoTile'
 import DemoThumb from '@/components/pillar-demos/DemoThumb'
 import DemoDisclaimer from '@/components/DemoDisclaimer'
@@ -131,39 +132,18 @@ const PILLAR_BG: Record<string, string> = {
 export default function PlaygroundClient({ counts }: { counts: Record<string, number> }) {
   return (
     <div data-screen-label="Playground" style={s('min-height:100vh;overflow-x:hidden')}>
-      {/* HEADER */}
-      <section style={s('max-width:1120px;margin:0 auto;padding:56px 28px 22px')}>
-        <p style={mono('font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:#a39a8f;margin:0 0 16px')}>
-          / playground · tools + live demos
-        </p>
-        <h1
-          style={s(
-            `font-family:${stack};font-weight:600;font-size:clamp(38px,5.6vw,68px);line-height:1.02;letter-spacing:-.02em;margin:0 0 18px;max-width:900px;text-wrap:balance`,
-          )}
-        >
-          Things you can actually run.
-        </h1>
-        <p style={s('font-size:18px;line-height:1.6;color:#57514b;max-width:700px;margin:0 0 22px')}>
-          Free browser-based utilities I built for my own research and teaching, plus the research itself —
-          simulations and optimizers rebuilt from the published papers, and a stand-in for each research pillar.
-          Everything runs locally in your browser; nothing is uploaded. Click any preview for the full interactive
-          version.
-        </p>
-        <div style={mono('display:flex;flex-wrap:wrap;gap:18px;font-size:12px;color:#8a8279')}>
-          <a href="#tools" style={s('text-decoration:none;color:inherit;border-bottom:1px solid #e0dbd2;padding-bottom:2px')}>
-            ↓ Tools
-          </a>
-          <a href="#from-research" style={s('text-decoration:none;color:inherit;border-bottom:1px solid #e0dbd2;padding-bottom:2px')}>
-            ↓ Built from published research
-          </a>
-          <a href="#pillar-demos" style={s('text-decoration:none;color:inherit;border-bottom:1px solid #e0dbd2;padding-bottom:2px')}>
-            ↓ Research-pillar demos
-          </a>
-        </div>
-      </section>
+      <PageBanner
+        eyebrow="/ playground · tools + live demos"
+        title="Things you can actually run."
+        lede="Free browser-based utilities I built for my own research and teaching, plus the research itself — simulations and optimizers rebuilt from the published papers, and a stand-in for each research pillar. Everything runs locally in your browser; nothing is uploaded. Click any preview for the full interactive version."
+      >
+        <a href="#tools" className="banner-jump">↓ Tools</a>
+        <a href="#from-research" className="banner-jump">↓ Built from published research</a>
+        <a href="#pillar-demos" className="banner-jump">↓ Research-pillar demos</a>
+      </PageBanner>
 
       {/* TOOLS */}
-      <section id="tools" style={s('max-width:1120px;margin:0 auto;padding:18px 28px 10px;scroll-margin-top:80px')}>
+      <section id="tools" style={s('max-width:1120px;margin:0 auto;padding:52px 28px 10px;scroll-margin-top:80px')}>
         <div style={s('display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:18px')}>
           <h2 style={s(`font-family:${stack};font-weight:600;font-size:clamp(22px,2.8vw,30px);letter-spacing:-.02em;margin:0`)}>
             The toolkit

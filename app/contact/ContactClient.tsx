@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from 'react'
 import { s } from '@/lib/style'
+import PageBanner from '@/components/PageBanner'
 
 const stack = "'Space Grotesk', system-ui, sans-serif"
 
@@ -33,16 +34,17 @@ export default function ContactClient({
 
   return (
     <div ref={wrapRef} data-screen-label="Contact" style={s('min-height:100vh;display:flex;flex-direction:column;overflow-x:hidden')}>
-      <section style={s('max-width:1120px;margin:0 auto;width:100%;padding:64px 28px 40px;display:grid;grid-template-columns:1.1fr .9fr;gap:56px;align-items:center;flex:1')}>
-        <div>
-          <p style={s("font-family:'JetBrains Mono',monospace;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:#a39a8f;margin:0 0 16px")}>/ contact</p>
-          <h1 style={s(`font-family:${stack};font-weight:600;font-size:clamp(38px,5.4vw,64px);line-height:1.03;letter-spacing:-.02em;margin:0 0 18px;text-wrap:balance`)}>Let&apos;s start a conversation.</h1>
-          <p style={s('font-size:17.5px;line-height:1.6;color:#57514b;max-width:520px;margin:0 0 30px')}>Open to postgraduate supervision, research collaboration, joint grant applications and conference invitations. The fastest way to reach me is email.</p>
-          <a href={`mailto:${email}`} style={s('display:inline-flex;align-items:center;gap:10px;font-size:15px;font-weight:500;text-decoration:none;color:#fff;background:#16142e;padding:13px 22px;border-radius:9px')}>Write to me <span style={s("font-family:'JetBrains Mono',monospace")}>→</span></a>
-          <p style={s('font-size:13.5px;color:#8a8279;margin:18px 0 0')}>Prospective postgraduate students: please read the <a href="/postgraduate-guide" style={s('color:#16142e;font-weight:500')}>application guide</a> before writing.</p>
-        </div>
+      <PageBanner
+        eyebrow="/ contact"
+        title={<>Let&apos;s start a conversation.</>}
+        lede="Open to postgraduate supervision, research collaboration, joint grant applications and conference invitations. The fastest way to reach me is email."
+      >
+        <a href={`mailto:${email}`} className="btn-lume">Write to me <span aria-hidden="true">→</span></a>
+        <a href="/postgraduate-guide" className="btn-ghost">Postgraduate application guide</a>
+      </PageBanner>
 
-        <div style={s('display:flex;flex-direction:column;gap:12px')}>
+      <section style={s('max-width:1120px;margin:0 auto;width:100%;padding:56px 28px 40px;flex:1')}>
+        <div style={s('display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:12px;align-items:start')}>
           {details.map((d) => (
             <a key={d.label} href={d.href} style={s(`display:block;text-decoration:none;color:#1c1917;background:#fff;border:1px solid #e7e3dd;border-left:3px solid ${d.accent};border-radius:13px;padding:18px`)}>
               <div style={s("font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:#a39a8f;margin-bottom:7px")}>{d.label}</div>

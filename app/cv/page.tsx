@@ -9,6 +9,7 @@
 import { loadCV } from "../../lib/cv-data.js";
 // @ts-ignore
 import { renderBody, CV_CSS_SCOPED } from "../../lib/cv-template.js";
+import PageBanner from "@/components/PageBanner";
 
 export const metadata = {
   title: "Curriculum Vitae — Mohd Nor Akmal Khalid",
@@ -21,28 +22,28 @@ export default function CVPage() {
   const body = renderBody(data);
 
   return (
-    <div style={{ background: "#f4f5f7", minHeight: "100vh", padding: "24px 12px 64px" }}>
+    <>
+      <PageBanner
+        eyebrow="/ curriculum vitae"
+        title="Curriculum Vitae"
+        kicker="Dr. Mohd Nor Akmal Khalid · Senior Lecturer, FTSM, Universiti Kebangsaan Malaysia"
+        lede="The full academic record — appointments, grants, publications, supervision and service. This page and the PDF are generated from one source file, so they can never drift apart."
+      >
+        <a href="/cv/Akmal_CV_2026.pdf" className="btn-lume" download>
+          Download PDF <span aria-hidden="true">↓</span>
+        </a>
+        <a href="/publications" className="btn-ghost">Browse publications</a>
+      </PageBanner>
+
+    <div style={{ background: "#f4f5f7", minHeight: "100vh", padding: "34px 12px 64px" }}>
       <link
         rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
       />
       <style dangerouslySetInnerHTML={{ __html: CV_CSS_SCOPED }} />
 
-      <div style={{ maxWidth: 900, margin: "0 auto 16px", display: "flex", gap: 10, justifyContent: "flex-end", alignItems: "center" }}>
-        <span style={{ marginRight: "auto", fontSize: 13, color: "#6b7280" }}>
-          Auto-generated from this page — always current.
-        </span>
-        <a
-          href="/cv/Akmal_CV_2026.pdf"
-          className="cv-download-btn"
-          style={{
-            display: "inline-flex", alignItems: "center", gap: 8,
-            background: "#1b2a5c", color: "#fff", fontWeight: 600, fontSize: 14,
-            padding: "9px 16px", borderRadius: 8, textDecoration: "none",
-          }}
-        >
-          ↓ Download PDF
-        </a>
+      <div style={{ maxWidth: 900, margin: "0 auto 16px", fontSize: 13, color: "#6b7280", textAlign: "center" }}>
+        Auto-generated from the same data as the downloadable PDF — always current.
       </div>
 
       <div
@@ -55,5 +56,6 @@ export default function CVPage() {
         dangerouslySetInnerHTML={{ __html: body }}
       />
     </div>
+    </>
   );
 }
