@@ -247,6 +247,7 @@ footer.deckfoot{text-align:center;color:var(--muted);font-size:.8rem;padding:20p
 .pl-head{background:#fff!important;color:#111629!important;border-bottom:2px solid #111629}
 .pl-sub{color:#565d80!important}.copy-btn{display:none}
 .pl-tabs{background:#fff!important;border-bottom:1px solid #111629}
+details.console>.console-body{display:block!important}
 .pl-tab{background:#fff!important;color:#111629!important;border-color:#111629!important}
 .connections,.owncase{background:#fff!important;color:#111629!important;border:2px solid #111629!important}
 .connections h3,.connections strong,.owncase strong,.connections a{color:#111629!important}
@@ -274,6 +275,22 @@ h2.sec{font-size:1.5rem;margin:0 0 .15em}
 .ucard .un{font-size:.7rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
 .ucard h3{margin:.25em 0 .3em;font-size:1.06rem;line-height:1.25}
 .ucard p{font-size:.86rem;color:var(--muted);margin:.2em 0 .6em}
+.ucard.mini{border-left-width:4px;padding:12px 15px;display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px}
+.ucard.mini h3{margin:0;font-size:.96rem}
+.ucard.mini p{margin:0;flex:1 1 260px}
+.subhead{font-size:.72rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:26px 0 10px}
+/* Collapsible prompt console — closed by default to keep the hub calm */
+details.console{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--panel)}
+details.console>summary{list-style:none;cursor:pointer;padding:14px 18px;background:var(--accent-soft);
+  font-weight:800;color:var(--accent-2);display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:.94rem}
+details.console>summary::-webkit-details-marker{display:none}
+details.console>summary::after{content:"\25B8";font-size:1.05rem;color:var(--accent)}
+details.console[open]>summary::after{content:"\25BE"}
+details.console>summary:hover{filter:brightness(.97)}
+details.console .console-body{padding:4px 16px 14px}
+.drivebtn{display:inline-flex;align-items:center;gap:9px;background:var(--accent);color:#fff!important;border-radius:10px;
+  padding:11px 18px;font-weight:800;font-size:.9rem;text-decoration:none;border-bottom:none!important;margin-top:4px}
+.drivebtn:hover{background:var(--accent-2)}
 </style>
 </head>
 <body data-accent="u1" class="lang-en">
@@ -291,7 +308,7 @@ h2.sec{font-size:1.5rem;margin:0 0 .15em}
 <div class="hub">
 
 <div class="hero">
-  <div class="slide-kicker"><span lang="en">A self-instructional series · 1 nano entry point + 4 units</span><span lang="ms">Siri pembelajaran kendiri · 1 titik masuk nano + 4 unit</span></div>
+  <div class="slide-kicker"><span lang="en">A self-instructional series · 4 units + a 20-minute starter</span><span lang="ms">Siri pembelajaran kendiri · 4 unit + pemula 20 minit</span></div>
   <h1 lang="en">Build your own course SIMs — with AI, without losing the plot</h1>
   <h1 lang="ms">Bina SIM kursus anda sendiri — dengan AI, tanpa hilang jejak</h1>
   <p class="lead" lang="en" style="max-width:700px">Four units that take you from an approved curriculum to a complete series of
@@ -308,22 +325,19 @@ h2.sec{font-size:1.5rem;margin:0 0 .15em}
 </div>
 
 <section class="hs">
-  <h2 class="sec"><span lang="en">Start here if you have twenty minutes</span><span lang="ms">Mulakan di sini jika anda ada dua puluh minit</span></h2>
-  <div class="sec-ms"><span lang="en">A Nano Unit is one outcome, one sitting, complete. It needs nothing before it — no prior unit, no setup, no account. Finish it and you have already started your <code>SPEC.md</code>.</span><span lang="ms">Unit Nano ialah satu hasil, satu duduk, lengkap. Ia tidak memerlukan apa-apa sebelumnya — tiada unit terdahulu, tiada persediaan, tiada akaun. Selesaikannya dan anda sudah pun memulakan <code>SPEC.md</code> anda.</span></div>
-  <a class="ucard" href="simbuilder-nano-outcome.html" style="border-left-color:#8a5a12">
-    <div class="un"><span lang="en">Nano · start here</span><span lang="ms">Nano · mulakan di sini</span></div>
-    <h3><span lang="en">Write one outcome you can actually assess</span><span lang="ms">Tulis satu hasil pembelajaran yang benar-benar boleh ditaksir</span></h3>
-    <p><span lang="en">Five screens, about twenty minutes. Take the weakest outcome in your syllabus and rewrite it so it names something you could watch a student do — and so you know what evidence would prove it.</span><span lang="ms">Lima skrin, kira-kira dua puluh minit. Ambil hasil pembelajaran paling lemah dalam sukatan anda dan tulis semula supaya ia menamakan sesuatu yang boleh anda lihat pelajar lakukan — dan supaya anda tahu bukti apa yang membuktikannya.</span></p>
-    <span class="clo-chip" style="margin:0;background:#8a5a12">PN</span>
-    <span class="clo-chip" style="margin-left:6px;background:#5f3d0a"><span lang="en">feeds Unit 2</span><span lang="ms">menyuap Unit 2</span></span>
-  </a>
-  <p class="ms-tag" style="margin-top:14px"><span lang="en">Small and constant beats large and abandoned. Two of these a week finishes a syllabus in a month.</span><span lang="ms">Kecil dan berterusan mengatasi besar dan terbengkalai. Dua daripada ini seminggu menyiapkan satu sukatan dalam sebulan.</span></p>
-</section>
-
-<section class="hs">
-  <h2 class="sec"><span lang="en">The four units</span><span lang="ms">Empat unit</span></h2>
-  <div class="sec-ms"><span lang="en">Work through them in order — each produces something the next one needs.</span><span lang="ms">Ikuti mengikut urutan — setiap satu menghasilkan sesuatu yang diperlukan unit berikutnya.</span></div>
+  <h2 class="sec"><span lang="en">The course · four units</span><span lang="ms">Kursus ini · empat unit</span></h2>
+  <div class="sec-ms"><span lang="en">Work through them in order — each one produces something the next one needs.</span><span lang="ms">Ikuti mengikut urutan — setiap satu menghasilkan sesuatu yang diperlukan unit berikutnya.</span></div>
   <div class="units" id="ugrid"></div>
+
+  <div class="subhead"><span lang="en">Short on time? Start smaller</span><span lang="ms">Suntuk masa? Mulakan lebih kecil</span></div>
+  <a class="ucard mini" href="simbuilder-nano-outcome.html" style="border-left-color:#8a5a12">
+    <div>
+      <div class="un"><span lang="en">Nano · 20 minutes</span><span lang="ms">Nano · 20 minit</span></div>
+      <h3><span lang="en">Write one outcome you can actually assess</span><span lang="ms">Tulis satu hasil pembelajaran yang benar-benar boleh ditaksir</span></h3>
+    </div>
+    <p><span lang="en">Five screens. One outcome, one sitting, complete — and it feeds straight into Unit 2. Needs nothing before it.</span><span lang="ms">Lima skrin. Satu hasil, satu duduk, lengkap — dan ia terus menyuap Unit 2. Tiada prasyarat.</span></p>
+    <span class="clo-chip" style="margin:0;background:#8a5a12">PN</span>
+  </a>
 </section>
 
 <section class="hs">
@@ -359,8 +373,11 @@ h2.sec{font-size:1.5rem;margin:0 0 .15em}
   <h2 class="sec"><span lang="en">Prompt console</span><span lang="ms">Konsol gesaan</span></h2>
   <div class="sec-ms"><span lang="en">All ten prompts and the ledger template in one place — for when you have learned the method and just need to copy.</span><span lang="ms">Kesepuluh-sepuluh gesaan dan templat lejar di satu tempat — untuk apabila anda sudah mempelajari kaedahnya dan hanya perlu menyalin.</span></div>
   <p class="ms-tag"><span lang="en">Prompt bodies are in English by design; the output language is set inside each prompt. Each unit teaches the
-    prompts it owns — this console is reference, not instruction.</span><span lang="ms">Badan gesaan sengaja dalam bahasa Inggeris; bahasa keluaran
-    ditetapkan di dalam setiap gesaan. Setiap unit mengajar gesaan miliknya — konsol ini rujukan, bukan pengajaran.</span></p>
+    prompts it owns — this console is reference, not instruction, so it stays closed until you want it.</span><span lang="ms">Badan gesaan sengaja dalam bahasa Inggeris; bahasa keluaran
+    ditetapkan di dalam setiap gesaan. Setiap unit mengajar gesaan miliknya — konsol ini rujukan, bukan pengajaran, jadi ia kekal tertutup sehingga anda memerlukannya.</span></p>
+  <details class="console">
+    <summary><span><span lang="en">Open the prompt console — all 10 prompts + the ledger template</span><span lang="ms">Buka konsol gesaan — kesemua 10 gesaan + templat lejar</span></span></summary>
+    <div class="console-body">
   <div class="prompt-lab">
     <div class="pl-tabs">
       <button class="pl-tab on" onclick="showP(this,'p0')">P0 role</button>
@@ -1158,6 +1175,8 @@ UNIT 2 | ...
         kosong sebelum anda menjalankan satu gesaan pun.</span></div>
     </div>
   </div>
+    </div>
+  </details>
 </section>
 
 <section class="hs">
@@ -1173,6 +1192,38 @@ UNIT 2 | ...
     <div class="card"><div class="name">🧪 <span lang="en">Prompt labs</span><span lang="ms">Makmal gesaan</span></div>
       <div class="use"><span lang="en">Every unit carries the prompts it teaches, with a line-by-line explanation and an illustrative expected output.</span><span lang="ms">Setiap unit membawa gesaan yang diajarnya, dengan penjelasan baris demi baris dan contoh hasil yang dijangka.</span></div></div>
   </div>
+</section>
+
+<section class="hs">
+  <h2 class="sec"><span lang="en">Source materials · what to bring, feed and cite</span><span lang="ms">Bahan sumber · apa yang dibawa, disuap dan dipetik</span></h2>
+  <div class="sec-ms"><span lang="en">Three questions that get confused with each other. The full guide, the worked example files and the blank templates are in the shared folder.</span><span lang="ms">Tiga soalan yang kerap dikelirukan antara satu sama lain. Panduan penuh, fail contoh terisi dan templat kosong ada dalam folder kongsi.</span></div>
+
+  <div class="cardgrid">
+    <div class="card"><div class="name">🎒 <span lang="en">What to bring</span><span lang="ms">Apa yang dibawa</span></div>
+      <div class="use"><span lang="en"><b>Essential:</b> your SLT sheet and Table 4, exported as CSV or a clean table — not a merged-cell spreadsheet. <b>Most useful optional item:</b> your existing slides for one week, so you can compare before and after.</span><span lang="ms"><b>Wajib:</b> helaian SLT dan Jadual 4 anda, dieksport sebagai CSV atau jadual bersih — bukan hamparan bersel gabung. <b>Item pilihan paling berguna:</b> slaid sedia ada untuk satu minggu, untuk perbandingan sebelum dan selepas.</span></div></div>
+
+    <div class="card"><div class="name">🎯 <span lang="en">What feeds which prompt</span><span lang="ms">Apa menyuap gesaan mana</span></div>
+      <div class="use"><span lang="en">Give each prompt the minimum it needs — extra material is not neutral, it competes for attention. P1 takes your documents; P2 takes only the spec; P5 takes the spec, contract, ledger and <b>one</b> brief. About three pages per session.</span><span lang="ms">Beri setiap gesaan hanya keperluan minimumnya — bahan berlebihan bukan neutral, ia bersaing untuk perhatian. P1 mengambil dokumen anda; P2 mengambil spesifikasi sahaja; P5 mengambil spesifikasi, kontrak, lejar dan <b>satu</b> ringkasan. Kira-kira tiga halaman setiap sesi.</span></div></div>
+
+    <div class="card"><div class="name">📚 <span lang="en">What to cite</span><span lang="ms">Apa yang dipetik</span></div>
+      <div class="use"><span lang="en">Four sources per unit, one of each type: <b>foundational</b>, <b>current</b> (last three years), <b>local</b>, and <b>applied</b>. Every one must be reachable by your students — a paywalled article your library does not hold is a name, not a source.</span><span lang="ms">Empat sumber setiap unit, satu bagi setiap jenis: <b>asas</b>, <b>semasa</b> (tiga tahun terakhir), <b>tempatan</b>, dan <b>gunaan</b>. Setiap satu mesti boleh dicapai pelajar anda — artikel berbayar yang tiada dalam langganan perpustakaan ialah nama, bukan sumber.</span></div></div>
+
+    <div class="card"><div class="name">⚖️ <span lang="en">Figures and copyright</span><span lang="ms">Rajah dan hak cipta</span></div>
+      <div class="use"><span lang="en">Diagrams are hand-authored SVG by contract, so every figure in your units is yours. Do not paste figures from papers or textbooks — link to the source, or redraw the idea and cite it.</span><span lang="ms">Rajah dihasilkan sendiri sebagai SVG mengikut kontrak, jadi setiap rajah dalam unit anda milik anda. Jangan tampal rajah daripada kertas atau buku teks — pautkan kepada sumber, atau lukis semula ideanya dan petik sumbernya.</span></div></div>
+  </div>
+
+  <div class="block fact" style="margin-top:16px">
+    <span class="tag"><span lang="en">The one check no AI can do for you</span><span lang="ms">Satu semakan yang tiada AI boleh lakukan untuk anda</span></span>
+    <p lang="en" style="margin:.3em 0 0">A model can check that your material agrees with itself — screen counts, class names, duplicate cases, banned verbs. It cannot check whether a paper exists, whether a law still says what you claim, or whether a tool is still online. <b>Open every DOI and click every link yourself before release.</b></p>
+    <p lang="ms" style="margin:.3em 0 0">Model boleh menyemak bahawa bahan anda selaras dengan dirinya sendiri — bilangan skrin, nama kelas, kes berganda, kata kerja terlarang. Ia tidak boleh menyemak sama ada sesebuah kertas wujud, sama ada undang-undang masih menyatakan dakwaan anda, atau sama ada sesuatu alat masih dalam talian. <b>Buka setiap DOI dan klik setiap pautan sendiri sebelum pelepasan.</b></p>
+  </div>
+
+  <p style="margin:18px 0 0">
+    <a class="drivebtn" href="https://drive.google.com/drive/folders/15-TWHiHyDa6aJkrhT5PZ2v2JzNfywJsd?usp=sharing" target="_blank" rel="noopener">
+      <span>📁</span><span><span lang="en">Open the shared materials folder</span><span lang="ms">Buka folder bahan kongsi</span></span>
+    </a>
+  </p>
+  <p class="ms-tag" style="margin-top:10px"><span lang="en">Contains the full source-materials guide, the four worked example files (a real <code>SPEC</code>, <code>BRIEFS</code>, <code>CONTRACT</code> and <code>LEDGER</code>), and the four blank templates to copy into your own course folder.</span><span lang="ms">Mengandungi panduan bahan sumber penuh, empat fail contoh terisi (<code>SPEC</code>, <code>BRIEFS</code>, <code>CONTRACT</code> dan <code>LEDGER</code> yang sebenar), dan empat templat kosong untuk disalin ke dalam folder kursus anda.</span></p>
 </section>
 
 <section class="hs">

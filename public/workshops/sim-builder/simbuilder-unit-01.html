@@ -417,7 +417,7 @@ footer.deckfoot{text-align:center;color:var(--muted);font-size:.8rem;padding:20p
   <p class="lead" lang="ms">Semua di atas garis putus-putus dilakukan <strong>sekali sahaja</strong>. Semua di bawahnya berulang —
     sekali bagi setiap unit mingguan, dalam sesi baharu setiap kali.</p>
   <div class="figure">
-  <svg viewBox="0 0 940 500" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The SIM Builder prompt chain: a one-time setup phase producing four handoff files, then a repeating per-unit loop.">
+  <svg viewBox="0 0 940 486" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A linear setup chain producing four files, then a repeating per-unit loop whose only return path is the ledger.">
     <defs>
       <marker id="ar" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto">
         <path d="M0,0 L9,4.5 L0,9 z" fill="#08383c"/>
@@ -427,95 +427,88 @@ footer.deckfoot{text-align:center;color:var(--muted);font-size:.8rem;padding:20p
       </marker>
     </defs>
 
-    <!-- ===== PHASE A : SETUP ===== -->
-    <text x="20" y="26" font-size="13" font-weight="800" fill="#08383c" letter-spacing="1.5">SET UP ONCE</text>
+    <!-- ===================== ROW A · SET UP ONCE ===================== -->
+    <text x="16" y="26" font-size="13" font-weight="800" fill="#08383c" letter-spacing="1.4">SET UP ONCE — left to right, each step feeds the next</text>
 
-    <rect x="18" y="42" width="158" height="122" rx="10" fill="#f1f3f9" stroke="#7b839e" stroke-width="1.5"/>
-    <text x="97" y="72" font-size="13" font-weight="800" fill="#111629" text-anchor="middle">Your approved</text>
-    <text x="97" y="90" font-size="13" font-weight="800" fill="#111629" text-anchor="middle">documents</text>
-    <text x="97" y="112" font-size="11.5" fill="#333a5c" text-anchor="middle">SLT workload sheet</text>
-    <text x="97" y="129" font-size="11.5" fill="#333a5c" text-anchor="middle">Table 4 / syllabus</text>
-    <text x="97" y="146" font-size="11.5" fill="#333a5c" text-anchor="middle">Course application form</text>
+    <rect x="16" y="48" width="146" height="92" rx="10" fill="#f1f3f9" stroke="#7b839e" stroke-width="1.5"/>
+    <text x="89" y="76" font-size="12.5" font-weight="800" fill="#111629" text-anchor="middle">Your documents</text>
+    <text x="89" y="98" font-size="11" fill="#333a5c" text-anchor="middle">SLT sheet</text>
+    <text x="89" y="114" font-size="11" fill="#333a5c" text-anchor="middle">Table 4</text>
+    <text x="89" y="130" font-size="11" fill="#333a5c" text-anchor="middle">application form</text>
 
-    <line x1="180" y1="66" x2="222" y2="66" stroke="#08383c" stroke-width="2" marker-end="url(#ar)"/>
-    <line x1="180" y1="103" x2="222" y2="103" stroke="#08383c" stroke-width="2" marker-end="url(#ar)"/>
-    <line x1="180" y1="140" x2="222" y2="140" stroke="#08383c" stroke-width="2" marker-end="url(#ar)"/>
+    <text x="185" y="84" font-size="12.5" font-weight="800" fill="#0f5257" text-anchor="middle">P1</text>
+    <line x1="166" y1="94" x2="202" y2="94" stroke="#08383c" stroke-width="2.2" marker-end="url(#ar)"/>
 
-    <rect x="226" y="50" width="128" height="32" rx="8" fill="#0f5257" stroke="#08383c" stroke-width="1.5"/>
-    <text x="290" y="71" font-size="12.5" font-weight="800" fill="#ffffff" text-anchor="middle">P1 · Spec</text>
-    <rect x="226" y="87" width="128" height="32" rx="8" fill="#0f5257" stroke="#08383c" stroke-width="1.5"/>
-    <text x="290" y="108" font-size="12.5" font-weight="800" fill="#ffffff" text-anchor="middle">P2 · Briefs</text>
-    <rect x="226" y="124" width="128" height="32" rx="8" fill="#0f5257" stroke="#08383c" stroke-width="1.5"/>
-    <text x="290" y="145" font-size="12.5" font-weight="800" fill="#ffffff" text-anchor="middle">P3+P4 · Template</text>
+    <rect x="206" y="48" width="146" height="92" rx="10" fill="#e2f1f1" stroke="#0f5257" stroke-width="1.5"/>
+    <text x="279" y="90" font-size="12.5" font-weight="800" fill="#08383c" text-anchor="middle">SPEC.md</text>
+    <text x="279" y="110" font-size="11" fill="#08383c" text-anchor="middle">one page</text>
 
-    <line x1="358" y1="66" x2="400" y2="66" stroke="#08383c" stroke-width="2" marker-end="url(#ar)"/>
-    <line x1="358" y1="103" x2="400" y2="103" stroke="#08383c" stroke-width="2" marker-end="url(#ar)"/>
-    <line x1="358" y1="140" x2="400" y2="140" stroke="#08383c" stroke-width="2" marker-end="url(#ar)"/>
+    <text x="375" y="84" font-size="12.5" font-weight="800" fill="#0f5257" text-anchor="middle">P2</text>
+    <line x1="356" y1="94" x2="392" y2="94" stroke="#08383c" stroke-width="2.2" marker-end="url(#ar)"/>
 
-    <rect x="404" y="50" width="150" height="32" rx="8" fill="#e2f1f1" stroke="#0f5257" stroke-width="1.5"/>
-    <text x="479" y="71" font-size="12.5" font-weight="800" fill="#08383c" text-anchor="middle">SPEC.md</text>
-    <rect x="404" y="87" width="150" height="32" rx="8" fill="#e2f1f1" stroke="#0f5257" stroke-width="1.5"/>
-    <text x="479" y="108" font-size="12.5" font-weight="800" fill="#08383c" text-anchor="middle">BRIEFS.md</text>
-    <rect x="404" y="124" width="150" height="32" rx="8" fill="#e2f1f1" stroke="#0f5257" stroke-width="1.5"/>
-    <text x="479" y="145" font-size="12.5" font-weight="800" fill="#08383c" text-anchor="middle">CONTRACT.md</text>
+    <rect x="396" y="48" width="146" height="92" rx="10" fill="#e2f1f1" stroke="#0f5257" stroke-width="1.5"/>
+    <text x="469" y="90" font-size="12.5" font-weight="800" fill="#08383c" text-anchor="middle">BRIEFS.md</text>
+    <text x="469" y="110" font-size="11" fill="#08383c" text-anchor="middle">map + one brief per unit</text>
 
-    <rect x="580" y="50" width="146" height="106" rx="10" fill="#0f1836" stroke="#26325f" stroke-width="1.5"/>
-    <text x="653" y="80" font-size="12.5" font-weight="800" fill="#ffffff" text-anchor="middle">unit-01.html</text>
-    <text x="653" y="101" font-size="11.5" fill="#c3ceff" text-anchor="middle">the golden template</text>
-    <text x="653" y="122" font-size="11.5" fill="#c3ceff" text-anchor="middle">built by P3, described</text>
-    <text x="653" y="139" font-size="11.5" fill="#c3ceff" text-anchor="middle">by CONTRACT.md</text>
-    <line x1="558" y1="140" x2="576" y2="120" stroke="#08383c" stroke-width="2" marker-end="url(#ar)"/>
+    <text x="565" y="84" font-size="12.5" font-weight="800" fill="#0f5257" text-anchor="middle">P3</text>
+    <line x1="546" y1="94" x2="582" y2="94" stroke="#08383c" stroke-width="2.2" marker-end="url(#ar)"/>
 
-    <!-- divider -->
-    <line x1="18" y1="188" x2="922" y2="188" stroke="#7b839e" stroke-width="1.5" stroke-dasharray="7 6"/>
+    <rect x="586" y="48" width="146" height="92" rx="10" fill="#0f1836" stroke="#26325f" stroke-width="1.5"/>
+    <text x="659" y="90" font-size="12.5" font-weight="800" fill="#ffffff" text-anchor="middle">unit-01.html</text>
+    <text x="659" y="110" font-size="11" fill="#c3ceff" text-anchor="middle">the golden template</text>
 
-    <!-- ===== PHASE B : LOOP ===== -->
-    <text x="20" y="216" font-size="13" font-weight="800" fill="#08383c" letter-spacing="1.5">REPEAT PER UNIT</text>
+    <text x="755" y="84" font-size="12.5" font-weight="800" fill="#0f5257" text-anchor="middle">P4</text>
+    <line x1="736" y1="94" x2="772" y2="94" stroke="#08383c" stroke-width="2.2" marker-end="url(#ar)"/>
 
-    <rect x="18" y="236" width="182" height="182" rx="10" fill="#ffffff" stroke="#0f5257" stroke-width="1.5"/>
-    <text x="109" y="260" font-size="11.5" font-weight="800" fill="#08383c" text-anchor="middle" letter-spacing=".8">PASTE IN, EVERY TIME</text>
-    <rect x="32" y="272" width="154" height="26" rx="13" fill="#e2f1f1" stroke="#0f5257"/>
-    <text x="109" y="289" font-size="11.5" font-weight="700" fill="#08383c" text-anchor="middle">P0 role card</text>
-    <rect x="32" y="304" width="154" height="26" rx="13" fill="#e2f1f1" stroke="#0f5257"/>
-    <text x="109" y="321" font-size="11.5" font-weight="700" fill="#08383c" text-anchor="middle">SPEC.md</text>
-    <rect x="32" y="336" width="154" height="26" rx="13" fill="#e2f1f1" stroke="#0f5257"/>
-    <text x="109" y="353" font-size="11.5" font-weight="700" fill="#08383c" text-anchor="middle">CONTRACT.md</text>
-    <rect x="32" y="368" width="154" height="26" rx="13" fill="#fff3de" stroke="#a85e00"/>
-    <text x="109" y="385" font-size="11.5" font-weight="700" fill="#5c3400" text-anchor="middle">LEDGER.md</text>
-    <text x="109" y="410" font-size="11.5" font-weight="700" fill="#333a5c" text-anchor="middle">+ ONE week brief</text>
+    <rect x="776" y="48" width="146" height="92" rx="10" fill="#e2f1f1" stroke="#0f5257" stroke-width="1.5"/>
+    <text x="849" y="90" font-size="12.5" font-weight="800" fill="#08383c" text-anchor="middle">CONTRACT.md</text>
+    <text x="849" y="110" font-size="11" fill="#08383c" text-anchor="middle">under 70 lines</text>
 
-    <line x1="204" y1="327" x2="252" y2="327" stroke="#08383c" stroke-width="2.5" marker-end="url(#ar)"/>
+    <line x1="16" y1="168" x2="924" y2="168" stroke="#7b839e" stroke-width="1.5" stroke-dasharray="7 6"/>
 
-    <rect x="256" y="266" width="228" height="122" rx="12" fill="#0f5257" stroke="#08383c" stroke-width="1.5"/>
-    <text x="370" y="300" font-size="14" font-weight="800" fill="#ffffff" text-anchor="middle">FRESH SESSION</text>
-    <text x="370" y="324" font-size="12" fill="#cfe8ea" text-anchor="middle">one chat · one unit</text>
-    <text x="370" y="346" font-size="12" fill="#cfe8ea" text-anchor="middle">prompt P5</text>
-    <text x="370" y="370" font-size="12" fill="#ffd977" text-anchor="middle" font-weight="700">close it when done</text>
+    <!-- ===================== ROW B · THE LOOP ===================== -->
+    <text x="16" y="198" font-size="13" font-weight="800" fill="#08383c" letter-spacing="1.4">REPEAT PER UNIT — a fresh session every time</text>
 
-    <line x1="488" y1="327" x2="536" y2="327" stroke="#08383c" stroke-width="2.5" marker-end="url(#ar)"/>
+    <rect x="16" y="218" width="196" height="152" rx="10" fill="#ffffff" stroke="#0f5257" stroke-width="1.5"/>
+    <text x="114" y="242" font-size="11" font-weight="800" fill="#08383c" text-anchor="middle" letter-spacing=".7">PASTE IN, EVERY TIME</text>
+    <rect x="30" y="254" width="168" height="22" rx="11" fill="#e2f1f1" stroke="#0f5257"/>
+    <text x="114" y="269" font-size="10.5" font-weight="700" fill="#08383c" text-anchor="middle">P0 role card</text>
+    <rect x="30" y="281" width="168" height="22" rx="11" fill="#e2f1f1" stroke="#0f5257"/>
+    <text x="114" y="296" font-size="10.5" font-weight="700" fill="#08383c" text-anchor="middle">SPEC.md</text>
+    <rect x="30" y="308" width="168" height="22" rx="11" fill="#e2f1f1" stroke="#0f5257"/>
+    <text x="114" y="323" font-size="10.5" font-weight="700" fill="#08383c" text-anchor="middle">CONTRACT.md</text>
+    <rect x="30" y="335" width="168" height="22" rx="11" fill="#fff3de" stroke="#a85e00"/>
+    <text x="114" y="350" font-size="10.5" font-weight="700" fill="#5c3400" text-anchor="middle">LEDGER.md  +  ONE brief</text>
 
-    <rect x="540" y="288" width="168" height="78" rx="10" fill="#0f1836" stroke="#26325f" stroke-width="1.5"/>
-    <text x="624" y="318" font-size="13" font-weight="800" fill="#ffffff" text-anchor="middle">unit-NN.html</text>
-    <text x="624" y="340" font-size="11.5" fill="#c3ceff" text-anchor="middle">one complete SIM unit</text>
+    <line x1="216" y1="294" x2="254" y2="294" stroke="#08383c" stroke-width="2.5" marker-end="url(#ar)"/>
 
-    <line x1="712" y1="327" x2="760" y2="327" stroke="#a85e00" stroke-width="2.5" marker-end="url(#ar2)"/>
-    <rect x="764" y="290" width="158" height="74" rx="10" fill="#fff3de" stroke="#a85e00" stroke-width="1.5"/>
-    <text x="843" y="318" font-size="12.5" font-weight="800" fill="#5c3400" text-anchor="middle">6-line ledger</text>
-    <text x="843" y="338" font-size="12.5" font-weight="800" fill="#5c3400" text-anchor="middle">entry</text>
-    <text x="843" y="356" font-size="11" fill="#5c3400" text-anchor="middle">what was used, what linked</text>
+    <rect x="258" y="244" width="196" height="100" rx="12" fill="#0f5257" stroke="#08383c" stroke-width="1.5"/>
+    <text x="356" y="276" font-size="13.5" font-weight="800" fill="#ffffff" text-anchor="middle">FRESH SESSION</text>
+    <text x="356" y="298" font-size="11.5" fill="#cfe8ea" text-anchor="middle">one chat · one unit · P5</text>
+    <text x="356" y="322" font-size="11.5" font-weight="700" fill="#ffd977" text-anchor="middle">close it when done</text>
 
-    <path d="M843,288 L843,246 L109,246 L109,264" fill="none" stroke="#a85e00" stroke-width="2.5"
+    <line x1="458" y1="294" x2="496" y2="294" stroke="#08383c" stroke-width="2.5" marker-end="url(#ar)"/>
+
+    <rect x="500" y="256" width="164" height="76" rx="10" fill="#0f1836" stroke="#26325f" stroke-width="1.5"/>
+    <text x="582" y="286" font-size="12.5" font-weight="800" fill="#ffffff" text-anchor="middle">unit-NN.html</text>
+    <text x="582" y="308" font-size="11" fill="#c3ceff" text-anchor="middle">one finished unit</text>
+
+    <line x1="668" y1="294" x2="706" y2="294" stroke="#a85e00" stroke-width="2.5" marker-end="url(#ar2)"/>
+
+    <rect x="710" y="256" width="170" height="76" rx="10" fill="#fff3de" stroke="#a85e00" stroke-width="1.5"/>
+    <text x="795" y="284" font-size="12.5" font-weight="800" fill="#5c3400" text-anchor="middle">7-line ledger entry</text>
+    <text x="795" y="306" font-size="10.5" fill="#5c3400" text-anchor="middle">what was used, what linked</text>
+
+    <!-- return path: runs BELOW every box, in its own empty lane -->
+    <path d="M795,336 L795,412 L114,412 L114,374" fill="none" stroke="#a85e00" stroke-width="2.5"
           stroke-dasharray="6 5" marker-end="url(#ar2)"/>
-    <rect x="400" y="230" width="230" height="24" rx="12" fill="#fff3de" stroke="#a85e00"/>
-    <text x="515" y="247" font-size="11.5" font-weight="800" fill="#5c3400" text-anchor="middle">appended — this is the only memory</text>
+    <text x="455" y="438" font-size="11.5" font-weight="800" fill="#5c3400" text-anchor="middle">appended to the ledger — the only memory that crosses units</text>
 
-    <rect x="256" y="404" width="452" height="30" rx="8" fill="#f1f3f9" stroke="#7b839e"/>
-    <text x="482" y="424" font-size="11.5" font-weight="700" fill="#333a5c" text-anchor="middle">every 3rd unit: run P8 audit · at the end: P6 hub · P7 rubrics · P9 workload check</text>
+    <text x="16" y="470" font-size="11" fill="#565d80">every 3rd unit: run the P8 audit  ·  at the end: P6 hub · P7 rubrics · P9 workload check</text>
   </svg>
-  <div class="figcap"><span lang="en">The chain runs left to right once; the loop runs top to bottom many times. The dashed
-    amber return path is the entire cross-unit memory of the project.</span><span lang="ms">Rantaian berjalan kiri ke kanan sekali;
-    gelung berjalan atas ke bawah berkali-kali. Laluan pulangan ambar putus-putus itulah keseluruhan ingatan antara unit bagi
-    projek ini.</span></div>
+  <div class="figcap"><span lang="en">Above the line, one straight chain: each step consumes what the step before it produced. Below the line,
+    the same four cards go into every session. Only the dashed amber path returns — and that is the entire cross-unit memory of the project.</span><span lang="ms">Di atas garis, satu rantaian lurus: setiap langkah menggunakan hasil langkah sebelumnya. Di bawah garis,
+    empat kad yang sama masuk ke dalam setiap sesi. Hanya laluan ambar putus-putus yang kembali — dan itulah keseluruhan ingatan antara unit bagi projek ini.</span></div>
   </div>
 </section>
 

@@ -240,6 +240,17 @@ body.dark .figure svg{background:#ffffff}
 .node-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
 .node{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);border-radius:99px;padding:8px 15px;font-size:.85rem;color:#fff}
 footer.deckfoot{text-align:center;color:var(--muted);font-size:.8rem;padding:20px}
+/* ---------- Narrow screens ----------
+   Long Malay compounds (mempertahankan, mengintegrasikan) are wider than a phone
+   viewport at the desktop heading size, which pushed the whole page sideways.
+   Scale the headings down and let any single word wrap rather than overflow. */
+@media(max-width:560px){
+  .deck{padding:70px 14px 90px}
+  .slide{padding:26px 20px}
+  h1{font-size:1.72rem}
+  h2{font-size:1.34rem}
+  h1,h2,h3,h4,.lead,.card .name,.outcome,.stem{overflow-wrap:break-word;word-break:break-word}
+}
 @media print{.topbar{display:none}.deck{padding-top:10px}body.mode-slides .slide{display:block!important}
 .slide{break-inside:avoid;box-shadow:none}.pl-panel{display:block!important}.pl-prompt{max-height:none}
 .footnotes,.footnotes li{display:block!important}.footnotes li{display:list-item!important}
