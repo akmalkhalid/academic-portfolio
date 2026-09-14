@@ -241,6 +241,39 @@ body.dark .figure svg{background:#ffffff}
 .node-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
 .node{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);border-radius:99px;padding:8px 15px;font-size:.85rem;color:#fff}
 footer.deckfoot{text-align:center;color:var(--muted);font-size:.8rem;padding:20px}
+/* ---------- Narrow screens (phones) ----------
+   Two problems this solves, both invisible on a desktop:
+   1. The top bar was one fixed, non-wrapping row. Below ~560px its controls ran
+      past the right edge of the screen — the mode button, the language toggle and
+      Prev/Next could not be tapped at all. Here the bar becomes sticky (so it takes
+      its own space in the flow, no magic padding under it) and wraps into two rows:
+      title + progress + counter, then the controls, right-aligned.
+   2. Long Malay compounds ("mempertahankan", "mengintegrasikan") are wider than a
+      phone viewport at the desktop heading size, which pushed the whole page
+      sideways. Headings scale down and any single word may wrap. */
+@media(max-width:560px){
+  .topbar{position:sticky;height:auto;flex-wrap:wrap;justify-content:flex-end;
+    padding:8px 10px;gap:6px;row-gap:7px}
+  .topbar::after{content:"";flex:1 0 100%;order:3;height:0;margin:0}
+  .brand{order:0;flex:1 1 auto;min-width:0;font-size:.88rem;overflow:hidden;text-overflow:ellipsis}
+  .progress-wrap{order:1;flex:1 1 70px}
+  .counter{order:2}
+  #darkBtn{order:4}
+  .langtog{order:5}
+  #modeBtn{order:6}
+  .nav-arrows{order:7}
+  .topbar .btn{padding:6px 8px;font-size:.74rem}
+  .langtog button{padding:5px 8px;font-size:.72rem}
+  .nav-arrows{gap:5px}
+  .deck{padding:16px 14px 90px}
+  .hub{padding:16px 14px 70px}
+  .slide{padding:26px 20px;scroll-margin-top:16px}
+  h1{font-size:1.72rem}
+  h2{font-size:1.34rem}
+  h1,h2,h3,h4,.lead,.card .name,.outcome,.stem{overflow-wrap:break-word;word-break:break-word}
+  /* Bare DOIs and URLs are one long unbreakable token; let them break anywhere. */
+  .footnotes li,.footnotes a,.reslist li,.reslist a,.card a{overflow-wrap:anywhere}
+}
 @media print{.topbar{display:none}.deck{padding-top:10px}body.mode-slides .slide{display:block!important}
 .slide{break-inside:avoid;box-shadow:none}.pl-panel{display:block!important}.pl-prompt{max-height:none}
 .footnotes,.footnotes li{display:block!important}.footnotes li{display:list-item!important}
