@@ -84,8 +84,33 @@ export type Publication = {
   _slug: string; _body: string
 }
 
+// Guard against a record being imported twice under two filenames — it happened
+// once (the same IEEE Access paper as both 2025-Omar2025 and 2025-Bashaddadh2025,
+// differing only in author formatting) and silently inflated every publication
+// count on the site.
+//
+// The test is deliberately strict: same DOI AND same title AND same year. DOI
+// alone is NOT safe here — this corpus has already contained a record carrying a
+// DOI copy-pasted from a different paper, and a DOI-only rule would have silently
+// dropped a real publication from the count. Double-counting is bad; quietly
+// losing a paper from a promotion file is worse.
+function dropDuplicates(pubs: Publication[]): Publication[] {
+  const seen = new Set<string>()
+  const out: Publication[] = []
+  for (const p of pubs) {
+    const doi = (p.doi || '').toLowerCase().replace(/[^a-z0-9]/g, '')
+    const title = (p.title || '').toLowerCase().replace(/[^a-z0-9]/g, '')
+    if (!doi || doi === 'na' || !title) { out.push(p); continue }
+    const key = `${doi}::${title}::${p.year}`
+    if (seen.has(key)) continue
+    seen.add(key)
+    out.push(p)
+  }
+  return out
+}
+
 export function getAllPublications(): Publication[] {
-  return readMarkdownDir<Publication>('publications').sort((a, b) => b.year - a.year)
+  return dropDuplicates(readMarkdownDir<Publication>('publications')).sort((a, b) => b.year - a.year)
 }
 
 export function getRecentPublications(limit = 3): Publication[] {
