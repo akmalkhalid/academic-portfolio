@@ -2,15 +2,15 @@
 
 // Compact dark banner used at the head of every top-level page, so the whole
 // site opens in the same register as the home hero rather than only the landing
-// page feeling redesigned. Same simulation engine as the hero, dimmed and
-// without the telemetry readout.
+// page feeling redesigned. Same procedural terrain as the hero, dimmed — but no
+// swarm and no telemetry, so short bands under a lot of copy stay calm.
 //
 // Deliberately NOT applied to detail routes (/publications/<slug>, /demos/<x>):
 // those are reading surfaces and keep the quiet cream header. SiteNav's DARK_TOP
 // set must stay in step with wherever this component is used.
 
 import type { ReactNode } from 'react'
-import HeroSim from './HeroSim'
+import ProcLandscape from './ProcLandscape'
 
 export default function PageBanner({
   eyebrow,
@@ -32,7 +32,7 @@ export default function PageBanner({
 }) {
   return (
     <section className="dark-band" data-dark-band="1">
-      <HeroSim variant="banner" hud={false} />
+      <ProcLandscape variant="banner" />
       <div className={'band-inner banner-inner' + (aside ? ' banner-split' : '')}>
         <div className="hero-in" style={{ minWidth: 0 }}>
           <p className="banner-eyebrow">{eyebrow}</p>

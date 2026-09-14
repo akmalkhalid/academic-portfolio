@@ -5,6 +5,7 @@ import { s } from '@/lib/style'
 import { PCOL, PNAME, PBADGE, QCOL, CATNAME, type Code } from '@/lib/view'
 import ResearchShowreel from '@/components/paper-demos/ResearchShowreel'
 import DemoThumb from '@/components/pillar-demos/DemoThumb'
+import ProcLandscape from '@/components/ProcLandscape'
 import HeroSim from '@/components/HeroSim'
 import type { PillarKey } from '@/lib/demos/registry'
 
@@ -229,6 +230,7 @@ export default function HomeClient({
     <div ref={wrapRef} data-screen-label="Home" style={s('min-height:100vh;overflow-x:hidden')}>
       {/* HERO — dark cinematic band, live particle-swarm search running behind it */}
       <section id="top" className="dark-band" data-dark-band="1">
+        <ProcLandscape variant="hero" />
         <HeroSim variant="hero" />
         <div className="band-inner">
           <div className="hero-grid">
@@ -245,8 +247,9 @@ export default function HomeClient({
                 <a href="/cv/Akmal_CV_2026.pdf" download className="btn-ghost">Download CV <span aria-hidden="true">↓</span></a>
               </div>
               <p className="hero-foot">
-                The field behind this text is a live particle-swarm search — a real population hunting the optimum of a
-                landscape that keeps shifting under it. Move your cursor into it: you become a constraint it has to route around.
+                The terrain behind this text is generated procedurally, and the swarm crossing it is a real particle-swarm
+                search climbing those ridges. Move faster and the ground roughens. Click anywhere and a new landscape sweeps
+                out from your cursor — watch the population lose its optimum and start again.
               </p>
             </div>
             <div className="hero-portrait">

@@ -107,8 +107,8 @@ body {
   z-index: 1;
   pointer-events: none;
   background:
-    linear-gradient(100deg, rgba(7,6,15,.93) 0%, rgba(7,6,15,.80) 28%, rgba(7,6,15,.34) 56%, rgba(7,6,15,.10) 100%),
-    radial-gradient(120% 78% at 46% 116%, rgba(7,6,15,.80) 0%, rgba(7,6,15,0) 60%);
+    linear-gradient(100deg, rgba(7,6,15,.96) 0%, rgba(7,6,15,.90) 26%, rgba(7,6,15,.62) 52%, rgba(7,6,15,.34) 100%),
+    radial-gradient(120% 78% at 46% 116%, rgba(7,6,15,.72) 0%, rgba(7,6,15,0) 62%);
 }
 /* Hairline of pillar colour closing the band — the handshake into the cream page */
 .dark-band::after {
@@ -125,7 +125,7 @@ body {
 @media (max-width: 860px) {
   .dark-band::before {
     background:
-      linear-gradient(180deg, rgba(7,6,15,.45) 0%, rgba(7,6,15,.80) 34%, rgba(7,6,15,.90) 100%);
+      linear-gradient(180deg, rgba(7,6,15,.55) 0%, rgba(7,6,15,.86) 34%, rgba(7,6,15,.93) 100%);
   }
 }
 
@@ -444,7 +444,7 @@ body {
 .banner-jump:hover { color: #fff; border-color: rgba(255,255,255,.4); background: rgba(255,255,255,.1) }
 .banner-jump:focus-visible { outline: 2px solid #8b7bf0; outline-offset: 3px }
 
-/* ---- Page transition: one panel sweeping across the viewport ----
+/* ---- Page transition: organic pixel dissolve ----
    Starts hidden so that with JS disabled nothing ever covers the page. */
 .pt-root {
   position: fixed;
@@ -454,26 +454,14 @@ body {
   pointer-events: none;
   overflow: hidden;
 }
-.pt-panel {
+.pt-canvas {
   position: absolute;
   inset: 0;
-  background: linear-gradient(102deg, #07060f 0%, #0d0b1a 52%, #07060f 100%);
-  transform: translate3d(-101%, 0, 0);
-  will-change: transform;
+  display: block;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
 }
-/* The pillar ribbon rides both edges: the right edge leads while covering,
-   the left edge trails while uncovering. Same ribbon that closes each band. */
-.pt-panel::before,
-.pt-panel::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 5px;
-  background: linear-gradient(180deg, #21b3a0 0%, #4d8df0 34%, #8b7bf0 58%, #f2683f 100%);
-}
-.pt-panel::before { left: -5px;  box-shadow: -14px 0 40px -8px rgba(33,179,160,.5) }
-.pt-panel::after  { right: -5px; box-shadow:  14px 0 40px -8px rgba(139,123,240,.5) }
 .pt-label {
   position: absolute;
   left: 50%;
@@ -483,9 +471,10 @@ body {
   font-size: 12px;
   letter-spacing: .34em;
   text-transform: uppercase;
-  color: rgba(214,208,240,.9);
+  color: rgba(245,243,255,.92);
+  text-shadow: 0 2px 18px rgba(0,0,0,.85);
   white-space: nowrap;
   opacity: 0;
-  transition: opacity .14s ease;
+  transition: opacity .16s ease;
 }
 @media (prefers-reduced-motion: reduce) { .pt-root { display: none !important } }
