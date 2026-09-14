@@ -51,7 +51,7 @@ export default function CVPage() {
         style={{
           maxWidth: 900, margin: "0 auto", background: "#fff",
           boxShadow: "0 8px 30px rgba(0,0,0,.10)", borderRadius: 10,
-          padding: "34px 40px",
+          // padding lives in CV_SCREEN_CSS so it can shrink on phones
         }}
         dangerouslySetInnerHTML={{ __html: body }}
       />

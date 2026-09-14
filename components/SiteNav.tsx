@@ -48,20 +48,20 @@ export default function SiteNav({ shortName }: { shortName: string }) {
   return (
     <header className="nav-shell" data-solid={solid ? '1' : '0'}>
       <nav style={s('max-width:1120px;margin:0 auto;padding:14px 28px;display:flex;align-items:center;justify-content:space-between;gap:24px;position:relative')}>
-        <Link href="/" onClick={() => setOpen(false)} className="nav-brand" style={s('display:flex;align-items:center;gap:10px;text-decoration:none;color:#1c1917')}>
-          <span className="nav-brand-dot" style={s('width:11px;height:11px;border-radius:50%;background:#16142e;display:inline-block')} />
+        <Link href="/" onClick={() => setOpen(false)} className="nav-brand" style={s('display:flex;align-items:center;gap:10px;text-decoration:none')}>
+          <span className="nav-brand-dot" style={s('width:11px;height:11px;border-radius:50%;display:inline-block')} />
           <span style={s("font-family:'JetBrains Mono',monospace;font-weight:600;font-size:14px;letter-spacing:.02em")}>{shortName}</span>
         </Link>
 
         {/* Desktop links */}
-        <ul className="nav-desktop" style={s('display:flex;gap:26px;list-style:none;margin:0;padding:0;font-size:13.5px;color:#57514b;align-items:center')}>
+        <ul className="nav-desktop" style={s('display:flex;gap:26px;list-style:none;margin:0;padding:0;font-size:13.5px;align-items:center')}>
           {NAV.map((n) => (
             <li key={n.href}>
               <Link
                 href={n.href}
                 className="nav-link"
                 data-on={isActive(n.href) ? '1' : '0'}
-                style={s('text-decoration:none;' + (isActive(n.href) ? 'color:#16142e;font-weight:500' : 'color:#57514b'))}
+                style={s('text-decoration:none;' + (isActive(n.href) ? 'font-weight:500' : ''))}
               >
                 {n.label}
               </Link>
@@ -69,7 +69,7 @@ export default function SiteNav({ shortName }: { shortName: string }) {
           ))}
         </ul>
 
-        <Link className="nav-cta" href="/contact" style={s("font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:500;text-decoration:none;color:#fff;background:#16142e;padding:8px 15px;border-radius:7px;border:1px solid #16142e")}>
+        <Link className="nav-cta" href="/contact" style={s("font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:500;text-decoration:none;padding:8px 15px;border-radius:7px")}>
           Collaborate
         </Link>
 
@@ -80,11 +80,11 @@ export default function SiteNav({ shortName }: { shortName: string }) {
           aria-label={open ? 'Close menu' : 'Open menu'}
           aria-expanded={open}
           onClick={() => setOpen((v) => !v)}
-          style={s('cursor:pointer;width:40px;height:40px;border:1px solid #e7e3dd;border-radius:9px;align-items:center;justify-content:center;flex-direction:column;gap:4px;background:#fff')}
+          style={s('cursor:pointer;width:40px;height:40px;border-radius:9px;align-items:center;justify-content:center;flex-direction:column;gap:4px')}
         >
-          <span style={s('width:18px;height:2px;background:#1c1917')} />
-          <span style={s('width:18px;height:2px;background:#1c1917')} />
-          <span style={s('width:18px;height:2px;background:#1c1917')} />
+          <span style={s('width:18px;height:2px')} />
+          <span style={s('width:18px;height:2px')} />
+          <span style={s('width:18px;height:2px')} />
         </button>
 
         {/* Mobile dropdown */}

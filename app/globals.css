@@ -333,11 +333,32 @@ body {
 }
 .banner-actions { display: flex; flex-wrap: wrap; gap: 10px }
 
-/* ---- Nav over a dark band ---- */
+/* ---- Nav: two states, both defined here ----
+   The colours MUST live in CSS, not in inline style props: an inline style wins
+   over a stylesheet rule, which would leave the dark state inert (and the links
+   at ~1.9:1 contrast on the dark band). SiteNav therefore ships no colours. */
 .nav-shell {
   position: sticky; top: 0; z-index: 40;
-  transition: background .28s ease, border-color .28s ease, backdrop-filter .28s ease;
+  transition: background .28s ease, border-color .28s ease;
 }
+
+/* Solid: the cream bar, once scrolled or on a light page */
+.nav-shell[data-solid='1'] {
+  background: rgba(250,249,247,.85);
+  border-bottom: 1px solid #e7e3dd;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+.nav-shell[data-solid='1'] .nav-brand { color: #1c1917 }
+.nav-shell[data-solid='1'] .nav-brand-dot { background: #16142e }
+.nav-shell[data-solid='1'] .nav-link { color: #57514b }
+.nav-shell[data-solid='1'] .nav-link[data-on='1'] { color: #16142e }
+.nav-shell[data-solid='1'] .nav-link:hover { color: #16142e }
+.nav-shell[data-solid='1'] .nav-cta { background: #16142e; color: #fff; border: 1px solid #16142e }
+.nav-shell[data-solid='1'] .nav-cta:hover { background: #26224a; border-color: #26224a }
+.nav-shell[data-solid='1'] .nav-burger { background: #fff; border: 1px solid #e7e3dd }
+.nav-shell[data-solid='1'] .nav-burger span { background: #1c1917 }
+
 /* Over a dark banner the bar is dark itself, so nav + band read as one block.
    (The bar is sticky and occupies layout space — it cannot float over the band.) */
 .nav-shell[data-solid='0'] {
@@ -346,22 +367,20 @@ body {
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
 }
-.nav-shell[data-solid='1'] {
-  background: rgba(250,249,247,.85);
-  border-bottom: 1px solid #e7e3dd;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-}
-.nav-shell[data-solid='0'] .nav-link { color: rgba(226,222,245,.74) }
-.nav-shell[data-solid='0'] .nav-link[data-on='1'] { color: #fff; font-weight: 500 }
-.nav-shell[data-solid='0'] .nav-link:hover { color: #fff }
 .nav-shell[data-solid='0'] .nav-brand { color: #fbfaff }
 .nav-shell[data-solid='0'] .nav-brand-dot { background: #21b3a0; box-shadow: 0 0 12px rgba(33,179,160,.9) }
+.nav-shell[data-solid='0'] .nav-link { color: rgba(226,222,245,.82) }   /* ~9:1 on #07060f */
+.nav-shell[data-solid='0'] .nav-link[data-on='1'] { color: #fff }
+.nav-shell[data-solid='0'] .nav-link:hover { color: #fff }
 .nav-shell[data-solid='0'] .nav-cta { background: rgba(255,255,255,.1); color: #fff; border: 1px solid rgba(255,255,255,.3) }
-.nav-shell[data-solid='0'] .nav-cta:hover { background: rgba(255,255,255,.2) }
-.nav-shell[data-solid='0'] .nav-burger { background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.22) }
+.nav-shell[data-solid='0'] .nav-cta:hover { background: rgba(255,255,255,.2); border-color: rgba(255,255,255,.5) }
+.nav-shell[data-solid='0'] .nav-burger { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.24) }
 .nav-shell[data-solid='0'] .nav-burger span { background: #fff }
-.nav-link, .nav-cta, .nav-brand { transition: color .22s ease, background .22s ease, border-color .22s ease }
+
+.nav-link, .nav-cta, .nav-brand, .nav-brand-dot, .nav-burger, .nav-burger span {
+  transition: color .22s ease, background .22s ease, border-color .22s ease;
+}
+.nav-link:focus-visible, .nav-cta:focus-visible, .nav-brand:focus-visible { outline: 2px solid #8b7bf0; outline-offset: 3px }
 
 /* Staggered entrance for the hero block (skipped under reduced motion) */
 .hero-in > * { animation: heroRise .85s cubic-bezier(.19,.82,.28,1) both }
@@ -424,3 +443,49 @@ body {
 }
 .banner-jump:hover { color: #fff; border-color: rgba(255,255,255,.4); background: rgba(255,255,255,.1) }
 .banner-jump:focus-visible { outline: 2px solid #8b7bf0; outline-offset: 3px }
+
+/* ---- Page transition: one panel sweeping across the viewport ----
+   Starts hidden so that with JS disabled nothing ever covers the page. */
+.pt-root {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: none;
+  pointer-events: none;
+  overflow: hidden;
+}
+.pt-panel {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(102deg, #07060f 0%, #0d0b1a 52%, #07060f 100%);
+  transform: translate3d(-101%, 0, 0);
+  will-change: transform;
+}
+/* The pillar ribbon rides both edges: the right edge leads while covering,
+   the left edge trails while uncovering. Same ribbon that closes each band. */
+.pt-panel::before,
+.pt-panel::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 5px;
+  background: linear-gradient(180deg, #21b3a0 0%, #4d8df0 34%, #8b7bf0 58%, #f2683f 100%);
+}
+.pt-panel::before { left: -5px;  box-shadow: -14px 0 40px -8px rgba(33,179,160,.5) }
+.pt-panel::after  { right: -5px; box-shadow:  14px 0 40px -8px rgba(139,123,240,.5) }
+.pt-label {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  letter-spacing: .34em;
+  text-transform: uppercase;
+  color: rgba(214,208,240,.9);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity .14s ease;
+}
+@media (prefers-reduced-motion: reduce) { .pt-root { display: none !important } }
