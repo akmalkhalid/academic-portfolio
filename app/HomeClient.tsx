@@ -268,23 +268,23 @@ export default function HomeClient({
             </div>
 
             {/* The record, as one object: face, name, title and evidence together */}
-            <aside className="cred" aria-label="Academic record at a glance">
-              <div className="cred-id">
-                <img className="cred-face" src="/profile.jpg" alt="Dr. Mohd Nor Akmal Khalid" />
+            <aside className="record" aria-label="Academic record at a glance">
+              <div className="record-id">
+                <img className="record-face" src="/portrait.png" alt="Dr. Mohd Nor Akmal Khalid" />
                 <div style={s('min-width:0')}>
-                  <div className="cred-name">Dr. Mohd Nor Akmal Khalid</div>
-                  <div className="cred-role">Senior Lecturer · FTSM, UKM</div>
+                  <div className="record-name">Dr. Mohd Nor Akmal Khalid</div>
+                  <div className="record-role">Senior Lecturer · FTSM, UKM</div>
                 </div>
               </div>
-              <dl className="cred-list">
+              <dl className="record-list">
                 {credentials.map((c) => (
-                  <div className="cred-row" key={c.k}>
+                  <div className="record-row" key={c.k}>
                     <dt>{c.k}</dt>
                     <dd>{c.v}</dd>
                   </div>
                 ))}
               </dl>
-              <a className="cred-link" href="/cv">Full curriculum vitae <span aria-hidden="true">→</span></a>
+              <a className="record-link" href="/cv">Full curriculum vitae <span aria-hidden="true">→</span></a>
             </aside>
           </div>
         </div>

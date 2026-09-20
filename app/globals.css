@@ -270,13 +270,14 @@ body {
   object-fit: cover;
   border-radius: 50%;
   border: 1px solid rgba(255,255,255,.26);
+  background: radial-gradient(circle at 50% 32%, rgba(233,230,255,.2), rgba(233,230,255,.06) 72%, rgba(233,230,255,.02));
   box-shadow: 0 30px 70px -26px rgba(0,0,0,.95), inset 0 0 60px rgba(139,123,240,.12);
 }
 
 /* Credentials card — the record as ONE object beside the question, rather than
    a row of big-number tiles. Deliberately quiet: the question is the subject of
    this fold, and a card with a border, a fill and a glow would fight it. */
-.cred {
+.record {
   width: 322px;
   justify-self: end;
   align-self: center;
@@ -290,49 +291,50 @@ body {
   -webkit-backdrop-filter: blur(9px);
   animation: heroRise .9s cubic-bezier(.19,.82,.28,1) .34s both;
 }
-@media (max-width: 940px) { .cred { justify-self: start; width: 100%; max-width: 380px; } }
+@media (max-width: 940px) { .record { justify-self: start; width: 100%; max-width: 380px; } }
 
-.cred-id { display: flex; align-items: center; gap: 12px; min-width: 0; }
-.cred-face {
+.record-id { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.record-face {
   width: 46px; height: 46px; flex: 0 0 auto;
   border-radius: 50%;
   object-fit: cover;
   border: 1px solid rgba(255,255,255,.28);
+  background: radial-gradient(circle at 50% 32%, rgba(233,230,255,.22), rgba(233,230,255,.07) 72%, rgba(233,230,255,.03));
 }
-.cred-name { font-size: 13.5px; font-weight: 600; color: #fbfaff; line-height: 1.25; letter-spacing: -.01em; }
-.cred-role {
+.record-name { font-size: 13.5px; font-weight: 600; color: #fbfaff; line-height: 1.25; letter-spacing: -.01em; }
+.record-role {
   font-family: 'JetBrains Mono', monospace;
   font-size: 10px; letter-spacing: .07em; text-transform: uppercase;
   color: rgba(214,208,240,.6); margin-top: 3px;
 }
 
-.cred-list { margin: 0; display: grid; gap: 0; }
-.cred-row {
+.record-list { margin: 0; display: grid; gap: 0; }
+.record-row {
   display: flex; align-items: baseline; justify-content: space-between; gap: 12px;
   padding: 7px 0;
   border-bottom: 1px solid rgba(255,255,255,.08);
 }
-.cred-row:last-child { border-bottom: 0; }
-.cred-row dt {
+.record-row:last-child { border-bottom: 0; }
+.record-row dt {
   font-family: 'JetBrains Mono', monospace;
   font-size: 10.5px; letter-spacing: .06em;
   color: rgba(214,208,240,.62);
 }
-.cred-row dd {
+.record-row dd {
   margin: 0;
   font-size: 13.5px; font-weight: 600; color: #fbfaff;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
-.cred-link {
+.record-link {
   font-family: 'JetBrains Mono', monospace;
   font-size: 10.5px; letter-spacing: .06em;
   color: #7fe6d6; text-decoration: none;
   border-top: 1px solid rgba(255,255,255,.08);
   padding-top: 11px;
 }
-.cred-link:hover { color: #fff; }
-.cred-link:focus-visible { outline: 2px solid #8b7bf0; outline-offset: 3px; }
+.record-link:hover { color: #fff; }
+.record-link:focus-visible { outline: 2px solid #8b7bf0; outline-offset: 3px; }
 
 /* ---- Compact banner for sub-pages ---- */
 .banner-inner {

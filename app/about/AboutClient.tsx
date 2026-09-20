@@ -104,7 +104,7 @@ export default function AboutClient({ name, jobTitle, profiles }: { name: string
         aside={
           <div className="hero-portrait">
             <canvas ref={motifRef} style={s('position:absolute;inset:-30px;width:calc(100% + 60px);height:calc(100% + 60px)')} />
-            <img className="face" src="/profile.jpg" alt={name} />
+            <img className="face" src="/portrait.png" alt={name} />
           </div>
         }
       >
