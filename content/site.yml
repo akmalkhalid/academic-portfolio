@@ -16,9 +16,23 @@ social:
   github: ""
   researchgate: "https://www.researchgate.net/profile/Mohd-Nor-Akmal-Khalid"
 
-# Hero section copy
-heroHeadline: "Engineering intelligence at the intersection of theory and play."
-heroSubheadline: "Senior lecturer and researcher at FTSM, UKM, working in computational intelligence — the search, optimization and metaheuristic methods at the heart of AI — with a distinctive focus on modelling and optimizing engagement in games and interactive systems, and an emerging frontier in generative and agentic AI."
+# Hero section copy.
+#
+# The fold leads with the research question (study E3). The previous statement
+# headline is kept here so it can be restored in a single edit:
+#   heroHeadline: "Engineering intelligence at the intersection of theory and play."
+#   heroSubheadline: "Senior lecturer and researcher at FTSM, UKM, working in
+#     computational intelligence — the search, optimization and metaheuristic
+#     methods at the heart of AI — with a distinctive focus on modelling and
+#     optimizing engagement in games and interactive systems, and an emerging
+#     frontier in generative and agentic AI."
+#
+# The question is quoted verbatim from the About page, so the two pages agree.
+heroHeadline: "How can we design intelligent systems that adapt, optimize and create, not just compute?"
+# NOTE: the closing "since <year>." is appended at build time from the earliest
+# publication year in /content/publications, so it can never drift. Don't type a
+# year here.
+heroSubheadline: "Metaheuristics, games informatics and generative AI — one question, three ways of answering it,"
 
 # Headline metrics shown on the home page (all optional). Publications, grants
 # and supervised-students counts are computed automatically from /content; these

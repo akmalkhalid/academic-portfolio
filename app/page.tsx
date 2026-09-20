@@ -56,6 +56,13 @@ export default function Page() {
     })),
   })).filter((g) => g.items.length > 0)
 
+  // Funding is DERIVED from content/projects, the same way the research page
+  // derives it — never typed into the hero, so the two pages cannot disagree.
+  const fundingTotal = projects.reduce((sum, p) => sum + (p.amountMyr || 0), 0)
+  const fundingPI = projects.filter((p) => isPI(p.role)).reduce((sum, p) => sum + (p.amountMyr || 0), 0)
+  // The hero's "since <year>" comes from the earliest publication on file.
+  const firstYear = pubs.length ? Math.min(...pubs.map((p) => p.year)) : new Date().getFullYear()
+
   const computedCitations = pubs.reduce((sum, p) => sum + (p.citationCount || 0), 0)
   const stats = {
     pubs: pubs.length,
@@ -66,6 +73,9 @@ export default function Page() {
     students: students.length,
     autoCitations: cfg.autoMetrics?.citations ?? null,
     autoSource: cfg.autoMetrics?.source ?? null,
+    fundingTotal,
+    fundingPI,
+    firstYear,
   }
 
   return (

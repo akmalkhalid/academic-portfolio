@@ -172,8 +172,8 @@ body {
 .hero-title {
   font-family: 'Space Grotesk', system-ui, sans-serif;
   font-weight: 700;
-  font-size: clamp(38px, 5.6vw, 74px);
-  line-height: 1.0;
+  font-size: clamp(30px, 4.5vw, 58px);
+  line-height: 1.06;
   letter-spacing: -.035em;
   margin: 0 0 24px;
   text-wrap: balance;
@@ -182,13 +182,14 @@ body {
 .hero-title .hl { position: relative; white-space: nowrap; }
 .hero-title .hl-a { color: #4fd8c6; text-shadow: 0 0 34px rgba(33,179,160,.55); }
 .hero-title .hl-b { color: #ff9b78; text-shadow: 0 0 34px rgba(242,104,63,.5); }
+.hero-title .hl-c { color: #b6a8ff; text-shadow: 0 0 34px rgba(139,123,240,.5); }
 
-.hero-sub {
-  font-size: clamp(15.5px, 1.5vw, 18px);
-  line-height: 1.62;
-  color: rgba(214,208,240,.78);
-  max-width: 620px;
-  margin: 0 0 32px;
+.hero-answer {
+  font-size: clamp(15px, 1.45vw, 17.5px);
+  line-height: 1.6;
+  color: rgba(214,208,240,.8);
+  max-width: 540px;
+  margin: 0 0 28px;
 }
 
 .hero-eyebrow {
@@ -272,35 +273,66 @@ body {
   box-shadow: 0 30px 70px -26px rgba(0,0,0,.95), inset 0 0 60px rgba(139,123,240,.12);
 }
 
-/* Metrics rail, sitting inside the dark band */
-.hero-metrics {
-  max-width: 1120px;
-  margin: 0 auto;
-  padding: 0 28px 46px;
+/* Credentials card — the record as ONE object beside the question, rather than
+   a row of big-number tiles. Deliberately quiet: the question is the subject of
+   this fold, and a card with a border, a fill and a glow would fight it. */
+.cred {
+  width: 322px;
+  justify-self: end;
+  align-self: center;
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 18px;
-  border-top: 1px solid rgba(255,255,255,.1);
-  padding-top: 28px;
+  gap: 14px;
+  padding: 18px 18px 14px;
+  border: 1px solid rgba(255,255,255,.14);
+  border-radius: 12px;
+  background: rgba(10,9,20,.5);
+  backdrop-filter: blur(9px);
+  -webkit-backdrop-filter: blur(9px);
+  animation: heroRise .9s cubic-bezier(.19,.82,.28,1) .34s both;
 }
-@media (max-width: 900px) { .hero-metrics { grid-template-columns: repeat(3, 1fr); row-gap: 26px } }
-@media (max-width: 480px) { .hero-metrics { grid-template-columns: repeat(2, 1fr) } }
-.hero-metric-n {
-  font-family: 'Space Grotesk', system-ui, sans-serif;
-  font-weight: 600;
-  font-size: clamp(26px, 3.2vw, 40px);
-  line-height: 1;
-  letter-spacing: -.025em;
-  color: #fbfaff;
+@media (max-width: 940px) { .cred { justify-self: start; width: 100%; max-width: 380px; } }
+
+.cred-id { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.cred-face {
+  width: 46px; height: 46px; flex: 0 0 auto;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid rgba(255,255,255,.28);
 }
-.hero-metric-l { font-size: 12.5px; color: rgba(214,208,240,.72); margin-top: 8px; line-height: 1.35; min-height: 34px }
-.hero-metric-h {
+.cred-name { font-size: 13.5px; font-weight: 600; color: #fbfaff; line-height: 1.25; letter-spacing: -.01em; }
+.cred-role {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 10px; letter-spacing: .08em; text-transform: uppercase;
-  color: rgba(214,208,240,.4); margin-top: 4px;
+  font-size: 10px; letter-spacing: .07em; text-transform: uppercase;
+  color: rgba(214,208,240,.6); margin-top: 3px;
 }
 
-
+.cred-list { margin: 0; display: grid; gap: 0; }
+.cred-row {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 12px;
+  padding: 7px 0;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+.cred-row:last-child { border-bottom: 0; }
+.cred-row dt {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px; letter-spacing: .06em;
+  color: rgba(214,208,240,.62);
+}
+.cred-row dd {
+  margin: 0;
+  font-size: 13.5px; font-weight: 600; color: #fbfaff;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.cred-link {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10.5px; letter-spacing: .06em;
+  color: #7fe6d6; text-decoration: none;
+  border-top: 1px solid rgba(255,255,255,.08);
+  padding-top: 11px;
+}
+.cred-link:hover { color: #fff; }
+.cred-link:focus-visible { outline: 2px solid #8b7bf0; outline-offset: 3px; }
 
 /* ---- Compact banner for sub-pages ---- */
 .banner-inner {

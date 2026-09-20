@@ -11,7 +11,12 @@ import type { PillarKey } from '@/lib/demos/registry'
 
 type PubNode = { t: string; y: number; pills: Code[]; q: string; cat: string; citation: string; scholar: string }
 type Funded = { role: string; title: string; agency: string; years: string; dots: string[] }
-type Stats = { pubs: number; citations: number; hIndex: number | null; i10Index: number | null; grants: number; students: number; autoCitations?: number | null; autoSource?: string | null }
+type Stats = {
+  pubs: number; citations: number; hIndex: number | null; i10Index: number | null
+  grants: number; students: number
+  autoCitations?: number | null; autoSource?: string | null
+  fundingTotal: number; fundingPI: number; firstYear: number
+}
 
 type SelectedGroup = { title: string; accent: string; items: { quartile: string; marker: string; cite: string; slug: string }[] }
 
@@ -205,17 +210,26 @@ export default function HomeClient({
     setCopied(true); setTimeout(() => setCopied(false), 1800)
   }
 
-  const statList = [
-    { num: stats.citations, display: stats.citations.toLocaleString(), label: 'Citations', hint: `Google Scholar${stats.autoCitations ? ` · ${stats.autoSource || 'OpenAlex'} ${stats.autoCitations.toLocaleString()}` : ''}`, dot: '#4d8df0', live: false },
-    { num: stats.hIndex || 0, display: stats.hIndex ? String(stats.hIndex) : '—', label: 'h-index', hint: stats.i10Index ? `i10-index ${stats.i10Index}` : 'Google Scholar', dot: '#8b7bf0', live: false },
-    { num: stats.pubs, display: String(stats.pubs), label: 'Peer-reviewed publications', hint: '2012 — 2026', dot: '#21b3a0', live: false },
-    { num: stats.grants, display: String(stats.grants), label: 'Funded grants', hint: 'FRGS · GGPM · TR-UKM', dot: '#f2683f', live: false },
-    { num: stats.students, display: String(stats.students), label: 'Postgraduates supervised', hint: "PhD & Master's", dot: '#d99320', live: false },
-    { num: 0, display: '—', label: 'Site visitors', hint: 'cookie-free · live', dot: '#84b53a', live: true },
+  // Ringgit, short form: 1508350 → "RM 1.51M". Derived upstream, never typed.
+  const fmtMYR = (n: number) =>
+    n >= 1e6 ? `RM ${(n / 1e6).toFixed(2)}M` : n >= 1e3 ? `RM ${Math.round(n / 1e3)}k` : `RM ${n}`
+
+  // The credentials card: a label/value list, the way a CV header reads — not a
+  // row of big-number tiles. Every figure here is computed in page.tsx.
+  const credentials: { k: string; v: string }[] = [
+    { k: 'Citations', v: stats.citations.toLocaleString() },
+    { k: 'h-index / i10', v: `${stats.hIndex ?? '—'} / ${stats.i10Index ?? '—'}` },
+    { k: 'Peer-reviewed', v: String(stats.pubs) },
+    { k: 'Grants', v: `${stats.grants} · ${fmtMYR(stats.fundingTotal)}` },
+    { k: 'Postgraduates', v: String(stats.students) },
   ]
 
-  // Headline words that get lit up. Falls back silently if the copy changes.
-  const HL: Record<string, string> = { theory: 'hl-a', play: 'hl-b' }
+  // The three verbs in the question are lit in their pillar's colour, so the
+  // colour is a real signal rather than decoration: optimize → Computational
+  // Intelligence & Optimization (teal), adapt → Games Informatics & Engagement
+  // Modelling (coral), create → Generative & Agentic AI (violet). Falls back
+  // silently to plain text if the question copy changes.
+  const HL: Record<string, string> = { adapt: 'hl-b', optimize: 'hl-a', create: 'hl-c' }
   const headlineNodes = (hero.headline || '').split(/(\s+)/).map((tok, i) => {
     const cls = HL[tok.toLowerCase().replace(/[^a-z]/g, '')]
     return cls ? <span key={i} className={'hl ' + cls}>{tok}</span> : <span key={i}>{tok}</span>
@@ -228,7 +242,7 @@ export default function HomeClient({
 
   return (
     <div ref={wrapRef} data-screen-label="Home" style={s('min-height:100vh;overflow-x:hidden')}>
-      {/* HERO — dark cinematic band, live particle-swarm search running behind it */}
+      {/* HERO — the research question, with the record beside it (study E3) */}
       <section id="top" className="dark-band" data-dark-band="1">
         <ProcLandscape variant="hero" />
         <HeroSim variant="hero" />
@@ -236,40 +250,42 @@ export default function HomeClient({
           <div className="hero-grid">
             <div className="hero-in" style={s('min-width:0')}>
               <p className="hero-eyebrow">
-                <span className="dot" />
-                <span className="txt">Dr. Mohd Nor Akmal Khalid · FTSM, UKM</span>
+                <span className="txt">A research programme built on one question</span>
               </p>
               <h1 className="hero-title">{headlineNodes}</h1>
-              <p className="hero-sub">{hero.sub}</p>
+              <p className="hero-answer">
+                {hero.sub} since {stats.firstYear}.
+              </p>
               <div className="hero-ctas">
-                <a href="#research" className="btn-lume">Explore my research <span aria-hidden="true">→</span></a>
-                <a href="#pubs" className="btn-ghost">View publications</a>
-                <a href="/cv/Akmal_CV_2026.pdf" download className="btn-ghost">Download CV <span aria-hidden="true">↓</span></a>
+                <a href="#research" className="btn-lume">See how I answer it <span aria-hidden="true">→</span></a>
+                <a href="#pubs" className="btn-ghost">Publications</a>
+                <a href="/cv/Akmal_CV_2026.pdf" download className="btn-ghost">CV <span aria-hidden="true">↓</span></a>
               </div>
               <p className="hero-foot">
-                The terrain behind this text is generated procedurally, and the swarm crossing it is a real particle-swarm
-                search climbing those ridges. Move faster and the ground roughens. Click anywhere and a new landscape sweeps
-                out from your cursor — watch the population lose its optimum and start again.
+                The terrain behind this page is generated live and the swarm crossing it is a real search climbing
+                those ridges. Click anywhere to regenerate the landscape.
               </p>
             </div>
-            <div className="hero-portrait">
-              <span className="ring" aria-hidden="true" />
-              <img className="face" src="/profile.jpg" alt="Dr. Mohd Nor Akmal Khalid" />
-            </div>
-          </div>
 
-          {/* METRICS RAIL — inside the band, so the dark fold closes on the numbers */}
-          <div className="hero-metrics" data-stats="1">
-            {statList.map((st, i) => (
-              <div key={i} style={s('position:relative;padding-left:16px;min-width:0')}>
-                <span style={s(`position:absolute;left:0;top:9px;width:7px;height:7px;border-radius:50%;background:${st.dot};box-shadow:0 0 12px ${st.dot};animation:computePulse 2.6s ease-in-out infinite`)} />
-                <div className="hero-metric-n">
-                  <span {...(st.live ? { 'data-count': 0, 'data-live': '1' } : st.num ? { 'data-count': st.num } : {})}>{st.display}</span>
+            {/* The record, as one object: face, name, title and evidence together */}
+            <aside className="cred" aria-label="Academic record at a glance">
+              <div className="cred-id">
+                <img className="cred-face" src="/profile.jpg" alt="Dr. Mohd Nor Akmal Khalid" />
+                <div style={s('min-width:0')}>
+                  <div className="cred-name">Dr. Mohd Nor Akmal Khalid</div>
+                  <div className="cred-role">Senior Lecturer · FTSM, UKM</div>
                 </div>
-                <div className="hero-metric-l">{st.label}</div>
-                <div className="hero-metric-h">{st.hint}</div>
               </div>
-            ))}
+              <dl className="cred-list">
+                {credentials.map((c) => (
+                  <div className="cred-row" key={c.k}>
+                    <dt>{c.k}</dt>
+                    <dd>{c.v}</dd>
+                  </div>
+                ))}
+              </dl>
+              <a className="cred-link" href="/cv">Full curriculum vitae <span aria-hidden="true">→</span></a>
+            </aside>
           </div>
         </div>
       </section>
