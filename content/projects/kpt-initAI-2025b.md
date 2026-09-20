@@ -6,7 +6,7 @@ grantCode: "WARISAN-2025-005"
 amountMyr: 400000
 role: "Principle Investigator"
 startDate: "2025-07-01"
-endDate: "2026-04-30"
+endDate: "2026-12-31"
 status: "Completed"
 researchTags: ["generative-ai", "simulation"]
 featured: false
