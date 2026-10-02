@@ -110,7 +110,8 @@ export default function AboutClient({ name, jobTitle, profiles }: { name: string
       >
         <a href="/research" className="btn-lume">Explore the research <span aria-hidden="true">→</span></a>
         <a href="/contact" className="btn-ghost">Get in touch</a>
-        <a href="/cv/Akmal_CV_2026.pdf" download className="btn-ghost">Download CV <span aria-hidden="true">↓</span></a>
+        <a href="/cv/Akmal_CV_2026_Academic.pdf" download className="btn-ghost">Academic CV <span aria-hidden="true">↓</span></a>
+        <a href="/cv/Akmal_CV_2026_Industry.pdf" download className="btn-ghost">Trainer CV <span aria-hidden="true">↓</span></a>
       </PageBanner>
 
       {/* BIO */}

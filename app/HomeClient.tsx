@@ -259,7 +259,7 @@ export default function HomeClient({
               <div className="hero-ctas">
                 <a href="#research" className="btn-lume">See how I answer it <span aria-hidden="true">→</span></a>
                 <a href="#pubs" className="btn-ghost">Publications</a>
-                <a href="/cv/Akmal_CV_2026.pdf" download className="btn-ghost">CV <span aria-hidden="true">↓</span></a>
+                <a href="/cv/" className="btn-ghost">CV <span aria-hidden="true">→</span></a>
               </div>
               <p className="hero-foot">
                 The terrain behind this page is generated live and the swarm crossing it is a real search climbing

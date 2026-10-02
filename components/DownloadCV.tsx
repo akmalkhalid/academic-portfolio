@@ -7,14 +7,17 @@
 //   <DownloadCV />                       // default: "Download CV"
 //   <DownloadCV variant="outline" />     // outline style
 //   <DownloadCV label="Download CV (PDF)" />
+//   <DownloadCV profile="industry" label="Trainer CV" />   // trainer-first PDF
 
 type Props = {
   label?: string;
+  /** academic (default) = full scholarly CV · industry = trainer-first CV */
+  profile?: "academic" | "industry";
   variant?: "solid" | "outline";
   className?: string;
 };
 
-export default function DownloadCV({ label = "Download CV", variant = "solid", className = "" }: Props) {
+export default function DownloadCV({ label = "Download CV", profile = "academic", variant = "solid", className = "" }: Props) {
   const base: React.CSSProperties = {
     display: "inline-flex",
     alignItems: "center",
@@ -34,11 +37,11 @@ export default function DownloadCV({ label = "Download CV", variant = "solid", c
 
   return (
     <a
-      href="/cv/Akmal_CV_2026.pdf"
+      href={profile === "industry" ? "/cv/Akmal_CV_2026_Industry.pdf" : "/cv/Akmal_CV_2026_Academic.pdf"}
       download
       className={className}
       style={variant === "outline" ? outline : solid}
-      aria-label="Download the latest CV as a PDF"
+      aria-label={`Download the latest ${profile} CV as a PDF`}
     >
       <span aria-hidden>↓</span>
       {label}

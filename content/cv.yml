@@ -111,6 +111,116 @@ ip:
   - { title: "AI-Assisted Research Writing", place: "FTSM, UKM", year: "2024" }
   - { title: "AI-Assisted Systematic Literature Review", place: "FTSM, UKM", year: "2024" }
 
+# ----------------------------------------------------------------------------
+#  TRAINING  —  feeds BOTH CV profiles and the Teaching page.
+#
+#  delivered: one row per session Akmal TAUGHT (trainer / speaker / keynote).
+#    date      ISO start date (YYYY-MM-DD) — drives sorting AND the
+#              delivered-vs-scheduled split: rows dated after the build date
+#              print under "Scheduled"; once the date passes, the weekly
+#              rebuild moves them into "Delivered" automatically.
+#              (If an event is cancelled, delete its row.)
+#    when      the date as printed on the CV
+#    kind      workshop | course | talk | keynote | webinar
+#    sector    academia | government | health | industry | international | schools
+#    days      training days (used for the "training days" tile; talks = 0.5 or less)
+#  Source: Google Drive › [AKTIVITI] › [2026] › [COMPLETED] (invitation letters,
+#  tentatif, participant lists). Audience counts only where a list exists.
+#  Activities from 2025 and earlier live in a different Google account and are
+#  NOT yet listed here.
+# ----------------------------------------------------------------------------
+training:
+  delivered:
+    - { date: "2026-01-20", when: "20 Jan 2026", kind: "workshop", sector: "academia", days: 1,   title: "Using AI for Article Writing (CORE Synergy Series 1/2026)", client: "CORE, Faculty of Health Sciences, UKM", audience: "Researchers & postgraduates" }
+    - { date: "2026-02-09", when: "9 Feb 2026",  kind: "workshop", sector: "academia", days: 1,   title: "Q1/Q2 Journal Writing Workshop, Series 2 (Mentoring System)", client: "Faculty of Law, UKM", audience: "Law academics" }
+    - { date: "2026-02-21", when: "21 Feb 2026", kind: "workshop", sector: "schools",  days: 1,   title: "AI Intervention for Teachers: Vibe-Coding a Digital Teaching Portfolio", client: "Teacher community programme", audience: "School teachers" }
+    - { date: "2026-04-06", when: "6–7 Apr 2026", kind: "workshop", sector: "academia", days: 2, title: "AI & Information Literacy in Academic Writing — Module LS27 Development (Series I & II)", client: "UKM Library (PTSL)", audience: "Librarians & instructors", participants: 13 }
+    - { date: "2026-04-16", when: "16 Apr 2026", kind: "workshop", sector: "academia", days: 0.5, title: "Using AI in Writing Journal Articles", client: "UKM Library (PTSL)", audience: "Academics & researchers" }
+    - { date: "2026-04-27", when: "27 Apr 2026", kind: "workshop", sector: "health",   days: 1,   title: "Gemini Pro & NotebookLM for Work Efficiency and Innovation", client: "Faculty of Health Sciences, UKM", audience: "Faculty staff" }
+    - { date: "2026-05-04", when: "4 May 2026",  kind: "webinar",  sector: "academia", days: 0.1, title: "AI Champion Webinar 1 — Maximise Your Productivity with the Google Ecosystem", client: "UKM AI Champion Webinar Series", audience: "UKM staff" }
+    - { date: "2026-05-13", when: "13 May 2026", kind: "workshop", sector: "health",   days: 0.5, title: "Transforming Healthcare and Work with AI (Pre-Conference Workshop on Public Health & SDGs)", client: "Public-health conference", audience: "Public-health professionals" }
+    - { date: "2026-07-06", when: "6 Jul 2026",  kind: "workshop", sector: "international", days: 1, title: "AI in Daily Use: Planning, Content & Video Generation (Summer Camp)", client: "Zhejiang University of Finance & Economics (ZUFE), via IVI UKM", audience: "Visiting students, China" }
+    - { date: "2026-07-07", when: "7–9 Jul 2026", kind: "course",  sector: "academia", days: 3,   title: "Agentic AI — Foundations Course (hands-on LangChain / LangGraph)", client: "BAKAT-UKM & DigitalUKM", audience: "UKM IT officers", participants: 22 }
+    - { date: "2026-07-16", when: "16 Jul 2026", kind: "workshop", sector: "international", days: 0.25, title: "Introduction to Computer Science, Programming & Digital Tech — “The Journey of One Alert”", client: "UKM summer programme (international students)", audience: "UG & PG students, China" }
+    - { date: "2026-07-29", when: "29 Jul 2026", kind: "talk",     sector: "international", days: 0.25, title: "AI Applications in Healthcare & Education (UKM–ZCMU Summer Programme 2026)", client: "UKM Global & FTSM, for Zhejiang Chinese Medical University", audience: "Visiting students", participants: 40 }
+    - { date: "2026-07-29", when: "29 Jul 2026", kind: "webinar",  sector: "academia", days: 0.1, title: "AI Champion Webinar 8 — Ask, Assist or Automate: Gemini as Your Digital Productivity Driver", client: "UKM AI Champion Webinar Series", audience: "UKM staff" }
+    - { date: "2026-08-03", when: "3–4 Aug 2026", kind: "workshop", sector: "international", days: 2, title: "AI in Daily Use: Planning, Content & Video Generation (Summer Camp)", client: "Zhejiang A&F University (ZAFU), via IVI UKM", audience: "Visiting students, China" }
+    - { date: "2026-08-06", when: "6–7 Aug 2026", kind: "workshop", sector: "health",  days: 1,   title: "Integrating AI in Research and OBL-Based Pedagogy", client: "Centre for Drug & Herbal Development, Faculty of Pharmacy, UKM", audience: "Lecturers, researchers & students" }
+    - { date: "2026-08-07", when: "7 Aug 2026",  kind: "webinar",  sector: "health",   days: 0.1, title: "Using AI in Research Preparation (Research Webinar Series)", client: "Dept. of Ophthalmology, Faculty of Medicine, UKM", audience: "Ophthalmology postgraduates" }
+    - { date: "2026-08-11", when: "11 Aug 2026", kind: "workshop", sector: "health",   days: 1,   title: "AI-Guided Office Productivity Transformation, Series 1", client: "Hospital Canselor Tuanku Muhriz (HCTM) UKM", audience: "Hospital staff" }
+    - { date: "2026-08-18", when: "18 Aug 2026", kind: "talk",     sector: "academia", days: 0.25, title: "Using AI in Research (FEP Research Ethics Series 1/2026)", client: "Faculty of Economics & Management, UKM", audience: "Lecturers & postgraduates" }
+    - { date: "2026-09-09", when: "9 Sep 2026",  kind: "course",   sector: "government", days: 1, title: "AI Technology in Law Enforcement (SPSK5231) — Professional Certificate in AI- & Cybersecurity-Driven Policing, Series 1", client: "Royal Malaysia Police (PDRM), via FSSK UKM", audience: "Senior police officers (DSP/ASP)", participants: 30 }
+    - { date: "2026-09-17", when: "17 Sep 2026", kind: "workshop", sector: "academia", days: 1,   title: "SIM Builder: Building Interactive Teaching Simulations with AI", client: "UKM teaching staff programme", audience: "UKM lecturers" }
+    - { date: "2026-09-23", when: "23 Sep 2026", kind: "course",   sector: "government", days: 1, title: "AI Technology in Law Enforcement (SPSK5231) — Professional Certificate, Series 2", client: "Royal Malaysia Police (PDRM), via FSSK UKM", audience: "Police officers (DSP/ASP/Insp.)", participants: 30 }
+    - { date: "2026-09-25", when: "25–26 Sep 2026", kind: "workshop", sector: "industry", days: 2, title: "AI Masterclass for Practical Communication & Presentation (co-trainer)", client: "Commerce Dot Com Sdn Bhd (CDC)", audience: "Corporate communications, SVP to executive", participants: 10, rating: "4.70 / 5" }
+    - { date: "2026-09-26", when: "26 Sep 2026", kind: "talk",     sector: "academia", days: 0.25, title: "Measuring the Unmeasurable: What Games Teach Us About Engagement", client: "myHCI-UX (KL ACM SIGCHI Chapter), 9th AGM, UPM", audience: "HCI researchers & practitioners" }
+    - { date: "2026-09-27", when: "27 Sep 2026", kind: "talk",     sector: "health",   days: 0.25, title: "AI in Health Science Research & AI Tools in Healthcare (2 sessions)", client: "Malaysian Society of Radiographers (MSR)", audience: "Radiographers" }
+    - { date: "2026-09-28", when: "28–29 Sep 2026", kind: "workshop", sector: "academia", days: 1.5, title: "AI-Assisted Academic Writing for Journal Publication: From Manuscript to Submission", client: "STEM Enculturation Research Centre, Faculty of Education, UKM", audience: "Academics" }
+    - { date: "2026-10-01", when: "1 Oct 2026",  kind: "keynote",  sector: "academia", days: 0.1, title: "Keynote — Learning to Learn with AI: Meta-Learning Skills for the Aspirational University", client: "kNovasi 2026 (UKM teaching-innovation congress)", audience: "Higher-education educators" }
+    # --- confirmed upcoming (printed under "Scheduled" until their date passes) ---
+    - { date: "2026-10-06", when: "6 Oct 2026",  kind: "workshop", sector: "health",   days: 1,   title: "AI-Guided Office Productivity Transformation, Series 2", client: "Hospital Canselor Tuanku Muhriz (HCTM) UKM", audience: "Hospital staff" }
+    - { date: "2026-10-20", when: "20 Oct 2026", kind: "workshop", sector: "academia", days: 0.5, title: "AI for Literature Review Writing", client: "FSSK Research Secretariat & UKM Library", audience: "Researchers & postgraduates" }
+    - { date: "2026-10-22", when: "22 Oct 2026", kind: "talk",     sector: "health",   days: 0.1, title: "Application of AI in Clinical Research: Dos and Don'ts", client: "Dept. of Obstetrics & Gynaecology, Faculty of Medicine / HCTM", audience: "Clinicians & researchers" }
+    - { date: "2026-10-27", when: "27–29 Oct 2026", kind: "course", sector: "government", days: 2.5, title: "LLM Engineering: From Setup to Production Systems (Series 1)", client: "Malaysian Armed Forces", audience: "Technical officers" }
+    - { date: "2026-11-03", when: "3–5 Nov 2026", kind: "workshop", sector: "international", days: 0.5, title: "Workshop Speaker — MCAIT 2026", client: "Taibah University, Madinah (with UKM)", audience: "Conference delegates" }
+
+  # Short "what I teach" cards for the trainer-first profile.
+  expertise:
+    - accent: "purple"
+      title: "Generative AI for the Workplace"
+      text: "Gemini, NotebookLM, ChatGPT & Copilot for office productivity, communication and presentation — hands-on, role-based exercises for staff from front-line to senior management"
+    - accent: "teal"
+      title: "AI for Research & Academic Writing"
+      text: "Ethical AI use across the research cycle — literature review & SLR, manuscript development, Q1/Q2 journal targeting — for faculties, libraries and hospitals"
+    - accent: "amber"
+      title: "Agentic AI & LLM Engineering"
+      text: "Building agents and RAG pipelines with LangChain / LangGraph, local LLM deployment, and AI for law enforcement & public-sector operations"
+
+  # Courses / certifications Akmal COMPLETED (2025 onward). Source: Google Drive
+  # › [PENSIJILAN] › 2025 / 2026 / CLAUDE CERTIFICATION.
+  development:
+    - { year: "2026", title: "Claude 101 · Claude Code 101 · Claude Platform 101 · Introduction to Claude Work", provider: "Anthropic Academy", note: "Jul 2026 · 4 verified certificates" }
+    - { year: "2026", title: "From Model to MCU: Pruning, Projection & Quantization for Edge AI", provider: "TechSource Systems (MathWorks)", note: "9 Jun 2026" }
+    - { year: "2026", title: "Smarter Teaching Starts Here: Gemini Pro for Lecturers", provider: "Online webinar", note: "25 May 2026" }
+    - { year: "2026", title: "Course-Note Development for UKM Trainers (Agentic AI)", provider: "BAKAT-UKM & DigitalUKM", note: "9 Apr 2026" }
+    - { year: "2026", title: "Thesis to Book", provider: "IIESM, Universiti Teknologi MARA", note: "26–27 Feb 2026" }
+    - { year: "2025", title: "Empowering Leadership Conference 2.0 — Artificial Intelligence: The New Era of Leadership", provider: "Universiti Malaysia Sabah / AKEPT", note: "24–25 Sep 2025" }
+    - { year: "2025", title: "Scopus AI, ChatGPT & AI Agents for Rapid Research Paper Creation", provider: "Educrafters", note: "10 Sep 2025" }
+    - { year: "2025", title: "Build Your Generative AI Productivity Skills (learning path)", provider: "Microsoft & LinkedIn Learning", note: "5 Sep 2025 · 4 h 51 min" }
+    - { year: "2025", title: "What Is Generative AI? · Become an AI-Powered People Manager", provider: "LinkedIn Learning", note: "Aug–Sep 2025 · 3.4 NASBA CPE" }
+    - { year: "2025", title: "AI Productivity Hacks · Excel with Copilot · Copilot in PowerPoint · Prompt Engineering for Generative AI · Generative AI for Creative Content", provider: "LinkedIn Learning", note: "Sep 2025 · HRCI, SHRM & PMI credits" }
+    - { year: "2025", title: "Webinar Series on Active Learning — AI in Teaching & Learning and Academic Quality Assurance (2/2025, 5/2025)", provider: "UKM", note: "May & Dec 2025" }
+    - { year: "2025", title: "Professional Certificate in Higher Education Teaching (SPPPT), Cohort 13", provider: "Human Resources Division, UKM", note: "17–28 Feb 2025" }
+    - { year: "2025", title: "Mind Transformation Programme (Program Transformasi Minda)", provider: "Human Resources Division, UKM", note: "20–24 Jan 2025 · assessed" }
+
+  appointments:
+    - "AI Champion, Ministry of Higher Education Malaysia (appointed Apr 2026) — runs the UKM AI Champion webinar series"
+    - "Module lecturer, UKM–PDRM Professional Certificate in AI- & Cybersecurity-Driven Policing (2026)"
+    - "Consultancy & training via UKM Pakarunding Sdn. Bhd."
+
+# ----------------------------------------------------------------------------
+#  INDUSTRY (trainer-first) PROFILE — overrides used only by the second CV.
+#  Everything not overridden here is shared with the academic CV.
+# ----------------------------------------------------------------------------
+industry:
+  title: "AI Trainer & Consultant · Senior Lecturer, UKM"
+  subtitle: "Generative & Agentic AI for organisations"
+  profile: >
+    AI trainer and consultant who turns generative and agentic AI into day-to-day
+    capability for organisations. In 2026 alone he has delivered hands-on programmes
+    for the Royal Malaysia Police, a university hospital, the Government e-procurement
+    operator (Commerce Dot Com),
+    university faculties and libraries, and visiting cohorts from China — from
+    one-hour webinars to multi-day professional-certificate modules. Appointed an AI
+    Champion by Malaysia's Ministry of Higher Education, he designs his own training
+    modules (five registered as copyrights at UKM) and keeps them current through
+    continuous certification, including Anthropic's Claude and Microsoft–LinkedIn
+    generative-AI tracks. Behind the training sits a research record of 113
+    publications, a Ph.D. in Evolutionary Computing and RM 1.51M in competitive
+    grants, including a national project building a large language model for the
+    Malay language. Senior Lecturer at Universiti Kebangsaan Malaysia, previously
+    Assistant Professor at JAIST, Japan.
+
 journals:
   - { q: "", cite: "A. Ullah, X. Zhang, M. A. M. Tasir, M. N. A. Khalid, A. Majid, N. Kumar, and H. Mukalazi (2026). Text-to-video generation with multi-loss sequential generative adversarial network. Scientific Reports, vol. 16." }
   - { q: "", cite: "W. D. Ahmad, A. A. Bakar, and M. N. A. Khalid (2026). A coordinated hybrid initialization and multi-operator framework for swarm-based optimization. Engineering Research Express, vol. 8." }
@@ -249,6 +359,10 @@ supervision:
     - { role: "PhD·Co", name: "Nur Izzati Abd Kader", year: "2025", topic: "HMM with RNN for the impact of climate change on depression in Malaysia.", now: "Now Senior Lecturer, UNITEN." }
 
 awards:
+  - "Excellent Service Award (Anugerah Perkhidmatan Cemerlang) — UKM (2026)"
+  - "Teaching Performance Excellence (SPPP 3.5–5.0) — FTSM, UKM, Sem. 2 2025/26"
+  - "Outstanding Individual Award (Innovation), Science & Technology — MyRA@UKM Excellence Awards (2025)"
+  - "Gold Medal, Digital Games category (team mentor) — DICE 3.0, KPT & UniSZA (2025)"
   - "Best Paper Award — M-CAIT 2021, UKM"
   - "Best Paper Award — IRICT 2020"
   - "Best Paper Award — iCiCSE 2018, Kuching"
@@ -266,6 +380,7 @@ teaching:
 skills:
   Programming: "C++ · C#.NET · Python · Java · R · MATLAB · Scilab · PHP · SQL · Prolog · LaTeX"
   "Data & Web": "MySQL · Neo4j · SQLite · XQuery · HTML/CSS · JavaScript · Apache · Tomcat"
+  "AI Tools": "Gemini · NotebookLM · ChatGPT · Claude · Microsoft Copilot · Perplexity · LangChain · LangGraph"
   Professional: "Research & Publishing · Teaching & Training · Consultation · Peer Review"
   Languages: "English (fluent) · Bahasa Malaysia (native)"
 
@@ -279,9 +394,11 @@ service:
   - "Guest Editor — Entertainment Computing (Elsevier), Information (MDPI), PeerJ Computer Science"
   - "Program Committee — IFIP-ICEC, AGENTICS/IJCCI 2025, AWIST"
   - "General Chair — ASEAN Workshop on Information Science & Technology; AI & Entertainment Science Workshop, JAIST"
+  - "Organising Committee & Reviewer — ICEEI 2025"
+  - "Reviewer — IEEE Transactions on Affective Computing (2025); IEEE ICCSCE 2026"
   - "Referee — Elsevier, IEEE and other reputable journals"
   - "Academic Collaboration Advisor — JAIST (2024–2026)"
-  - "Invited Speaker — 15+ talks on AI, entertainment science, gamification & scientific publishing"
+  - "Invited Speaker & Trainer — 40+ talks and workshops on AI, entertainment science, gamification & scientific publishing"
 
 references:
   - { name: "Prof. Dr. Shahrul Azman Mohd Noah", role: "Professor & Dean, Faculty of Information Science & Technology", affil: "Universiti Kebangsaan Malaysia, 43600 Bangi, Selangor, Malaysia.", email: "shahrul@ukm.edu.my" }

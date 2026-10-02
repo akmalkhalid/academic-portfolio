@@ -512,3 +512,7 @@ body {
   transition: opacity .16s ease;
 }
 @media (prefers-reduced-motion: reduce) { .pt-root { display: none !important } }
+
+/* Teaching › Training & workshops grids collapse on narrow screens */
+@media (max-width: 860px) { .tr-grid { grid-template-columns: repeat(2, 1fr) !important; } }
+@media (max-width: 560px) { .tr-grid { grid-template-columns: 1fr !important; } }

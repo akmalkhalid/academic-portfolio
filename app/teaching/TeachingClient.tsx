@@ -8,11 +8,15 @@ const stack = "'Space Grotesk', system-ui, sans-serif"
 
 type Course = { code: string; title: string; meta: string; accent: string; hasLabs: boolean; labs: { title: string; href: string; blurb: string }[] }
 type Ongoing = { name: string; thesis: string; startYear: string; degShort: string; degStyle: string; roleShort: string; dots: string[] }
+type TrRow = { when: string; kind: string; title: string; client: string; audience: string }
+type Training = { done: TrRow[]; next: TrRow[]; stats: { num: string; label: string; color: string }[] }
+const KIND_COL: Record<string, string> = { workshop: '#21b3a0', course: '#8b7bf0', talk: '#4d8df0', keynote: '#e0a03a', webinar: '#8a8279' }
 type Grad = { name: string; thesis: string; degree: string; completion: number | string; role: string; now: string }
 
 export default function TeachingClient({
-  current, past, currentCount, pastCount, ongoing, graduated, supStats,
+  current, past, currentCount, pastCount, ongoing, graduated, supStats, training,
 }: {
+  training: Training
   current: Course[]; past: Course[]; currentCount: number; pastCount: number
   ongoing: Ongoing[]; graduated: Grad[]; supStats: { num: string; label: string; color: string }[]
 }) {
@@ -132,6 +136,48 @@ export default function TeachingClient({
             </div>
           ))}
         </div>
+      </section>
+
+      {/* TRAINING & WORKSHOPS — rows come from content/cv.yml › training.delivered,
+          the same data both CVs print. Future-dated rows show as "Coming up". */}
+      <section id="training" style={s('max-width:1120px;margin:0 auto;padding:46px 28px 10px')}>
+        <h2 style={s(`font-family:${stack};font-weight:600;font-size:clamp(24px,3vw,32px);letter-spacing:-.02em;margin:0 0 8px`)}>Training &amp; workshops</h2>
+        <p style={s('font-size:15px;line-height:1.6;color:#57514b;margin:0 0 18px;max-width:660px')}>Hands-on AI training beyond the lecture hall — for police officers, hospital staff, corporate teams, faculties, libraries and visiting cohorts. <a href="/cv/industry/" style={s('color:#1c1917')}>See the trainer CV →</a></p>
+        <div className="tr-grid" style={s('display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:26px')}>
+          {training.stats.map((st, i) => (
+            <div key={i} style={s(`border-top:2px solid ${st.color};padding-top:12px`)}>
+              <div style={s(`font-family:${stack};font-weight:600;font-size:30px;line-height:1;letter-spacing:-.02em`)}>{st.num}</div>
+              <div style={s('font-size:13px;color:#57514b;margin-top:6px')}>{st.label}</div>
+            </div>
+          ))}
+        </div>
+        {training.next.length > 0 && (
+          <>
+            <p style={s("font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#a39a8f;margin:0 0 14px")}>Coming up</p>
+            <div className="tr-grid" style={s('display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-bottom:26px')}>
+              {training.next.map((r, i) => (
+                <div key={i} style={s('background:#fbfaf8;border:1px dashed #d9d3c9;border-radius:11px;padding:13px 14px')}>
+                  <p style={s(`font-family:'JetBrains Mono',monospace;font-size:10.5px;color:${KIND_COL[r.kind] || '#8a8279'};font-weight:600;margin:0 0 6px;text-transform:uppercase`)}>{r.when} · {r.kind}</p>
+                  <h3 style={s('font-size:13.5px;font-weight:600;line-height:1.3;margin:0 0 4px')}>{r.title}</h3>
+                  <p style={s('font-size:11.5px;color:#8a8279;line-height:1.45;margin:0')}>{r.client}</p>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+        <p style={s("font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#a39a8f;margin:0 0 14px")}>Delivered · newest first</p>
+        <div className="tr-grid" style={s('display:grid;grid-template-columns:repeat(3,1fr);gap:11px')}>
+          {training.done.slice(0, 9).map((r, i) => (
+            <div key={i} style={s(`background:#fff;border:1px solid #e7e3dd;border-top:3px solid ${KIND_COL[r.kind] || '#8a8279'};border-radius:11px;padding:13px 14px`)}>
+              <p style={s(`font-family:'JetBrains Mono',monospace;font-size:10.5px;color:${KIND_COL[r.kind] || '#8a8279'};font-weight:600;margin:0 0 6px;text-transform:uppercase`)}>{r.when} · {r.kind}</p>
+              <h3 style={s('font-size:13.5px;font-weight:600;line-height:1.3;margin:0 0 4px')}>{r.title}</h3>
+              <p style={s('font-size:11.5px;color:#8a8279;line-height:1.45;margin:0')}>{r.client}{r.audience ? ' · ' + r.audience : ''}</p>
+            </div>
+          ))}
+        </div>
+        {training.done.length > 9 && (
+          <p style={s('margin:16px 0 0;font-size:14px')}><a href="/cv/industry/" style={s('color:#1c1917;font-weight:600')}>All {training.done.length} sessions, with audiences and formats, in the trainer CV →</a></p>
+        )}
       </section>
 
       {/* OPEN LEARNING — Kopi & Prompt archive (static page under /public/newsletter/) */}

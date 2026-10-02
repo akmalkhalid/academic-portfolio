@@ -1,6 +1,10 @@
 import { getCourses, getStudents } from '@/lib/content'
 import { codesFromTags, PCOL } from '@/lib/view'
 import TeachingClient from './TeachingClient'
+// @ts-ignore — plain JS helpers shared with the CV (content/cv.yml)
+import { loadCV } from '../../lib/cv-data.js'
+// @ts-ignore
+import { splitTraining } from '../../lib/cv-template.js'
 
 const accentOf = (tags?: string[]) => PCOL[codesFromTags(tags)[0]]
 const degShort = (d: string) => (d.indexOf('MSc') >= 0 ? 'MSc' : 'PhD')
@@ -40,8 +44,22 @@ export default function Page() {
     { num: String(graduated.length), label: 'Graduated', color: '#8b7bf0' },
   ]
 
+  // Training & workshops delivered — the same rows the CVs print, so the
+  // Teaching page, /cv and both PDFs always agree.
+  const tr = splitTraining(loadCV())
+  const pick = (r: any) => ({ when: r.when, kind: r.kind, title: r.title, client: r.client, audience: r.audience || '' })
+  const training = {
+    done: tr.done.map(pick), next: tr.next.map(pick),
+    stats: [
+      { num: String(tr.done.length), label: 'Sessions delivered in ' + ((tr.done[0]?.date || '').slice(0, 4)), color: '#21b3a0' },
+      { num: String(tr.orgCount), label: 'Host organisations', color: '#4d8df0' },
+      { num: String(tr.sectorCount), label: 'Sectors — academia, health, government, industry, international, schools', color: '#e0a03a' },
+    ],
+  }
+
   return (
     <TeachingClient
+      training={training}
       current={current} past={past}
       currentCount={current.length} pastCount={past.length}
       ongoing={ongoing} graduated={graduated} supStats={supStats}
