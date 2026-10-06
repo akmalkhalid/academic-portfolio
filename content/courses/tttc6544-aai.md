@@ -4,7 +4,7 @@ courseTitle: "Advanced Artificial Intelligence"
 level: "Postgraduate"
 program: "MSc / PhD"
 semestersTaught: ["Sem 2 2025/2026", "Sem 1 2025/2026", "Sem 2 2024/2025", "Sem 1 2024/2025", "Sem 2 2023/2024", "Sem 1 2023/2024"]
-isCurrentlyTeaching: true
+isCurrentlyTeaching: false
 topicTags: ["expert-systems", "evolutionary-computing", "optimization"]
 labs:
   - title: "The Fuzzy Logic Playground"

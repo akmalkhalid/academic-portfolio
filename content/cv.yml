@@ -370,10 +370,11 @@ awards:
   - "Certificate of Excellence — Industrial Training, USM (2011)"
 
 teaching:
-  - { when: "Now", text: "Advanced Artificial Intelligence (TTTC6544, PG)" }
+  - { when: "Now", text: "Artificial Intelligence (TTTK2313, UG)" }
   - { when: "Now", text: "Advanced Research Method in Computing (TTTM6124, PG)" }
   - { when: "Now", text: "Computer Organization & Architecture (TTTK1153, UG)" }
-  - { when: "Now", text: "3D Modelling (TTTH2213, UG) · Digital Innovation (TTTT1221, UG)" }
+  - { when: "Now", text: "Digital Innovation (TTTT1221, UG)" }
+  - { when: "Past", text: "Advanced Artificial Intelligence (TTTC6544, PG) · 3D Modelling (TTTH2213, UG)" }
   - { when: "Past", text: "Discrete Mathematics, System Simulation & Modeling, Probability & Statistics, Database (UG)" }
   - { when: "2019–23", text: "Game Informatics (M.Sc./Ph.D., JAIST)" }
 

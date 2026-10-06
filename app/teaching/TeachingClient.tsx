@@ -92,6 +92,17 @@ export default function TeachingClient({
               <p style={s("font-family:'JetBrains Mono',monospace;font-size:11px;color:#a39a8f;font-weight:600;margin:0 0 6px")}>{c.code}</p>
               <h3 style={s('font-size:14px;font-weight:600;line-height:1.3;margin:0 0 6px')}>{c.title}</h3>
               <p style={s("font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#a39a8f;margin:0")}>{c.meta}</p>
+              {/* Lab tools outlive the semester — keep them reachable once a course moves here. */}
+              {c.hasLabs && (
+                <div style={s('margin-top:10px;padding-top:9px;border-top:1px solid #ece8e1')}>
+                  {c.labs.map((lab, i) => (
+                    <a key={i} href={lab.href} style={s('display:flex;gap:7px;align-items:baseline;text-decoration:none;color:#57514b;font-size:12px;font-weight:600;line-height:1.3;padding:3px 0')}>
+                      <span style={s(`width:6px;height:6px;border-radius:50%;background:${c.accent};flex-shrink:0;transform:translateY(-1px)`)} />
+                      <span>{lab.title}</span>
+                    </a>
+                  ))}
+                </div>
+              )}
             </div>
           ))}
         </div>
