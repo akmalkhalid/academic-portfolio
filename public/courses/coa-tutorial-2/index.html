@@ -1,0 +1,887 @@
+<title>TTTK1153 Tutorial 2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans+Condensed:wght@500;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pako/2.1.0/pako.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
+<style>
+/* Layout: worksheet console. Question rail on the left, one question card at a time, a sign-in gate before anything opens, submission page at the end. */
+:root{
+  --bg:#f3f4f1; --surface:#ffffff; --sunk:#e9ebe6; --line:#d3d7cf; --fg:#1d2321; --muted:#5d6661;
+  --accent:#1f4f8f; --accent-soft:#e3ebf6; --accent-fg:#ffffff;
+  --hint:#8a5a00; --hint-soft:#fbf1dc;
+  --ok:#1d7a46; --ok-soft:#e1f2e8; --bad:#b3362c; --bad-soft:#f8e3e0;
+  --card-back:#1f4f8f; --card-back-fg:#e3ebf6;
+  --f-display:"IBM Plex Sans Condensed","Arial Narrow",system-ui,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+  --r:6px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#141917; --surface:#1c2220; --sunk:#232a28; --line:#34403c; --fg:#e7ece9; --muted:#9aa6a0;
+  --accent:#7fa8e6; --accent-soft:#1f2c40; --accent-fg:#0d1520;
+  --hint:#e7b65a; --hint-soft:#33291a; --ok:#6fcf97; --ok-soft:#17301f; --bad:#f08a80; --bad-soft:#3a1d1a;
+  --card-back:#2b4a74; --card-back-fg:#dbe6f6; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141917; --surface:#1c2220; --sunk:#232a28; --line:#34403c; --fg:#e7ece9; --muted:#9aa6a0;
+  --accent:#7fa8e6; --accent-soft:#1f2c40; --accent-fg:#0d1520;
+  --hint:#e7b65a; --hint-soft:#33291a; --ok:#6fcf97; --ok-soft:#17301f; --bad:#f08a80; --bad-soft:#3a1d1a;
+  --card-back:#2b4a74; --card-back-fg:#dbe6f6; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:15px/1.6 var(--f-body);margin:0}
+.wrap{max-width:1120px;margin:0 auto;padding-inline:16px;padding-block:20px 48px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;line-height:1.2}
+code,.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+button,input,textarea,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.top{display:flex;flex-wrap:wrap;gap:16px 32px;align-items:flex-end;justify-content:space-between;border-bottom:2px solid var(--fg);padding-bottom:14px}
+.eyebrow{font:600 12px/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.top h1{font-size:clamp(26px,4vw,36px);margin-top:6px}
+.top p{margin:4px 0 0;color:var(--muted);max-width:60ch}
+.meter{min-width:220px}
+.meter .bar{height:8px;background:var(--sunk);border-radius:4px;overflow:hidden;margin-top:6px}
+.meter .bar i{display:block;height:100%;background:var(--accent);width:0;transition:width .3s}
+.meter .num{font:600 20px/1 var(--f-mono)}
+
+.who{display:flex;flex-wrap:wrap;gap:6px 22px;align-items:center;margin:14px 0 18px;padding:10px 14px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);font-size:14px}
+.who b{font-family:var(--f-mono);font-weight:600}
+.who .k{font:600 11px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-right:6px}
+.who button{margin-left:auto;background:none;border:0;color:var(--accent);text-decoration:underline;cursor:pointer;padding:0}
+.spacer{height:18px}
+
+.main{display:grid;grid-template-columns:220px minmax(0,1fr);gap:24px;align-items:start}
+.rail{position:sticky;top:calc(env(safe-area-inset-top,0px) + 12px)}
+.rail.locked{opacity:.4;pointer-events:none}
+.rail h3{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:14px 0 6px;font-family:var(--f-mono);font-weight:600}
+.rail h3:first-child{margin-top:0}
+.chips{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.chip{appearance:none;border:1px solid var(--line);background:var(--surface);border-radius:4px;padding:6px 0;font:600 13px/1 var(--f-mono);cursor:pointer}
+.chip.wip{border-color:var(--hint);background:var(--hint-soft)}
+.chip.done{border-color:var(--ok);background:var(--ok-soft);color:var(--ok)}
+.chip.cur{outline:2px solid var(--accent);outline-offset:1px}
+.submitchip{margin-top:12px;width:100%;padding:9px;border:1px solid var(--fg);background:var(--fg);color:var(--bg);border-radius:4px;font-weight:600;cursor:pointer}
+.legend{display:flex;flex-direction:column;gap:3px;font-size:12px;color:var(--muted);margin-top:12px}
+.legend span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px;border:1px solid var(--line);background:var(--surface)}
+.legend .l2::before{border-color:var(--hint);background:var(--hint-soft)}
+.legend .l3::before{border-color:var(--ok);background:var(--ok-soft)}
+@media (max-width:820px){
+  .main{grid-template-columns:1fr}
+  .rail{position:static}
+  .chips{grid-template-columns:repeat(10,1fr)}
+  .legend{flex-direction:row;flex-wrap:wrap;gap:4px 14px}
+}
+@media (max-width:460px){.chips{grid-template-columns:repeat(5,1fr)}}
+
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:22px clamp(16px,3vw,28px);min-width:0}
+.qhead{display:flex;gap:12px;align-items:baseline;flex-wrap:wrap}
+.qno{font:700 13px/1 var(--f-mono);background:var(--fg);color:var(--bg);padding:5px 8px;border-radius:3px}
+.qtype{font:600 11px/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.qtext{font-family:var(--f-display);font-weight:700;font-size:clamp(19px,2.4vw,23px);margin:12px 0 4px;line-height:1.3;text-wrap:balance}
+.guide{color:var(--muted);margin:0 0 8px;max-width:68ch}
+
+.gate{max-width:560px}
+.gate .fields{display:flex;flex-direction:column;gap:12px;margin:16px 0}
+.gate label{display:flex;flex-direction:column;gap:4px;font:600 12px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.gate input{padding:10px 12px;border:1px solid var(--line);border-radius:4px;background:var(--bg);font:400 16px var(--f-body);letter-spacing:0;text-transform:none;color:var(--fg)}
+.gate input.badf{border-color:var(--bad)}
+.gate .err{font:400 13px var(--f-body);color:var(--bad);letter-spacing:0;text-transform:none}
+.gate .err:empty{display:none}
+.gate ul{margin:8px 0;padding-left:20px;color:var(--muted)}
+
+.part{margin-top:20px;padding-top:16px;border-top:1px dashed var(--line)}
+.part:first-child{border-top:0;padding-top:4px;margin-top:8px}
+.ptitle{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;margin-bottom:8px}
+.ptitle .tag{font:600 11px/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;padding:4px 7px;border-radius:3px;background:var(--accent-soft);color:var(--accent)}
+.ptitle .tag.okt{background:var(--ok-soft);color:var(--ok)}
+.how{font-size:13px;color:var(--muted);margin:-2px 0 10px}
+.passage{line-height:2.4;max-width:74ch}
+.blank{display:inline-block;max-width:100%;padding:2px 8px;border:0;border-bottom:2px solid var(--accent);background:var(--accent-soft);border-radius:3px 3px 0 0;font-family:var(--f-mono);font-size:14px;line-height:1.5}
+.blank.ok{border-color:var(--ok);background:var(--ok-soft)}
+.blank.bad{border-color:var(--bad);background:var(--bad-soft)}
+.slot{display:inline-flex;align-items:center;justify-content:center;min-width:9ch;min-height:30px;padding:1px 10px;border:1px dashed var(--accent);border-radius:4px;background:var(--bg);font-family:var(--f-mono);font-size:14px;line-height:1.5;cursor:pointer;vertical-align:middle;color:var(--fg)}
+.slot.filled{border-style:solid;background:var(--accent-soft)}
+.slot.active{outline:2px solid var(--accent);outline-offset:1px}
+.slot.ok{border:1px solid var(--ok);background:var(--ok-soft);cursor:default;opacity:1}
+.slot.bad{border:1px solid var(--bad);background:var(--bad-soft)}
+.bank{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;padding:10px;background:var(--sunk);border-radius:4px}
+.tile{appearance:none;border:1px solid var(--line);background:var(--surface);border-radius:4px;padding:5px 11px;font:500 14px var(--f-mono);cursor:pointer;text-align:left}
+.tile:hover{border-color:var(--accent)}
+.tile.used{visibility:hidden}
+.tile.sel{outline:2px solid var(--accent);outline-offset:1px;background:var(--accent-soft)}
+.tile.ok{border-color:var(--ok);background:var(--ok-soft);cursor:default;opacity:1}
+.tile.bad{border-color:var(--bad);background:var(--bad-soft)}
+
+.sorter .pool{display:flex;flex-wrap:wrap;gap:8px;min-height:44px;padding:10px;background:var(--sunk);border-radius:4px}
+.sorter .pool:empty::after{content:"All items placed. Check your answer.";font-size:13px;color:var(--muted)}
+.buckets{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin-top:10px}
+.bucket{border:1px solid var(--line);border-radius:4px;background:var(--bg);display:flex;flex-direction:column;min-width:0}
+.bucket>button.bh{appearance:none;border:0;border-bottom:1px solid var(--line);background:var(--surface);padding:8px 10px;text-align:left;font:700 14px var(--f-display);cursor:pointer;border-radius:4px 4px 0 0;color:var(--fg)}
+.bucket.armed>button.bh{background:var(--accent);color:var(--accent-fg)}
+.bucket .in{display:flex;flex-wrap:wrap;gap:6px;padding:8px;min-height:48px;align-content:flex-start}
+
+.flipgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+@media (max-width:560px){.flipgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.fcard{appearance:none;position:relative;min-height:96px;border:0;padding:0;background:none;cursor:pointer;perspective:700px}
+.fcard .fi{position:absolute;inset:0;transition:transform .35s;transform-style:preserve-3d}
+.fcard.up .fi,.fcard.matched .fi{transform:rotateY(180deg)}
+.fcard .face{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:8px;border-radius:6px;backface-visibility:hidden;-webkit-backface-visibility:hidden;text-align:center;font-size:13px;line-height:1.35;color:var(--fg)}
+.fcard .back{background:var(--card-back);color:var(--card-back-fg);font:600 12px var(--f-mono);letter-spacing:.06em;text-transform:uppercase}
+.fcard .front{background:var(--surface);border:1px solid var(--accent);transform:rotateY(180deg)}
+.fcard .front.term{font:700 15px var(--f-display)}
+.fcard.matched .front{border-color:var(--ok);background:var(--ok-soft)}
+.fcard.miss .front{border-color:var(--bad);background:var(--bad-soft)}
+.flipstat{font:400 13px var(--f-mono);color:var(--muted);margin-top:8px}
+
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid var(--line);border-radius:4px;cursor:pointer;background:var(--bg)}
+.opt input{margin-top:4px;accent-color:var(--accent)}
+.opt.right{border-color:var(--ok);background:var(--ok-soft)}
+.opt.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.opt b{font-family:var(--f-mono)}
+
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:14px}
+.btn{appearance:none;border:1px solid var(--accent);background:var(--accent);color:var(--accent-fg);padding:8px 14px;border-radius:4px;font-weight:600;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--accent)}
+.btn.warn{border-color:var(--hint);background:transparent;color:var(--hint)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.note{font-size:13px;color:var(--muted)}
+
+.fb{margin-top:12px;padding:10px 12px;border-radius:4px;border:1px solid}
+.fb.ok{border-color:var(--ok);background:var(--ok-soft)}
+.fb.bad{border-color:var(--bad);background:var(--bad-soft)}
+.fb.hint{border-color:var(--hint);background:var(--hint-soft)}
+.fb.hint strong{color:var(--hint)}
+.model{margin-top:18px;padding:14px 16px;background:var(--accent-soft);border-radius:4px;border:1px solid var(--accent)}
+.model h4{margin:0 0 6px;font:600 11px/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+.model p{margin:6px 0}
+.model ul,.model ol{margin:6px 0;padding-left:20px}
+.tblwrap{overflow-x:auto;margin:8px 0}
+table{border-collapse:collapse;font-size:14px}
+th,td{border:1px solid var(--line);padding:6px 10px;text-align:left;vertical-align:middle}
+th{background:var(--sunk);font-weight:600}
+
+table.work td.fix{font-family:var(--f-mono);white-space:nowrap}
+table.work input{width:100%;min-width:8ch;padding:6px 8px;border:1px solid var(--line);border-radius:4px;background:var(--surface);font-family:var(--f-mono);text-align:center}
+table.work input.ok,.final input.ok{border-color:var(--ok);background:var(--ok-soft)}
+table.work input.bad,.final input.bad{border-color:var(--bad);background:var(--bad-soft)}
+table.work th{text-align:center}
+.finals{display:flex;flex-direction:column;gap:8px;margin-top:12px;max-width:560px}
+.final{display:grid;grid-template-columns:minmax(0,1fr) 160px;gap:10px;align-items:center;padding:8px 10px;border:2px solid var(--fg);border-radius:4px}
+.final label{font-family:var(--f-mono);font-size:14px}
+.final input{width:100%;padding:6px 8px;border:1px solid var(--line);border-radius:4px;background:var(--surface);font-family:var(--f-mono);text-align:center}
+@media (max-width:460px){.final{grid-template-columns:1fr}}
+.guidepanel{margin-top:14px;padding:14px 16px;border:1px solid var(--line);border-radius:4px;background:var(--bg)}
+.guidepanel h4{margin:12px 0 6px;font:700 15px var(--f-display)}
+.guidepanel h4:first-child{margin-top:0}
+.guidepanel ol{margin:4px 0;padding-left:20px}
+.gtables{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start}
+.gtables table{font-family:var(--f-mono);font-size:13px}
+.gtables td,.gtables th{padding:3px 9px;text-align:center}
+
+.order{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.order li{display:flex;align-items:center;gap:10px;padding:8px 10px;border:1px solid var(--line);border-radius:4px;background:var(--bg)}
+.order .pos{font:700 13px var(--f-mono);color:var(--muted);width:20px}
+.order .lab{flex:1;min-width:0}
+.order button{appearance:none;border:1px solid var(--line);background:var(--surface);border-radius:3px;width:30px;height:28px;cursor:pointer}
+.order li.right{border-color:var(--ok);background:var(--ok-soft)} .order li.wrong{border-color:var(--bad);background:var(--bad-soft)}
+
+.match{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr);gap:8px;align-items:center}
+.match .h{font:600 11px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.match select{width:100%;padding:6px;border:1px solid var(--line);border-radius:4px;background:var(--bg)}
+.match select.right{border-color:var(--ok)} .match select.wrong{border-color:var(--bad)}
+@media (max-width:560px){.match{grid-template-columns:1fr}.match .h{display:none}.match .g{font-weight:600;margin-top:8px}}
+
+.nav{display:flex;justify-content:space-between;gap:8px;margin-top:24px;padding-top:16px;border-top:1px solid var(--line)}
+.sumgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:14px 0}
+.sumgrid div{padding:12px;border:1px solid var(--line);border-radius:4px;background:var(--bg)}
+.sumgrid b{display:block;font:600 22px/1.1 var(--f-mono)}
+.sumgrid span{font-size:12px;color:var(--muted)}
+@media (max-width:640px){.sumgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.pw{display:inline-block;font:600 16px var(--f-mono);padding:4px 10px;border:1px dashed var(--fg);border-radius:4px;user-select:all}
+.confirm{margin-top:10px;padding:10px 12px;border:1px solid var(--bad);background:var(--bad-soft);border-radius:4px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <div class="eyebrow">TTTK1153 · Computer Organization &amp; Architecture · FTSM UKM</div>
+      <h1>Tutorial 2: Central Processing Unit</h1>
+      <p>Work through each question, check your answers, and learn from the feedback. Your first attempt at every question is recorded in your submission.</p>
+    </div>
+    <div class="meter">
+      <div class="eyebrow">Progress</div>
+      <div class="num mono" id="pnum">0 / 20</div>
+      <div class="bar"><i id="pbar"></i></div>
+    </div>
+  </header>
+
+  <div class="who" id="who" hidden></div>
+  <div class="spacer" id="spacer"></div>
+
+  <div class="main">
+    <nav class="rail" id="rail" aria-label="Questions">
+      <h3>A · CPU components and registers</h3><div class="chips" id="chipsA"></div>
+      <h3>B · Instruction cycle and ISA</h3><div class="chips" id="chipsB"></div>
+      <h3>C · CPU performance</h3><div class="chips" id="chipsC"></div>
+      <h3>D · Parallelism and cache</h3><div class="chips" id="chipsD"></div>
+      <button class="submitchip" id="goSubmit">Review and submit</button>
+      <div class="legend"><span class="l1">Not started</span><span class="l2">In progress</span><span class="l3">Done</span></div>
+    </nav>
+    <main class="card" id="card" aria-live="polite"></main>
+  </div>
+</div>
+
+<script>
+/* ======================================================================
+   CONTENT (from the TTTK1153 Tutorial 2 answer scheme)
+   Part kinds: blanks (type the word), bank (answer builder: tap word tiles),
+   sort (click-and-match: tap item, then tap its group), flip (flip-and-match).
+   Blank answers: every accepted spelling.
+   ====================================================================== */
+const Q = [
+{n:1, sec:'A', type:'mcq', multi:true, q:'What are the main components of a CPU? Select all that apply.',
+ guide:'Think about what sits inside the processor chip itself, not what is connected to it.',
+ opts:['Arithmetic Logic Unit (ALU)','Control Unit (CU)','Registers','Hard Disk Drive'], ans:[0,1,2],
+ hint:'One option is a storage device that sits outside the CPU and keeps data permanently.',
+ model:`<p><strong>Answer: ALU, Control Unit and Registers</strong></p><ul><li>The <strong>ALU</strong> performs arithmetic and logical operations.</li><li>The <strong>Control Unit</strong> directs and coordinates CPU operations.</li><li><strong>Registers</strong> provide very fast temporary storage for data and instructions being used by the CPU.</li></ul><p>A hard disk is a secondary storage device and is not a CPU component.</p>`},
+
+{n:2, sec:'A', type:'parts', q:'Differentiate between fixed-program computers and stored-program computers.',
+ guide:'Part A: complete the definitions. Part B: sort each statement or example.',
+ parts:[
+  {kind:'blanks', title:'Complete the definitions',
+   text:'A fixed-program computer is designed to perform a [[0]] number of predefined functions and normally cannot be [[1]] for completely different tasks. A stored-program computer stores program instructions in [[2]], so it can be programmed to perform different tasks. The main distinction between the two is [[3]].',
+   ans:[['limited','small','fixed','few','restricted','set'],['reprogrammed','re-programmed','programmed','changed','modified'],['memory','main memory','ram'],['programmability','programming','reprogrammability','flexibility']]},
+  {kind:'sort', title:'Fixed-program or stored-program?', cats:['Fixed-program computer','Stored-program computer'],
+   items:[['Calculator',0],['Performs a limited set of predefined functions',0],['Cannot load a completely different program',0],['Modern general-purpose computer',1],['Program instructions are kept in memory',1],['Can load and run different programs',1],['Associated with John von Neumann',1]]}
+ ],
+ model:`<p>A <strong>fixed-program computer</strong> is designed to perform a limited number of predefined functions and normally cannot be reprogrammed for completely different tasks. Example: a calculator.</p><p>A <strong>stored-program computer</strong> stores program instructions in memory and can be programmed to perform different tasks. Modern general-purpose computers follow the stored-program concept associated with John von Neumann.</p><p>The main distinction is programmability: a stored-program computer can load different programs into memory and execute them.</p>`},
+
+{n:3, sec:'A', type:'parts', q:'Explain the role of the Control Unit (CU) in the CPU.',
+ guide:'Part A: decide which jobs belong to the Control Unit. Part B: complete the explanation.',
+ parts:[
+  {kind:'sort', title:'Is this the Control Unit’s job?', cats:['Control Unit does this','Not the Control Unit’s job'],
+   items:[['Provides timing and control signals',0],['Controls the sequence of operations',0],['Directs the flow of data between CPU components',0],['Coordinates communication with memory and I/O devices',0],['Interprets instructions and tells other components what to do',0],['Performs the actual addition of two numbers',1],['Stores files permanently',1],['Displays output on the screen',1]]},
+  {kind:'blanks', title:'Complete the explanation',
+   text:'The Control Unit does not normally perform [[0]] itself. Instead, it [[1]] components such as the ALU, memory, registers and I/O devices so that instructions are executed in the correct [[2]].',
+   ans:[['calculations','calculation','computations','computation','arithmetic','arithmetic operations'],['coordinates','coordinate','controls','directs','manages'],['sequence','order']]}
+ ],
+ model:`<p>The Control Unit manages and coordinates the operations of the CPU. It:</p><ul><li>Provides timing and control signals.</li><li>Controls the sequence of operations.</li><li>Directs the flow of data between CPU components.</li><li>Coordinates communication with memory and I/O devices.</li><li>Interprets instructions and tells other components what actions to perform.</li></ul><p>The CU does not normally perform calculations itself. It coordinates the ALU, memory, registers and I/O devices so that instructions are executed in the correct sequence.</p>`},
+
+{n:4, sec:'A', type:'mcq', q:'Which component of the CPU performs arithmetic and logical operations?',
+ guide:'One component calculates. The others coordinate or hold values.',
+ opts:['Control Unit','Arithmetic Logic Unit','Program Counter','Current Instruction Register'], ans:[1],
+ hint:'The Control Unit tells this component what to do, but does not do the calculation itself.',
+ model:`<p><strong>Answer: Arithmetic Logic Unit</strong></p><p>The ALU performs arithmetic operations such as addition and subtraction, and logical or bitwise operations such as AND, OR, XOR and comparisons. The Control Unit coordinates these operations but does not perform the calculations.</p>`},
+
+{n:5, sec:'A', type:'mcq', multi:true, q:'Which registers are primarily used for storing intermediate results during computations? Select all that apply.',
+ guide:'Ask what each register holds: an address, an instruction, or a data value being worked on?',
+ opts:['Accumulator','Program Counter','Current Instruction Register','General Purpose Registers'], ans:[0,3],
+ hint:'One register holds an address and another holds an instruction. Neither of those is a computed result.',
+ model:`<p><strong>Answer: Accumulator and General Purpose Registers</strong></p><p>The Accumulator stores intermediate arithmetic and logical results. General Purpose Registers can also temporarily hold data and intermediate results.</p><p>The Program Counter holds the address of the next instruction, and the Current Instruction Register holds the instruction currently being processed.</p>`},
+
+{n:6, sec:'A', type:'parts', q:'Explain the purpose of the following registers: Accumulator, PC, MAR, MDR and CIR.',
+ guide:'Part A: flip two cards at a time to pair each register with its purpose. Part B: build the summary.',
+ parts:[
+  {kind:'flip', title:'Register and purpose',
+   pairs:[['Accumulator (AC)','Stores intermediate arithmetic and logical results'],['Program Counter (PC)','Holds the address of the next instruction'],['Memory Address Register (MAR)','Holds the address of the memory location to access'],['Memory Data Register (MDR)','Holds data or instructions moving to or from memory'],['Current Instruction Register (CIR)','Holds the instruction being decoded or executed']]},
+  {kind:'bank', title:'How they work together',
+   text:'The [[0]] identifies where the next instruction is. The [[1]] identifies which memory address is being accessed. The [[2]] carries the content transferred. The [[3]] contains the current instruction.',
+   ans:['PC','MAR','MDR','CIR'], extra:['ALU','HDD','Accumulator']}
+ ],
+ model:`<ul><li><strong>Accumulator (AC):</strong> stores intermediate arithmetic and logical results.</li><li><strong>Program Counter (PC):</strong> contains the address of the next instruction to be fetched.</li><li><strong>Memory Address Register (MAR):</strong> contains the address of the memory location the CPU wants to access.</li><li><strong>Memory Data Register (MDR):</strong> temporarily stores data or instructions transferred to or from memory.</li><li><strong>Current Instruction Register (CIR):</strong> holds the instruction currently being decoded or executed.</li></ul><p>The PC identifies where the next instruction is, MAR identifies which memory address is being accessed, MDR carries the content transferred, and CIR contains the current instruction.</p>`},
+
+{n:7, sec:'A', type:'mcq', q:'What is the primary purpose of the Program Counter (PC)?',
+ guide:'The PC is what lets a program run one instruction after another.',
+ opts:['Store intermediate arithmetic results','Hold the address of the next instruction','Hold data received from memory','Store the instruction currently being decoded'], ans:[1],
+ hint:'The PC holds an address, not data and not an instruction.',
+ model:`<p><strong>Answer: Hold the address of the next instruction</strong></p><p>The PC keeps track of the next instruction in the sequence. When an instruction is fetched, the PC is normally updated so that it points to the following instruction. This allows instructions to be executed sequentially.</p>`},
+
+{n:8, sec:'B', type:'order', q:'Arrange the steps of instruction fetching in the correct order.',
+ guide:'Use the arrows to move each step. Start with where the address of the next instruction is kept.',
+ items:['PC contains the address of the next instruction.','The contents of the PC are copied to MAR.','Memory sends the contents of the requested address to MBR/MDR.','PC is incremented.','The instruction in MBR/MDR is transferred to CIR.','CIR identifies the opcode and operand.'],
+ start:[4,1,5,0,3,2],
+ hint:'The address must reach MAR before memory can respond. The opcode can only be identified once the instruction is in CIR.',
+ model:`<p><strong>Answer: B → C → D → E → A → F</strong></p><ol><li>PC contains the address of the next instruction.</li><li>The address is copied to MAR, which places it on the address bus.</li><li>Memory retrieves the instruction and sends it through the data bus to MBR/MDR.</li><li>The PC is incremented for the following instruction.</li><li>The instruction moves from MBR/MDR to CIR.</li><li>CIR separates the opcode and operand.</li></ol>`},
+
+{n:9, sec:'B', type:'mcq', q:'What happens during the decode stage of instruction execution?',
+ guide:'Decode sits between fetching the instruction and executing it.',
+ opts:['The instruction is interpreted and appropriate control actions are determined.','The final result is permanently stored on the hard disk.','The CPU shuts down.','The program is deleted from memory.'], ans:[0],
+ hint:'Decoding looks at the opcode to work out what operation is needed.',
+ model:`<p><strong>Answer: The instruction is interpreted and appropriate control actions are determined.</strong></p><p>During decoding, the CPU interprets the fetched instruction, including its opcode, to determine which operation must be performed. For example, the opcode may indicate an addition, a logical operation or a data transfer.</p>`},
+
+{n:10, sec:'B', type:'parts', q:'What is an Instruction Set Architecture (ISA)?',
+ guide:'Part A: complete the definition. Part B: sort what an ISA includes from examples of real ISAs.',
+ parts:[
+  {kind:'blanks', title:'Complete the definition',
+   text:'The ISA defines the part of the processor that is [[0]] to the [[1]]. It acts as the [[2]] between software and processor hardware: programs use the instructions the ISA defines, and the CPU hardware [[3]] those instructions.',
+   ans:[['visible','seen','exposed','accessible'],['programmer','programmers','software','software developer'],['interface','link','bridge','boundary'],['implements','implement','executes','execute','carries out','runs']]},
+  {kind:'sort', title:'Included in an ISA, or an example of one?', cats:['Included in an ISA','Example of an ISA'],
+   items:[['Instructions',0],['Instruction formats',0],['Opcodes',0],['Registers',0],['Data and memory formats',0],['x86',1],['ARM',1],['MIPS',1]]}
+ ],
+ model:`<p>The Instruction Set Architecture defines the part of the processor that is visible to the programmer. It includes instructions, instruction formats, opcodes, registers, and data and memory formats. Examples: x86, ARM, MIPS.</p><p>The ISA is the interface between software and processor hardware. Programs use instructions defined by the ISA, and the CPU hardware implements them.</p>`},
+
+{n:11, sec:'B', type:'parts', q:'Compare RISC and CISC architectures.',
+ guide:'Part A: sort each feature. Part B: complete the explanation.',
+ parts:[
+  {kind:'sort', title:'RISC or CISC?', cats:['RISC','CISC'],
+   items:[['Smaller, simpler instruction set',0],['Typically fixed-length instructions',0],['Often simple or single-cycle execution',0],['More efficient pipelining',0],['Complexity shifted toward the compiler',0],['Lower code density',0],['ARM, MIPS',0],['Larger, more complex instruction set',1],['Typically variable-length instructions',1],['May require multiple cycles per instruction',1],['Pipelining is more difficult',1],['Complexity shifted toward hardware or microprograms',1],['Higher code density',1],['x86',1]]},
+  {kind:'blanks', title:'Complete the explanation',
+   text:'RISC focuses on simple instructions that execute quickly, so [[0]] instructions may be needed to complete a task. One CISC instruction can perform several low-level operations, but it may need several clock [[1]].',
+   ans:[['more','additional','extra','many','a larger number of'],['cycles','cycle']]}
+ ],
+ model:`<div class="tblwrap"><table><thead><tr><th>Feature</th><th>RISC</th><th>CISC</th></tr></thead><tbody><tr><td>Instruction set</td><td>Smaller, simpler</td><td>Larger, more complex</td></tr><tr><td>Instruction length</td><td>Typically fixed</td><td>Typically variable</td></tr><tr><td>Execution</td><td>Often simple/single-cycle</td><td>May require multiple cycles</td></tr><tr><td>Pipelining</td><td>More efficient</td><td>More difficult</td></tr><tr><td>Complexity</td><td>Shifted toward compiler</td><td>Shifted toward hardware/microprograms</td></tr><tr><td>Code density</td><td>Lower</td><td>Higher</td></tr><tr><td>Examples</td><td>ARM, MIPS</td><td>x86</td></tr></tbody></table></div><p>RISC uses simpler instructions that run quickly, so more instructions may be needed. CISC packs several low-level operations into one instruction, which may take several clock cycles.</p>`},
+
+{n:12, sec:'B', type:'mcq', multi:true, q:'Which statements correctly describe RISC? Select all that apply.',
+ guide:'Think about what "reduced" instruction set means for each instruction.',
+ opts:['It uses relatively simple instructions.','It commonly uses fixed-length instructions.','It provides high pipelining efficiency.','Every instruction requires many clock cycles.'], ans:[0,1,2],
+ hint:'Simple, fixed-length instructions are designed to finish quickly.',
+ model:`<p><strong>Answer: simple instructions, fixed-length instructions, high pipelining efficiency</strong></p><p>RISC uses a smaller set of simple instructions, commonly of fixed length, which supports efficient pipelining. "Every instruction requires many clock cycles" is wrong: simple RISC instructions are designed to execute quickly.</p>`},
+
+{n:13, sec:'C', type:'num', q:'Calculate the effective CPI if a CPU executes 50% of instructions in 1 cycle, 30% in 2 cycles, and 20% in 4 cycles.',
+ guide:'Effective CPI is a weighted average. Write each percentage as a decimal, multiply by its cycles, then add the products.',
+ head:['Instruction class','Fraction (decimal)','Cycles','Fraction × cycles'],
+ rows:[['50% of instructions',['0.5','real'],['1'],['0.5','real']],['30% of instructions',['0.3','real'],['2'],['0.6','real']],['20% of instructions',['0.2','real'],['4'],['0.8','real']]],
+ finals:[['Effective CPI (cycles per instruction)','1.9','real']],
+ model:`<p><code>Effective CPI = (0.50 × 1) + (0.30 × 2) + (0.20 × 4) = 0.50 + 0.60 + 0.80 = 1.90</code></p><p><strong>Effective CPI = 1.9 cycles per instruction.</strong> For mixed instruction types, CPI is the weighted average of each type's cycles, weighted by how often it occurs.</p>`},
+
+{n:14, sec:'C', type:'num', q:'A CPU has a clock rate of 2 GHz and an instruction requires 3 clock cycles. Calculate the execution time for the instruction.',
+ guide:'First find the time for one clock cycle, then multiply by the number of cycles. Give times in nanoseconds (ns).',
+ head:['Step','Value'],
+ rows:[['Clock cycles per second (billions)',['2','real']],['Clock cycle time = 1 / clock rate (ns)',['0.5','real']],['Cycles needed by the instruction',['3']]],
+ finals:[['Execution time (ns)','1.5','real']],
+ model:`<p><strong>Step 1.</strong> <code>Clock cycle time = 1 / 2 GHz = 0.5 ns</code></p><p><strong>Step 2.</strong> <code>Execution time = 3 × 0.5 ns = 1.5 ns</code></p><p>A 2 GHz CPU performs 2 billion cycles per second, so each cycle takes 0.5 ns. Three cycles need <strong>1.5 ns</strong>.</p>`},
+
+{n:15, sec:'C', type:'num', q:'A CPU has 4 cores, each capable of executing 1 instruction per cycle. If each core runs at 3 GHz, calculate the theoretical maximum number of instructions executed per second.',
+ guide:'Instructions per second = number of cores × IPC × clock rate. Give rates in billions.',
+ head:['Quantity','Value'],
+ rows:[['Number of cores',['4']],['Instructions per cycle (IPC) per core',['1']],['Clock rate per core (billion cycles/s)',['3','real']],['Instructions per second for one core (billions)',['3','real']]],
+ finals:[['Maximum instructions per second, all cores (billions)','12','real']],
+ model:`<p><code>Instructions per second = cores × IPC × clock rate = 4 × 1 × 3 billion = 12 billion</code></p><p>Each core executes 3 billion instructions per second at 1 IPC, so four cores give <strong>12 billion instructions per second</strong>, assuming the workload fully uses all four cores.</p>`},
+
+{n:16, sec:'C', type:'mcq', q:'If CPU clock speed doubles but CPI also doubles, what happens to CPU execution performance?',
+ guide:'Execution time depends on instruction count, CPI and clock cycle time together.',
+ opts:['Performance remains approximately the same','Performance doubles','Performance becomes four times faster','Execution becomes impossible'], ans:[0],
+ hint:'Each cycle becomes twice as fast, but each instruction now needs twice as many cycles.',
+ model:`<p><strong>Answer: Performance remains approximately the same</strong></p><p>If clock speed doubles, each cycle takes half the time. If CPI also doubles, each instruction needs twice as many cycles. The two effects cancel, so execution performance stays about the same, assuming the instruction count is unchanged.</p>`},
+
+{n:17, sec:'D', type:'parts', q:'Explain the concept of pipelining in CPU architecture.',
+ guide:'Part A: build the pipeline stages in order. Part B: explain what overlaps and what improves.',
+ parts:[
+  {kind:'bank', title:'The pipeline stages',
+   text:'[[0]] → [[1]] → [[2]] → [[3]] → [[4]]',
+   ans:['Fetch','Decode','Execute','Memory','Write-back'], extra:['Compile','Shut down']},
+  {kind:'blanks', title:'Overlapping instructions',
+   text:'Pipelining divides instruction processing into stages, so different instructions occupy different stages at the same time. While instruction 1 is being executed, instruction 2 may be [[0]] and instruction 3 may be [[1]]. Pipelining does not necessarily reduce the latency of one instruction. Its main advantage is higher instruction [[2]].',
+   ans:[['decoded','decode','decoding'],['fetched','fetch','fetching'],['throughput','throughputs']]}
+ ],
+ model:`<p>Pipelining divides instruction processing into stages and lets different instructions occupy different stages at the same time: <code>Fetch → Decode → Execute → Memory → Write-back</code>.</p><p>While instruction 1 is being executed, instruction 2 may be decoded and instruction 3 may be fetched.</p><p>Pipelining does not necessarily reduce the latency of one instruction. Its main advantage is higher <strong>throughput</strong>: more instructions completed in a given time.</p>`},
+
+{n:18, sec:'D', type:'mcq', multi:true, q:'What are the advantages and characteristics of superscalar architecture? Select all that apply.',
+ guide:'"Superscalar" means going beyond one instruction at a time.',
+ opts:['It contains multiple execution units.','It can execute more than one instruction per clock cycle.','It supports instruction-level parallelism.','It restricts the CPU to one instruction at a time.'], ans:[0,1,2],
+ hint:'Only one option contradicts the purpose of having several execution units.',
+ model:`<p><strong>Answer: multiple execution units, more than one instruction per cycle, instruction-level parallelism</strong></p><p>A superscalar CPU contains multiple execution units, for example separate units for integer arithmetic, floating-point and Boolean operations. Several instructions can be fetched and decoded, then assigned to available units, so they execute in parallel.</p>`},
+
+{n:19, sec:'D', type:'parts', q:'Differentiate between parallel processing, data parallelism, task parallelism and multiprocessing.',
+ guide:'Part A: pair each term with its meaning. Part B: sort the features of the two multiprocessing approaches.',
+ parts:[
+  {kind:'flip', title:'Term and meaning',
+   pairs:[['Parallel processing','A large task is split into smaller subtasks processed concurrently'],['Data parallelism','The same operation runs on different portions of data at once'],['Task parallelism','Different cores perform different tasks at once'],['Multiprocessing','Multiple cores or processors run processes or threads concurrently']]},
+  {kind:'sort', title:'SMP or AMP?', cats:['Symmetric Multiprocessing (SMP)','Asymmetric Multiprocessing (AMP)'],
+   items:[['Cores operate as peers',0],['Cores share memory',0],['Tasks are coordinated dynamically',0],['One master core controls task allocation',1],['Other cores operate as subordinates',1],['Often found in embedded systems',1]]}
+ ],
+ model:`<ul><li><strong>Parallel processing:</strong> a large task is divided into smaller independent subtasks processed concurrently.</li><li><strong>Data parallelism:</strong> the same operation is performed on different portions of data simultaneously.</li><li><strong>Task parallelism:</strong> different processors or cores perform different tasks simultaneously.</li><li><strong>Multiprocessing:</strong> multiple CPU cores or processors execute multiple processes or threads concurrently.</li></ul><p><strong>SMP:</strong> cores are peers, share memory, tasks coordinated dynamically. <strong>AMP:</strong> one master core allocates tasks, other cores are subordinate, often used in embedded systems.</p><p>Parallel processing is the broad idea; data and task parallelism describe how work is divided; multiprocessing refers to using multiple cores or processors.</p>`},
+
+{n:20, sec:'D', type:'parts', q:'Explain cache memory and compare L1, L2 and L3 cache.',
+ guide:'Part A: complete the definition. Part B: sort each description to its cache level.',
+ parts:[
+  {kind:'blanks', title:'What cache is for',
+   text:'Cache is a small and [[0]] memory located close to the [[1]]. It stores frequently accessed data and instructions to reduce the average time needed to access [[2]].',
+   ans:[['fast','quick','high-speed','high speed','very fast'],['cpu','processor','cpu core','core','cores'],['main memory','ram','memory','primary memory']]},
+  {kind:'sort', title:'L1, L2 or L3?', cats:['L1','L2','L3'],
+   items:[['Fastest',0],['Smallest',0],['Closest to the CPU core',0],['Slower than L1',1],['Larger than L1',1],['Secondary cache level',1],['Largest of the three',2],['Slower than both L1 and L2',2],['Commonly shared across cores',2]]}
+ ],
+ model:`<p>Cache is a small, fast memory close to the CPU that stores frequently accessed data and instructions, reducing the average time to access main memory.</p><div class="tblwrap"><table><thead><tr><th>Cache</th><th>Speed</th><th>Size</th><th>Characteristic</th></tr></thead><tbody><tr><td>L1</td><td>Fastest</td><td>Smallest</td><td>Closest to the CPU core</td></tr><tr><td>L2</td><td>Slower than L1</td><td>Larger</td><td>Secondary cache level</td></tr><tr><td>L3</td><td>Slower than L1/L2</td><td>Largest</td><td>Commonly shared across cores</td></tr></tbody></table></div><p>When needed data is already in cache, the CPU does not wait as long for RAM, which improves efficiency.</p>`}
+];
+
+/* ======================================================================
+   STATE
+   ====================================================================== */
+const KEY='tttk1153-t2-guided-v1';
+const COURSE='TTTK1153';
+let S={started:false,student:{name:'',matric:'',group:''},cur:0,a:{}};
+try{const raw=localStorage.getItem(KEY); if(raw){const p=JSON.parse(raw); if(p&&p.a) S=p;}}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+function st(n){return S.a[n]||(S.a[n]={tries:0,hints:0,first:null,firstOk:null,done:false,revealed:false,sel:[],parts:{},cells:{},guide:0,order:null,match:null});}
+const now=()=>new Date().toISOString();
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const L='abcdefghij';
+const matricUp=()=>String(S.student.matric||'').trim().toUpperCase().replace(/\s+/g,'');
+
+/* seeded shuffle: each student gets a stable, personal tile and card order */
+function seedOf(str){let h=2166136261;for(const c of str){h^=c.charCodeAt(0);h=Math.imul(h,16777619);}return h>>>0;}
+function rng(seed){return()=>{seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+function optOrder(q){return shuffled(q.opts.map((_,i)=>i),q.n+'opt');}
+function shuffled(arr,key){const r=rng(seedOf(matricUp()+'|'+key)),a=arr.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+/* typed blanks: case, punctuation and one-letter typos (words of 6+ letters) are tolerated */
+const clean=s=>String(s||'').toLowerCase().replace(/[’']/g,'').replace(/[^a-z0-9 -]/g,' ').replace(/\s+/g,' ').trim();
+function lev(a,b){const d=Array.from({length:a.length+1},(_,i)=>[i]);for(let j=1;j<=b.length;j++)d[0][j]=j;for(let i=1;i<=a.length;i++)for(let j=1;j<=b.length;j++)d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));return d[a.length][b.length];}
+function blankOk(v,acc){const c=clean(v);if(!c)return false;return acc.some(x=>{const t=clean(x);return c===t||c.replace(/[ -]/g,'')===t.replace(/[ -]/g,'')||(t.length>=6&&lev(c,t)<=1);});}
+function numNorm(v,kind){
+  let s=String(v||'').trim().replace(/\s+/g,'').replace(/[₀-₉]/g,'').toUpperCase().replace(/^0X/,'').replace(/(H|_16|\(16\)|_2|_10)$/,'');
+  if(kind==='dec')s=s.replace(/^0+(?=\d)/,'');
+  if(kind==='bin')s=s.replace(/^0+(?=[01])/,'');
+  if(kind==='hex')s=s.replace(/^0+(?=[0-9A-F])/,'');
+  return s;
+}
+function numOk(v,ans,kind){if(kind==='real'){const t=String(v||'').trim().replace(/,/g,'.').replace(/\s*(ns|ghz|cycles?|billion|b|cpi)\s*$/i,'');if(!/^[+-]?(\d+\.?\d*|\.\d+)$/.test(t))return false;return Math.abs(parseFloat(t)-parseFloat(ans))<1e-9;}if(kind==='bin4')return String(v||'').replace(/\s+/g,'')===ans;return numNorm(v,kind)===numNorm(ans,kind);}
+
+function status(q){const a=S.a[q.n]; if(!a) return 'none'; if(a.done) return 'done';
+  const touched=a.sel.length||Object.keys(a.parts).length||Object.keys(a.cells).length||a.order||a.match||a.tries; return touched?'wip':'none';}
+
+/* ======================================================================
+   RAIL + GATE
+   ====================================================================== */
+function rail(){
+  $('#rail').classList.toggle('locked',!S.started);
+  ['A','B','C','D'].forEach(sec=>{
+    const box=$('#chips'+sec); box.innerHTML='';
+    Q.filter(q=>q.sec===sec).forEach(q=>{
+      const i=Q.indexOf(q), b=document.createElement('button'), s=status(q);
+      b.className='chip '+s+(S.started&&S.cur===i?' cur':''); b.textContent=q.n; b.setAttribute('aria-label','Question '+q.n+' ('+s+')');
+      b.disabled=!S.started; b.onclick=()=>{S.cur=i;save();render();}; box.appendChild(b);
+    });
+  });
+  $('#goSubmit').disabled=!S.started;
+  const done=Q.filter(q=>status(q)==='done').length;
+  $('#pnum').textContent=done+' / 20'; $('#pbar').style.width=(done*5)+'%';
+  const w=$('#who');
+  $('#spacer').hidden=S.started;
+  if(S.started){w.hidden=false;w.innerHTML=`<span><span class="k">Name</span>${esc(S.student.name)}</span><span><span class="k">Matric</span><b>${esc(matricUp())}</b></span><span><span class="k">Group/Set</span><b>${esc(S.student.group)}</b></span><button id="editWho">Change details</button>`;
+    $('#editWho').onclick=()=>{S.started=false;save();render();};}
+  else w.hidden=true;
+}
+const MATRIC_RE=/^[A-Z]{1,2}\d{5,8}$/;
+function renderGate(){
+  const sd=S.student;
+  $('#card').innerHTML=`<div class="gate"><div class="qhead"><span class="qno">Start</span><span class="qtype">Student details</span></div>
+  <div class="qtext">Enter your details to begin</div>
+  <p class="guide">The questions open after you confirm your details. Your matric number protects your submission file, so type it exactly as on your matric card.</p>
+  <form id="gateForm" novalidate><div class="fields">
+   <label for="sName">Full name<input id="sName" autocomplete="name" value="${esc(sd.name)}" placeholder="Name as in SMP"><span class="err" id="eName"></span></label>
+   <label for="sMatric">Matric no.<input id="sMatric" autocomplete="off" value="${esc(sd.matric)}" placeholder="e.g. A201234"><span class="err" id="eMatric"></span></label>
+   <label for="sMatric2">Type your matric no. again<input id="sMatric2" autocomplete="off" value="${esc(sd.matric)}" placeholder="Repeat to confirm"><span class="err" id="eMatric2"></span></label>
+   <label for="sGroup">Group / Set no.<input id="sGroup" autocomplete="off" value="${esc(sd.group)}" placeholder="e.g. 3"><span class="err" id="eGroup"></span></label>
+  </div>
+  <ul><li>Stay on one browser and one device until you submit. Progress is saved in this browser only.</li><li>Your first attempt at each question is recorded.</li></ul>
+  <div class="row"><button class="btn" type="submit">Confirm and start</button></div></form></div>`;
+  $('#gateForm').onsubmit=e=>{
+    e.preventDefault();
+    const name=$('#sName').value.trim(), m=$('#sMatric').value.trim().toUpperCase().replace(/\s+/g,''), m2=$('#sMatric2').value.trim().toUpperCase().replace(/\s+/g,''), g=$('#sGroup').value.trim();
+    const errs={eName:name.length<3?'Enter your full name.':'',eMatric:!MATRIC_RE.test(m)?'Use the format on your matric card, e.g. A201234.':'',eMatric2:m!==m2?'The two matric numbers do not match.':'',eGroup:!g?'Enter your group or set number.':''};
+    let bad=false; Object.entries(errs).forEach(([id,t])=>{const el=$('#'+id);el.textContent=t;el.previousElementSibling.classList.toggle('badf',!!t);if(t)bad=true;});
+    if(bad) return;
+    S.student={name,matric:m,group:g}; S.started=true; save(); render();
+  };
+}
+
+/* ======================================================================
+   RENDER
+   ====================================================================== */
+function render(){
+  rail();
+  if(!S.started) return renderGate();
+  if(S.cur>=Q.length) return renderSubmit();
+  const q=Q[S.cur], a=st(q.n); if(!a.t0){a.t0=now();save();}
+  const typeName={mcq:q.multi?'Select all that apply':'Multiple choice',parts:'Guided answer',num:'Guided calculation',order:'Ordering',match:'Matching'}[q.type];
+  let h=`<div class="qhead"><span class="qno">Q${q.n}</span><span class="qtype">${typeName}</span></div><div class="qtext">${q.q}</div><p class="guide">${q.guide}</p>`;
+  h+=`<div id="body"></div><div id="hintbox"></div><div id="modelbox"></div>`;
+  h+=`<div class="nav"><button class="btn ghost" id="prev" ${S.cur===0?'disabled':''}>← Previous</button><button class="btn ghost" id="next">${S.cur===Q.length-1?'Review and submit →':'Next →'}</button></div>`;
+  $('#card').innerHTML=h;
+  $('#prev').onclick=()=>{S.cur--;save();render();};
+  $('#next').onclick=()=>{S.cur++;save();render();window.scrollTo({top:$('.main').offsetTop-8,behavior:'smooth'});};
+  rerenderBody(q,a);
+}
+function rerenderBody(q,a){
+  $('#body').innerHTML=body(q,a);
+  $('#hintbox').innerHTML=a.hints&&q.hint&&!a.done?`<div class="fb hint"><strong>Hint.</strong> ${q.hint}</div>`:'';
+  $('#modelbox').innerHTML=a.done?`<div class="model"><h4>Model answer</h4>${q.model}</div>`:'';
+  wire(q,a); rail();
+}
+
+function body(q,a){
+  if(q.type==='mcq'){
+    const inp=q.multi?'checkbox':'radio';
+    let h=`<div class="opts">`+optOrder(q).map((i,pos)=>{
+      let cls=''; if(a.done){cls=q.ans.includes(i)?'right':(a.sel.includes(i)?'wrong':'');}
+      return `<label class="opt ${cls}"><input type="${inp}" name="opt" id="o${i}" value="${i}" ${a.sel.includes(i)?'checked':''} ${a.done?'disabled':''}><span><b>${L[pos]})</b> ${esc(q.opts[i])}</span></label>`;}).join('')+`</div>`;
+    return h+`<div class="row">${a.done?'':'<button class="btn" id="chk">Check answer</button>'}<span class="note" id="msg"></span></div>`+firstFb(a);
+  }
+  if(q.type==='parts') return q.parts.map((p,pi)=>partHTML(q,a,p,pi)).join('');
+  if(q.type==='num') return numHTML(q,a);
+  if(q.type==='order'){
+    if(!a.order){let o=shuffled(q.items.map((_,i)=>i),q.n+'ord');if(o.every((x,i)=>x===i))o=q.start.slice();a.order=o;}
+    const res=a.done?a.order.map((x,i)=>x===i):null;
+    let h=`<ol class="order" id="ord">`+a.order.map((x,i)=>`<li class="${res?(res[i]?'right':'wrong'):''}"><span class="pos">${i+1}</span><span class="lab">${q.items[x]}</span>${a.done?'':`<button aria-label="Move ${q.items[x]} up" data-u="${i}" ${i===0?'disabled':''}>↑</button><button aria-label="Move ${q.items[x]} down" data-d="${i}" ${i===a.order.length-1?'disabled':''}>↓</button>`}</li>`).join('')+`</ol>`;
+    return h+`<div class="row">${a.done?'':'<button class="btn" id="chk">Check order</button>'}<span class="note" id="msg"></span></div>`+firstFb(a);
+  }
+  if(q.type==='match'){
+    if(!a.match) a.match=q.rows.map(()=>q.cols.map(()=>-1));
+    let h=`<div class="match"><span class="h">Generation</span>${q.cols.map(c=>`<span class="h">${c.h}</span>`).join('')}`;
+    q.rows.forEach((r,ri)=>{
+      h+=`<span class="g">${r}</span>`+q.cols.map((c,ci)=>{const v=a.match[ri][ci]; const cls=a.done&&v>=0?(v===c.ans[ri]?'right':'wrong'):'';
+        return `<select id="m${ri}_${ci}" class="${cls}" aria-label="${c.h} for ${r}" ${a.done?'disabled':''}><option value="-1">Choose…</option>${shuffled(c.opts.map((_,k)=>k),q.n+'m'+ci).map(oi=>`<option value="${oi}" ${v===oi?'selected':''}>${esc(c.opts[oi])}</option>`).join('')}</select>`;}).join('');});
+    return h+`</div><div class="row">${a.done?'':'<button class="btn" id="chk">Check matches</button>'}<span class="note" id="msg"></span></div>`+firstFb(a);
+  }
+}
+function firstFb(a){
+  if(!a.done) return '';
+  return `<div class="fb ${a.firstOk?'ok':'bad'}">${a.firstOk?'Correct on your first attempt.':'Your first attempt was not fully correct. Read the model answer and note what you missed.'} Attempts: ${a.tries}.</div>`;
+}
+
+/* ---------- guided parts ---------- */
+const KIND_LABEL={blanks:'Fill in the blanks',bank:'Answer builder',sort:'Click and match',flip:'Flip and match'};
+const KIND_HOW={blanks:'Type one word or short phrase in each gap. Several answers may be accepted.',bank:'Tap a gap to choose it, then tap a word tile. Tap a filled gap to clear it.',sort:'Tap an item, then tap the heading of the group it belongs to. Tap a placed item to take it back.',flip:'Flip two cards at a time to find a term and its description. Matching pairs stay open.'};
+function ps(a,pi){return a.parts[pi]||(a.parts[pi]={v:null,tries:0,first:null,firstScore:null,res:null,done:false,revealed:false,flips:0,miss:0,matched:[],up:[],active:0,selTile:null});}
+const bankTiles=(q,p,pi)=>shuffled(p.ans.concat(p.extra||[]),q.n+'b'+pi);
+function partHTML(q,a,p,pi){
+  const s=ps(a,pi), letter='ABCD'[pi];
+  let h=`<div class="part" data-p="${pi}"><div class="ptitle"><span class="tag ${s.done?'okt':''}">Part ${letter} · ${KIND_LABEL[p.kind]}${s.done?' ✓':''}</span><strong>${p.title}</strong></div>${s.done?'':`<div class="how">${KIND_HOW[p.kind]}</div>`}`;
+  if(p.kind==='blanks'){
+    if(!s.v) s.v=p.ans.map(()=> '');
+    h+=`<div class="passage">`+p.text.replace(/\[\[(\d+)\]\]/g,(m,i)=>{i=+i;const r=s.res?s.res[i]:null;
+      return `<input class="blank ${r===true?'ok':r===false?'bad':''}" id="b${pi}_${i}" aria-label="Blank ${i+1}" autocomplete="off" spellcheck="false" size="${Math.max(9,(s.v[i]||'').length+2)}" value="${esc(s.v[i])}" ${r===true||s.done?'readonly':''}>`;})+`</div>`;
+  }
+  if(p.kind==='bank'){
+    const tiles=bankTiles(q,p,pi);
+    if(!s.v) s.v=p.ans.map(()=>-1);
+    const used=new Set(s.v.filter(x=>x>=0));
+    h+=`<div class="passage">`+p.text.replace(/\[\[(\d+)\]\]/g,(m,i)=>{i=+i;const r=s.res?s.res[i]:null;const t=s.v[i]>=0?tiles[s.v[i]]:'';
+      return `<button class="slot ${t?'filled':''} ${r===true?'ok':r===false?'bad':''} ${!s.done&&s.active===i&&r!==true?'active':''}" data-slot="${i}" aria-label="Gap ${i+1}${t?': '+esc(t):' (empty)'}" ${r===true||s.done?'disabled':''}>${t?esc(t):'&nbsp;'}</button>`;})+`</div>`;
+    if(!s.done) h+=`<div class="bank" aria-label="Word tiles">`+tiles.map((t,ti)=>`<button class="tile ${used.has(ti)?'used':''}" data-tile="${ti}" ${used.has(ti)?'tabindex="-1" aria-hidden="true"':''}>${esc(t)}</button>`).join('')+`</div>`;
+  }
+  if(p.kind==='sort'){
+    const order=shuffled(p.items.map((_,i)=>i),q.n+'s'+pi);
+    if(!s.v) s.v=p.items.map(()=>-1);
+    const tile=i=>{const r=s.res?s.res[i]:null;return `<button class="tile ${s.selTile===i?'sel':''} ${r===true?'ok':r===false?'bad':''}" data-item="${i}" ${r===true||s.done?'disabled':''}>${esc(p.items[i][0])}</button>`;};
+    h+=`<div class="sorter">${s.done?'':`<div class="pool" aria-label="Items to place">${order.filter(i=>s.v[i]<0).map(tile).join('')}</div>`}
+      <div class="buckets">${p.cats.map((c,ci)=>`<div class="bucket ${s.selTile!=null&&!s.done?'armed':''}"><button class="bh" data-cat="${ci}" ${s.done?'disabled':''}>${esc(c)}</button><div class="in">${order.filter(i=>s.v[i]===ci).map(tile).join('')}</div></div>`).join('')}</div></div>`;
+  }
+  if(p.kind==='flip'){
+    if(!s.v){const cards=[];p.pairs.forEach((pr,i)=>{cards.push([i,0]);cards.push([i,1]);});s.v=shuffled(cards.map((_,i)=>i),q.n+'f'+pi).map(k=>cards[k]);}
+    s.up=s.up||[];
+    h+=`<div class="flipgrid">`+s.v.map(([k,side],ci)=>{const m=s.matched.includes(k);const up=s.up.includes(ci);
+      return `<button class="fcard ${m?'matched':''} ${up?'up':''} ${up&&s.missNow?'miss':''}" data-card="${ci}" aria-label="${m||up?esc(p.pairs[k][side]):'Hidden card '+(ci+1)}" ${m||s.done?'disabled':''}><span class="fi"><span class="face back">${side===0?'Term':'Description'}</span><span class="face front ${side===0?'term':''}">${esc(p.pairs[k][side])}</span></span></button>`;}).join('')+`</div>
+      <div class="flipstat">Pairs found ${s.matched.length}/${p.pairs.length} · flips ${s.flips} · mismatches ${s.miss}</div>`;
+  }
+  if(p.kind!=='flip'){
+    const score=s.res?s.res.filter(Boolean).length+'/'+s.res.length:'';
+    h+=`<div class="row">${s.done?'':`<button class="btn" data-check="${pi}">Check Part ${letter}</button>`}${!s.done&&s.tries>=2?`<button class="btn warn" data-reveal="${pi}">Show the answer</button>`:''}<span class="note pmsg">${s.done?(s.revealed?'Answer shown after '+s.tries+' checks.':'Correct'+(s.tries>1?' after '+s.tries+' checks.':' on the first check.')):(s.res?score+' correct. Fix the red ones and check again.':'')}</span></div>`;
+  }
+  return h+`</div>`;
+}
+function partCorrect(p,s,q,pi){
+  if(p.kind==='blanks') return p.ans.map((acc,i)=>blankOk(s.v[i],acc));
+  if(p.kind==='bank'){const tiles=bankTiles(q,p,pi);return p.ans.map((ans,i)=>s.v[i]>=0&&tiles[s.v[i]]===ans);}
+  if(p.kind==='sort') return p.items.map((it,i)=>s.v[i]===it[1]);
+}
+function partSnapshot(p,s,q,pi){
+  if(p.kind==='blanks') return s.v.slice();
+  if(p.kind==='bank'){const tiles=bankTiles(q,p,pi);return s.v.map(x=>x>=0?tiles[x]:'');}
+  if(p.kind==='sort') return p.items.map((it,i)=>s.v[i]>=0?p.cats[s.v[i]]:'');
+}
+function finishQ(q,a){
+  if(!q.parts.every((p,pi)=>ps(a,pi).done)||a.done) return;
+  a.done=true; a.t1=now();
+  a.firstOk=q.parts.every((p,pi)=>{const s=ps(a,pi);return p.kind==='flip'?s.miss<=p.pairs.length:(!s.revealed&&s.firstScore===s.res.length);});
+}
+function wireParts(q,a){
+  q.parts.forEach((p,pi)=>{
+    const s=ps(a,pi), root=document.querySelector(`.part[data-p="${pi}"]`);
+    const refocus=sel=>{const el=document.querySelector(`.part[data-p="${pi}"] ${sel}`); if(el) el.focus();};
+    if(p.kind==='blanks'){
+      root.querySelectorAll('input.blank').forEach(el=>{const i=+el.id.split('_')[1];
+        el.oninput=()=>{s.v[i]=el.value;el.size=Math.max(9,el.value.length+2);if(s.res)s.res[i]=null;el.classList.remove('bad');save();};
+        el.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();const b=root.querySelector('[data-check]');if(b)b.click();}};});
+    }
+    if(p.kind==='bank'){
+      root.querySelectorAll('[data-slot]').forEach(b=>b.onclick=()=>{const i=+b.dataset.slot;
+        if(s.v[i]>=0){s.v[i]=-1;if(s.res)s.res[i]=null;} s.active=i; save(); rerenderBody(q,a); refocus(`[data-slot="${i}"]`);});
+      root.querySelectorAll('[data-tile]').forEach(b=>b.onclick=()=>{const ti=+b.dataset.tile;
+        const free=k=>s.v[k]<0&&!(s.res&&s.res[k]===true);
+        let i=s.active; if(i==null||!free(i)) i=s.v.findIndex((x,k)=>free(k));
+        if(i<0) return; s.v[i]=ti; if(s.res)s.res[i]=null;
+        const nx=s.v.findIndex((x,k)=>free(k)); s.active=nx<0?null:nx; save(); rerenderBody(q,a); refocus('.tile:not(.used)');});
+    }
+    if(p.kind==='sort'){
+      root.querySelectorAll('[data-item]').forEach(b=>b.onclick=()=>{const i=+b.dataset.item;
+        if(s.v[i]>=0){s.v[i]=-1;if(s.res)s.res[i]=null;s.selTile=i;} else s.selTile=(s.selTile===i?null:i); save(); rerenderBody(q,a); refocus(`[data-item="${i}"]`);});
+      root.querySelectorAll('[data-cat]').forEach(b=>b.onclick=()=>{if(s.selTile==null)return;s.v[s.selTile]=+b.dataset.cat;if(s.res)s.res[s.selTile]=null;s.selTile=null;save();rerenderBody(q,a);refocus('.pool .tile');});
+    }
+    if(p.kind==='flip'){
+      root.querySelectorAll('[data-card]').forEach(b=>b.onclick=()=>{
+        if(s.lock) return; const ci=+b.dataset.card; if(s.up.includes(ci)) return;
+        s.up.push(ci); s.flips++; s.missNow=false;
+        if(s.up.length===2){const [x,y]=s.up.map(k=>s.v[k]);
+          if(x[0]===y[0]){s.matched.push(x[0]);s.up=[];if(s.matched.length===p.pairs.length){s.done=true;s.tries=1;}a.tries=Math.max(a.tries,1);finishQ(q,a);save();rerenderBody(q,a);}
+          else{s.miss++;s.missNow=true;s.lock=true;save();rerenderBody(q,a);setTimeout(()=>{s.up=[];s.missNow=false;s.lock=false;save();if(Q[S.cur]===q)rerenderBody(q,a);},1100);}
+        } else {save();rerenderBody(q,a);}
+      });
+    }
+    const cb=root.querySelector('[data-check]'); if(cb) cb.onclick=()=>{
+      const pm=root.querySelector('.pmsg');
+      if(p.kind==='blanks'?s.v.some(x=>!String(x).trim()):s.v.some(x=>x<0)){pm.textContent=p.kind==='sort'?'Place every item first.':'Fill every gap first.';return;}
+      s.res=partCorrect(p,s,q,pi); s.tries++; a.tries++;
+      if(s.first===null){s.first=partSnapshot(p,s,q,pi);s.firstScore=s.res.filter(Boolean).length;}
+      if(p.kind==='bank'){s.res.forEach((ok,i)=>{if(!ok)s.v[i]=-1;}); const k=s.v.findIndex(x=>x<0); s.active=k<0?null:k;}
+      if(s.res.every(Boolean)) s.done=true;
+      finishQ(q,a); save(); rerenderBody(q,a);
+    };
+    const rb=root.querySelector('[data-reveal]'); if(rb) rb.onclick=()=>{
+      if(p.kind==='blanks') s.v=p.ans.map(x=>x[0]);
+      if(p.kind==='bank'){const tiles=bankTiles(q,p,pi),used=new Set();s.v=p.ans.map(ans=>{const k=tiles.findIndex((t,ti)=>t===ans&&!used.has(ti));used.add(k);return k;});}
+      if(p.kind==='sort') s.v=p.items.map(it=>it[1]);
+      s.res=s.v.map(()=>true); s.revealed=true; s.done=true; finishQ(q,a); save(); rerenderBody(q,a);
+    };
+  });
+}
+
+/* ---------- number tables ---------- */
+function cellList(q){const out=[];q.rows.forEach((r,ri)=>r.slice(1).forEach((c,ci)=>out.push({id:'r'+ri+'c'+ci,ans:c[0],kind:c[1]||'dec',label:r[0]+' | '+q.head[ci+1]})));q.finals.forEach((f,fi)=>out.push({id:'f'+fi,ans:f[1],kind:f[2],label:f[0]}));return out;}
+function numHTML(q,a){
+  const cl=cellList(q);
+  const inp=(id,label)=>{const v=a.cells[id]||{};return `<input id="${id}" class="${v.ok===true?'ok':v.ok===false?'bad':''}" autocomplete="off" spellcheck="false" value="${esc(v.val||'')}" ${v.ok||a.done?'readonly':''} aria-label="${esc(label)}">`;};
+  let h=`<div class="tblwrap"><table class="work"><thead><tr>${q.head.map(x=>`<th>${x}</th>`).join('')}</tr></thead><tbody>`+
+    q.rows.map((r,ri)=>`<tr><td class="fix">${r[0]}</td>${r.slice(1).map((c,ci)=>`<td>${inp('r'+ri+'c'+ci,r[0]+', '+q.head[ci+1])}</td>`).join('')}</tr>`).join('')+`</tbody></table></div>`;
+  h+=`<div class="finals">`+q.finals.map((f,fi)=>`<div class="final"><label for="f${fi}">${f[0]}</label>${inp('f'+fi,f[0])}</div>`).join('')+`</div>`;
+  const bad=cl.filter(c=>a.cells[c.id]&&a.cells[c.id].ok===false).length, okc=cl.filter(c=>a.cells[c.id]&&a.cells[c.id].ok).length;
+  h+=`<div class="row">${a.done?'':'<button class="btn" id="chk">Check my working</button>'}<button class="btn ghost" id="gbtn" aria-expanded="${!!a.gopen}">${a.gopen?'Hide':'Open'} formula sheet</button>${!a.done&&a.tries>=3?'<button class="btn warn" id="rev">Show the answer</button>':''}<span class="note" id="msg">${a.done?(a.revealed?'Answer shown after '+a.tries+' checks.':'All correct.'):(a.tries?okc+'/'+cl.length+' correct'+(bad?'. Fix the red boxes and check again.':'. Keep going.'):'')}</span></div>`;
+  if(a.gopen) h+=guideHTML();
+  return h;
+}
+function guideHTML(){
+  return `<div class="guidepanel"><h4>Formula sheet</h4>
+  <div class="tblwrap"><table><thead><tr><th>Quantity</th><th>Formula</th></tr></thead><tbody>
+   <tr><td>Effective CPI (mixed instructions)</td><td><code>Σ (fraction of instructions × cycles for that class)</code></td></tr>
+   <tr><td>Clock cycle time</td><td><code>1 / clock rate</code></td></tr>
+   <tr><td>Execution time of one instruction</td><td><code>cycles needed × clock cycle time</code></td></tr>
+   <tr><td>CPU execution time of a program</td><td><code>instruction count × CPI × clock cycle time</code></td></tr>
+   <tr><td>Instructions per second (multicore)</td><td><code>number of cores × IPC × clock rate</code></td></tr>
+  </tbody></table></div>
+  <h4>Units</h4>
+  <div class="gtables"><div class="tblwrap"><table><thead><tr><th>Prefix</th><th>Value</th></tr></thead><tbody><tr><td>1 GHz</td><td>10⁹ cycles per second (1 billion)</td></tr><tr><td>1 MHz</td><td>10⁶ cycles per second</td></tr><tr><td>1 ns</td><td>10⁻⁹ s</td></tr><tr><td>1 / (1 GHz)</td><td>1 ns</td></tr></tbody></table></div></div>
+  <h4>Tips</h4><ol><li>Write percentages as decimals before multiplying: 25% = 0.25.</li><li>A clock rate in GHz gives a cycle time in ns: divide 1 by the GHz value.</li><li>IPC (instructions per cycle) is the reverse view of CPI (cycles per instruction).</li></ol></div>`;
+}
+function wireNum(q,a){
+  const cl=cellList(q);
+  cl.forEach(c=>{const el=document.getElementById(c.id); if(!el) return;
+    el.oninput=()=>{const v=a.cells[c.id]||{}; if(v.ok) return; a.cells[c.id]={...v,val:el.value,ok:null}; el.classList.remove('bad'); save();};
+    el.onkeydown=e=>{if(e.key==='Enter'){const b=$('#chk'); if(b) b.click();}};});
+  $('#gbtn').onclick=()=>{a.gopen=!a.gopen; if(a.gopen) a.guide=(a.guide||0)+1; save(); rerenderBody(q,a);};
+  const c=$('#chk'); if(c) c.onclick=()=>{
+    let any=false;
+    cl.forEach(x=>{const v=a.cells[x.id]; if(!v||v.ok||!String(v.val||'').trim()) return; any=true;
+      v.ok=numOk(v.val,x.ans,x.kind); v.tries=(v.tries||0)+1; if(v.first===undefined){v.first=v.val;v.firstOk=v.ok;}});
+    if(!any){$('#msg').textContent='Fill in at least one box first.';return;}
+    a.tries++;
+    const fin=a.cells['f0']; if(a.first===null&&fin&&fin.first!==undefined){a.first=fin.first;a.firstOk=fin.firstOk;}
+    if(cl.every(x=>a.cells[x.id]&&a.cells[x.id].ok)){a.done=true;a.t1=now();a.firstOk=cl.every(x=>a.cells[x.id].firstOk);}
+    save(); rerenderBody(q,a);
+  };
+  const r=$('#rev'); if(r) r.onclick=()=>{cl.forEach(x=>{const v=a.cells[x.id]||{}; if(!v.ok){a.cells[x.id]={...v,val:x.ans,ok:true,shown:true};}}); a.revealed=true;a.done=true;a.t1=now(); if(a.firstOk==null)a.firstOk=false; save(); rerenderBody(q,a);};
+}
+
+/* ---------- wiring for every type ---------- */
+function wire(q,a){
+  if(q.type==='parts') return wireParts(q,a);
+  if(q.type==='num') return wireNum(q,a);
+  const msg=$('#msg');
+  if(q.type==='mcq'){
+    document.querySelectorAll('input[name=opt]').forEach(el=>el.onchange=()=>{a.sel=[...document.querySelectorAll('input[name=opt]:checked')].map(x=>+x.value);save();rail();});
+    const c=$('#chk'); if(c) c.onclick=()=>{
+      if(!a.sel.length){msg.textContent='Choose at least one option first.';return;}
+      const ok=a.sel.length===q.ans.length&&q.ans.every(x=>a.sel.includes(x));
+      a.tries++; if(a.first===null){a.first=a.sel.map(i=>q.opts[i]).join('; ');a.firstOk=ok;} else if(a.tries===2){a.secondOk=ok;}
+      if(ok||a.tries>=2){a.done=true;a.t1=now();} else if(!a.hints) a.hints++;
+      save();rerenderBody(q,a);
+      if(!ok&&a.tries<2) $('#msg').textContent=q.multi?'Not quite. Check every option again, then try once more.':'Not quite. Read the hint, then try once more.';
+    };
+  }
+  if(q.type==='order'){
+    document.querySelectorAll('#ord button').forEach(b=>b.onclick=()=>{
+      const up=b.dataset.u!==undefined, i=+(up?b.dataset.u:b.dataset.d), j=up?i-1:i+1;
+      [a.order[i],a.order[j]]=[a.order[j],a.order[i]]; save(); rerenderBody(q,a);
+      const nb=document.querySelector(`#ord button[data-${up?'u':'d'}="${j}"]`); if(nb&&!nb.disabled) nb.focus();});
+    const c=$('#chk'); if(c) c.onclick=()=>{
+      const ok=a.order.every((x,i)=>x===i); a.tries++;
+      if(a.first===null){a.first=a.order.map(x=>q.items[x]).join(' < ');a.firstOk=ok;a.firstPos=a.order.filter((x,i)=>x===i).length;}
+      if(ok||a.tries>=2){a.done=true;a.t1=now();} else if(!a.hints) a.hints++;
+      save();rerenderBody(q,a); if(!ok&&a.tries<2){const n=a.order.filter((x,i)=>x===i).length; $('#msg').textContent=n+' of 6 in the right position. Try once more.';}
+    };
+  }
+  if(q.type==='match'){
+    q.rows.forEach((r,ri)=>q.cols.forEach((c,ci)=>{const el=$(`#m${ri}_${ci}`); el.onchange=()=>{a.match[ri][ci]=+el.value;save();rail();};}));
+    const c=$('#chk'); if(c) c.onclick=()=>{
+      if(a.match.some(r=>r.some(v=>v<0))){msg.textContent='Make a choice in every box first.';return;}
+      const ok=q.rows.every((r,ri)=>q.cols.every((c,ci)=>a.match[ri][ci]===c.ans[ri])); a.tries++;
+      if(a.first===null){a.first=q.rows.map((r,ri)=>r.split(' (')[0]+': '+q.cols.map((c,ci)=>c.opts[a.match[ri][ci]]).join(' / ')).join('; ');a.firstOk=ok;a.firstHits=q.rows.reduce((t,r,ri)=>t+q.cols.filter((c,ci)=>a.match[ri][ci]===c.ans[ri]).length,0);}
+      if(ok||a.tries>=2){a.done=true;a.t1=now();} else if(!a.hints) a.hints++;
+      save();rerenderBody(q,a); if(!ok&&a.tries<2) $('#msg').textContent='Some matches are wrong. Read the hint and try once more.';
+    };
+  }
+}
+
+/* ======================================================================
+   SCORING (first attempts, 5 marks per question, 100 total)
+   ====================================================================== */
+const MAX_Q=5;
+function partFrac(p,s){
+  if(!s) return 0;
+  if(p.kind==='flip') return (s.matched||[]).length/p.pairs.length;
+  const n=p.kind==='sort'?p.items.length:p.ans.length;
+  return s.firstScore==null?0:s.firstScore/n;
+}
+function scoreQ(q){
+  const a=S.a[q.n]; if(!a) return 0; let f=0;
+  if(q.type==='mcq') f=a.firstOk?1:(a.secondOk?0.5:0);
+  if(q.type==='order') f=(a.firstPos||0)/q.items.length;
+  if(q.type==='match') f=(a.firstHits||0)/(q.rows.length*q.cols.length);
+  if(q.type==='parts') f=q.parts.reduce((t,p,pi)=>t+partFrac(p,(a.parts||{})[pi]),0)/q.parts.length;
+  if(q.type==='num'){const cl=cellList(q); f=cl.filter(c=>a.cells&&a.cells[c.id]&&a.cells[c.id].firstOk).length/cl.length;}
+  return Math.round(f*MAX_Q*10)/10;
+}
+function totalScore(){return Math.round(Q.reduce((t,q)=>t+scoreQ(q),0)*10)/10;}
+function summary(){return {done:Q.filter(q=>status(q)==='done').length,score:totalScore()};}
+
+/* ======================================================================
+   ENCRYPTED RECORD
+   ====================================================================== */
+const recKey=()=>[84,84,84,75,49,49,53,51].map(c=>String.fromCharCode(c)).join('')+matricUp();
+function plainModel(q){const d=document.createElement('div');d.innerHTML=q.model.replace(/<\/(p|li|tr|h4|div)>/g,'\n').replace(/<br\s*\/?>/g,'\n').replace(/<\/t[dh]>/g,' | ');return d.textContent.replace(/[ \t]+\n/g,'\n').replace(/\n{2,}/g,'\n').trim();}
+function gapText(t){return t.replace(/\[\[(\d+)\]\]/g,(m,i)=>'['+(+i+1)+']');}
+function buildRecord(){
+  const sd=S.student, m=summary();
+  const rec={format:'TTTK1153-T2-v1',course:'TTTK1153',tutorial:'Tutorial 2: Central Processing Unit',
+    student:{name:sd.name,matric:matricUp(),group:sd.group},generated:new Date().toISOString(),
+    score:m.score,max:Q.length*MAX_Q,completed:m.done,questions:[]};
+  Q.forEach(q=>{
+    const a=S.a[q.n]||{};
+    const r={n:q.n,question:strip(q.q),type:q.type,score:scoreQ(q),max:MAX_Q,status:status(q),checks:a.tries||0,
+      started:a.t0||null,finished:a.t1||null,modelAnswer:plainModel(q)};
+    if(q.type==='mcq'){
+      r.options=optOrder(q).map((i,pos)=>L[pos]+') '+q.opts[i]);
+      r.correct=q.ans.map(i=>q.opts[i]);
+      r.firstAnswer=a.first||null; r.firstCorrect=a.first?!!a.firstOk:null;
+      r.finalAnswer=(a.sel||[]).map(i=>q.opts[i]); r.secondCorrect=a.secondOk==null?null:!!a.secondOk; r.hintShown=!!a.hints;
+    }
+    if(q.type==='order'){
+      r.correct=q.items.slice(); r.firstAnswer=a.first||null; r.firstPositionsCorrect=a.firstPos==null?null:a.firstPos;
+      r.finalAnswer=a.order?a.order.map(x=>q.items[x]):null; r.hintShown=!!a.hints;
+    }
+    if(q.type==='match'){
+      r.correct=q.rows.map((row,ri)=>row+': '+q.cols.map(c=>c.opts[c.ans[ri]]).join(' / '));
+      r.firstAnswer=a.first||null; r.firstHits=a.firstHits==null?null:a.firstHits; r.of=q.rows.length*q.cols.length;
+      r.finalAnswer=a.match?q.rows.map((row,ri)=>row+': '+q.cols.map((c,ci)=>a.match[ri][ci]>=0?c.opts[a.match[ri][ci]]:'-').join(' / ')):null; r.hintShown=!!a.hints;
+    }
+    if(q.type==='parts'){
+      r.parts=q.parts.map((p,pi)=>{
+        const s=(a.parts||{})[pi]; const out={part:'ABCD'[pi],kind:KIND_LABEL[p.kind],title:p.title,checks:s?s.tries:0,answerShown:!!(s&&s.revealed),completed:!!(s&&s.done)};
+        if(p.kind==='flip'){out.pairs=p.pairs.map(x=>x[0]+' = '+x[1]);out.found=s?s.matched.length:0;out.flips=s?s.flips:0;out.mismatches=s?s.miss:0;return out;}
+        if(p.kind==='sort'){
+          out.firstScore=s&&s.firstScore!=null?s.firstScore:null; out.of=p.items.length;
+          const fin=s&&s.v?s.v:null;
+          out.items=p.items.map((it,i)=>({item:it[0],correct:p.cats[it[1]],first:s&&s.first?(s.first[i]||null):null,final:fin&&fin[i]>=0?p.cats[fin[i]]:null}));
+          return out;
+        }
+        out.text=gapText(p.text); out.firstScore=s&&s.firstScore!=null?s.firstScore:null; out.of=p.ans.length;
+        const fin=s&&s.v?partSnapshot(p,s,q,pi):null;
+        out.gaps=p.ans.map((ans,i)=>({gap:i+1,accepted:p.kind==='blanks'?ans:[ans],first:s&&s.first?(s.first[i]||''):null,final:fin?fin[i]:null}));
+        if(p.kind==='bank') out.distractors=p.extra||[];
+        return out;
+      });
+    }
+    if(q.type==='num'){
+      r.guideOpened=a.guide||0; r.answerShown=!!a.revealed;
+      r.cells=cellList(q).map(c=>{const v=(a.cells||{})[c.id]||{};return {step:c.label,correct:c.ans,first:v.first===undefined?null:v.first,firstCorrect:v.firstOk===undefined?null:!!v.firstOk,final:v.val||'',checks:v.tries||0,shown:!!v.shown};});
+    }
+    rec.questions.push(r);
+  });
+  return rec;
+}
+function u8ToWords(u8){const w=[];for(let i=0;i<u8.length;i++)w[i>>>2]|=u8[i]<<(24-(i%4)*8);return CryptoJS.lib.WordArray.create(w,u8.length);}
+function encryptRecord(rec){
+  const z=pako.deflate(JSON.stringify(rec));
+  return CryptoJS.AES.encrypt(u8ToWords(z),recKey()).toString();
+}
+
+/* ======================================================================
+   SUBMISSION
+   ====================================================================== */
+function renderSubmit(){
+  const m=summary(), miss=Q.filter(q=>status(q)!=='done');
+  let h=`<div class="qhead"><span class="qno">Submit</span><span class="qtype">UKMFolio</span></div>
+  <div class="qtext">Review and download your submission</div>
+  <p class="guide">Your score is based on your first attempt at each question. Download the PDF and upload it, unchanged, to the Tutorial 2 assignment in UKMFolio. The PDF shows your score and an encoded record of your work for your lecturer.</p>
+  <div class="sumgrid"><div><b>${m.score}</b><span>Score out of 100</span></div><div><b>${m.done}/20</b><span>Questions completed</span></div><div><b>${20-m.done}</b><span>Not completed</span></div><div><b>${esc(matricUp())}</b><span>Matric no.</span></div></div>`;
+  if(miss.length) h+=`<div class="fb hint"><strong>Not finished yet:</strong> ${miss.map(q=>`<a href="#" data-go="${Q.indexOf(q)}">Q${q.n}</a>`).join(', ')}. You can still download now. Unfinished questions score only what you got right before stopping.</div>`;
+  h+=`<div class="row"><button class="btn" id="dl">Download submission PDF</button><span class="note" id="msg"></span></div>
+  <div class="nav"><button class="btn ghost" id="prev">← Back to Q20</button><button class="btn warn" id="reset">Clear all my answers</button></div><div id="confirmBox"></div>`;
+  $('#card').innerHTML=h;
+  document.querySelectorAll('[data-go]').forEach(x=>x.onclick=e=>{e.preventDefault();S.cur=+x.dataset.go;save();render();});
+  $('#prev').onclick=()=>{S.cur=Q.length-1;save();render();};
+  $('#dl').onclick=downloadPDF;
+  $('#reset').onclick=()=>{$('#confirmBox').innerHTML=`<div class="confirm">This removes every answer saved in this browser. <div class="row"><button class="btn" id="yes">Yes, clear everything</button><button class="btn ghost" id="no">Keep my answers</button></div></div>`;
+    $('#no').onclick=()=>{$('#confirmBox').innerHTML='';};
+    $('#yes').onclick=()=>{S={started:true,student:S.student,cur:0,a:{}};save();render();};};
+}
+function strip(html){const d=document.createElement('div');d.innerHTML=html;return d.textContent.trim();}
+function pdfSafe(s){return String(s).replace(/[‘’]/g,"'").replace(/[“”]/g,'"').replace(/[−–—]/g,'-').replace(/[^\x09\x0A\x0D\x20-\x7E\xA0-\xFF]/g,'?');}
+function buildPDF(cipher){
+  const {jsPDF}=window.jspdf; const doc=new jsPDF({unit:'pt',format:'a4'});
+  const sd=S.student, m=summary();
+  doc.setProperties({title:'TTTK1153 Tutorial 2 - '+matricUp(),subject:'TTTK1153 Tutorial 2 submission',author:sd.name});
+  const W=doc.internal.pageSize.getWidth(), H=doc.internal.pageSize.getHeight(), M=50; let y=M;
+  const footer=()=>{doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(120);doc.text(pdfSafe(`TTTK1153 Tutorial 2 | ${matricUp()} | page ${doc.getNumberOfPages()}`),M,H-24);doc.setTextColor(0);};
+  const need=h=>{if(y+h>H-M){footer();doc.addPage();y=M;}};
+  doc.setFont('helvetica','bold');doc.setFontSize(15);doc.text('TTTK1153 Computer Organization & Architecture',M,y);y+=20;
+  doc.setFont('helvetica','normal');doc.setFontSize(11.5);doc.text('Tutorial 2: Central Processing Unit',M,y);y+=26;
+  doc.setFontSize(10.5);
+  [['Name',sd.name],['Matric no.',matricUp()],['Group/Set no.',sd.group],['Generated',new Date().toLocaleString('en-MY')]].forEach(([k,v])=>{doc.setFont('helvetica','bold');doc.text(k,M,y);doc.setFont('helvetica','normal');doc.text(pdfSafe(v),M+90,y);y+=15;});
+  y+=10; doc.setDrawColor(0); doc.setLineWidth(1); doc.rect(M,y,W-2*M,58);
+  doc.setFont('helvetica','bold');doc.setFontSize(26);doc.text(`${m.score} / 100`,M+16,y+38);
+  doc.setFont('helvetica','normal');doc.setFontSize(10);doc.text(`Score (first attempts)   |   Questions completed: ${m.done} / 20`,M+170,y+34);
+  y+=80;
+  doc.setFont('helvetica','bold');doc.setFontSize(10);doc.text('Submission record',M,y);y+=13;
+  doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.setTextColor(90);
+  doc.splitTextToSize('This encoded block holds the full record of your work for your lecturer. Upload this PDF unchanged. Any edit to the block makes it unreadable.',W-2*M).forEach(l=>{doc.text(l,M,y);y+=11;});
+  doc.setTextColor(0); y+=6;
+  const lines=[]; for(let i=0;i<cipher.length;i+=96) lines.push(cipher.slice(i,i+96));
+  doc.setFont('courier','normal');doc.setFontSize(7.5);
+  const block=['-----BEGIN RECORD-----',...lines,'-----END RECORD-----'];
+  block.forEach(l=>{need(9.5);doc.text(l,M,y);y+=9.5;});
+  footer(); return doc;
+}
+async function downloadPDF(){
+  const msg=$('#msg');
+  if(!window.jspdf||!window.pako||!window.CryptoJS){msg.textContent='A required tool did not load. Check your internet connection and reload the page. Your answers are kept.';return;}
+  let cipher; try{cipher=encryptRecord(buildRecord());}catch(e){msg.textContent='Could not prepare your record. Reload the page and try again.';return;}
+  const name=`TTTK1153_Tutorial2_${matricUp()}.pdf`, blob=buildPDF(cipher).output('blob');
+  S.exported=(S.exported||0)+1; save();
+  let dl=null; try{dl=window.claude&&window.claude.use?await window.claude.use('downloads'):null;}catch(e){dl=null;}
+  if(dl){
+    try{await dl.save({filename:name,data:blob}); msg.textContent='Saved '+name+'. Upload it to UKMFolio.';}
+    catch(e){msg.textContent=e&&e.code==='declined'?'Download cancelled.':'The download was blocked here. Open the copy of this tutorial in UKMFolio and download from there.';}
+    return;
+  }
+  const url=URL.createObjectURL(blob), link=document.createElement('a'); link.href=url; link.download=name; document.body.appendChild(link); link.click(); link.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),4000);
+  msg.textContent='Check your downloads for '+name+', then upload it to UKMFolio.';
+}
+
+$('#goSubmit').onclick=()=>{if(!S.started)return;S.cur=Q.length;save();render();};
+render();
+</script>

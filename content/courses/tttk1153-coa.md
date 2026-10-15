@@ -11,4 +11,8 @@ labs:
     href: "/courses/coa-tutorial-1/"
     emoji: "🖥️"
     blurb: "Guided practice on core concepts, number systems, and the CPU and software layers — with hints, then a protected submission file."
+  - title: "Tutorial 2 · Central Processing Unit"
+    href: "/courses/coa-tutorial-2/"
+    emoji: "⚙️"
+    blurb: "Registers, the instruction cycle and ISA, CPU performance, then parallelism and cache — guided, with a protected submission file."
 ---
