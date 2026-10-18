@@ -15,4 +15,8 @@ labs:
     href: "/courses/coa-tutorial-2/"
     emoji: "⚙️"
     blurb: "Registers, the instruction cycle and ISA, CPU performance, then parallelism and cache — guided, with a protected submission file."
+  - title: "Tutorial 3 · Memory and Storage Systems"
+    href: "/courses/coa-tutorial-3/"
+    emoji: "💾"
+    blurb: "Memory basics, RAM, ROM and cache, disks and RAID, then flash, optical, cloud and error handling — guided, with a protected submission file."
 ---
