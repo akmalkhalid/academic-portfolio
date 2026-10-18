@@ -1,0 +1,953 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AI-Powered Prototyping · Slides</title>
+<link rel="stylesheet" href="assets/fonts.css">
+<style>
+:root{--bg:#04070F;--panel:#0F172C;--line:#25304F;--fg:#EEF2FA;--muted:#AAB5CD;--cyan:#22D3EE;--violet:#A78BFA;--pink:#F472B6;--amber:#FBBF24;--mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;--sans:'Space Grotesk','Segoe UI',system-ui,Arial,sans-serif;color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--fg);font-family:var(--sans);overflow:hidden}
+button{font:inherit}
+:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+#app{position:fixed;inset:0;display:grid;grid-template-columns:1fr;grid-template-rows:1fr}
+.stage{position:relative;overflow:hidden;background:#000}
+.frame{position:absolute;left:50%;top:50%;width:1920px;height:1080px;transform-origin:0 0}
+/* slide content defaults (deck format) */
+.slide{position:absolute;inset:0;width:1920px;height:1080px;overflow:hidden;display:none;box-sizing:border-box}
+.slide *{box-sizing:border-box}
+.slide.cur{display:var(--disp,flex)}
+.slide h1,.slide h2,.slide h3,.slide p,.slide ul,.slide ol{margin:0}
+.slide h1{font-size:96px;font-weight:600;line-height:1.1}.slide h2{font-size:64px;font-weight:600;line-height:1.15}.slide h3{font-size:44px;font-weight:600;line-height:1.2}
+.slide p{font-size:32px;line-height:1.4}.slide ul,.slide ol{padding-left:1.15em}
+.slide iframe.embed{border:0;background:transparent;pointer-events:none;color-scheme:normal}
+.slide .xicon{display:inline-block;flex:none}
+.slide .xicon svg{width:100%;height:100%;display:block}
+.slide img{max-width:none}
+/* builds */
+.slide [data-build-in].bh{opacity:0!important;visibility:hidden}
+.slide [data-build-in].bi{animation:var(--ba) .65s cubic-bezier(.2,.8,.2,1) both}
+@keyframes b-fade{from{opacity:0}}@keyframes b-rise{from{opacity:0;translate:0 40px}}@keyframes b-pop{from{opacity:0;scale:.6}}@keyframes b-left{from{opacity:0;translate:-60px 0}}@keyframes b-right{from{opacity:0;translate:60px 0}}
+.slide.enter-fade{animation:s-fade .45s ease both}.slide.enter-push{animation:s-push .5s cubic-bezier(.2,.8,.2,1) both}.slide.enter-pushb{animation:s-pushb .5s cubic-bezier(.2,.8,.2,1) both}
+@keyframes s-fade{from{opacity:0}}@keyframes s-push{from{opacity:0;translate:120px 0}}@keyframes s-pushb{from{opacity:0;translate:-120px 0}}
+@media (prefers-reduced-motion:reduce){.slide,.slide *{animation:none!important}}
+.qr{background:#fff;display:grid;place-items:center;border-radius:12px}
+.qr svg{width:100%;height:100%}
+/* black screen */
+.blank{position:absolute;inset:0;background:#000;z-index:5}
+/* toolbar */
+.bar{position:absolute;left:50%;bottom:calc(14px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);display:flex;gap:6px;align-items:center;background:rgba(10,15,31,.86);backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:999px;padding:6px;z-index:10;transition:opacity .3s;max-width:calc(100% - 24px);overflow-x:auto}
+.bar.hide{opacity:0;pointer-events:none}
+.bar button,.bar a{color:var(--fg);background:transparent;border:0;border-radius:999px;min-width:40px;height:40px;padding:0 12px;cursor:pointer;font-size:14px;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;white-space:nowrap}
+.bar button:hover,.bar a:hover{background:#1B2442}
+.bar .count{font-family:var(--mono);font-size:13px;color:var(--muted);padding:0 8px;white-space:nowrap}
+.bar .sep{width:1px;height:24px;background:var(--line)}
+/* overlays */
+.ov{position:absolute;inset:0;z-index:20;background:rgba(4,7,15,.94);overflow:auto;padding:max(24px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) 24px max(16px,env(safe-area-inset-left,0px))}
+.ov h2{font-size:22px;margin:0 0 14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;max-width:1300px;margin:0 auto}
+.tile{text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;color:var(--fg);cursor:pointer;min-height:84px;display:flex;flex-direction:column;gap:6px}
+.tile:hover,.tile.cur{border-color:var(--cyan)}
+.tile b{font-family:var(--mono);font-size:12px;color:var(--cyan)}
+.tile span{font-size:15px;line-height:1.3}
+.tile.hid{opacity:.55}.tile.hid b::after{content:" · hidden";color:var(--amber)}
+.ovhead{display:flex;justify-content:space-between;align-items:center;max-width:1300px;margin:0 auto 14px;gap:12px}
+.x{background:var(--panel);color:var(--fg);border:1px solid var(--line);border-radius:999px;height:40px;padding:0 16px;cursor:pointer}
+.notes{position:absolute;left:0;right:0;bottom:0;max-height:38%;overflow:auto;z-index:8;background:rgba(10,15,31,.96);border-top:1px solid var(--line);padding:16px max(20px,env(safe-area-inset-left,0px)) calc(70px + env(safe-area-inset-bottom,0px));font-size:18px;line-height:1.55;color:var(--fg)}
+.help{font-size:15px;line-height:1.9;max-width:720px;margin:0 auto}
+.help kbd{font-family:var(--mono);font-size:13px;background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:2px 7px}
+/* presenter console */
+#app.presenter{grid-template-columns:minmax(0,1.6fr) minmax(320px,1fr)}
+.console{display:none}
+#app.presenter .console{display:flex;flex-direction:column;gap:14px;padding:18px;background:#0A0F1F;border-left:1px solid var(--line);overflow:auto;min-width:0}
+.c-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.c-clock{font-family:var(--mono);font-size:40px;font-weight:700;font-variant-numeric:tabular-nums}
+.c-el{font-family:var(--mono);font-size:15px;color:var(--muted)}
+.c-el button{margin-left:6px}
+.c-now{font-size:22px;font-weight:700;line-height:1.25}
+.c-meta{font-family:var(--mono);font-size:13px;color:var(--muted)}
+.c-next{border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:15px;color:var(--muted)}
+.c-next b{color:var(--fg)}
+.c-notes{font-size:19px;line-height:1.6;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;flex:1;min-height:160px;overflow:auto}
+.c-btns{display:flex;flex-wrap:wrap;gap:8px}
+.c-btns button{background:var(--panel);color:var(--fg);border:1px solid var(--line);border-radius:12px;min-height:52px;padding:0 18px;cursor:pointer;font-weight:700}
+.c-btns button.big{flex:1;background:linear-gradient(90deg,var(--cyan),#8B5CF6);color:#0A0F1F;border:0;font-size:18px}
+.sync{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.c-site{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-family:var(--mono);font-size:12px;color:var(--muted)}
+.c-site a{color:var(--fg);text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:12.5px}
+.c-site a:hover{border-color:var(--cyan)}
+.c-site a.hub{background:#22D3EE;color:#0A0F1F;border-color:#22D3EE;font-weight:700}
+#app.presenter ~ .mvpdock{display:none}
+
+.mvpdock{position:fixed;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:60;display:flex;flex-direction:column-reverse;align-items:flex-end;gap:10px;transition:opacity .3s;font-family:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace}
+.mvpdock.hide{opacity:0;pointer-events:none}
+.mvpdock-btn{display:inline-flex;align-items:center;gap:10px;height:46px;padding:0 14px;border-radius:999px;border:1px solid #33406A;background:rgba(10,15,31,.92);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);color:#EEF2FA;font-family:inherit;font-weight:700;font-size:12.5px;letter-spacing:.06em;cursor:pointer;box-shadow:0 12px 40px rgba(0,0,0,.45)}
+.mvpdock-btn:hover,.mvpdock-btn[aria-expanded="true"]{border-color:#22D3EE}
+.mvpdock-btn:focus-visible{outline:2px solid #22D3EE;outline-offset:3px}
+.mvpdock-btn i{width:12px;height:12px;transform:rotate(45deg);background:linear-gradient(135deg,#22D3EE,#F472B6);border-radius:2px}
+.mvpdock-btn kbd{font-family:inherit;font-size:11px;font-weight:600;color:#8792AD;border:1px solid #33406A;border-radius:5px;padding:2px 6px}
+.mvpdock-menu{width:min(330px,calc(100vw - 32px));max-height:calc(100vh - 110px);overflow:auto;background:rgba(10,15,31,.97);border:1px solid #33406A;border-radius:18px;padding:8px;box-shadow:0 24px 70px rgba(0,0,0,.6);display:grid;gap:2px;animation:mvpd .18s ease-out}
+
+.mvpdock-menu[hidden]{display:none}
+@keyframes mvpd{from{opacity:0;transform:translateY(8px)}}
+.mvpdock-menu b{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:#7F8BA8;padding:8px 12px 4px;font-weight:600}
+.mvpdock-menu a{display:grid;grid-template-columns:10px minmax(0,1fr);column-gap:12px;align-items:center;padding:8px 12px;border-radius:12px;text-decoration:none;color:#EEF2FA}
+.mvpdock-menu a:hover,.mvpdock-menu a:focus-visible{background:#1B2442;outline:none}
+.mvpdock-menu a[aria-current]{background:#141C33;box-shadow:inset 0 0 0 1px #33406A}
+.mvpdock-menu a::before{content:"";grid-row:span 2;width:10px;height:10px;border-radius:50%;background:var(--d,#22D3EE)}
+.mvpdock-menu em{font-family:'Space Grotesk',system-ui,Arial,sans-serif;font-style:normal;font-weight:700;font-size:15px;line-height:1.25}
+.mvpdock-menu small{font-size:11px;color:#8792AD;line-height:1.35}
+.mvpdock-menu p{margin:4px 0 0;padding:8px 12px 4px;border-top:1px solid #25304F;font-size:10.5px;color:#7F8BA8;line-height:1.45}
+@media (prefers-reduced-motion:reduce){.mvpdock-menu{animation:none}.mvpdock{transition:none}}
+@media print{.mvpdock{display:none}}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="stage" id="stage">
+    <div class="frame" id="frame">
+<div class="slide" id="cover" data-tr="fade" style="background:radial-gradient(circle at 82% 18%, #3B1F7A 0%, #0A0F1F 62%);color:#EEF2FA;font-family:'Space Grotesk', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;justify-content:center;gap:36px">
+<div style="position:absolute;left:0;top:0;width:1920px;height:12px;background:linear-gradient(90deg, #22D3EE, #8B5CF6, #F472B6)"></div>
+<div style="position:absolute;left:1335px;top:64px;width:457px;height:124px;background:#F7F8FC;border-radius:20px;padding:20px 28px;display:flex;flex-direction:row;gap:32px;align-items:center;box-shadow:0 16px 48px rgba(0,0,0,0.35)">
+<img src="assets/ukm.png" alt="Universiti Kebangsaan Malaysia logo" style="width:177px;height:84px;object-fit:contain">
+<img src="assets/ftsm.png" alt="Fakulti Teknologi dan Sains Maklumat (FTSM) logo" style="width:192px;height:72px;object-fit:contain">
+</div>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#22D3EE">FTSM Technopreneurship Bootcamp 2026 · Day 2 · Build</p>
+<h1 style="font-size:120px;font-weight:700;line-height:1.05;width:1080px">AI-Powered Prototyping</h1>
+<h2 style="font-size:72px;font-weight:500;line-height:1.1;width:1000px;background:linear-gradient(90deg, #22D3EE, #A78BFA, #F472B6);background-clip:text;-webkit-text-fill-color:transparent">Supercharge your MVP</h2>
+<p style="font-size:32px;color:#A9B4CC;width:1000px">Ts. Dr. Mohd Nor Akmal Khalid · CAIT, FTSM, UKM</p>
+<iframe class="embed" title="animation" sandbox="allow-scripts" tabindex="-1" aria-hidden="true" data-build-in="fade" style="position:absolute;left:1240px;top:600px;width:552px;height:280px" srcdoc="&lt;!doctype html&gt;&lt;html&gt;&lt;head&gt;&lt;style&gt;body{margin:0;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:24px;color:#EEF2FA}.b{box-sizing:border-box;height:280px;background:#131A2E;border:1px solid #2A3557;border-radius:20px;padding:24px 28px}.d{display:flex;gap:8px;margin-bottom:18px}.d i{width:14px;height:14px;border-radius:50%;display:block}.c{color:#22D3EE}.ok{color:#A3E635}.cur{display:inline-block;width:12px;height:26px;background:#F472B6;vertical-align:middle;animation:k 1s steps(1) infinite}@keyframes k{50%{opacity:0}}&lt;/style&gt;&lt;/head&gt;&lt;body&gt;&lt;div class=b&gt;&lt;div class=d&gt;&lt;i style=&quot;background:#F472B6&quot;&gt;&lt;/i&gt;&lt;i style=&quot;background:#FBBF24&quot;&gt;&lt;/i&gt;&lt;i style=&quot;background:#A3E635&quot;&gt;&lt;/i&gt;&lt;/div&gt;&lt;div&gt;&lt;span class=c&gt;&amp;gt;&lt;/span&gt; &lt;span id=t&gt;&lt;/span&gt;&lt;span class=cur&gt;&lt;/span&gt;&lt;/div&gt;&lt;div id=o style=&quot;margin-top:14px;line-height:1.5&quot;&gt;&lt;/div&gt;&lt;/div&gt;&lt;script&gt;const p=&quot;build me an MVP for…&quot;;const L=[&quot;✓ planning screens&quot;,&quot;✓ generating UI&quot;,&quot;✓ wiring data&quot;,&quot;✓ live preview ready&quot;];const t=document.getElementById(&#x27;t&#x27;),o=document.getElementById(&#x27;o&#x27;);function run(){t.textContent=&#x27;&#x27;;o.innerHTML=&#x27;&#x27;;let i=0;const a=setInterval(()=&gt;{t.textContent=p.slice(0,++i);if(i&gt;=p.length){clearInterval(a);let j=0;const b=setInterval(()=&gt;{const d=document.createElement(&#x27;div&#x27;);d.className=&#x27;ok&#x27;;d.textContent=L[j++];o.appendChild(d);if(j&gt;=L.length){clearInterval(b);setTimeout(run,3500)}},700)}},70)}run()&lt;/script&gt;&lt;/body&gt;&lt;/html&gt;"></iframe>
+</div>
+<div class="slide" id="agenda" data-tr="push" style="background:#0A0F1F;color:#EEF2FA;font-family:'Space Grotesk', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;gap:24px">
+<div style="position:absolute;left:0;top:0;width:1920px;height:12px;background:linear-gradient(90deg, #22D3EE, #8B5CF6, #F472B6)"></div>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#22D3EE">The next 120 minutes</p>
+<h2 style="font-size:72px;font-weight:700;line-height:1.1">Think first. Then build fast.</h2>
+<div data-build-in="rise 1" style="position:absolute;left:128px;top:400px;width:566px;height:420px;background:#131A2E;border:1px solid #26304D;border-radius:24px;padding:40px;display:flex;flex-direction:column;gap:16px">
+<div style="width:96px;height:8px;background:#22D3EE;border-radius:4px"></div>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#A9B4CC">10.30 – 11.12</p>
+<h3 style="font-size:72px;font-weight:700;line-height:1.1;color:#22D3EE">THINK</h3>
+<p style="font-size:32px;font-weight:600">42 min</p>
+<p style="font-size:24px;color:#A9B4CC">Live demo · 4 lenses · Thinking Canvas · Prompt</p>
+</div>
+<div data-build-in="rise 2" style="position:absolute;left:718px;top:400px;width:781px;height:420px;background:linear-gradient(135deg, #1E1446, #131A2E);border:1px solid #4C3A99;border-radius:24px;padding:40px;display:flex;flex-direction:column;gap:16px">
+<div style="width:96px;height:8px;background:#A78BFA;border-radius:4px"></div>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#A9B4CC">11.12 – 12.10</p>
+<h3 style="font-size:72px;font-weight:700;line-height:1.1;color:#C4B5FD">BUILD</h3>
+<p style="font-size:32px;font-weight:600">58 min</p>
+<p style="font-size:24px;color:#A9B4CC">Sprint 1 (38) · Peer test (6) · Sprint 2 (14)</p>
+</div>
+<div data-build-in="rise 3" style="position:absolute;left:1523px;top:400px;width:269px;height:420px;background:#131A2E;border:1px solid #26304D;border-radius:24px;padding:32px;display:flex;flex-direction:column;gap:16px">
+<div style="width:96px;height:8px;background:#F472B6;border-radius:4px"></div>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#A9B4CC">12.10 – 12.30</p>
+<h3 style="font-size:72px;font-weight:700;line-height:1.1;color:#F9A8D4">SHOW</h3>
+<p style="font-size:32px;font-weight:600">20 min</p>
+<p style="font-size:24px;color:#A9B4CC">Demos · Reflect</p>
+</div>
+<p data-build-in="fade 4" style="position:absolute;left:128px;top:860px;width:1664px;font-size:32px;color:#A9B4CC">Your goal by 12.30: <span style="color:#EEF2FA"><b>a tested hypothesis, a live link, a 20-second demo.</b></span></p>
+</div>
+<div class="slide" id="demo" data-tr="fade" style="background:radial-gradient(circle at 90% 90%, #0E3B4A 0%, #0A0F1F 55%);color:#EEF2FA;font-family:'Space Grotesk', Arial, sans-serif;padding:128px;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center">
+<div style="position:absolute;left:0;top:0;width:1920px;height:12px;background:linear-gradient(90deg, #22D3EE, #8B5CF6, #F472B6)"></div>
+<div style="display:flex;flex-direction:column;gap:32px">
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#22D3EE">● Live demo</p>
+<h2 style="font-size:72px;font-weight:700;line-height:1.1">One sentence. One working app.</h2>
+<ol style="font-size:32px;line-height:1.5;color:#A9B4CC">
+<li>You pick a campus problem</li>
+<li>I type one prompt</li>
+<li>We keep talking while it builds</li>
+</ol>
+</div>
+<div style="background:#131A2E;border:1px solid #2A3557;border-radius:24px;padding:48px;display:flex;flex-direction:column;gap:24px;box-shadow:0 24px 80px rgba(34,211,238,0.18)">
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#22D3EE">&gt; prompt</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:28px;line-height:1.5;color:#EEF2FA">Build a mobile-first web app where FTSM students book discussion rooms. Show today’s free slots, let a student reserve one with their name, and list “My bookings”. Use realistic sample data.</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#A3E635">aistudio.google.com → Build</p>
+</div>
+</div>
+<div class="slide" id="map" data-tr="fade" style="background:#0A0F1F;color:#EEF2FA;font-family:'Space Grotesk', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:24px">
+<div style="position:absolute;left:0;top:0;width:1920px;height:12px;background:linear-gradient(90deg, #22D3EE, #8B5CF6, #F472B6)"></div>
+<iframe class="embed" title="animation" sandbox="allow-scripts" tabindex="-1" aria-hidden="true" style="position:absolute;left:128px;top:290px;width:1664px;height:600px" srcdoc="&lt;!doctype html&gt;&lt;html&gt;&lt;head&gt;&lt;style&gt;
+html,body{margin:0;height:100%;background:transparent;overflow:hidden}svg{width:100%;height:100%;display:block}
+text{font-family:system-ui,&#x27;Segoe UI&#x27;,Roboto,Arial,sans-serif}.m{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.run .f{animation:f .7s ease both}@keyframes f{from{opacity:0}}
+.run .u{animation:u .7s cubic-bezier(.2,.8,.2,1) both}@keyframes u{from{opacity:0;transform:translateY(24px)}}
+.run .d{stroke-dasharray:1;animation:d 1.3s ease-in-out both}@keyframes d{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+.run .mv{animation:mv 1.8s cubic-bezier(.6,0,.2,1) 3.4s both}@keyframes mv{from{transform:translateX(-1048px)}}
+.run .gl{animation:f .8s ease 5.1s both,pl 1.6s ease-in-out 6s infinite alternate}@keyframes pl{to{opacity:.4}}
+.run .yh{animation:yh .6s cubic-bezier(.3,1.6,.5,1) 5.3s both;transform-box:fill-box;transform-origin:center}@keyframes yh{from{opacity:0;transform:scale(.4)}}
+&lt;/style&gt;&lt;/head&gt;&lt;body&gt;
+&lt;svg viewBox=&quot;0 0 1664 600&quot; role=&quot;img&quot; aria-label=&quot;Double Diamond: Discover and Define in the problem space, Develop and Deliver in the solution space; the Develop phase is marked You are here&quot;&gt;
+&lt;path class=&quot;gl&quot; d=&quot;M832 300 L1232 70 L1232 530 Z&quot; fill=&quot;#8B5CF6&quot; fill-opacity=&quot;0.45&quot;/&gt;
+&lt;path class=&quot;f&quot; style=&quot;animation-delay:1s&quot; d=&quot;M32 300 L432 70 L832 300 L432 530 Z&quot; fill=&quot;#22D3EE&quot; fill-opacity=&quot;0.1&quot;/&gt;
+&lt;path class=&quot;f&quot; style=&quot;animation-delay:2.4s&quot; d=&quot;M832 300 L1232 70 L1632 300 L1232 530 Z&quot; fill=&quot;#F472B6&quot; fill-opacity=&quot;0.1&quot;/&gt;
+&lt;path class=&quot;d&quot; pathLength=&quot;1&quot; d=&quot;M32 300 L432 70 L832 300 L432 530 Z&quot; fill=&quot;none&quot; stroke=&quot;#22D3EE&quot; stroke-width=&quot;5&quot; stroke-linejoin=&quot;round&quot;/&gt;
+&lt;path class=&quot;d&quot; style=&quot;animation-delay:1.6s&quot; pathLength=&quot;1&quot; d=&quot;M832 300 L1232 70 L1632 300 L1232 530 Z&quot; fill=&quot;none&quot; stroke=&quot;#F472B6&quot; stroke-width=&quot;5&quot; stroke-linejoin=&quot;round&quot;/&gt;
+&lt;g class=&quot;f&quot; style=&quot;animation-delay:1.2s&quot;&gt;&lt;line x1=&quot;432&quot; y1=&quot;70&quot; x2=&quot;432&quot; y2=&quot;530&quot; stroke=&quot;#22D3EE&quot; stroke-opacity=&quot;.45&quot; stroke-width=&quot;2&quot; stroke-dasharray=&quot;8 8&quot;/&gt;&lt;line x1=&quot;1232&quot; y1=&quot;70&quot; x2=&quot;1232&quot; y2=&quot;530&quot; stroke=&quot;#F472B6&quot; stroke-opacity=&quot;.45&quot; stroke-width=&quot;2&quot; stroke-dasharray=&quot;8 8&quot;/&gt;&lt;/g&gt;
+&lt;line class=&quot;f&quot; style=&quot;animation-delay:3.2s&quot; x1=&quot;32&quot; y1=&quot;300&quot; x2=&quot;1632&quot; y2=&quot;300&quot; stroke=&quot;#4B587A&quot; stroke-width=&quot;2&quot; stroke-dasharray=&quot;4 10&quot;/&gt;
+&lt;text class=&quot;m f&quot; style=&quot;animation-delay:.3s&quot; x=&quot;432&quot; y=&quot;40&quot; text-anchor=&quot;middle&quot; font-size=&quot;26&quot; letter-spacing=&quot;4&quot; fill=&quot;#22D3EE&quot;&gt;PROBLEM SPACE&lt;/text&gt;
+&lt;text class=&quot;m f&quot; style=&quot;animation-delay:1.9s&quot; x=&quot;1232&quot; y=&quot;40&quot; text-anchor=&quot;middle&quot; font-size=&quot;26&quot; letter-spacing=&quot;4&quot; fill=&quot;#F472B6&quot;&gt;SOLUTION SPACE&lt;/text&gt;
+&lt;g class=&quot;u&quot; style=&quot;animation-delay:.8s&quot;&gt;&lt;text x=&quot;290&quot; y=&quot;238&quot; text-anchor=&quot;middle&quot; font-size=&quot;36&quot; font-weight=&quot;700&quot; fill=&quot;#EEF2FA&quot;&gt;Discover&lt;/text&gt;&lt;text x=&quot;290&quot; y=&quot;274&quot; text-anchor=&quot;middle&quot; font-size=&quot;24&quot; fill=&quot;#A9B4CC&quot;&gt;Day 1 · find problems&lt;/text&gt;&lt;/g&gt;
+&lt;g class=&quot;u&quot; style=&quot;animation-delay:1.3s&quot;&gt;&lt;text x=&quot;580&quot; y=&quot;238&quot; text-anchor=&quot;middle&quot; font-size=&quot;36&quot; font-weight=&quot;700&quot; fill=&quot;#EEF2FA&quot;&gt;Define&lt;/text&gt;&lt;text x=&quot;580&quot; y=&quot;274&quot; text-anchor=&quot;middle&quot; font-size=&quot;24&quot; fill=&quot;#A9B4CC&quot;&gt;9.00 · value proposition&lt;/text&gt;&lt;/g&gt;
+&lt;g class=&quot;u&quot; style=&quot;animation-delay:2.4s&quot;&gt;&lt;text x=&quot;1080&quot; y=&quot;238&quot; text-anchor=&quot;middle&quot; font-size=&quot;36&quot; font-weight=&quot;700&quot; fill=&quot;#FFFFFF&quot;&gt;Develop&lt;/text&gt;&lt;text x=&quot;1080&quot; y=&quot;274&quot; text-anchor=&quot;middle&quot; font-size=&quot;24&quot; font-weight=&quot;700&quot; fill=&quot;#F9A8D4&quot;&gt;NOW · prototype → MVP&lt;/text&gt;&lt;/g&gt;
+&lt;g class=&quot;u&quot; style=&quot;animation-delay:2.8s&quot;&gt;&lt;text x=&quot;1380&quot; y=&quot;238&quot; text-anchor=&quot;middle&quot; font-size=&quot;36&quot; font-weight=&quot;700&quot; fill=&quot;#EEF2FA&quot;&gt;Deliver&lt;/text&gt;&lt;text x=&quot;1380&quot; y=&quot;274&quot; text-anchor=&quot;middle&quot; font-size=&quot;24&quot; fill=&quot;#A9B4CC&quot;&gt;Day 3 · pitch, then users&lt;/text&gt;&lt;/g&gt;
+&lt;circle class=&quot;mv&quot; cx=&quot;1080&quot; cy=&quot;300&quot; r=&quot;13&quot; fill=&quot;#F472B6&quot; stroke=&quot;#FDE7F3&quot; stroke-width=&quot;4&quot;/&gt;
+&lt;g class=&quot;yh&quot;&gt;&lt;rect x=&quot;965&quot; y=&quot;334&quot; width=&quot;230&quot; height=&quot;48&quot; rx=&quot;24&quot; fill=&quot;#F472B6&quot;/&gt;&lt;text x=&quot;1080&quot; y=&quot;367&quot; text-anchor=&quot;middle&quot; font-size=&quot;24&quot; font-weight=&quot;800&quot; fill=&quot;#0A0F1F&quot;&gt;YOU ARE HERE&lt;/text&gt;&lt;/g&gt;
+&lt;text class=&quot;f&quot; style=&quot;animation-delay:5.8s&quot; x=&quot;832&quot; y=&quot;590&quot; text-anchor=&quot;middle&quot; font-size=&quot;30&quot; fill=&quot;#A9B4CC&quot;&gt;Each diamond: &lt;tspan fill=&quot;#22D3EE&quot; font-weight=&quot;700&quot;&gt;diverge&lt;/tspan&gt; (explore widely), then &lt;tspan fill=&quot;#F472B6&quot; font-weight=&quot;700&quot;&gt;converge&lt;/tspan&gt; (decide). Twice.&lt;/text&gt;
+&lt;/svg&gt;
+&lt;script&gt;const R=document.documentElement;function go(){R.classList.remove(&#x27;run&#x27;);void R.offsetWidth;R.classList.add(&#x27;run&#x27;)}new IntersectionObserver(x=&gt;{if(x[0].isIntersecting)go()}).observe(document.body)&lt;/script&gt;
+&lt;/body&gt;&lt;/html&gt;"></iframe>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#22D3EE">The map · Double Diamond</p>
+<h2 style="font-size:72px;font-weight:700;line-height:1.1">You are here: the third quarter</h2>
+<p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#8792AD">Double Diamond: Design Council (UK), 2004, designcouncil.org.uk/framework-for-innovation</p>
+</div>
+<div class="slide" id="pmp" data-tr="push" style="background:#F4F6FB;color:#0A0F1F;font-family:'Space Grotesk', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;gap:24px">
+<div style="position:absolute;left:0;top:0;width:1920px;height:12px;background:linear-gradient(90deg, #22D3EE, #8B5CF6, #F472B6)"></div>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#6D28D9">Why MVP, not product</p>
+<h2 style="font-size:72px;font-weight:700;line-height:1.1">Three stages, three different questions</h2>
+<div data-build-in="pop 1" style="position:absolute;left:128px;top:420px;width:533px;height:400px;background:#FDFDFF;border:1px solid #D9DEEA;border-radius:24px;padding:48px;display:flex;flex-direction:column;gap:20px">
+<div style="display:flex;flex-direction:row;gap:16px;align-items:center"><span class="xicon" style="color:#0E7490;width:48px;height:48px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a4 4 0 00-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 005.4-5.4l-2.6 2.6-2.4-.6-.6-2.4z"/></svg></span><p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#0E7490">01</p></div>
+<h3 style="font-size:44px;font-weight:700">Prototype</h3>
+<p style="font-size:32px;line-height:1.3;color:#0A0F1F">Will they understand it?</p>
+<p style="font-size:24px;line-height:1.4;color:#4A5568">Sketches, mock-ups, clickable screens</p>
+</div>
+<div data-build-in="pop 2" style="position:absolute;left:693px;top:420px;width:533px;height:400px;background:#0A0F1F;border:1px solid #0A0F1F;border-radius:24px;padding:48px;display:flex;flex-direction:column;gap:20px;box-shadow:0 24px 64px rgba(139,92,246,0.35)">
+<div style="display:flex;flex-direction:row;gap:16px;align-items:center"><span class="xicon" style="color:#F9A8D4;width:48px;height:48px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-7 7-7s7 3 7 7"/><path d="M16 4a4 4 0 010 8M22 21c0-3-2-6-5-6.5"/></svg></span><p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#F9A8D4">02 · today</p></div>
+<h3 style="font-size:44px;font-weight:700;color:#EEF2FA">MVP</h3>
+<p style="font-size:32px;line-height:1.3;color:#EEF2FA">Will they use it, or pay for it?</p>
+<p style="font-size:24px;line-height:1.4;color:#A9B4CC">The smallest thing a real user can try</p>
+</div>
+<div data-build-in="pop 3" style="position:absolute;left:1258px;top:420px;width:534px;height:400px;background:#FDFDFF;border:1px solid #D9DEEA;border-radius:24px;padding:48px;display:flex;flex-direction:column;gap:20px">
+<div style="display:flex;flex-direction:row;gap:16px;align-items:center"><span class="xicon" style="color:#BE185D;width:48px;height:48px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 010 20M12 2a15 15 0 000 20"/></svg></span><p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#BE185D">03</p></div>
+<h3 style="font-size:44px;font-weight:700">Product</h3>
+<p style="font-size:32px;line-height:1.3;color:#0A0F1F">Can it scale and earn?</p>
+<p style="font-size:24px;line-height:1.4;color:#4A5568">Reliable, secure, supported</p>
+</div>
+</div>
+<div class="slide" id="reveal" data-tr="fade" style="background:linear-gradient(135deg, #22D3EE 0%, #8B5CF6 52%, #F472B6 100%);color:#0A0F1F;font-family:'Space Grotesk', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;justify-content:center;gap:48px">
+<h1 style="font-size:120px;font-weight:700;line-height:1.05;width:1500px">Building is no longer the bottleneck.</h1>
+<p data-build-in="rise" style="position:absolute;left:128px;top:720px;width:1500px;font-size:56px;font-weight:600;line-height:1.2;color:#0A0F1F">Knowing what to build — and for whom — is.</p>
+</div>
+<div class="slide" id="pyramid" data-tr="push" style="background:#F4F6FB;color:#0A0F1F;font-family:'Space Grotesk', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:24px">
+<div style="position:absolute;left:0;top:0;width:1920px;height:12px;background:linear-gradient(90deg, #22D3EE, #8B5CF6, #F472B6)"></div>
+<iframe class="embed" title="animation" sandbox="allow-scripts" tabindex="-1" aria-hidden="true" style="position:absolute;left:128px;top:290px;width:1664px;height:640px" srcdoc="&lt;!doctype html&gt;&lt;html&gt;&lt;head&gt;&lt;style&gt;
+html,body{margin:0;height:100%;background:transparent;overflow:hidden}svg{width:100%;height:100%;display:block}
+text{font-family:system-ui,&#x27;Segoe UI&#x27;,Roboto,Arial,sans-serif}
+.run .f{animation:f .7s ease both}@keyframes f{from{opacity:0}}
+.run .d{stroke-dasharray:1;animation:d 1.2s ease-in-out both}@keyframes d{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+.run .g{animation:g .5s ease-out both;transform-box:fill-box;transform-origin:bottom}@keyframes g{from{opacity:0;transform:scaleY(0)}}
+.run .sl{animation:sl 2.6s cubic-bezier(.4,0,.2,1) 3.4s both;transform-box:fill-box;transform-origin:bottom}@keyframes sl{from{transform:scaleY(0)}}
+.run .lb{animation:lb .4s ease both}@keyframes lb{from{fill:#B8C0D2}}
+.run .x{animation:x .5s cubic-bezier(.3,1.6,.5,1) both;transform-box:fill-box;transform-origin:center}@keyframes x{from{opacity:0;transform:scale(.3)}}
+&lt;/style&gt;&lt;/head&gt;&lt;body&gt;
+&lt;svg viewBox=&quot;0 0 1664 640&quot; role=&quot;img&quot; aria-label=&quot;Two pyramids of user needs. Left: only the bottom layers are partly built, many features done poorly. Right: a thin slice rises through every layer from functional to meaningful, core features done well.&quot;&gt;
+&lt;defs&gt;&lt;linearGradient id=&quot;sg&quot; x1=&quot;0&quot; y1=&quot;1&quot; x2=&quot;0&quot; y2=&quot;0&quot;&gt;&lt;stop offset=&quot;0&quot; stop-color=&quot;#8B5CF6&quot;/&gt;&lt;stop offset=&quot;1&quot; stop-color=&quot;#F472B6&quot;/&gt;&lt;/linearGradient&gt;&lt;/defs&gt;
+&lt;path d=&quot;M332 20 L632 500 L32 500 Z&quot; fill=&quot;#FDFDFF&quot;/&gt;&lt;path d=&quot;M1332 20 L1632 500 L1032 500 Z&quot; fill=&quot;#FDFDFF&quot;/&gt;
+&lt;path class=&quot;g&quot; style=&quot;animation-delay:1.6s&quot; d=&quot;M32 500 L632 500 L582 420 L82 420 Z&quot; fill=&quot;#A9B4CC&quot;/&gt;
+&lt;path class=&quot;g&quot; style=&quot;animation-delay:2.1s&quot; d=&quot;M82 420 L582 420 L560 385 L104 385 Z&quot; fill=&quot;#D9DEEA&quot;/&gt;
+&lt;path class=&quot;sl&quot; d=&quot;M1032 500 L1172 500 L1340 32 L1332 20 Z&quot; fill=&quot;url(#sg)&quot;/&gt;
+&lt;path class=&quot;f&quot; style=&quot;animation-delay:.9s&quot; d=&quot;M250 100 H414 M200 180 H464 M150 260 H514 M100 340 H564 M50 420 H614 M1250 100 H1414 M1200 180 H1464 M1150 260 H1514 M1100 340 H1564 M1050 420 H1614&quot; stroke=&quot;#0A0F1F&quot; stroke-width=&quot;2&quot;/&gt;
+&lt;path class=&quot;d&quot; pathLength=&quot;1&quot; d=&quot;M332 20 L632 500 L32 500 Z&quot; fill=&quot;none&quot; stroke=&quot;#0A0F1F&quot; stroke-width=&quot;4&quot; stroke-linejoin=&quot;round&quot;/&gt;
+&lt;path class=&quot;d&quot; style=&quot;animation-delay:.3s&quot; pathLength=&quot;1&quot; d=&quot;M1332 20 L1632 500 L1032 500 Z&quot; fill=&quot;none&quot; stroke=&quot;#0A0F1F&quot; stroke-width=&quot;4&quot; stroke-linejoin=&quot;round&quot;/&gt;
+&lt;g class=&quot;f&quot; style=&quot;animation-delay:1s&quot; font-size=&quot;28&quot; text-anchor=&quot;middle&quot;&gt;
+&lt;text class=&quot;lb&quot; style=&quot;animation-delay:5.6s&quot; x=&quot;832&quot; y=&quot;70&quot; fill=&quot;#0A0F1F&quot;&gt;Meaningful&lt;/text&gt;
+&lt;text class=&quot;lb&quot; style=&quot;animation-delay:5.2s&quot; x=&quot;832&quot; y=&quot;150&quot; fill=&quot;#0A0F1F&quot;&gt;Pleasurable&lt;/text&gt;
+&lt;text class=&quot;lb&quot; style=&quot;animation-delay:4.8s&quot; x=&quot;832&quot; y=&quot;230&quot; fill=&quot;#0A0F1F&quot;&gt;Convenient&lt;/text&gt;
+&lt;text class=&quot;lb&quot; style=&quot;animation-delay:4.4s&quot; x=&quot;832&quot; y=&quot;310&quot; fill=&quot;#0A0F1F&quot;&gt;Usable&lt;/text&gt;
+&lt;text class=&quot;lb&quot; style=&quot;animation-delay:4s&quot; x=&quot;832&quot; y=&quot;390&quot; fill=&quot;#0A0F1F&quot;&gt;Reliable&lt;/text&gt;
+&lt;text class=&quot;lb&quot; style=&quot;animation-delay:3.6s&quot; x=&quot;832&quot; y=&quot;470&quot; fill=&quot;#0A0F1F&quot;&gt;Functional&lt;/text&gt;
+&lt;/g&gt;
+&lt;g class=&quot;x&quot; style=&quot;animation-delay:2.7s&quot;&gt;&lt;circle cx=&quot;332&quot; cy=&quot;220&quot; r=&quot;34&quot; fill=&quot;#FDFDFF&quot; stroke=&quot;#8792AD&quot; stroke-width=&quot;3&quot;/&gt;&lt;text x=&quot;332&quot; y=&quot;233&quot; text-anchor=&quot;middle&quot; font-size=&quot;36&quot; font-weight=&quot;800&quot; fill=&quot;#4A5568&quot;&gt;?&lt;/text&gt;&lt;/g&gt;
+&lt;text class=&quot;f&quot; style=&quot;animation-delay:2.9s&quot; x=&quot;332&quot; y=&quot;556&quot; text-anchor=&quot;middle&quot; font-size=&quot;32&quot; fill=&quot;#4A5568&quot;&gt;Many features, done poorly&lt;/text&gt;
+&lt;text class=&quot;f&quot; style=&quot;animation-delay:6s&quot; x=&quot;1332&quot; y=&quot;556&quot; text-anchor=&quot;middle&quot; font-size=&quot;32&quot; font-weight=&quot;700&quot; fill=&quot;#BE185D&quot;&gt;Core features, done well&lt;/text&gt;
+&lt;text class=&quot;f&quot; style=&quot;animation-delay:6.3s&quot; x=&quot;1332&quot; y=&quot;596&quot; text-anchor=&quot;middle&quot; font-size=&quot;24&quot; fill=&quot;#4A5568&quot;&gt;Your MVP = one thin slice through every layer&lt;/text&gt;
+&lt;/svg&gt;
+&lt;script&gt;const R=document.documentElement;function go(){R.classList.remove(&#x27;run&#x27;);void R.offsetWidth;R.classList.add(&#x27;run&#x27;)}new IntersectionObserver(x=&gt;{if(x[0].isIntersecting)go()}).observe(document.body)&lt;/script&gt;
+&lt;/body&gt;&lt;/html&gt;"></iframe>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#6D28D9">What “viable” means</p>
+<h2 style="font-size:72px;font-weight:700;line-height:1.1">A thin slice, not a wide base</h2>
+<p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#4A5568">After S. P. Anderson’s UX hierarchy of needs (2011), building on A. Walter (2011); MVP-slice view as drawn by B. Waldock, beingagile.co.uk</p>
+</div>
+<div class="slide" id="curve" data-tr="fade" style="background:radial-gradient(circle at 80% 55%, #2A1B5E 0%, #0A0F1F 55%);color:#EEF2FA;font-family:'Space Grotesk', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:24px">
+<div style="position:absolute;left:0;top:0;width:1920px;height:12px;background:linear-gradient(90deg, #22D3EE, #8B5CF6, #F472B6)"></div>
+<iframe class="embed" title="animation" sandbox="allow-scripts" tabindex="-1" aria-hidden="true" style="position:absolute;left:128px;top:300px;width:1664px;height:520px" srcdoc="&lt;!doctype html&gt;&lt;html&gt;&lt;head&gt;&lt;style&gt;
+html,body{margin:0;height:100%;background:transparent;overflow:hidden}svg{width:100%;height:100%;display:block}
+text{font-family:system-ui,&#x27;Segoe UI&#x27;,Roboto,Arial,sans-serif}.m{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.run .f{animation:f .6s ease both}@keyframes f{from{opacity:0}}
+.run .d{stroke-dasharray:1;animation:d 2.6s cubic-bezier(.45,0,.4,1) both}@keyframes d{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+.run .dl{stroke-dasharray:1;animation:d 1.3s ease-in-out 3.3s both}
+.run .p{animation:p .5s cubic-bezier(.3,1.6,.5,1) both;transform-box:fill-box;transform-origin:center}@keyframes p{from{opacity:0;transform:scale(.2)}}
+.run .ow{animation:f .6s ease 4.6s both}
+.pu{transform-box:fill-box;transform-origin:center;animation:pu 1.4s ease-in-out infinite alternate}@keyframes pu{to{transform:scale(1.35)}}
+&lt;/style&gt;&lt;/head&gt;&lt;body&gt;
+&lt;svg viewBox=&quot;0 -10 1664 520&quot; role=&quot;img&quot; aria-label=&quot;A path rises from needs through research, prioritise and concept to a hypothesis, swirls through a dashed exploring loop, reaches the MVP, then enters a build, measure, learn cycle that keeps turning&quot;&gt;
+&lt;g class=&quot;f&quot; style=&quot;animation-delay:1.8s&quot;&gt;&lt;circle cx=&quot;860&quot; cy=&quot;250&quot; r=&quot;105&quot; fill=&quot;none&quot; stroke=&quot;#A78BFA&quot; stroke-width=&quot;4&quot; stroke-dasharray=&quot;14 12&quot;&gt;&lt;animateTransform attributeName=&quot;transform&quot; type=&quot;rotate&quot; from=&quot;0 860 250&quot; to=&quot;360 860 250&quot; dur=&quot;14s&quot; repeatCount=&quot;indefinite&quot;/&gt;&lt;/circle&gt;&lt;/g&gt;
+&lt;path class=&quot;d&quot; pathLength=&quot;1&quot; d=&quot;M0 400 L200 400 C250 400 280 385 300 370 C330 345 340 320 350 290 C362 255 372 235 390 210 C415 170 435 140 470 120 C530 85 590 72 640 80 C820 100 980 170 1070 250&quot; fill=&quot;none&quot; stroke=&quot;#A78BFA&quot; stroke-width=&quot;6&quot; stroke-linecap=&quot;round&quot;/&gt;
+&lt;circle class=&quot;dl&quot; pathLength=&quot;1&quot; cx=&quot;1300&quot; cy=&quot;250&quot; r=&quot;230&quot; fill=&quot;none&quot; stroke=&quot;#F472B6&quot; stroke-width=&quot;6&quot;/&gt;
+&lt;g class=&quot;f&quot; style=&quot;animation-delay:4.4s&quot;&gt;&lt;path d=&quot;M1286 8 L1312 20 L1286 32&quot; fill=&quot;none&quot; stroke=&quot;#F472B6&quot; stroke-width=&quot;6&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;/&gt;&lt;path d=&quot;M1314 468 L1288 480 L1314 492&quot; fill=&quot;none&quot; stroke=&quot;#F472B6&quot; stroke-width=&quot;6&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;/&gt;&lt;/g&gt;
+&lt;g class=&quot;ow&quot;&gt;&lt;g&gt;&lt;animateTransform attributeName=&quot;transform&quot; type=&quot;rotate&quot; from=&quot;0 1300 250&quot; to=&quot;360 1300 250&quot; dur=&quot;5s&quot; repeatCount=&quot;indefinite&quot;/&gt;&lt;circle cx=&quot;1300&quot; cy=&quot;20&quot; r=&quot;14&quot; fill=&quot;#FDE7F3&quot;/&gt;&lt;/g&gt;&lt;/g&gt;
+&lt;g class=&quot;p&quot; style=&quot;animation-delay:.6s&quot;&gt;&lt;circle cx=&quot;300&quot; cy=&quot;370&quot; r=&quot;14&quot; fill=&quot;#0A0F1F&quot; stroke=&quot;#22D3EE&quot; stroke-width=&quot;4&quot;/&gt;&lt;/g&gt;
+&lt;g class=&quot;p&quot; style=&quot;animation-delay:.9s&quot;&gt;&lt;circle cx=&quot;350&quot; cy=&quot;290&quot; r=&quot;14&quot; fill=&quot;#0A0F1F&quot; stroke=&quot;#22D3EE&quot; stroke-width=&quot;4&quot;/&gt;&lt;/g&gt;
+&lt;g class=&quot;p&quot; style=&quot;animation-delay:1.15s&quot;&gt;&lt;circle cx=&quot;390&quot; cy=&quot;210&quot; r=&quot;14&quot; fill=&quot;#0A0F1F&quot; stroke=&quot;#22D3EE&quot; stroke-width=&quot;4&quot;/&gt;&lt;/g&gt;
+&lt;g class=&quot;p&quot; style=&quot;animation-delay:1.45s&quot;&gt;&lt;circle cx=&quot;470&quot; cy=&quot;120&quot; r=&quot;14&quot; fill=&quot;#0A0F1F&quot; stroke=&quot;#22D3EE&quot; stroke-width=&quot;4&quot;/&gt;&lt;/g&gt;
+&lt;g class=&quot;p&quot; style=&quot;animation-delay:1.8s&quot;&gt;&lt;circle cx=&quot;640&quot; cy=&quot;80&quot; r=&quot;16&quot; fill=&quot;#0A0F1F&quot; stroke=&quot;#A78BFA&quot; stroke-width=&quot;5&quot;/&gt;&lt;/g&gt;
+&lt;g class=&quot;p&quot; style=&quot;animation-delay:2.6s&quot;&gt;&lt;circle class=&quot;pu&quot; cx=&quot;1070&quot; cy=&quot;250&quot; r=&quot;22&quot; fill=&quot;#F472B6&quot; stroke=&quot;#FDE7F3&quot; stroke-width=&quot;4&quot;/&gt;&lt;/g&gt;
+&lt;text class=&quot;f&quot; style=&quot;animation-delay:.6s&quot; x=&quot;324&quot; y=&quot;380&quot; font-size=&quot;26&quot; fill=&quot;#EEF2FA&quot;&gt;Needs&lt;/text&gt;
+&lt;text class=&quot;f&quot; style=&quot;animation-delay:.9s&quot; x=&quot;374&quot; y=&quot;300&quot; font-size=&quot;26&quot; fill=&quot;#EEF2FA&quot;&gt;Research&lt;/text&gt;
+&lt;text class=&quot;f&quot; style=&quot;animation-delay:1.15s&quot; x=&quot;414&quot; y=&quot;220&quot; font-size=&quot;26&quot; fill=&quot;#EEF2FA&quot;&gt;Prioritise&lt;/text&gt;
+&lt;text class=&quot;f&quot; style=&quot;animation-delay:1.45s&quot; x=&quot;446&quot; y=&quot;110&quot; text-anchor=&quot;end&quot; font-size=&quot;26&quot; fill=&quot;#EEF2FA&quot;&gt;Concept&lt;/text&gt;
+&lt;text class=&quot;f&quot; style=&quot;animation-delay:1.8s&quot; x=&quot;640&quot; y=&quot;46&quot; text-anchor=&quot;middle&quot; font-size=&quot;28&quot; font-weight=&quot;700&quot; fill=&quot;#C4B5FD&quot;&gt;Hypothesis&lt;/text&gt;
+&lt;text class=&quot;f&quot; style=&quot;animation-delay:2.6s&quot; x=&quot;1040&quot; y=&quot;318&quot; text-anchor=&quot;end&quot; font-size=&quot;30&quot; font-weight=&quot;800&quot; fill=&quot;#F9A8D4&quot;&gt;MVP&lt;/text&gt;
+&lt;text class=&quot;f&quot; style=&quot;animation-delay:4.2s&quot; x=&quot;1300&quot; y=&quot;106&quot; text-anchor=&quot;middle&quot; font-size=&quot;30&quot; fill=&quot;#EEF2FA&quot;&gt;Build&lt;/text&gt;
+&lt;text class=&quot;f&quot; style=&quot;animation-delay:4.4s&quot; x=&quot;1448&quot; y=&quot;260&quot; text-anchor=&quot;middle&quot; font-size=&quot;28&quot; fill=&quot;#EEF2FA&quot;&gt;Measure&lt;/text&gt;
+&lt;text class=&quot;f&quot; style=&quot;animation-delay:4.6s&quot; x=&quot;1300&quot; y=&quot;420&quot; text-anchor=&quot;middle&quot; font-size=&quot;30&quot; fill=&quot;#EEF2FA&quot;&gt;Learn&lt;/text&gt;
+&lt;text class=&quot;m f&quot; style=&quot;animation-delay:4.8s&quot; x=&quot;1268&quot; y=&quot;260&quot; text-anchor=&quot;middle&quot; font-size=&quot;24&quot; fill=&quot;#A9B4CC&quot;&gt;sprints 1 + 2&lt;/text&gt;
+&lt;/svg&gt;
+&lt;script&gt;const R=document.documentElement;function go(){R.classList.remove(&#x27;run&#x27;);void R.offsetWidth;R.classList.add(&#x27;run&#x27;)}new IntersectionObserver(x=&gt;{if(x[0].isIntersecting)go()}).observe(document.body)&lt;/script&gt;
+&lt;/body&gt;&lt;/html&gt;"></iframe>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#22D3EE">How an MVP is born</p>
+<h2 style="font-size:72px;font-weight:700;line-height:1.1">Design thinking + Lean UX + Agile</h2>
+<div style="position:absolute;left:128px;top:840px;width:572px;height:8px;background:#22D3EE;border-radius:4px"></div>
+<div style="position:absolute;left:724px;top:840px;width:456px;height:8px;background:#A78BFA;border-radius:4px"></div>
+<div style="position:absolute;left:1204px;top:840px;width:588px;height:8px;background:#F472B6;border-radius:4px"></div>
+<p style="position:absolute;left:128px;top:860px;width:572px;font-size:24px;color:#A5F3FC"><b>Design thinking</b> · understand the need</p>
+<p style="position:absolute;left:724px;top:860px;width:456px;font-size:24px;color:#DDD6FE"><b>Lean UX</b> · state and test a hypothesis</p>
+<p style="position:absolute;left:1204px;top:860px;width:588px;font-size:24px;color:#FBCFE8"><b>Agile</b> · short build–measure–learn loops</p>
+<p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#8792AD">Redrawn after a common “Design thinking + Lean UX + Agile = successful MVP” figure. Build–Measure–Learn: E. Ries, The Lean Startup (2011).</p>
+</div>
+<div class="slide" id="systems" data-tr="fade" style="background:#0A0F1F;color:#EEF2FA;font-family:'Space Grotesk', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;gap:24px">
+<div style="position:absolute;left:0;top:0;width:1920px;height:12px;background:linear-gradient(90deg, #22D3EE, #8B5CF6, #F472B6)"></div>
+<iframe class="embed" title="animation" sandbox="allow-scripts" tabindex="-1" aria-hidden="true" style="position:absolute;left:128px;top:300px;width:1664px;height:620px" srcdoc="&lt;!doctype html&gt;&lt;html&gt;&lt;head&gt;&lt;style&gt;
+html,body{margin:0;height:100%;background:transparent;overflow:hidden}svg{width:100%;height:100%;display:block}
+text{font-family:system-ui,&#x27;Segoe UI&#x27;,Roboto,Arial,sans-serif}.m{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.run .f{animation:f .7s ease both}@keyframes f{from{opacity:0}}
+.run .u{animation:u .7s cubic-bezier(.2,.8,.2,1) both}@keyframes u{from{opacity:0;transform:translateX(30px)}}
+.run .d{stroke-dasharray:1;animation:d .6s ease-out both}@keyframes d{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+.bob{animation:bob 3.2s ease-in-out infinite alternate}@keyframes bob{to{transform:translateY(8px)}}
+.wave{animation:wv 2.4s linear infinite}@keyframes wv{to{transform:translateX(-120px)}}
+.gl{transform-box:fill-box;transform-origin:center;animation:gl 1.4s ease-in-out infinite alternate}@keyframes gl{from{opacity:.25}to{opacity:.9}}
+&lt;/style&gt;&lt;/head&gt;&lt;body&gt;
+&lt;svg viewBox=&quot;0 0 1664 620&quot; role=&quot;img&quot; aria-label=&quot;Iceberg model. Above the waterline: events. Below: patterns, structures and mental models, with BilikKu examples for each&quot;&gt;
+&lt;defs&gt;&lt;clipPath id=&quot;cw&quot;&gt;&lt;rect x=&quot;0&quot; y=&quot;0&quot; width=&quot;640&quot; height=&quot;620&quot;/&gt;&lt;/clipPath&gt;&lt;linearGradient id=&quot;sea&quot; x1=&quot;0&quot; y1=&quot;0&quot; x2=&quot;0&quot; y2=&quot;1&quot;&gt;&lt;stop offset=&quot;0&quot; stop-color=&quot;#0E2A44&quot;/&gt;&lt;stop offset=&quot;1&quot; stop-color=&quot;#06131F&quot;/&gt;&lt;/linearGradient&gt;&lt;/defs&gt;
+&lt;rect x=&quot;0&quot; y=&quot;150&quot; width=&quot;640&quot; height=&quot;420&quot; rx=&quot;16&quot; fill=&quot;url(#sea)&quot;/&gt;
+&lt;g transform=&quot;translate(20 30)&quot;&gt;&lt;g class=&quot;bob&quot;&gt;
+&lt;path class=&quot;f&quot; style=&quot;animation-delay:.3s&quot; d=&quot;M300 0 L380 80 L420 120 L180 120 L220 80 Z&quot; fill=&quot;#EEF2FA&quot;/&gt;
+&lt;path class=&quot;f&quot; style=&quot;animation-delay:1.3s&quot; d=&quot;M180 120 L420 120 L500 240 L100 240 Z&quot; fill=&quot;#67E8F9&quot;/&gt;
+&lt;path class=&quot;f&quot; style=&quot;animation-delay:2.3s&quot; d=&quot;M100 240 L500 240 L540 300 L526 360 L74 360 L60 300 Z&quot; fill=&quot;#22D3EE&quot;/&gt;
+&lt;path class=&quot;f&quot; style=&quot;animation-delay:3.3s&quot; d=&quot;M74 360 L526 360 L500 470 L300 510 L100 470 Z&quot; fill=&quot;#0E7490&quot;/&gt;
+&lt;g class=&quot;f&quot; style=&quot;animation-delay:4.4s&quot;&gt;&lt;path class=&quot;gl&quot; d=&quot;M100 240 L500 240 L540 300 L526 360 L74 360 L60 300 Z&quot; fill=&quot;none&quot; stroke=&quot;#FFFFFF&quot; stroke-width=&quot;6&quot; stroke-linejoin=&quot;round&quot;/&gt;&lt;/g&gt;
+&lt;/g&gt;&lt;/g&gt;
+&lt;g clip-path=&quot;url(#cw)&quot;&gt;&lt;path class=&quot;wave&quot; d=&quot;M-120 150 q30 -12 60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0 t60 0&quot; fill=&quot;none&quot; stroke=&quot;#22D3EE&quot; stroke-width=&quot;4&quot;/&gt;&lt;/g&gt;
+&lt;text class=&quot;m f&quot; x=&quot;610&quot; y=&quot;140&quot; text-anchor=&quot;end&quot; font-size=&quot;24&quot; fill=&quot;#22D3EE&quot;&gt;waterline&lt;/text&gt;
+&lt;path class=&quot;d&quot; style=&quot;animation-delay:.6s&quot; pathLength=&quot;1&quot; d=&quot;M390 90 H700&quot; stroke=&quot;#4B587A&quot; stroke-width=&quot;2&quot; stroke-dasharray=&quot;1&quot;/&gt;
+&lt;path class=&quot;d&quot; style=&quot;animation-delay:1.6s&quot; pathLength=&quot;1&quot; d=&quot;M480 210 H700&quot; stroke=&quot;#4B587A&quot; stroke-width=&quot;2&quot;/&gt;
+&lt;path class=&quot;d&quot; style=&quot;animation-delay:2.6s&quot; pathLength=&quot;1&quot; d=&quot;M560 330 H700&quot; stroke=&quot;#4B587A&quot; stroke-width=&quot;2&quot;/&gt;
+&lt;path class=&quot;d&quot; style=&quot;animation-delay:3.6s&quot; pathLength=&quot;1&quot; d=&quot;M540 460 H700&quot; stroke=&quot;#4B587A&quot; stroke-width=&quot;2&quot;/&gt;
+&lt;g class=&quot;u&quot; style=&quot;animation-delay:.7s&quot;&gt;&lt;text class=&quot;m&quot; x=&quot;720&quot; y=&quot;78&quot; font-size=&quot;24&quot; fill=&quot;#EEF2FA&quot;&gt;EVENT · what we see&lt;/text&gt;&lt;text x=&quot;720&quot; y=&quot;116&quot; font-size=&quot;32&quot; fill=&quot;#A9B4CC&quot;&gt;“No free room again at 2 pm.”&lt;/text&gt;&lt;/g&gt;
+&lt;g class=&quot;u&quot; style=&quot;animation-delay:1.7s&quot;&gt;&lt;text class=&quot;m&quot; x=&quot;720&quot; y=&quot;198&quot; font-size=&quot;24&quot; fill=&quot;#67E8F9&quot;&gt;PATTERN · what keeps happening&lt;/text&gt;&lt;text x=&quot;720&quot; y=&quot;236&quot; font-size=&quot;32&quot; fill=&quot;#A9B4CC&quot;&gt;Rooms full at peak hours, empty after 5 pm.&lt;/text&gt;&lt;/g&gt;
+&lt;g class=&quot;u&quot; style=&quot;animation-delay:2.7s&quot;&gt;&lt;text class=&quot;m&quot; x=&quot;720&quot; y=&quot;318&quot; font-size=&quot;24&quot; fill=&quot;#22D3EE&quot;&gt;STRUCTURE · what causes it&lt;/text&gt;&lt;text x=&quot;720&quot; y=&quot;356&quot; font-size=&quot;32&quot; fill=&quot;#EEF2FA&quot; font-weight=&quot;600&quot;&gt;Walk-in only. No shared schedule. Groups “hold” rooms.&lt;/text&gt;&lt;/g&gt;
+&lt;g class=&quot;u&quot; style=&quot;animation-delay:3.7s&quot;&gt;&lt;text class=&quot;m&quot; x=&quot;720&quot; y=&quot;448&quot; font-size=&quot;24&quot; fill=&quot;#38BDF8&quot;&gt;MENTAL MODEL · what people believe&lt;/text&gt;&lt;text x=&quot;720&quot; y=&quot;486&quot; font-size=&quot;32&quot; fill=&quot;#A9B4CC&quot;&gt;“First come, first served is fair.”&lt;/text&gt;&lt;/g&gt;
+&lt;text class=&quot;f&quot; style=&quot;animation-delay:4.8s&quot; x=&quot;0&quot; y=&quot;606&quot; font-size=&quot;30&quot; fill=&quot;#EEF2FA&quot;&gt;Design for the &lt;tspan fill=&quot;#22D3EE&quot; font-weight=&quot;700&quot;&gt;structure&lt;/tspan&gt;, not the event. Who else is in the system: lab staff, faculty office, other groups?&lt;/text&gt;
+&lt;/svg&gt;
+&lt;script&gt;const R=document.documentElement;function go(){R.classList.remove(&#x27;run&#x27;);void R.offsetWidth;R.classList.add(&#x27;run&#x27;)}new IntersectionObserver(x=&gt;{if(x[0].isIntersecting)go()}).observe(document.body)&lt;/script&gt;
+&lt;/body&gt;&lt;/html&gt;"></iframe>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#22D3EE">Lens 1 · systems thinking</p>
+<h2 style="font-size:72px;font-weight:700;line-height:1.1">See the system, not just the problem</h2>
+</div>
+<div class="slide" id="dt" data-tr="push" style="background:#F4F6FB;color:#0A0F1F;font-family:'Space Grotesk', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:24px">
+<div style="position:absolute;left:0;top:0;width:1920px;height:12px;background:linear-gradient(90deg, #22D3EE, #8B5CF6, #F472B6)"></div>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#6D28D9">Lens 2 · design thinking</p>
+<h2 style="font-size:72px;font-weight:700;line-height:1.1">Start from a person, not a feature</h2>
+<div style="position:absolute;left:128px;top:320px;width:1664px;display:flex;flex-direction:row;gap:16px">
+<p style="flex:1;font-size:28px;font-weight:600;text-align:center;background:#E2E8F0;color:#4A5568;border-radius:40px;padding:16px">Empathise</p>
+<p style="flex:1;font-size:28px;font-weight:600;text-align:center;background:#0A0F1F;color:#EEF2FA;border-radius:40px;padding:16px">Define</p>
+<p style="flex:1;font-size:28px;font-weight:600;text-align:center;background:#E2E8F0;color:#4A5568;border-radius:40px;padding:16px">Ideate</p>
+<p style="flex:1;font-size:28px;font-weight:600;text-align:center;background:#0A0F1F;color:#EEF2FA;border-radius:40px;padding:16px">Prototype</p>
+<p style="flex:1;font-size:28px;font-weight:600;text-align:center;background:#0A0F1F;color:#EEF2FA;border-radius:40px;padding:16px">Test</p>
+</div>
+<div data-build-in="rise 1" style="position:absolute;left:128px;top:450px;width:816px;height:380px;background:#FDFDFF;border:1px solid #D9DEEA;border-radius:24px;padding:40px;display:flex;flex-direction:column;gap:16px">
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#0E7490">Point of view (POV)</p>
+<p style="font-size:36px;line-height:1.3;font-weight:600">[User] needs a way to [need] because [insight].</p>
+<div style="flex:1"></div>
+<p style="font-size:24px;line-height:1.4;color:#4A5568">e.g. Off-campus final-year students need a way to secure a room before they travel in, because walking in at 2 pm usually fails.</p>
+</div>
+<div data-build-in="rise 2" style="position:absolute;left:976px;top:450px;width:816px;height:380px;background:#FDFDFF;border:1px solid #D9DEEA;border-radius:24px;padding:40px;display:flex;flex-direction:column;gap:16px">
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#BE185D">How might we… ? (HMW)</p>
+<p style="font-size:36px;line-height:1.3;font-weight:600">How might we help [user] [do the need] without [today’s pain]?</p>
+<div style="flex:1"></div>
+<p style="font-size:24px;line-height:1.4;color:#4A5568">e.g. How might we help them book a room from home without racing to the faculty?</p>
+</div>
+<p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#4A5568">Five modes after the Stanford d.school; POV and “How might we” are standard design-thinking tools. Dark pills = what today covers.</p>
+</div>
+<div class="slide" id="ct" data-tr="push" style="background:#F4F6FB;color:#0A0F1F;font-family:'Space Grotesk', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:24px">
+<div style="position:absolute;left:0;top:0;width:1920px;height:12px;background:linear-gradient(90deg, #22D3EE, #8B5CF6, #F472B6)"></div>
+<iframe class="embed" title="animation" sandbox="allow-scripts" tabindex="-1" aria-hidden="true" style="position:absolute;left:128px;top:296px;width:1664px;height:624px" srcdoc="&lt;!doctype html&gt;&lt;html&gt;&lt;head&gt;&lt;style&gt;
+html,body{margin:0;height:100%;background:transparent;overflow:hidden}svg{width:100%;height:100%;display:block}
+text{font-family:system-ui,&#x27;Segoe UI&#x27;,Roboto,Arial,sans-serif}.m{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.run .f{animation:f .6s ease both}@keyframes f{from{opacity:0}}
+.run .p{animation:p .5s cubic-bezier(.3,1.6,.5,1) both;transform-box:fill-box;transform-origin:center}@keyframes p{from{opacity:0;transform:scale(.3)}}
+.run .d{stroke-dasharray:1;animation:d .7s ease-out both}@keyframes d{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+.run .lit{animation:lit .5s ease both}@keyframes lit{from{fill:#E2E8F0}}
+.run .lt{animation:lt .5s ease both}@keyframes lt{from{fill:#8792AD}}
+.run .fo{animation:fo .6s ease 4.3s both}@keyframes fo{from{opacity:1}}
+.run .ko{animation:ko .6s ease 4.4s both}@keyframes ko{from{stroke:#D9DEEA;stroke-width:2}}
+.cv{transform-box:fill-box;transform-origin:right}.run .cv{animation:cv 1.8s steps(40) 6.1s both}@keyframes cv{from{transform:scaleX(1)}}
+&lt;/style&gt;&lt;/head&gt;&lt;body&gt;
+&lt;svg viewBox=&quot;0 0 1664 624&quot; role=&quot;img&quot; aria-label=&quot;Computational thinking in four steps on the BilikKu example: the idea Book a discussion room is decomposed into five steps, matched to the pattern of a cinema seat picker, cut to the three steps that test the hypothesis, and given one if-then rule&quot;&gt;
+&lt;g font-size=&quot;26&quot; font-weight=&quot;700&quot;&gt;
+&lt;rect class=&quot;lit&quot; style=&quot;animation-delay:.8s&quot; x=&quot;0&quot; y=&quot;0&quot; width=&quot;401&quot; height=&quot;64&quot; rx=&quot;32&quot; fill=&quot;#CFFAFE&quot;/&gt;&lt;text class=&quot;lt&quot; style=&quot;animation-delay:.8s&quot; x=&quot;200&quot; y=&quot;41&quot; text-anchor=&quot;middle&quot; fill=&quot;#0A0F1F&quot;&gt;01 Decompose&lt;/text&gt;
+&lt;rect class=&quot;lit&quot; style=&quot;animation-delay:2.6s&quot; x=&quot;421&quot; y=&quot;0&quot; width=&quot;401&quot; height=&quot;64&quot; rx=&quot;32&quot; fill=&quot;#EDE9FE&quot;/&gt;&lt;text class=&quot;lt&quot; style=&quot;animation-delay:2.6s&quot; x=&quot;621&quot; y=&quot;41&quot; text-anchor=&quot;middle&quot; fill=&quot;#0A0F1F&quot;&gt;02 Spot patterns&lt;/text&gt;
+&lt;rect class=&quot;lit&quot; style=&quot;animation-delay:4s&quot; x=&quot;842&quot; y=&quot;0&quot; width=&quot;401&quot; height=&quot;64&quot; rx=&quot;32&quot; fill=&quot;#FCE7F3&quot;/&gt;&lt;text class=&quot;lt&quot; style=&quot;animation-delay:4s&quot; x=&quot;1042&quot; y=&quot;41&quot; text-anchor=&quot;middle&quot; fill=&quot;#0A0F1F&quot;&gt;03 Abstract&lt;/text&gt;
+&lt;rect class=&quot;lit&quot; style=&quot;animation-delay:5.6s&quot; x=&quot;1263&quot; y=&quot;0&quot; width=&quot;401&quot; height=&quot;64&quot; rx=&quot;32&quot; fill=&quot;#FEF3C7&quot;/&gt;&lt;text class=&quot;lt&quot; style=&quot;animation-delay:5.6s&quot; x=&quot;1463&quot; y=&quot;41&quot; text-anchor=&quot;middle&quot; fill=&quot;#0A0F1F&quot;&gt;04 Algorithm&lt;/text&gt;
+&lt;/g&gt;
+&lt;g class=&quot;m&quot; font-size=&quot;24&quot; fill=&quot;#4A5568&quot; text-anchor=&quot;middle&quot;&gt;&lt;text x=&quot;200&quot; y=&quot;100&quot;&gt;→ CORE FLOW&lt;/text&gt;&lt;text x=&quot;621&quot; y=&quot;100&quot;&gt;→ LOOK &amp;amp; DATA&lt;/text&gt;&lt;text x=&quot;1042&quot; y=&quot;100&quot;&gt;→ 3 FEATURES&lt;/text&gt;&lt;text x=&quot;1463&quot; y=&quot;100&quot;&gt;→ the rule&lt;/text&gt;&lt;/g&gt;
+&lt;g class=&quot;p&quot; style=&quot;animation-delay:.2s&quot;&gt;&lt;rect x=&quot;572&quot; y=&quot;132&quot; width=&quot;520&quot; height=&quot;60&quot; rx=&quot;30&quot; fill=&quot;#0A0F1F&quot;/&gt;&lt;text x=&quot;832&quot; y=&quot;171&quot; text-anchor=&quot;middle&quot; font-size=&quot;28&quot; font-weight=&quot;700&quot; fill=&quot;#EEF2FA&quot;&gt;Idea: book a discussion room&lt;/text&gt;&lt;/g&gt;
+&lt;g stroke=&quot;#8792AD&quot; stroke-width=&quot;2&quot; fill=&quot;none&quot;&gt;
+&lt;path class=&quot;d&quot; style=&quot;animation-delay:1s&quot; pathLength=&quot;1&quot; d=&quot;M832 192 C832 220 200 220 200 250&quot;/&gt;
+&lt;path class=&quot;d&quot; style=&quot;animation-delay:1.1s&quot; pathLength=&quot;1&quot; d=&quot;M832 192 C832 220 516 220 516 250&quot;/&gt;
+&lt;path class=&quot;d&quot; style=&quot;animation-delay:1.2s&quot; pathLength=&quot;1&quot; d=&quot;M832 192 L832 250&quot;/&gt;
+&lt;path class=&quot;d&quot; style=&quot;animation-delay:1.3s&quot; pathLength=&quot;1&quot; d=&quot;M832 192 C832 220 1148 220 1148 250&quot;/&gt;
+&lt;path class=&quot;d&quot; style=&quot;animation-delay:1.4s&quot; pathLength=&quot;1&quot; d=&quot;M832 192 C832 220 1464 220 1464 250&quot;/&gt;
+&lt;/g&gt;
+&lt;g font-size=&quot;26&quot; text-anchor=&quot;middle&quot;&gt;
+&lt;g class=&quot;p&quot; style=&quot;animation-delay:1.3s&quot;&gt;&lt;g class=&quot;fo&quot; style=&quot;opacity:.3&quot;&gt;&lt;rect x=&quot;50&quot; y=&quot;250&quot; width=&quot;300&quot; height=&quot;64&quot; rx=&quot;14&quot; fill=&quot;#FDFDFF&quot; stroke=&quot;#D9DEEA&quot; stroke-width=&quot;2&quot;/&gt;&lt;text x=&quot;200&quot; y=&quot;291&quot; fill=&quot;#0A0F1F&quot;&gt;1 · Open app&lt;/text&gt;&lt;path class=&quot;d&quot; style=&quot;animation-delay:4.4s&quot; pathLength=&quot;1&quot; d=&quot;M70 282 H330&quot; stroke=&quot;#4A5568&quot; stroke-width=&quot;3&quot;/&gt;&lt;/g&gt;&lt;/g&gt;
+&lt;g class=&quot;p&quot; style=&quot;animation-delay:1.45s&quot;&gt;&lt;rect class=&quot;ko&quot; x=&quot;366&quot; y=&quot;250&quot; width=&quot;300&quot; height=&quot;64&quot; rx=&quot;14&quot; fill=&quot;#FDFDFF&quot; stroke=&quot;#BE185D&quot; stroke-width=&quot;4&quot;/&gt;&lt;text x=&quot;516&quot; y=&quot;291&quot; fill=&quot;#0A0F1F&quot;&gt;2 · See free slots&lt;/text&gt;&lt;/g&gt;
+&lt;g class=&quot;p&quot; style=&quot;animation-delay:1.6s&quot;&gt;&lt;rect class=&quot;ko&quot; x=&quot;682&quot; y=&quot;250&quot; width=&quot;300&quot; height=&quot;64&quot; rx=&quot;14&quot; fill=&quot;#FDFDFF&quot; stroke=&quot;#BE185D&quot; stroke-width=&quot;4&quot;/&gt;&lt;text x=&quot;832&quot; y=&quot;291&quot; fill=&quot;#0A0F1F&quot;&gt;3 · Reserve a slot&lt;/text&gt;&lt;/g&gt;
+&lt;g class=&quot;p&quot; style=&quot;animation-delay:1.75s&quot;&gt;&lt;g class=&quot;fo&quot; style=&quot;opacity:.3&quot;&gt;&lt;rect x=&quot;998&quot; y=&quot;250&quot; width=&quot;300&quot; height=&quot;64&quot; rx=&quot;14&quot; fill=&quot;#FDFDFF&quot; stroke=&quot;#D9DEEA&quot; stroke-width=&quot;2&quot;/&gt;&lt;text x=&quot;1148&quot; y=&quot;291&quot; fill=&quot;#0A0F1F&quot;&gt;4 · Enter name&lt;/text&gt;&lt;path class=&quot;d&quot; style=&quot;animation-delay:4.4s&quot; pathLength=&quot;1&quot; d=&quot;M1018 282 H1278&quot; stroke=&quot;#4A5568&quot; stroke-width=&quot;3&quot;/&gt;&lt;/g&gt;&lt;/g&gt;
+&lt;g class=&quot;p&quot; style=&quot;animation-delay:1.9s&quot;&gt;&lt;rect class=&quot;ko&quot; x=&quot;1314&quot; y=&quot;250&quot; width=&quot;300&quot; height=&quot;64&quot; rx=&quot;14&quot; fill=&quot;#FDFDFF&quot; stroke=&quot;#BE185D&quot; stroke-width=&quot;4&quot;/&gt;&lt;text x=&quot;1464&quot; y=&quot;291&quot; fill=&quot;#0A0F1F&quot;&gt;5 · My bookings&lt;/text&gt;&lt;/g&gt;
+&lt;/g&gt;
+&lt;g class=&quot;f&quot; style=&quot;animation-delay:4.6s&quot; font-size=&quot;24&quot; font-weight=&quot;700&quot; text-anchor=&quot;middle&quot;&gt;&lt;text x=&quot;200&quot; y=&quot;348&quot; fill=&quot;#4A5568&quot;&gt;drop&lt;/text&gt;&lt;text x=&quot;516&quot; y=&quot;348&quot; fill=&quot;#BE185D&quot;&gt;keep&lt;/text&gt;&lt;text x=&quot;832&quot; y=&quot;348&quot; fill=&quot;#BE185D&quot;&gt;keep&lt;/text&gt;&lt;text x=&quot;1148&quot; y=&quot;348&quot; fill=&quot;#4A5568&quot;&gt;drop&lt;/text&gt;&lt;text x=&quot;1464&quot; y=&quot;348&quot; fill=&quot;#BE185D&quot;&gt;keep&lt;/text&gt;&lt;/g&gt;
+&lt;g class=&quot;p&quot; style=&quot;animation-delay:2.9s&quot;&gt;&lt;rect x=&quot;452&quot; y=&quot;376&quot; width=&quot;760&quot; height=&quot;58&quot; rx=&quot;29&quot; fill=&quot;#EDE9FE&quot;/&gt;&lt;g fill=&quot;#6D28D9&quot;&gt;&lt;rect x=&quot;480&quot; y=&quot;392&quot; width=&quot;10&quot; height=&quot;10&quot; rx=&quot;2&quot;/&gt;&lt;rect x=&quot;494&quot; y=&quot;392&quot; width=&quot;10&quot; height=&quot;10&quot; rx=&quot;2&quot;/&gt;&lt;rect x=&quot;508&quot; y=&quot;392&quot; width=&quot;10&quot; height=&quot;10&quot; rx=&quot;2&quot;/&gt;&lt;rect x=&quot;480&quot; y=&quot;406&quot; width=&quot;10&quot; height=&quot;10&quot; rx=&quot;2&quot;/&gt;&lt;rect x=&quot;494&quot; y=&quot;406&quot; width=&quot;10&quot; height=&quot;10&quot; rx=&quot;2&quot; fill=&quot;#A78BFA&quot;/&gt;&lt;rect x=&quot;508&quot; y=&quot;406&quot; width=&quot;10&quot; height=&quot;10&quot; rx=&quot;2&quot;/&gt;&lt;/g&gt;&lt;text x=&quot;850&quot; y=&quot;414&quot; text-anchor=&quot;middle&quot; font-size=&quot;26&quot; fill=&quot;#3B0764&quot;&gt;&lt;tspan font-weight=&quot;700&quot;&gt;Pattern:&lt;/tspan&gt; works like a cinema seat picker&lt;/text&gt;&lt;/g&gt;
+&lt;g class=&quot;f&quot; style=&quot;animation-delay:5.9s&quot;&gt;&lt;rect x=&quot;232&quot; y=&quot;470&quot; width=&quot;1200&quot; height=&quot;96&quot; rx=&quot;20&quot; fill=&quot;#FEF3C7&quot; stroke=&quot;#B45309&quot; stroke-width=&quot;3&quot;/&gt;
+&lt;text x=&quot;832&quot; y=&quot;528&quot; text-anchor=&quot;middle&quot; font-size=&quot;30&quot; fill=&quot;#0A0F1F&quot;&gt;&lt;tspan font-weight=&quot;800&quot; fill=&quot;#B45309&quot;&gt;IF&lt;/tspan&gt; a slot is taken &lt;tspan font-weight=&quot;800&quot; fill=&quot;#B45309&quot;&gt;THEN&lt;/tspan&gt; grey it out and suggest the next free one&lt;/text&gt;
+&lt;rect class=&quot;cv&quot; x=&quot;246&quot; y=&quot;484&quot; width=&quot;1172&quot; height=&quot;68&quot; fill=&quot;#FEF3C7&quot; style=&quot;transform:scaleX(0)&quot;/&gt;&lt;/g&gt;
+&lt;text class=&quot;f&quot; style=&quot;animation-delay:8s&quot; x=&quot;832&quot; y=&quot;612&quot; text-anchor=&quot;middle&quot; font-size=&quot;28&quot; fill=&quot;#4A5568&quot;&gt;Four habits turn a fuzzy idea into &lt;tspan font-weight=&quot;700&quot; fill=&quot;#0A0F1F&quot;&gt;a prompt a machine can follow&lt;/tspan&gt;.&lt;/text&gt;
+&lt;/svg&gt;
+&lt;script&gt;const R=document.documentElement;function go(){R.classList.remove(&#x27;run&#x27;);void R.offsetWidth;R.classList.add(&#x27;run&#x27;)}new IntersectionObserver(x=&gt;{if(x[0].isIntersecting)go()}).observe(document.body)&lt;/script&gt;
+&lt;/body&gt;&lt;/html&gt;"></iframe>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#6D28D9">Lens 3 · computational thinking</p>
+<h2 style="font-size:72px;font-weight:700;line-height:1.1">Think like a computer before you prompt one</h2>
+<p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#4A5568">Computational thinking: J. M. Wing (2006), Communications of the ACM 49(3); four-part form as commonly taught.</p>
+</div>
+<div class="slide" id="hypo" data-tr="fade" style="background:#0A0F1F;color:#EEF2FA;font-family:'Space Grotesk', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:24px">
+<div style="position:absolute;left:0;top:0;width:1920px;height:12px;background:linear-gradient(90deg, #22D3EE, #8B5CF6, #F472B6)"></div>
+<iframe class="embed" title="animation" sandbox="allow-scripts" tabindex="-1" aria-hidden="true" style="position:absolute;left:128px;top:300px;width:1664px;height:600px" srcdoc="&lt;!doctype html&gt;&lt;html&gt;&lt;head&gt;&lt;style&gt;
+html,body{margin:0;height:100%;background:transparent;overflow:hidden}svg{width:100%;height:100%;display:block}
+text{font-family:system-ui,&#x27;Segoe UI&#x27;,Roboto,Arial,sans-serif}.m{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.run .f{animation:f .6s ease both}@keyframes f{from{opacity:0}}
+.ph{opacity:0}.run .ph{animation:pi .4s ease .6s both,po .5s ease forwards}@keyframes pi{from{opacity:0}to{opacity:1}}@keyframes po{from{opacity:1;transform:none}to{opacity:0;transform:translateX(-30px)}}
+.run .vl{animation:vl .6s cubic-bezier(.2,.8,.2,1) both}@keyframes vl{from{opacity:0;transform:translateX(40px)}}
+.run .st{animation:st .6s cubic-bezier(.3,1.6,.5,1) 5.2s both;transform-box:fill-box;transform-origin:center}@keyframes st{from{opacity:0;transform:scale(.4)}}
+.run .hl{animation:f .6s ease 4.8s both}
+&lt;/style&gt;&lt;/head&gt;&lt;body&gt;
+&lt;svg viewBox=&quot;0 0 1664 600&quot; role=&quot;img&quot; aria-label=&quot;Lean UX hypothesis template: We believe user will behaviour because reason; we will know we are right when signal. Each placeholder is replaced by the BilikKu example, and the signal is marked testable in the peer test.&quot;&gt;
+&lt;rect x=&quot;0&quot; y=&quot;0&quot; width=&quot;1664&quot; height=&quot;76&quot; rx=&quot;18&quot; fill=&quot;#131A2E&quot; stroke=&quot;#4C3A99&quot; stroke-width=&quot;2&quot;/&gt;
+&lt;text x=&quot;32&quot; y=&quot;49&quot; font-size=&quot;30&quot; fill=&quot;#EEF2FA&quot;&gt;We believe &lt;tspan fill=&quot;#22D3EE&quot;&gt;[user]&lt;/tspan&gt; will &lt;tspan fill=&quot;#F9A8D4&quot;&gt;[behaviour]&lt;/tspan&gt; because &lt;tspan fill=&quot;#C4B5FD&quot;&gt;[reason]&lt;/tspan&gt;. We’ll know we’re right when &lt;tspan fill=&quot;#FBBF24&quot;&gt;[signal]&lt;/tspan&gt;.&lt;/text&gt;
+&lt;g font-size=&quot;32&quot; font-weight=&quot;700&quot; fill=&quot;#A9B4CC&quot;&gt;
+&lt;text class=&quot;f&quot; style=&quot;animation-delay:.5s&quot; x=&quot;0&quot; y=&quot;170&quot;&gt;We believe&lt;/text&gt;
+&lt;text class=&quot;f&quot; style=&quot;animation-delay:.6s&quot; x=&quot;0&quot; y=&quot;270&quot;&gt;will&lt;/text&gt;
+&lt;text class=&quot;f&quot; style=&quot;animation-delay:.7s&quot; x=&quot;0&quot; y=&quot;370&quot;&gt;because&lt;/text&gt;
+&lt;text class=&quot;f&quot; style=&quot;animation-delay:.8s&quot; x=&quot;0&quot; y=&quot;470&quot;&gt;We’ll know we’re right when&lt;/text&gt;
+&lt;/g&gt;
+&lt;rect class=&quot;hl&quot; x=&quot;500&quot; y=&quot;414&quot; width=&quot;1164&quot; height=&quot;84&quot; rx=&quot;16&quot; fill=&quot;#33240A&quot; stroke=&quot;#B45309&quot; stroke-width=&quot;2&quot;/&gt;
+&lt;g class=&quot;m&quot; font-size=&quot;26&quot;&gt;
+&lt;g class=&quot;ph&quot; style=&quot;animation-delay:.6s,1.6s&quot;&gt;&lt;rect x=&quot;520&quot; y=&quot;132&quot; width=&quot;200&quot; height=&quot;54&quot; rx=&quot;12&quot; fill=&quot;#0F2A33&quot; stroke=&quot;#22D3EE&quot; stroke-width=&quot;2&quot;/&gt;&lt;text x=&quot;620&quot; y=&quot;168&quot; text-anchor=&quot;middle&quot; fill=&quot;#22D3EE&quot;&gt;[user]&lt;/text&gt;&lt;/g&gt;
+&lt;g class=&quot;ph&quot; style=&quot;animation-delay:.6s,2.4s&quot;&gt;&lt;rect x=&quot;520&quot; y=&quot;232&quot; width=&quot;250&quot; height=&quot;54&quot; rx=&quot;12&quot; fill=&quot;#2E1330&quot; stroke=&quot;#F472B6&quot; stroke-width=&quot;2&quot;/&gt;&lt;text x=&quot;645&quot; y=&quot;268&quot; text-anchor=&quot;middle&quot; fill=&quot;#F9A8D4&quot;&gt;[behaviour]&lt;/text&gt;&lt;/g&gt;
+&lt;g class=&quot;ph&quot; style=&quot;animation-delay:.6s,3.2s&quot;&gt;&lt;rect x=&quot;520&quot; y=&quot;332&quot; width=&quot;210&quot; height=&quot;54&quot; rx=&quot;12&quot; fill=&quot;#1E1446&quot; stroke=&quot;#A78BFA&quot; stroke-width=&quot;2&quot;/&gt;&lt;text x=&quot;625&quot; y=&quot;368&quot; text-anchor=&quot;middle&quot; fill=&quot;#C4B5FD&quot;&gt;[reason]&lt;/text&gt;&lt;/g&gt;
+&lt;g class=&quot;ph&quot; style=&quot;animation-delay:.6s,4s&quot;&gt;&lt;rect x=&quot;520&quot; y=&quot;432&quot; width=&quot;210&quot; height=&quot;54&quot; rx=&quot;12&quot; fill=&quot;#33240A&quot; stroke=&quot;#FBBF24&quot; stroke-width=&quot;2&quot;/&gt;&lt;text x=&quot;625&quot; y=&quot;468&quot; text-anchor=&quot;middle&quot; fill=&quot;#FBBF24&quot;&gt;[signal]&lt;/text&gt;&lt;/g&gt;
+&lt;/g&gt;
+&lt;g font-size=&quot;34&quot;&gt;
+&lt;text class=&quot;vl&quot; style=&quot;animation-delay:1.8s&quot; x=&quot;520&quot; y=&quot;170&quot; fill=&quot;#22D3EE&quot; font-weight=&quot;600&quot;&gt;off-campus final-year FTSM students&lt;/text&gt;
+&lt;text class=&quot;vl&quot; style=&quot;animation-delay:2.6s&quot; x=&quot;520&quot; y=&quot;270&quot; fill=&quot;#F9A8D4&quot; font-weight=&quot;600&quot;&gt;book rooms online instead of walking in&lt;/text&gt;
+&lt;text class=&quot;vl&quot; style=&quot;animation-delay:3.4s&quot; x=&quot;520&quot; y=&quot;370&quot; fill=&quot;#C4B5FD&quot; font-weight=&quot;600&quot;&gt;they can see free slots&lt;/text&gt;
+&lt;text class=&quot;vl&quot; style=&quot;animation-delay:4.2s&quot; x=&quot;532&quot; y=&quot;470&quot; fill=&quot;#FBBF24&quot; font-weight=&quot;700&quot;&gt;2 of 3 testers book a slot in under 30 seconds&lt;/text&gt;
+&lt;/g&gt;
+&lt;g class=&quot;st&quot;&gt;&lt;rect x=&quot;932&quot; y=&quot;526&quot; width=&quot;732&quot; height=&quot;62&quot; rx=&quot;31&quot; fill=&quot;#A3E635&quot;/&gt;&lt;text x=&quot;1298&quot; y=&quot;567&quot; text-anchor=&quot;middle&quot; font-size=&quot;28&quot; font-weight=&quot;800&quot; fill=&quot;#0A0F1F&quot;&gt;✓ Observable in a 2-minute peer test&lt;/text&gt;&lt;/g&gt;
+&lt;/svg&gt;
+&lt;script&gt;const R=document.documentElement;function go(){R.classList.remove(&#x27;run&#x27;);void R.offsetWidth;R.classList.add(&#x27;run&#x27;)}new IntersectionObserver(x=&gt;{if(x[0].isIntersecting)go()}).observe(document.body)&lt;/script&gt;
+&lt;/body&gt;&lt;/html&gt;"></iframe>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#22D3EE">Lens 4 · Lean UX hypothesis</p>
+<h2 style="font-size:72px;font-weight:700;line-height:1.1">Make your guess testable</h2>
+<p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#8792AD">Hypothesis format adapted from J. Gothelf &amp; J. Seiden, Lean UX (2013).</p>
+</div>
+<div class="slide" id="classic" data-tr="push" style="background:#F4F6FB;color:#0A0F1F;font-family:'Space Grotesk', Arial, sans-serif;padding:128px 128px 160px;display:flex;flex-direction:column;gap:24px">
+<div style="position:absolute;left:0;top:0;width:1920px;height:12px;background:linear-gradient(90deg, #22D3EE, #8B5CF6, #F472B6)"></div>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#6D28D9">Classic MVPs · real examples</p>
+<h2 style="font-size:72px;font-weight:700;line-height:1.1">Famous MVPs had almost no code</h2>
+<div data-build-in="rise 1" style="position:absolute;left:128px;top:320px;width:533px;height:600px;background:#FDFDFF;border:1px solid #D9DEEA;border-radius:24px;padding:36px;display:flex;flex-direction:column;gap:16px">
+<svg width="461" height="190" viewBox="0 0 461 190" xmlns="http://www.w3.org/2000/svg" aria-label="Illustration of a demo video player with a play button"><rect width="461" height="190" rx="16" fill="#0A0F1F"/><rect x="20" y="18" width="421" height="128" rx="10" fill="#131A2E"/><rect x="42" y="40" width="150" height="12" rx="6" fill="#26304D"/><rect x="42" y="62" width="230" height="12" rx="6" fill="#26304D"/><rect x="42" y="84" width="190" height="12" rx="6" fill="#26304D"/><rect x="42" y="106" width="120" height="12" rx="6" fill="#26304D"/><circle cx="340" cy="82" r="38" fill="#22D3EE"/><path d="M328 62 L362 82 L328 102 Z" fill="#0A0F1F"/><rect x="20" y="164" width="421" height="8" rx="4" fill="#26304D"/><rect x="20" y="164" width="170" height="8" rx="4" fill="#22D3EE"/><circle cx="190" cy="168" r="10" fill="#EEF2FA"/></svg>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#0E7490">Explainer video · Dropbox, 2008</p>
+<h3 style="font-size:36px;font-weight:700;line-height:1.2">Show it before it exists</h3>
+<p style="font-size:24px;line-height:1.4;color:#4A5568">A 4-minute demo video, posted online. The beta waitlist grew from about 5,000 to about 75,000 overnight.</p>
+</div>
+<div data-build-in="rise 2" style="position:absolute;left:693px;top:320px;width:533px;height:600px;background:#FDFDFF;border:1px solid #D9DEEA;border-radius:24px;padding:36px;display:flex;flex-direction:column;gap:16px">
+<svg width="461" height="190" viewBox="0 0 461 190" xmlns="http://www.w3.org/2000/svg" aria-label="Illustration of an online shoe shop on a phone, with a person behind a curtain packing a shoe box"><rect width="461" height="190" rx="16" fill="#F1ECFE"/><rect x="30" y="18" width="126" height="154" rx="16" fill="#0A0F1F"/><rect x="40" y="30" width="106" height="130" rx="9" fill="#FDFDFF"/><rect x="48" y="40" width="42" height="52" rx="6" fill="#C4B5FD"/><rect x="96" y="40" width="42" height="52" rx="6" fill="#C4B5FD"/><rect x="48" y="98" width="42" height="52" rx="6" fill="#C4B5FD"/><rect x="96" y="98" width="42" height="52" rx="6" fill="#C4B5FD"/><path d="M178 95 H236" stroke="#6D28D9" stroke-width="6" stroke-linecap="round"/><path d="M226 82 L242 95 L226 108" fill="none" stroke="#6D28D9" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><rect x="264" y="18" width="170" height="154" rx="12" fill="#6D28D9"/><path d="M298 18 V172 M332 18 V172 M366 18 V172 M400 18 V172" stroke="#8B5CF6" stroke-width="6"/><circle cx="349" cy="70" r="20" fill="#FBBF24"/><rect x="323" y="94" width="52" height="54" rx="22" fill="#FBBF24"/><rect x="310" y="128" width="78" height="36" rx="5" fill="#F472B6"/><rect x="310" y="128" width="78" height="10" rx="4" fill="#BE185D"/></svg>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#6D28D9">Wizard of Oz · Zappos, 1999</p>
+<h3 style="font-size:36px;font-weight:700;line-height:1.2">Humans behind the curtain</h3>
+<p style="font-size:24px;line-height:1.4;color:#4A5568">Photos of shoes from local stores, posted on a simple site. Each order was bought at the store and shipped by hand.</p>
+</div>
+<div data-build-in="rise 3" style="position:absolute;left:1258px;top:320px;width:534px;height:600px;background:#FDFDFF;border:1px solid #D9DEEA;border-radius:24px;padding:36px;display:flex;flex-direction:column;gap:16px">
+<svg width="462" height="190" viewBox="0 0 462 190" xmlns="http://www.w3.org/2000/svg" aria-label="Illustration of a pricing page with three plans and a cursor clicking the middle plan"><rect width="462" height="190" rx="16" fill="#FDF2F8"/><rect x="20" y="14" width="422" height="162" rx="10" fill="#FFFFFF" stroke="#F9A8D4" stroke-width="2"/><rect x="21" y="15" width="420" height="24" rx="9" fill="#FCE7F3"/><circle cx="38" cy="27" r="5" fill="#F472B6"/><circle cx="54" cy="27" r="5" fill="#FBBF24"/><circle cx="70" cy="27" r="5" fill="#A3E635"/><rect x="44" y="52" width="114" height="112" rx="10" fill="#FCE7F3"/><rect x="174" y="48" width="114" height="120" rx="10" fill="#BE185D"/><rect x="304" y="52" width="114" height="112" rx="10" fill="#FCE7F3"/><rect x="60" y="66" width="60" height="10" rx="5" fill="#F9A8D4"/><rect x="60" y="86" width="80" height="10" rx="5" fill="#F9A8D4"/><rect x="190" y="62" width="60" height="10" rx="5" fill="#FBCFE8"/><rect x="190" y="82" width="80" height="10" rx="5" fill="#FBCFE8"/><rect x="320" y="66" width="60" height="10" rx="5" fill="#F9A8D4"/><rect x="320" y="86" width="80" height="10" rx="5" fill="#F9A8D4"/><rect x="60" y="136" width="82" height="18" rx="9" fill="#F472B6"/><rect x="190" y="140" width="82" height="18" rx="9" fill="#FDFDFF"/><rect x="320" y="136" width="82" height="18" rx="9" fill="#F472B6"/><path d="M246 146 L246 180 L255 171 L262 186 L270 182 L263 168 L276 168 Z" fill="#0A0F1F" stroke="#FFFFFF" stroke-width="2" stroke-linejoin="round"/><path d="M236 132 L228 124 M248 128 L248 118 M260 132 L268 124" stroke="#0A0F1F" stroke-width="3" stroke-linecap="round"/></svg>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#BE185D">Fake door · Buffer, 2010</p>
+<h3 style="font-size:36px;font-weight:700;line-height:1.2">Sell it before you build it</h3>
+<p style="font-size:24px;line-height:1.4;color:#4A5568">A two-page site, then a pricing page added, before the product existed. Clicks on paid plans showed people would pay.</p>
+</div>
+<p style="position:absolute;left:128px;bottom:64px;width:1664px;font-size:24px;color:#4A5568">Sources: YourStory (Feb 2026), Dropbox demo video; Hostinger, “16 best minimum viable product examples”. Illustrations are schematic, not the original products.</p>
+</div>
+<div class="slide" id="aishift" data-tr="fade" data-hidden style="background:#0A0F1F;color:#EEF2FA;font-family:'Space Grotesk', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;gap:24px">
+<div style="position:absolute;left:0;top:0;width:1920px;height:12px;background:linear-gradient(90deg, #22D3EE, #8B5CF6, #F472B6)"></div>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#22D3EE">The AI shift</p>
+<h2 style="font-size:72px;font-weight:700;line-height:1.1">What AI changed, and what it didn’t</h2>
+<div data-build-in="left 1" style="position:absolute;left:128px;top:420px;width:816px;height:420px;background:#0F2A33;border:1px solid #155E75;border-radius:24px;padding:56px;display:flex;flex-direction:column;gap:28px">
+<h3 style="font-size:44px;font-weight:700;color:#22D3EE">Changed</h3>
+<ul style="font-size:32px;line-height:1.5;color:#EEF2FA">
+<li>A clickable MVP in about an hour</li>
+<li>Non-coders can build</li>
+<li>Slides-only pitches look weak</li>
+</ul>
+</div>
+<div data-build-in="right 2" style="position:absolute;left:976px;top:420px;width:816px;height:420px;background:#2E1330;border:1px solid #9D174D;border-radius:24px;padding:56px;display:flex;flex-direction:column;gap:28px">
+<h3 style="font-size:44px;font-weight:700;color:#F9A8D4">Did not change</h3>
+<ul style="font-size:32px;line-height:1.5;color:#EEF2FA">
+<li>You still need a real user</li>
+<li>You still choose the problem</li>
+<li>Judges still ask: who pays?</li>
+</ul>
+</div>
+</div>
+<div class="slide" id="studio" data-tr="fade" style="background:radial-gradient(circle at 85% 30%, #2A1B5E 0%, #0A0F1F 60%);color:#EEF2FA;font-family:'Space Grotesk', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;gap:24px">
+<div style="position:absolute;left:0;top:0;width:1920px;height:12px;background:linear-gradient(90deg, #22D3EE, #8B5CF6, #F472B6)"></div>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#22D3EE">One laptop per group</p>
+<h2 style="font-size:72px;font-weight:700;line-height:1.1;width:1050px">Open MVP Studio</h2>
+<div style="position:absolute;left:128px;top:340px;width:1000px;display:flex;flex-direction:column;gap:20px">
+<div data-build-in="rise 1" style="display:flex;flex-direction:row;gap:24px;align-items:center;background:#131A2E;border:1px solid #155E75;border-radius:20px;padding:22px 28px"><p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:32px;font-weight:700;color:#22D3EE;width:48px">1</p><p style="font-size:32px;line-height:1.3"><b>Join</b> with your group number</p></div>
+<div data-build-in="rise 2" style="display:flex;flex-direction:row;gap:24px;align-items:center;background:#131A2E;border:1px solid #5B21B6;border-radius:20px;padding:22px 28px"><p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:32px;font-weight:700;color:#A78BFA;width:48px">2</p><p style="font-size:32px;line-height:1.3"><b>Fill the Thinking Canvas</b>, hints on request</p></div>
+<div data-build-in="rise 3" style="display:flex;flex-direction:row;gap:24px;align-items:center;background:#131A2E;border:1px solid #9D174D;border-radius:20px;padding:22px 28px"><p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:32px;font-weight:700;color:#F472B6;width:48px">3</p><p style="font-size:32px;line-height:1.3"><b>Copy your prompt</b> into AI Studio</p></div>
+<div data-build-in="rise 4" style="display:flex;flex-direction:row;gap:24px;align-items:center;background:#131A2E;border:1px solid #92400E;border-radius:20px;padding:22px 28px"><p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:32px;font-weight:700;color:#FBBF24;width:48px">4</p><p style="font-size:32px;line-height:1.3"><b>12.08: post your share code</b> for the gallery</p></div>
+</div>
+<div style="position:absolute;left:1312px;top:300px;width:480px;height:560px;background:#F7F8FC;border-radius:28px;padding:40px;display:flex;flex-direction:column;align-items:center;gap:20px;box-shadow:0 24px 80px rgba(139,92,246,0.35)">
+<div class="qr" data-qr style="width:400px;height:400px" role="img" aria-label="QR code that opens MVP Studio"></div>
+<p style="font-size:28px;font-weight:700;color:#0A0F1F;text-align:center">Scan to open</p>
+</div>
+<p style="position:absolute;left:1312px;top:880px;width:480px;font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;text-align:center;color:#A9B4CC"><span data-url></span></p>
+</div>
+<div class="slide" id="canvas" data-tr="push" style="background:#F4F6FB;color:#0A0F1F;font-family:'Space Grotesk', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;gap:24px">
+<div style="position:absolute;left:0;top:0;width:1920px;height:12px;background:linear-gradient(90deg, #22D3EE, #8B5CF6, #F472B6)"></div>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#6D28D9">Worksheet 1 · 12 min · one A3 per group</p>
+<h2 style="font-size:72px;font-weight:700;line-height:1.1;width:1200px">The Thinking Canvas</h2>
+<div style="flex:1;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:24px">
+<div style="background:#FDFDFF;border:1px solid #D9DEEA;border-radius:24px;padding:32px;display:flex;flex-direction:column;gap:10px"><div style="display:flex;flex-direction:row;gap:16px;align-items:center"><p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;font-weight:700;color:#0A0F1F;background:#CFFAFE;border-radius:10px;padding:4px 14px">1 · SYSTEM</p><p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#4A5568">3 min</p></div><h3 style="font-size:32px;font-weight:700">What keeps the problem in place?</h3><p style="font-size:24px;line-height:1.4;color:#4A5568">“It keeps happening because…” · “Who else is involved?”</p></div>
+<div style="background:#FDFDFF;border:1px solid #D9DEEA;border-radius:24px;padding:32px;display:flex;flex-direction:column;gap:10px"><div style="display:flex;flex-direction:row;gap:16px;align-items:center"><p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;font-weight:700;color:#0A0F1F;background:#EDE9FE;border-radius:10px;padding:4px 14px">2 · USER</p><p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#4A5568">3 min</p></div><h3 style="font-size:32px;font-weight:700">Point of view + How might we?</h3><p style="font-size:24px;line-height:1.4;color:#4A5568">“[User] needs a way to … because …” · “How might we …?”</p></div>
+<div style="background:#0A0F1F;border:1px solid #0A0F1F;border-radius:24px;padding:32px;display:flex;flex-direction:column;gap:10px"><div style="display:flex;flex-direction:row;gap:16px;align-items:center"><p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;font-weight:700;color:#0A0F1F;background:#F9A8D4;border-radius:10px;padding:4px 14px">3 · HYPOTHESIS</p><p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#A9B4CC">2 min</p></div><h3 style="font-size:32px;font-weight:700;color:#EEF2FA">Your riskiest assumption, testable</h3><p style="font-size:24px;line-height:1.4;color:#A9B4CC">“We believe … will … because …. We’ll know when ….”</p></div>
+<div style="background:#FDFDFF;border:1px solid #D9DEEA;border-radius:24px;padding:32px;display:flex;flex-direction:column;gap:10px"><div style="display:flex;flex-direction:row;gap:16px;align-items:center"><p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;font-weight:700;color:#0A0F1F;background:#FEF3C7;border-radius:10px;padding:4px 14px">4 · SLICE</p><p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#4A5568">4 min</p></div><h3 style="font-size:32px;font-weight:700">Decompose, then cut to 3</h3><p style="font-size:24px;line-height:1.4;color:#4A5568">List the steps. Circle the 3 that test box 3. Add one “if…then” rule.</p></div>
+</div>
+<iframe class="embed" title="animation" sandbox="allow-scripts" tabindex="-1" aria-hidden="true" style="position:absolute;left:1432px;top:150px;width:360px;height:112px" srcdoc="&lt;!doctype html&gt;&lt;html&gt;&lt;head&gt;&lt;style&gt;html,body{margin:0;height:100%;background:transparent}body{display:flex;align-items:center;justify-content:flex-end}#t{box-sizing:border-box;height:100%;display:flex;align-items:center;padding:0 5vh;border-radius:4vh;background:#FDFDFF;border:2px solid #D9DEEA;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,&#x27;Courier New&#x27;,monospace;font-weight:700;font-size:70vh;line-height:1;font-variant-numeric:tabular-nums;color:#0A0F1F}&lt;/style&gt;&lt;/head&gt;&lt;body&gt;&lt;div id=t&gt;12:00&lt;/div&gt;&lt;script&gt;let s=720;const e=document.getElementById(&#x27;t&#x27;);function f(){e.textContent=String(Math.floor(s/60)).padStart(2,&#x27;0&#x27;)+&#x27;:&#x27;+String(s%60).padStart(2,&#x27;0&#x27;);if(s&lt;=120)e.style.color=&#x27;#B45309&#x27;;if(s===0)e.style.color=&#x27;#BE185D&#x27;}const T=s;let st=0;f();new IntersectionObserver(x=&gt;{if(x[0].isIntersecting&amp;&amp;(!st||s===0)){s=T;st=1;e.style.color=&#x27;&#x27;;f()}}).observe(document.body);setInterval(()=&gt;{if(st&amp;&amp;s&gt;0){s--;f()}},1000)&lt;/script&gt;&lt;/body&gt;&lt;/html&gt;"></iframe>
+</div>
+<div class="slide" id="bridge" data-tr="fade" style="background:#0A0F1F;color:#EEF2FA;font-family:'Space Grotesk', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;gap:24px">
+<div style="position:absolute;left:0;top:0;width:1920px;height:12px;background:linear-gradient(90deg, #22D3EE, #8B5CF6, #F472B6)"></div>
+<iframe class="embed" title="animation" sandbox="allow-scripts" tabindex="-1" aria-hidden="true" style="position:absolute;left:728px;top:330px;width:464px;height:584px" srcdoc="&lt;!doctype html&gt;&lt;html&gt;&lt;head&gt;&lt;style&gt;html,body{margin:0;height:100%;background:transparent;overflow:hidden}svg{width:100%;height:100%;display:block}.run .f{animation:f .5s ease both}@keyframes f{from{opacity:0}}.fl{animation:fl 1.2s linear infinite}@keyframes fl{to{stroke-dashoffset:-40}}&lt;/style&gt;&lt;/head&gt;&lt;body&gt;&lt;svg viewBox=&quot;0 0 464 584&quot; aria-hidden=&quot;true&quot;&gt;&lt;g class=&quot;f&quot; style=&quot;animation-delay:0.30s&quot;&gt;&lt;path d=&quot;M8 42 H440&quot; stroke=&quot;#2A3557&quot; stroke-width=&quot;4&quot;/&gt;&lt;path class=&quot;fl&quot; style=&quot;animation-delay:0.30s&quot; d=&quot;M8 42 H440&quot; stroke=&quot;#22D3EE&quot; stroke-width=&quot;4&quot; stroke-dasharray=&quot;18 22&quot;/&gt;&lt;path d=&quot;M432 30 L452 42 L432 54&quot; fill=&quot;none&quot; stroke=&quot;#22D3EE&quot; stroke-width=&quot;4&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;/&gt;&lt;/g&gt;&lt;g class=&quot;f&quot; style=&quot;animation-delay:0.75s&quot;&gt;&lt;path d=&quot;M8 142 H440&quot; stroke=&quot;#2A3557&quot; stroke-width=&quot;4&quot;/&gt;&lt;path class=&quot;fl&quot; style=&quot;animation-delay:0.75s&quot; d=&quot;M8 142 H440&quot; stroke=&quot;#A78BFA&quot; stroke-width=&quot;4&quot; stroke-dasharray=&quot;18 22&quot;/&gt;&lt;path d=&quot;M432 130 L452 142 L432 154&quot; fill=&quot;none&quot; stroke=&quot;#A78BFA&quot; stroke-width=&quot;4&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;/&gt;&lt;/g&gt;&lt;g class=&quot;f&quot; style=&quot;animation-delay:1.20s&quot;&gt;&lt;path d=&quot;M8 242 H440&quot; stroke=&quot;#2A3557&quot; stroke-width=&quot;4&quot;/&gt;&lt;path class=&quot;fl&quot; style=&quot;animation-delay:1.20s&quot; d=&quot;M8 242 H440&quot; stroke=&quot;#A78BFA&quot; stroke-width=&quot;4&quot; stroke-dasharray=&quot;18 22&quot;/&gt;&lt;path d=&quot;M432 230 L452 242 L432 254&quot; fill=&quot;none&quot; stroke=&quot;#A78BFA&quot; stroke-width=&quot;4&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;/&gt;&lt;/g&gt;&lt;g class=&quot;f&quot; style=&quot;animation-delay:1.65s&quot;&gt;&lt;path d=&quot;M8 342 H440&quot; stroke=&quot;#2A3557&quot; stroke-width=&quot;4&quot;/&gt;&lt;path class=&quot;fl&quot; style=&quot;animation-delay:1.65s&quot; d=&quot;M8 342 H440&quot; stroke=&quot;#F472B6&quot; stroke-width=&quot;4&quot; stroke-dasharray=&quot;18 22&quot;/&gt;&lt;path d=&quot;M432 330 L452 342 L432 354&quot; fill=&quot;none&quot; stroke=&quot;#F472B6&quot; stroke-width=&quot;4&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;/&gt;&lt;/g&gt;&lt;g class=&quot;f&quot; style=&quot;animation-delay:2.10s&quot;&gt;&lt;path d=&quot;M8 442 H440&quot; stroke=&quot;#2A3557&quot; stroke-width=&quot;4&quot;/&gt;&lt;path class=&quot;fl&quot; style=&quot;animation-delay:2.10s&quot; d=&quot;M8 442 H440&quot; stroke=&quot;#FBBF24&quot; stroke-width=&quot;4&quot; stroke-dasharray=&quot;18 22&quot;/&gt;&lt;path d=&quot;M432 430 L452 442 L432 454&quot; fill=&quot;none&quot; stroke=&quot;#FBBF24&quot; stroke-width=&quot;4&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;/&gt;&lt;/g&gt;&lt;g class=&quot;f&quot; style=&quot;animation-delay:2.55s&quot;&gt;&lt;path d=&quot;M8 542 H440&quot; stroke=&quot;#2A3557&quot; stroke-width=&quot;4&quot;/&gt;&lt;path class=&quot;fl&quot; style=&quot;animation-delay:2.55s&quot; d=&quot;M8 542 H440&quot; stroke=&quot;#A3E635&quot; stroke-width=&quot;4&quot; stroke-dasharray=&quot;18 22&quot;/&gt;&lt;path d=&quot;M432 530 L452 542 L432 554&quot; fill=&quot;none&quot; stroke=&quot;#A3E635&quot; stroke-width=&quot;4&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;/&gt;&lt;/g&gt;&lt;/svg&gt;&lt;script&gt;const R=document.documentElement;function go(){R.classList.remove(&#x27;run&#x27;);void R.offsetWidth;R.classList.add(&#x27;run&#x27;)}new IntersectionObserver(x=&gt;{if(x[0].isIntersecting)go()}).observe(document.body)&lt;/script&gt;&lt;/body&gt;&lt;/html&gt;"></iframe>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#22D3EE">Your canvas writes your prompt</p>
+<h2 style="font-size:72px;font-weight:700;line-height:1.1">From canvas to prompt</h2>
+<p style="position:absolute;left:128px;top:282px;width:600px;font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#A9B4CC">CANVAS BOX</p>
+<p style="position:absolute;left:1192px;top:282px;width:600px;font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#A9B4CC">PROMPT PART</p>
+<div style="position:absolute;left:128px;top:330px;width:600px;height:84px;background:#131A2E;border:1px solid #2A3557;border-radius:16px;padding:0 28px;display:flex;flex-direction:row;align-items:center"><p style="font-size:28px">2 · User + point of view</p></div>
+<div style="position:absolute;left:1192px;top:330px;width:600px;height:84px;background:#0F2A33;border:1px solid #155E75;border-radius:16px;padding:0 28px;display:flex;flex-direction:row;align-items:center"><p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:26px;color:#22D3EE">ROLE &amp; GOAL</p></div>
+<div style="position:absolute;left:128px;top:430px;width:600px;height:84px;background:#131A2E;border:1px solid #2A3557;border-radius:16px;padding:0 28px;display:flex;flex-direction:row;align-items:center"><p style="font-size:28px">4 · Steps of the core job</p></div>
+<div style="position:absolute;left:1192px;top:430px;width:600px;height:84px;background:#1E1446;border:1px solid #5B21B6;border-radius:16px;padding:0 28px;display:flex;flex-direction:row;align-items:center"><p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:26px;color:#C4B5FD">CORE FLOW</p></div>
+<div style="position:absolute;left:128px;top:530px;width:600px;height:84px;background:#131A2E;border:1px solid #2A3557;border-radius:16px;padding:0 28px;display:flex;flex-direction:row;align-items:center"><p style="font-size:28px">4 · The “if…then” rule</p></div>
+<div style="position:absolute;left:1192px;top:530px;width:600px;height:84px;background:#1E1446;border:1px solid #5B21B6;border-radius:16px;padding:0 28px;display:flex;flex-direction:row;align-items:center"><p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:26px;color:#C4B5FD">CORE FLOW · rule</p></div>
+<div style="position:absolute;left:128px;top:630px;width:600px;height:84px;background:#131A2E;border:1px solid #2A3557;border-radius:16px;padding:0 28px;display:flex;flex-direction:row;align-items:center"><p style="font-size:28px">4 · The 3 circled steps</p></div>
+<div style="position:absolute;left:1192px;top:630px;width:600px;height:84px;background:#2E1330;border:1px solid #9D174D;border-radius:16px;padding:0 28px;display:flex;flex-direction:row;align-items:center"><p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:26px;color:#F9A8D4">FEATURES (only 3)</p></div>
+<div style="position:absolute;left:128px;top:730px;width:600px;height:84px;background:#131A2E;border:1px solid #2A3557;border-radius:16px;padding:0 28px;display:flex;flex-direction:row;align-items:center"><p style="font-size:28px">1 · Who is in the system</p></div>
+<div style="position:absolute;left:1192px;top:730px;width:600px;height:84px;background:#33240A;border:1px solid #92400E;border-radius:16px;padding:0 28px;display:flex;flex-direction:row;align-items:center"><p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:26px;color:#FBBF24">LOOK &amp; DATA</p></div>
+<div style="position:absolute;left:128px;top:830px;width:600px;height:84px;background:#131A2E;border:1px solid #2A3557;border-radius:16px;padding:0 28px;display:flex;flex-direction:row;align-items:center"><p style="font-size:28px">3 · Hypothesis signal</p></div>
+<div style="position:absolute;left:1192px;top:830px;width:600px;height:84px;background:#0F2A33;border:1px solid #155E75;border-radius:16px;padding:0 28px;display:flex;flex-direction:row;align-items:center"><p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:26px;color:#A3E635">PEER TEST at 11.50</p></div>
+</div>
+<div class="slide" id="prompt" data-tr="fade" style="background:#0A0F1F;color:#EEF2FA;font-family:'Space Grotesk', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;gap:24px">
+<div style="position:absolute;left:0;top:0;width:1920px;height:12px;background:linear-gradient(90deg, #22D3EE, #8B5CF6, #F472B6)"></div>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#22D3EE">Prompt card A · from brief to build</p>
+<h2 style="font-size:72px;font-weight:700;line-height:1.1">The 4-part build prompt</h2>
+<div data-build-in="rise 1" style="position:absolute;left:128px;top:360px;width:1664px;background:#131A2E;border:1px solid #26304D;border-radius:20px;padding:24px 32px;display:flex;flex-direction:row;gap:32px;align-items:center">
+<p style="width:300px;font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;font-weight:700;color:#22D3EE">1 · ROLE &amp; GOAL</p>
+<p style="flex:1;font-family:'JetBrains Mono', 'Courier New', monospace;font-size:28px;line-height:1.4">Build a web app MVP called [NAME] for [USER] who struggles with [PROBLEM].</p>
+</div>
+<div data-build-in="rise 2" style="position:absolute;left:128px;top:500px;width:1664px;background:#131A2E;border:1px solid #26304D;border-radius:20px;padding:24px 32px;display:flex;flex-direction:row;gap:32px;align-items:center">
+<p style="width:300px;font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;font-weight:700;color:#A78BFA">2 · CORE FLOW</p>
+<p style="flex:1;font-family:'JetBrains Mono', 'Courier New', monospace;font-size:28px;line-height:1.4">Opens it → [STEP 1] → [STEP 2] → sees [OUTCOME]. If [X], then [Y].</p>
+</div>
+<div data-build-in="rise 3" style="position:absolute;left:128px;top:640px;width:1664px;background:#131A2E;border:1px solid #26304D;border-radius:20px;padding:24px 32px;display:flex;flex-direction:row;gap:32px;align-items:center">
+<p style="width:300px;font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;font-weight:700;color:#F9A8D4">3 · FEATURES</p>
+<p style="flex:1;font-family:'JetBrains Mono', 'Courier New', monospace;font-size:28px;line-height:1.4">Only these 3: [FEATURE 1] · [FEATURE 2] · [FEATURE 3].</p>
+</div>
+<div data-build-in="rise 4" style="position:absolute;left:128px;top:780px;width:1664px;background:#131A2E;border:1px solid #26304D;border-radius:20px;padding:24px 32px;display:flex;flex-direction:row;gap:32px;align-items:center">
+<p style="width:300px;font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;font-weight:700;color:#FBBF24">4 · LOOK &amp; DATA</p>
+<p style="flex:1;font-family:'JetBrains Mono', 'Courier New', monospace;font-size:28px;line-height:1.4">Mobile-first, [COLOURS]. 15 realistic Malaysian sample records (RM, kolej). Language: [EN / BM].</p>
+</div>
+</div>
+<div class="slide" id="loop" data-tr="fade" style="background:radial-gradient(circle at 30% 70%, #1E1446 0%, #0A0F1F 55%);color:#EEF2FA;font-family:'Space Grotesk', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;gap:24px">
+<div style="position:absolute;left:0;top:0;width:1920px;height:12px;background:linear-gradient(90deg, #22D3EE, #8B5CF6, #F472B6)"></div>
+<iframe class="embed" title="animation" sandbox="allow-scripts" tabindex="-1" aria-hidden="true" style="position:absolute;left:128px;top:350px;width:920px;height:570px" srcdoc="&lt;!doctype html&gt;&lt;html&gt;&lt;head&gt;&lt;style&gt;
+html,body{margin:0;height:100%;background:transparent;overflow:hidden}svg{width:100%;height:100%;display:block}
+text{font-family:system-ui,&#x27;Segoe UI&#x27;,Roboto,Arial,sans-serif}.m{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.run .f{animation:f .6s ease both}@keyframes f{from{opacity:0}}
+.g1{animation:g1 9s linear infinite}@keyframes g1{0%,9%{opacity:1}12%,100%{opacity:0}}
+.g2{animation:g2 9s linear infinite}@keyframes g2{0%,11%{opacity:0}13%,45%{opacity:1}48%,100%{opacity:0}}
+.g3{animation:g3 9s linear infinite}@keyframes g3{0%,58%{opacity:0}61%,74%{opacity:1}77%,100%{opacity:0}}
+.g4{animation:g4 9s linear infinite}@keyframes g4{0%,79%{opacity:0}82%,96%{opacity:1}99%,100%{opacity:0}}
+.pb{transform-box:fill-box;transform-origin:left;animation:pb 9s linear infinite}@keyframes pb{0%,12%{transform:scaleX(0)}45%,100%{transform:scaleX(1)}}
+&lt;/style&gt;&lt;/head&gt;&lt;body&gt;
+&lt;svg viewBox=&quot;0 0 920 570&quot; role=&quot;img&quot; aria-label=&quot;The build loop: Prompt, then Generate which takes 1 to 4 minutes, then Test, then Note, and back to Prompt; one loop takes about 4 to 6 minutes&quot;&gt;
+&lt;defs&gt;&lt;linearGradient id=&quot;gg&quot; x1=&quot;0&quot; y1=&quot;0&quot; x2=&quot;1&quot; y2=&quot;1&quot;&gt;&lt;stop offset=&quot;0&quot; stop-color=&quot;#8B5CF6&quot;/&gt;&lt;stop offset=&quot;1&quot; stop-color=&quot;#F472B6&quot;/&gt;&lt;/linearGradient&gt;&lt;/defs&gt;
+&lt;g class=&quot;f&quot;&gt;
+&lt;rect x=&quot;0&quot; y=&quot;20&quot; width=&quot;320&quot; height=&quot;140&quot; rx=&quot;24&quot; fill=&quot;#131A2E&quot; stroke=&quot;#22D3EE&quot; stroke-width=&quot;3&quot;/&gt;
+&lt;rect x=&quot;552&quot; y=&quot;20&quot; width=&quot;320&quot; height=&quot;140&quot; rx=&quot;24&quot; fill=&quot;url(#gg)&quot; stroke=&quot;#C4B5FD&quot; stroke-width=&quot;3&quot;/&gt;
+&lt;rect x=&quot;552&quot; y=&quot;400&quot; width=&quot;320&quot; height=&quot;140&quot; rx=&quot;24&quot; fill=&quot;#131A2E&quot; stroke=&quot;#F472B6&quot; stroke-width=&quot;3&quot;/&gt;
+&lt;rect x=&quot;0&quot; y=&quot;400&quot; width=&quot;320&quot; height=&quot;140&quot; rx=&quot;24&quot; fill=&quot;#131A2E&quot; stroke=&quot;#FBBF24&quot; stroke-width=&quot;3&quot;/&gt;
+&lt;/g&gt;
+&lt;g fill=&quot;none&quot; stroke=&quot;#FFFFFF&quot; stroke-width=&quot;6&quot;&gt;
+&lt;rect class=&quot;g1&quot; x=&quot;-3&quot; y=&quot;17&quot; width=&quot;326&quot; height=&quot;146&quot; rx=&quot;26&quot;/&gt;
+&lt;rect class=&quot;g2&quot; x=&quot;549&quot; y=&quot;17&quot; width=&quot;326&quot; height=&quot;146&quot; rx=&quot;26&quot;/&gt;
+&lt;rect class=&quot;g3&quot; x=&quot;549&quot; y=&quot;397&quot; width=&quot;326&quot; height=&quot;146&quot; rx=&quot;26&quot;/&gt;
+&lt;rect class=&quot;g4&quot; x=&quot;-3&quot; y=&quot;397&quot; width=&quot;326&quot; height=&quot;146&quot; rx=&quot;26&quot;/&gt;
+&lt;/g&gt;
+&lt;rect x=&quot;592&quot; y=&quot;134&quot; width=&quot;240&quot; height=&quot;8&quot; rx=&quot;4&quot; fill=&quot;#0A0F1F&quot; fill-opacity=&quot;.35&quot;/&gt;
+&lt;rect class=&quot;pb&quot; x=&quot;592&quot; y=&quot;134&quot; width=&quot;240&quot; height=&quot;8&quot; rx=&quot;4&quot; fill=&quot;#0A0F1F&quot;/&gt;
+&lt;g class=&quot;f&quot; style=&quot;animation-delay:.3s&quot;&gt;
+&lt;text x=&quot;160&quot; y=&quot;104&quot; text-anchor=&quot;middle&quot; font-size=&quot;44&quot; font-weight=&quot;700&quot; fill=&quot;#EEF2FA&quot;&gt;Prompt&lt;/text&gt;
+&lt;text x=&quot;700&quot; y=&quot;88&quot; text-anchor=&quot;middle&quot; font-size=&quot;40&quot; font-weight=&quot;700&quot; fill=&quot;#0A0F1F&quot;&gt;Generate&lt;/text&gt;
+&lt;text class=&quot;m&quot; x=&quot;700&quot; y=&quot;122&quot; text-anchor=&quot;middle&quot; font-size=&quot;24&quot; fill=&quot;#0A0F1F&quot;&gt;1–4 min&lt;/text&gt;
+&lt;text x=&quot;712&quot; y=&quot;484&quot; text-anchor=&quot;middle&quot; font-size=&quot;44&quot; font-weight=&quot;700&quot; fill=&quot;#EEF2FA&quot;&gt;Test&lt;/text&gt;
+&lt;text x=&quot;160&quot; y=&quot;484&quot; text-anchor=&quot;middle&quot; font-size=&quot;44&quot; font-weight=&quot;700&quot; fill=&quot;#EEF2FA&quot;&gt;Note&lt;/text&gt;
+&lt;/g&gt;
+&lt;circle cx=&quot;840&quot; cy=&quot;70&quot; r=&quot;16&quot; fill=&quot;none&quot; stroke=&quot;#0A0F1F&quot; stroke-width=&quot;5&quot; stroke-dasharray=&quot;60 40&quot;&gt;&lt;animateTransform attributeName=&quot;transform&quot; type=&quot;rotate&quot; from=&quot;0 840 70&quot; to=&quot;360 840 70&quot; dur=&quot;1s&quot; repeatCount=&quot;indefinite&quot;/&gt;&lt;/circle&gt;
+&lt;g class=&quot;f&quot; style=&quot;animation-delay:.5s&quot; stroke=&quot;#A9B4CC&quot; stroke-width=&quot;4&quot; fill=&quot;none&quot; stroke-linecap=&quot;round&quot; stroke-linejoin=&quot;round&quot;&gt;
+&lt;path d=&quot;M330 90 H540 M528 78 L542 90 L528 102&quot;/&gt;&lt;path d=&quot;M712 170 V388 M700 376 L712 390 L724 376&quot;/&gt;&lt;path d=&quot;M542 470 H332 M344 458 L330 470 L344 482&quot;/&gt;&lt;path d=&quot;M160 390 V172 M148 184 L160 170 L172 184&quot;/&gt;
+&lt;/g&gt;
+&lt;text class=&quot;m f&quot; style=&quot;animation-delay:.7s&quot; x=&quot;436&quot; y=&quot;300&quot; text-anchor=&quot;middle&quot; font-size=&quot;26&quot; fill=&quot;#A9B4CC&quot;&gt;1 loop ≈ 4–6 min&lt;/text&gt;
+&lt;circle r=&quot;15&quot; fill=&quot;#FDE7F3&quot; stroke=&quot;#F472B6&quot; stroke-width=&quot;5&quot;&gt;&lt;animateMotion dur=&quot;9s&quot; repeatCount=&quot;indefinite&quot; calcMode=&quot;linear&quot; path=&quot;M160 160 H712 V400 H160 Z&quot; keyPoints=&quot;0;0.348;0.348;0.5;0.848;1&quot; keyTimes=&quot;0;0.12;0.45;0.6;0.8;1&quot;/&gt;&lt;/circle&gt;
+&lt;/svg&gt;
+&lt;script&gt;const R=document.documentElement;function go(){R.classList.remove(&#x27;run&#x27;);void R.offsetWidth;R.classList.add(&#x27;run&#x27;)}new IntersectionObserver(x=&gt;{if(x[0].isIntersecting)go()}).observe(document.body)&lt;/script&gt;
+&lt;/body&gt;&lt;/html&gt;"></iframe>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#22D3EE">The build loop</p>
+<h2 style="font-size:72px;font-weight:700;line-height:1.1">Build, measure, learn, in minutes</h2>
+<div data-build-in="fade 1" style="position:absolute;left:1120px;top:380px;width:672px;display:flex;flex-direction:column;gap:32px">
+<p style="font-size:56px;font-weight:700;line-height:1.15">One change<br>per prompt.</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:28px;line-height:1.6;color:#A9B4CC">first build · 2–5 min<br>each tweak · 1–3 min<br><span style="color:#22D3EE">≈ 7 loops in 38 min</span></p>
+</div>
+</div>
+<div class="slide" id="iterate" data-tr="push" style="background:#F4F6FB;color:#0A0F1F;font-family:'Space Grotesk', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;gap:24px">
+<div style="position:absolute;left:0;top:0;width:1920px;height:12px;background:linear-gradient(90deg, #22D3EE, #8B5CF6, #F472B6)"></div>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#6D28D9">Prompt card B · iterate</p>
+<h2 style="font-size:72px;font-weight:700;line-height:1.1">Five verbs for every next prompt</h2>
+<div data-build-in="rise 1" style="position:absolute;left:128px;top:350px;width:1664px;background:#FDFDFF;border:1px solid #D9DEEA;border-radius:20px;padding:24px 32px;display:flex;flex-direction:row;gap:32px;align-items:center"><p style="width:200px;font-family:'JetBrains Mono', 'Courier New', monospace;font-size:28px;font-weight:700;color:#0E7490">FIX</p><p style="flex:1;font-family:'JetBrains Mono', 'Courier New', monospace;font-size:28px;line-height:1.4">When I click [X], [Y] happens. It should [Z]. Fix only this.</p></div>
+<div data-build-in="rise 2" style="position:absolute;left:128px;top:454px;width:1664px;background:#FDFDFF;border:1px solid #D9DEEA;border-radius:20px;padding:24px 32px;display:flex;flex-direction:row;gap:32px;align-items:center"><p style="width:200px;font-family:'JetBrains Mono', 'Courier New', monospace;font-size:28px;font-weight:700;color:#6D28D9">CHANGE</p><p style="flex:1;font-family:'JetBrains Mono', 'Courier New', monospace;font-size:28px;line-height:1.4">Simplify [SCREEN]: keep [A] and [B], remove [C].</p></div>
+<div data-build-in="rise 3" style="position:absolute;left:128px;top:558px;width:1664px;background:#FDFDFF;border:1px solid #D9DEEA;border-radius:20px;padding:24px 32px;display:flex;flex-direction:row;gap:32px;align-items:center"><p style="width:200px;font-family:'JetBrains Mono', 'Courier New', monospace;font-size:28px;font-weight:700;color:#BE185D">ADD</p><p style="flex:1;font-family:'JetBrains Mono', 'Courier New', monospace;font-size:28px;line-height:1.4">Add one feature: [FEATURE]. Change nothing else.</p></div>
+<div data-build-in="rise 4" style="position:absolute;left:128px;top:662px;width:1664px;background:#0A0F1F;border:1px solid #0A0F1F;border-radius:20px;padding:24px 32px;display:flex;flex-direction:row;gap:32px;align-items:center"><p style="width:200px;font-family:'JetBrains Mono', 'Courier New', monospace;font-size:28px;font-weight:700;color:#F9A8D4">WOW</p><p style="flex:1;font-family:'JetBrains Mono', 'Courier New', monospace;font-size:28px;line-height:1.4;color:#EEF2FA">Use Gemini inside the app so it [AI FEATURE].</p></div>
+<div data-build-in="rise 5" style="position:absolute;left:128px;top:766px;width:1664px;background:#FDFDFF;border:1px solid #D9DEEA;border-radius:20px;padding:24px 32px;display:flex;flex-direction:row;gap:32px;align-items:center"><p style="width:200px;font-family:'JetBrains Mono', 'Courier New', monospace;font-size:28px;font-weight:700;color:#B45309">POLISH</p><p style="flex:1;font-family:'JetBrains Mono', 'Courier New', monospace;font-size:28px;line-height:1.4">Add a landing screen with the tagline “[TAGLINE]”.</p></div>
+</div>
+<div class="slide" id="roles" data-tr="fade" style="background:#0A0F1F;color:#EEF2FA;font-family:'Space Grotesk', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;gap:24px">
+<div style="position:absolute;left:0;top:0;width:1920px;height:12px;background:linear-gradient(90deg, #22D3EE, #8B5CF6, #F472B6)"></div>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#22D3EE">Team set-up</p>
+<h2 style="font-size:72px;font-weight:700;line-height:1.1">Four roles, zero idle time</h2>
+<div data-build-in="pop 1" style="position:absolute;left:128px;top:360px;width:398px;height:480px;background:#131A2E;border:1px solid #155E75;border-radius:24px;padding:40px;display:flex;flex-direction:column;gap:16px">
+<span class="xicon" style="color:#22D3EE;width:64px;height:64px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5"/></svg></span>
+<h3 style="font-size:44px;font-weight:700">Builder</h3>
+<p style="font-size:24px;line-height:1.4;color:#A9B4CC">Types the prompts</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#22D3EE">while it generates</p>
+<p style="font-size:24px;line-height:1.4">Writes the next prompt</p>
+</div>
+<div data-build-in="pop 2" style="position:absolute;left:550px;top:360px;width:398px;height:480px;background:#131A2E;border:1px solid #9D174D;border-radius:24px;padding:40px;display:flex;flex-direction:column;gap:16px">
+<span class="xicon" style="color:#F472B6;width:64px;height:64px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-5-5"/></svg></span>
+<h3 style="font-size:44px;font-weight:700">User</h3>
+<p style="font-size:24px;line-height:1.4;color:#A9B4CC">Clicks and breaks things</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#F472B6">while it generates</p>
+<p style="font-size:24px;line-height:1.4">Writes test steps for the next build</p>
+</div>
+<div data-build-in="pop 3" style="position:absolute;left:972px;top:360px;width:398px;height:480px;background:#131A2E;border:1px solid #5B21B6;border-radius:24px;padding:40px;display:flex;flex-direction:column;gap:16px">
+<span class="xicon" style="color:#A78BFA;width:64px;height:64px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19V5a2 2 0 012-2h12v18H6a2 2 0 01-2-2z"/><path d="M8 7h6"/></svg></span>
+<h3 style="font-size:44px;font-weight:700">Scribe</h3>
+<p style="font-size:24px;line-height:1.4;color:#A9B4CC">Screenshots and pitch notes</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#A78BFA">while it generates</p>
+<p style="font-size:24px;line-height:1.4">Drafts the 20-second demo script</p>
+</div>
+<div data-build-in="pop 4" style="position:absolute;left:1394px;top:360px;width:398px;height:480px;background:#131A2E;border:1px solid #92400E;border-radius:24px;padding:40px;display:flex;flex-direction:column;gap:16px">
+<span class="xicon" style="color:#FBBF24;width:64px;height:64px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg></span>
+<h3 style="font-size:44px;font-weight:700">Researcher</h3>
+<p style="font-size:24px;line-height:1.4;color:#A9B4CC">Guards the brief</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#FBBF24">while it generates</p>
+<p style="font-size:24px;line-height:1.4">Prepares sample data and app wording</p>
+</div>
+<p data-build-in="fade 5" style="position:absolute;left:128px;top:880px;width:1664px;font-size:32px;color:#A9B4CC">Rotate the Builder at <span style="color:#EEF2FA"><b>11.32</b></span>. Nobody watches the progress bar.</p>
+</div>
+<div class="slide" id="budget" data-tr="fade" style="background:#0A0F1F;color:#EEF2FA;font-family:'Space Grotesk', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;gap:24px">
+<div style="position:absolute;left:0;top:0;width:1920px;height:12px;background:linear-gradient(90deg, #22D3EE, #8B5CF6, #F472B6)"></div>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#22D3EE">Sprint 1 · time budget</p>
+<h2 style="font-size:72px;font-weight:700;line-height:1.1">Your 38 minutes, checkpoint by checkpoint</h2>
+<div style="position:absolute;left:128px;top:596px;width:1664px;height:8px;background:linear-gradient(90deg, #22D3EE, #8B5CF6, #F472B6);border-radius:4px"></div>
+<div style="position:absolute;left:112px;top:584px;width:32px;height:32px;background:#22D3EE;border:4px solid #0A0F1F;border-radius:50%"></div>
+<div style="position:absolute;left:243px;top:584px;width:32px;height:32px;background:#38BDF8;border:4px solid #0A0F1F;border-radius:50%"></div>
+<div style="position:absolute;left:462px;top:584px;width:32px;height:32px;background:#818CF8;border:4px solid #0A0F1F;border-radius:50%"></div>
+<div style="position:absolute;left:988px;top:584px;width:32px;height:32px;background:#A78BFA;border:4px solid #0A0F1F;border-radius:50%"></div>
+<div style="position:absolute;left:1557px;top:584px;width:32px;height:32px;background:#E879F9;border:4px solid #0A0F1F;border-radius:50%"></div>
+<div style="position:absolute;left:1760px;top:584px;width:32px;height:32px;background:#F472B6;border:4px solid #0A0F1F;border-radius:50%"></div>
+<div data-build-in="fade 1" style="position:absolute;left:128px;top:430px;width:300px;display:flex;flex-direction:column;gap:8px"><p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:32px;font-weight:700;color:#22D3EE">11.12</p><p style="font-size:24px;line-height:1.35">Open tool, paste prompt</p></div>
+<div data-build-in="fade 2" style="position:absolute;left:259px;top:640px;width:300px;display:flex;flex-direction:column;gap:8px"><p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:32px;font-weight:700;color:#38BDF8">11.15</p><p style="font-size:24px;line-height:1.35">v1 prompt submitted</p></div>
+<div data-build-in="fade 3" style="position:absolute;left:478px;top:430px;width:340px;display:flex;flex-direction:column;gap:8px"><p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:32px;font-weight:700;color:#818CF8">11.20</p><p style="font-size:24px;line-height:1.35">First preview (2–5 min wait)</p></div>
+<div data-build-in="fade 4" style="position:absolute;left:1004px;top:640px;width:340px;display:flex;flex-direction:column;gap:8px"><p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:32px;font-weight:700;color:#A78BFA">11.32</p><p style="font-size:24px;line-height:1.35">3 loops done · rotate Builder</p></div>
+<div data-build-in="fade 5" style="position:absolute;left:1232px;top:430px;width:340px;display:flex;flex-direction:column;gap:8px"><p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:32px;font-weight:700;color:#E879F9;text-align:right">11.45</p><p style="font-size:24px;line-height:1.35;text-align:right">Feature freeze: fixes only</p></div>
+<div data-build-in="fade 6" style="position:absolute;left:1452px;top:640px;width:340px;display:flex;flex-direction:column;gap:8px"><p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:32px;font-weight:700;color:#F472B6;text-align:right">11.50</p><p style="font-size:24px;line-height:1.35;text-align:right">Live link + 3 screenshots</p></div>
+<p data-build-in="fade 7" style="position:absolute;left:128px;top:840px;width:1664px;font-size:32px;color:#A9B4CC">Stuck on one error for <span style="color:#FBBF24"><b>two loops</b></span>? Undo to the last working version and try a smaller prompt.</p>
+</div>
+<div class="slide" id="tools" data-tr="push" style="background:#F4F6FB;color:#0A0F1F;font-family:'Space Grotesk', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;gap:24px">
+<div style="position:absolute;left:0;top:0;width:1920px;height:12px;background:linear-gradient(90deg, #22D3EE, #8B5CF6, #F472B6)"></div>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#6D28D9">Your toolkit</p>
+<h2 style="font-size:72px;font-weight:700;line-height:1.1">One main tool, two backups</h2>
+<div data-build-in="pop 1" style="position:absolute;left:128px;top:380px;width:640px;height:440px;background:#0A0F1F;border:1px solid #0A0F1F;border-radius:24px;padding:48px;display:flex;flex-direction:column;gap:20px;box-shadow:0 24px 64px rgba(34,211,238,0.30)">
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#22D3EE">MAIN</p>
+<h3 style="font-size:44px;font-weight:700;color:#EEF2FA">Google AI Studio · Build</h3>
+<p style="font-size:28px;line-height:1.4;color:#A9B4CC">Free for prototyping. Google sign-in. Adds a database and login when asked.</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#A3E635">aistudio.google.com</p>
+</div>
+<div data-build-in="pop 2" style="position:absolute;left:800px;top:380px;width:480px;height:440px;background:#FDFDFF;border:1px solid #D9DEEA;border-radius:24px;padding:48px;display:flex;flex-direction:column;gap:20px">
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#BE185D">BACKUP</p>
+<h3 style="font-size:44px;font-weight:700">Lovable</h3>
+<p style="font-size:28px;line-height:1.4;color:#4A5568">Polished look. Free: 5 credits a day; projects are public.</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#0E7490">lovable.dev</p>
+</div>
+<div data-build-in="pop 3" style="position:absolute;left:1312px;top:380px;width:480px;height:440px;background:#FDFDFF;border:1px solid #D9DEEA;border-radius:24px;padding:48px;display:flex;flex-direction:column;gap:20px">
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#BE185D">BACKUP</p>
+<h3 style="font-size:44px;font-weight:700">Bolt.new</h3>
+<p style="font-size:28px;line-height:1.4;color:#4A5568">Fast, runs in the browser. Free: daily token cap.</p>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#0E7490">bolt.new</p>
+</div>
+<p data-build-in="fade 4" style="position:absolute;left:128px;top:870px;width:1664px;font-size:32px;color:#4A5568">Out of credits? <b style="color:#0A0F1F">Switch account, not tool.</b> Free limits as of Jul 2026; they change often.</p>
+</div>
+<div class="slide" id="sprint1" data-tr="fade" style="background:radial-gradient(circle at 75% 40%, #12364A 0%, #0A0F1F 60%);color:#EEF2FA;font-family:'Space Grotesk', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;gap:28px">
+<div style="position:absolute;left:0;top:0;width:1920px;height:12px;background:linear-gradient(90deg, #22D3EE, #8B5CF6, #F472B6)"></div>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#22D3EE">Build sprint 1 · 11.12 – 11.50</p>
+<h1 style="font-size:120px;font-weight:700;line-height:1.05;width:820px">Build v1</h1>
+<ul style="font-size:32px;line-height:1.6;color:#A9B4CC;width:820px">
+<li><span style="color:#EEF2FA"><b>11.15</b></span> v1 prompt submitted</li>
+<li><span style="color:#EEF2FA"><b>11.20</b></span> first preview on screen</li>
+<li><span style="color:#EEF2FA"><b>11.32</b></span> 3 loops done · rotate Builder</li>
+<li><span style="color:#EEF2FA"><b>11.45</b></span> feature freeze: fixes only</li>
+<li><span style="color:#EEF2FA"><b>11.50</b></span> live link + 3 screenshots</li>
+</ul>
+<iframe class="embed" title="animation" sandbox="allow-scripts" tabindex="-1" aria-hidden="true" style="position:absolute;left:1192px;top:110px;width:600px;height:180px" srcdoc="&lt;!doctype html&gt;&lt;html&gt;&lt;head&gt;&lt;style&gt;html,body{margin:0;height:100%;background:transparent}body{display:flex;align-items:center;justify-content:flex-end}#t{box-sizing:border-box;height:100%;display:flex;align-items:center;padding:0 5vh;border-radius:4vh;background:rgba(19,26,46,.92);border:2px solid #2A3557;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,&#x27;Courier New&#x27;,monospace;font-weight:700;font-size:70vh;line-height:1;font-variant-numeric:tabular-nums;color:#EEF2FA}&lt;/style&gt;&lt;/head&gt;&lt;body&gt;&lt;div id=t&gt;38:00&lt;/div&gt;&lt;script&gt;let s=38*60;const e=document.getElementById(&#x27;t&#x27;);function f(){e.textContent=String(Math.floor(s/60)).padStart(2,&#x27;0&#x27;)+&#x27;:&#x27;+String(s%60).padStart(2,&#x27;0&#x27;);e.style.color=s===0?&#x27;#F472B6&#x27;:(s&lt;=300?&#x27;#FBBF24&#x27;:&#x27;#EEF2FA&#x27;)}const T=s;let st=0;f();new IntersectionObserver(x=&gt;{if(x[0].isIntersecting&amp;&amp;(!st||s===0)){s=T;st=1;e.style.color=&#x27;&#x27;;f()}}).observe(document.body);setInterval(()=&gt;{if(st&amp;&amp;s&gt;0){s--;f()}},1000)&lt;/script&gt;&lt;/body&gt;&lt;/html&gt;"></iframe>
+<iframe class="embed" title="animation" sandbox="allow-scripts" tabindex="-1" aria-hidden="true" style="position:absolute;left:1000px;top:330px;width:792px;height:432px" srcdoc="&lt;!doctype html&gt;&lt;html&gt;&lt;head&gt;&lt;style&gt;*{box-sizing:border-box}body{margin:0;font-family:system-ui,Segoe UI,Arial,sans-serif;color:#EEF2FA}.w{width:792px;height:432px;background:#131A2E;border:1px solid #2A3557;border-radius:20px;overflow:hidden;display:flex;flex-direction:column}.bar{height:46px;display:flex;align-items:center;gap:8px;padding:0 18px;background:#0E1426;border-bottom:1px solid #2A3557}.bar i{width:12px;height:12px;border-radius:50%;display:block}.u{margin-left:14px;font:24px ui-monospace,Menlo,Consolas,monospace;color:#A9B4CC}.b{flex:1;display:flex;gap:20px;padding:20px}.ph{width:300px;background:#F4F6FB;border-radius:22px;padding:14px;display:flex;flex-direction:column;gap:10px}.hd{height:44px;border-radius:12px;background:linear-gradient(90deg,#22D3EE,#8B5CF6);color:#0A0F1F;font-weight:700;font-size:24px;display:flex;align-items:center;padding-left:14px}.g{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.c{height:34px;border-radius:8px;background:#D9DEEA;transition:background .3s}.c.f{background:#A3E635}.btn{height:44px;border-radius:12px;background:#0A0F1F;color:#EEF2FA;font-size:24px;display:flex;align-items:center;justify-content:center}.ts{height:44px;border-radius:12px;background:#A3E635;color:#0A0F1F;font-size:24px;font-weight:700;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .4s}.sk{background:linear-gradient(90deg,#E3E7F0 25%,#F8F9FC 50%,#E3E7F0 75%);background-size:200% 100%;animation:sh 1.1s linear infinite;color:transparent}@keyframes sh{to{background-position:-200% 0}}.log{flex:1;display:flex;flex-direction:column;gap:8px;font:24px/1.35 ui-monospace,Menlo,Consolas,monospace}.ok{color:#A3E635}.run{color:#FBBF24}.pb{height:10px;background:#1F2842;border-radius:5px;overflow:hidden;margin-top:auto}.pb i{display:block;height:10px;width:0;background:linear-gradient(90deg,#22D3EE,#8B5CF6,#F472B6);transition:width .6s}&lt;/style&gt;&lt;/head&gt;&lt;body&gt;&lt;div class=w&gt;&lt;div class=bar&gt;&lt;i style=&quot;background:#F472B6&quot;&gt;&lt;/i&gt;&lt;i style=&quot;background:#FBBF24&quot;&gt;&lt;/i&gt;&lt;i style=&quot;background:#A3E635&quot;&gt;&lt;/i&gt;&lt;span class=u&gt;preview · your-mvp&lt;/span&gt;&lt;/div&gt;&lt;div class=b&gt;&lt;div class=ph&gt;&lt;div id=hd class=&quot;hd sk&quot;&gt;&lt;/div&gt;&lt;div id=g class=g&gt;&lt;/div&gt;&lt;div id=btn class=&quot;btn sk&quot;&gt;&lt;/div&gt;&lt;div id=t class=ts&gt;Booked ✓&lt;/div&gt;&lt;/div&gt;&lt;div class=log&gt;&lt;div id=log style=&quot;display:flex;flex-direction:column;gap:8px&quot;&gt;&lt;/div&gt;&lt;div class=pb&gt;&lt;i id=p&gt;&lt;/i&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;script&gt;const L=document.getElementById(&#x27;log&#x27;),P=document.getElementById(&#x27;p&#x27;),H=document.getElementById(&#x27;hd&#x27;),G=document.getElementById(&#x27;g&#x27;),B=document.getElementById(&#x27;btn&#x27;),T=document.getElementById(&#x27;t&#x27;);const cells=[];for(let i=0;i&lt;12;i++){const d=document.createElement(&#x27;div&#x27;);G.appendChild(d);cells.push(d)}const free=[1,2,5,7,8,10];const steps=[[&quot;planning screens&quot;,()=&gt;{}],[&quot;generating UI&quot;,()=&gt;{H.className=&#x27;hd&#x27;;H.textContent=&#x27;BilikKu&#x27;}],[&quot;building slot grid&quot;,()=&gt;cells.forEach((c,i)=&gt;setTimeout(()=&gt;{c.className=&#x27;c&#x27;},i*70))],[&quot;wiring sample data&quot;,()=&gt;free.forEach((n,i)=&gt;setTimeout(()=&gt;{cells[n].className=&#x27;c f&#x27;},i*120))],[&quot;adding Reserve button&quot;,()=&gt;{B.className=&#x27;btn&#x27;;B.textContent=&#x27;Reserve&#x27;}],[&quot;preview ready&quot;,()=&gt;{T.style.opacity=1}]];function reset(){H.className=&#x27;hd sk&#x27;;H.textContent=&#x27;&#x27;;cells.forEach(c=&gt;c.className=&#x27;c sk&#x27;);B.className=&#x27;btn sk&#x27;;B.textContent=&#x27;&#x27;;T.style.opacity=0;L.innerHTML=&#x27;&#x27;;P.style.width=&#x27;0&#x27;}let k=0,last=null;function tick(){if(k===0)reset();if(last){last.className=&#x27;ok&#x27;;last.textContent=&#x27;✓ &#x27;+last.dataset.t}if(k&lt;steps.length){const d=document.createElement(&#x27;div&#x27;);d.className=&#x27;run&#x27;;d.dataset.t=steps[k][0];d.textContent=&#x27;⟳ &#x27;+steps[k][0];L.appendChild(d);last=d;steps[k][1]();P.style.width=((k+1)/steps.length*100)+&#x27;%&#x27;;k++;setTimeout(tick,1600)}else{last=null;k=0;setTimeout(tick,4000)}}tick()&lt;/script&gt;&lt;/body&gt;&lt;/html&gt;"></iframe>
+<p style="position:absolute;left:1000px;top:800px;width:792px;font-size:32px;line-height:1.4;text-align:right;color:#A9B4CC">AI generating? <span style="color:#22D3EE"><b>Do your role’s job.</b></span></p>
+</div>
+<div class="slide" id="swap" data-tr="push" style="background:#F4F6FB;color:#0A0F1F;font-family:'Space Grotesk', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;gap:28px">
+<div style="position:absolute;left:0;top:0;width:1920px;height:12px;background:linear-gradient(90deg, #22D3EE, #8B5CF6, #F472B6)"></div>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#6D28D9">Peer test · 11.50 – 11.56</p>
+<h1 style="font-size:120px;font-weight:700;line-height:1.05;width:900px">Stand up &amp; swap</h1>
+<ol style="font-size:32px;line-height:1.6;color:#4A5568;width:900px">
+<li>One tester per group moves clockwise</li>
+<li>2 minutes, <b style="color:#0A0F1F">no explanation</b> from the team</li>
+<li>Team stays silent; note every hesitation</li>
+<li>Did your hypothesis signal happen? (box 3)</li>
+</ol>
+<iframe class="embed" title="animation" sandbox="allow-scripts" tabindex="-1" aria-hidden="true" style="position:absolute;left:1100px;top:300px;width:692px;height:300px" srcdoc="&lt;!doctype html&gt;&lt;html&gt;&lt;head&gt;&lt;style&gt;html,body{margin:0;height:100%;background:transparent}body{display:flex;align-items:center;justify-content:flex-end}#t{box-sizing:border-box;height:100%;display:flex;align-items:center;padding:0 5vh;border-radius:4vh;background:#FDFDFF;border:2px solid #D9DEEA;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,&#x27;Courier New&#x27;,monospace;font-weight:700;font-size:66vh;line-height:1;font-variant-numeric:tabular-nums;color:#0A0F1F}&lt;/style&gt;&lt;/head&gt;&lt;body&gt;&lt;div id=t&gt;02:00&lt;/div&gt;&lt;script&gt;let s=120;const e=document.getElementById(&#x27;t&#x27;);function f(){e.textContent=String(Math.floor(s/60)).padStart(2,&#x27;0&#x27;)+&#x27;:&#x27;+String(s%60).padStart(2,&#x27;0&#x27;);e.style.color=s===0?&#x27;#BE185D&#x27;:(s&lt;=30?&#x27;#B45309&#x27;:&#x27;#0A0F1F&#x27;)}const T=s;let st=0;f();new IntersectionObserver(x=&gt;{if(x[0].isIntersecting&amp;&amp;(!st||s===0)){s=T;st=1;e.style.color=&#x27;&#x27;;f()}}).observe(document.body);setInterval(()=&gt;{if(st&amp;&amp;s&gt;0){s--;f()}},1000)&lt;/script&gt;&lt;/body&gt;&lt;/html&gt;"></iframe>
+<p style="position:absolute;left:1100px;top:640px;width:692px;font-size:32px;line-height:1.4;text-align:right;color:#4A5568">Use the <b style="color:#0A0F1F">Peer-test sheet</b> in your kit.</p>
+</div>
+<div class="slide" id="sprint2" data-tr="fade" style="background:radial-gradient(circle at 75% 40%, #3A1440 0%, #0A0F1F 60%);color:#EEF2FA;font-family:'Space Grotesk', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;gap:28px">
+<div style="position:absolute;left:0;top:0;width:1920px;height:12px;background:linear-gradient(90deg, #22D3EE, #8B5CF6, #F472B6)"></div>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#F472B6">Build sprint 2 · 11.56 – 12.10</p>
+<h1 style="font-size:120px;font-weight:700;line-height:1.05;width:820px">Fix + one WOW</h1>
+<ul style="font-size:32px;line-height:1.6;color:#A9B4CC;width:820px">
+<li><span style="color:#EEF2FA"><b>First</b></span> fix where the tester got stuck</li>
+<li><span style="color:#EEF2FA"><b>Then</b></span> one WOW, only if v1 works</li>
+<li><span style="color:#EEF2FA"><b>11.59</b></span> WOW prompt submitted</li>
+<li><span style="color:#EEF2FA"><b>12.06</b></span> freeze: nothing new</li>
+<li><span style="color:#EEF2FA"><b>12.08</b></span> post link + screenshots</li>
+</ul>
+<iframe class="embed" title="animation" sandbox="allow-scripts" tabindex="-1" aria-hidden="true" style="position:absolute;left:1192px;top:110px;width:600px;height:180px" srcdoc="&lt;!doctype html&gt;&lt;html&gt;&lt;head&gt;&lt;style&gt;html,body{margin:0;height:100%;background:transparent}body{display:flex;align-items:center;justify-content:flex-end}#t{box-sizing:border-box;height:100%;display:flex;align-items:center;padding:0 5vh;border-radius:4vh;background:rgba(19,26,46,.92);border:2px solid #4C3A99;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,&#x27;Courier New&#x27;,monospace;font-weight:700;font-size:70vh;line-height:1;font-variant-numeric:tabular-nums;color:#EEF2FA}&lt;/style&gt;&lt;/head&gt;&lt;body&gt;&lt;div id=t&gt;14:00&lt;/div&gt;&lt;script&gt;let s=840;const e=document.getElementById(&#x27;t&#x27;);function f(){e.textContent=String(Math.floor(s/60)).padStart(2,&#x27;0&#x27;)+&#x27;:&#x27;+String(s%60).padStart(2,&#x27;0&#x27;);e.style.color=s===0?&#x27;#F472B6&#x27;:(s&lt;=180?&#x27;#FBBF24&#x27;:&#x27;#EEF2FA&#x27;)}const T=s;let st=0;f();new IntersectionObserver(x=&gt;{if(x[0].isIntersecting&amp;&amp;(!st||s===0)){s=T;st=1;e.style.color=&#x27;&#x27;;f()}}).observe(document.body);setInterval(()=&gt;{if(st&amp;&amp;s&gt;0){s--;f()}},1000)&lt;/script&gt;&lt;/body&gt;&lt;/html&gt;"></iframe>
+<iframe class="embed" title="animation" sandbox="allow-scripts" tabindex="-1" aria-hidden="true" style="position:absolute;left:1000px;top:330px;width:792px;height:432px" srcdoc="&lt;!doctype html&gt;&lt;html&gt;&lt;head&gt;&lt;style&gt;*{box-sizing:border-box}body{margin:0;font-family:system-ui,Segoe UI,Arial,sans-serif;color:#EEF2FA}.w{width:792px;height:432px;background:#131A2E;border:1px solid #4C3A99;border-radius:20px;overflow:hidden;display:flex;flex-direction:column}.bar{height:46px;display:flex;align-items:center;gap:8px;padding:0 18px;background:#0E1426;border-bottom:1px solid #2A3557}.bar i{width:12px;height:12px;border-radius:50%;display:block}.u{margin-left:14px;font:24px ui-monospace,Menlo,Consolas,monospace;color:#A9B4CC}.b{flex:1;display:flex;gap:20px;padding:20px}.ph{width:300px;background:#F4F6FB;border-radius:22px;padding:14px;display:flex;flex-direction:column;gap:10px}.hd{height:44px;border-radius:12px;background:linear-gradient(90deg,#22D3EE,#8B5CF6);color:#0A0F1F;font-weight:700;font-size:24px;display:flex;align-items:center;padding-left:14px}.g{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}.c{height:34px;border-radius:8px;background:#D9DEEA}.c.f{background:#A3E635}.btn{height:44px;border-radius:12px;background:#0A0F1F;color:#EEF2FA;font-size:24px;display:flex;align-items:center;justify-content:center;transition:all .4s}.btn.big{background:#6D28D9;transform:scale(1.04)}.card{min-height:84px;border-radius:12px;background:linear-gradient(135deg,#F3E8FF,#FCE7F3);border:2px solid #A78BFA;color:#3B0764;font-size:24px;line-height:1.25;padding:8px 12px}.sk{background:linear-gradient(90deg,#E3E7F0 25%,#F8F9FC 50%,#E3E7F0 75%);background-size:200% 100%;animation:sh 1.1s linear infinite;color:transparent;border-color:transparent}@keyframes sh{to{background-position:-200% 0}}.log{flex:1;display:flex;flex-direction:column;gap:8px;font:24px/1.35 ui-monospace,Menlo,Consolas,monospace}.ok{color:#A3E635}.run{color:#FBBF24}.pb{height:10px;background:#1F2842;border-radius:5px;overflow:hidden;margin-top:auto}.pb i{display:block;height:10px;width:0;background:linear-gradient(90deg,#22D3EE,#8B5CF6,#F472B6);transition:width .6s}&lt;/style&gt;&lt;/head&gt;&lt;body&gt;&lt;div class=w&gt;&lt;div class=bar&gt;&lt;i style=&quot;background:#F472B6&quot;&gt;&lt;/i&gt;&lt;i style=&quot;background:#FBBF24&quot;&gt;&lt;/i&gt;&lt;i style=&quot;background:#A3E635&quot;&gt;&lt;/i&gt;&lt;span class=u&gt;preview · v2 + WOW&lt;/span&gt;&lt;/div&gt;&lt;div class=b&gt;&lt;div class=ph&gt;&lt;div class=hd&gt;BilikKu&lt;/div&gt;&lt;div id=g class=g&gt;&lt;/div&gt;&lt;div id=btn class=btn&gt;Reserve&lt;/div&gt;&lt;div id=c class=&quot;card sk&quot;&gt;&lt;/div&gt;&lt;/div&gt;&lt;div class=log&gt;&lt;div id=log style=&quot;display:flex;flex-direction:column;gap:8px&quot;&gt;&lt;/div&gt;&lt;div class=pb&gt;&lt;i id=p&gt;&lt;/i&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;script&gt;const L=document.getElementById(&#x27;log&#x27;),P=document.getElementById(&#x27;p&#x27;),G=document.getElementById(&#x27;g&#x27;),B=document.getElementById(&#x27;btn&#x27;),C=document.getElementById(&#x27;c&#x27;);const free=[1,2,5,7];for(let i=0;i&lt;8;i++){const d=document.createElement(&#x27;div&#x27;);d.className=free.includes(i)?&#x27;c f&#x27;:&#x27;c&#x27;;G.appendChild(d)}const steps=[[&quot;fix: clearer Reserve&quot;,()=&gt;{B.className=&#x27;btn big&#x27;;B.textContent=&#x27;Reserve this slot&#x27;}],[&quot;reading WOW prompt&quot;,()=&gt;{}],[&quot;calling Gemini&quot;,()=&gt;{}],[&quot;adding AI suggestion&quot;,()=&gt;{C.className=&#x27;card&#x27;;C.textContent=&#x27;✨ Best for you: 2–3 pm, Bilik 4&#x27;}],[&quot;testing in preview&quot;,()=&gt;{}],[&quot;preview ready&quot;,()=&gt;{}]];function reset(){B.className=&#x27;btn&#x27;;B.textContent=&#x27;Reserve&#x27;;C.className=&#x27;card sk&#x27;;C.textContent=&#x27;&#x27;;L.innerHTML=&#x27;&#x27;;P.style.width=&#x27;0&#x27;}let k=0,last=null;function tick(){if(k===0)reset();if(last){last.className=&#x27;ok&#x27;;last.textContent=&#x27;✓ &#x27;+last.dataset.t}if(k&lt;steps.length){const d=document.createElement(&#x27;div&#x27;);d.className=&#x27;run&#x27;;d.dataset.t=steps[k][0];d.textContent=&#x27;⟳ &#x27;+steps[k][0];L.appendChild(d);last=d;steps[k][1]();P.style.width=((k+1)/steps.length*100)+&#x27;%&#x27;;k++;setTimeout(tick,1700)}else{last=null;k=0;setTimeout(tick,4000)}}tick()&lt;/script&gt;&lt;/body&gt;&lt;/html&gt;"></iframe>
+<p style="position:absolute;left:1000px;top:800px;width:792px;font-size:32px;line-height:1.4;text-align:right;color:#A9B4CC">WOW prompts take longest. <span style="color:#F9A8D4"><b>Start by 11.59.</b></span></p>
+</div>
+<div class="slide" id="demos" data-tr="fade" style="background:#0A0F1F;color:#EEF2FA;font-family:'Space Grotesk', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;gap:24px">
+<div style="position:absolute;left:0;top:0;width:1920px;height:12px;background:linear-gradient(90deg, #22D3EE, #8B5CF6, #F472B6)"></div>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#22D3EE">Speed demos · 12.10 – 12.22</p>
+<h2 style="font-size:72px;font-weight:700;line-height:1.1;width:1150px">The 60-second demo</h2>
+<iframe class="embed" title="animation" sandbox="allow-scripts" tabindex="-1" aria-hidden="true" style="position:absolute;left:1392px;top:150px;width:400px;height:140px" srcdoc="&lt;!doctype html&gt;&lt;html&gt;&lt;head&gt;&lt;style&gt;html,body{margin:0;height:100%;background:transparent}body{display:flex;align-items:center;justify-content:flex-end}#t{box-sizing:border-box;height:100%;display:flex;align-items:center;padding:0 5vh;border-radius:4vh;background:rgba(19,26,46,.92);border:2px solid #2A3557;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,&#x27;Courier New&#x27;,monospace;font-weight:700;font-size:70vh;line-height:1;font-variant-numeric:tabular-nums;color:#EEF2FA}&lt;/style&gt;&lt;/head&gt;&lt;body&gt;&lt;div id=t&gt;01:00&lt;/div&gt;&lt;script&gt;let s=60;const e=document.getElementById(&#x27;t&#x27;);function f(){e.textContent=String(Math.floor(s/60)).padStart(2,&#x27;0&#x27;)+&#x27;:&#x27;+String(s%60).padStart(2,&#x27;0&#x27;);e.style.color=s===0?&#x27;#F472B6&#x27;:(s&lt;=10?&#x27;#FBBF24&#x27;:&#x27;#EEF2FA&#x27;)}const T=s;let st=0;f();new IntersectionObserver(x=&gt;{if(x[0].isIntersecting&amp;&amp;(!st||s===0)){s=T;st=1;e.style.color=&#x27;&#x27;;f()}}).observe(document.body);setInterval(()=&gt;{if(st&amp;&amp;s&gt;0){s--;f()}},1000)&lt;/script&gt;&lt;/body&gt;&lt;/html&gt;"></iframe>
+<div data-build-in="left 1" style="position:absolute;left:128px;top:420px;width:269px;height:320px;background:#0F2A33;border:1px solid #155E75;border-radius:24px;padding:32px;display:flex;flex-direction:column;gap:12px"><p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:32px;font-weight:700;color:#22D3EE">10 s</p><h3 style="font-size:36px;font-weight:700">Problem</h3><p style="font-size:24px;line-height:1.4;color:#A9B4CC">Who hurts, and how</p></div>
+<div data-build-in="left 2" style="position:absolute;left:413px;top:420px;width:808px;height:320px;background:linear-gradient(135deg, #2A1B5E, #1E1446);border:1px solid #6D28D9;border-radius:24px;padding:32px;display:flex;flex-direction:column;gap:12px"><p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:32px;font-weight:700;color:#C4B5FD">30 s</p><h3 style="font-size:36px;font-weight:700">Click through it, live</h3><p style="font-size:24px;line-height:1.4;color:#A9B4CC">Show the one core job, start to finish. No feature tour.</p></div>
+<div data-build-in="left 3" style="position:absolute;left:1237px;top:420px;width:269px;height:320px;background:#2E1330;border:1px solid #9D174D;border-radius:24px;padding:32px;display:flex;flex-direction:column;gap:12px"><p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:32px;font-weight:700;color:#F9A8D4">10 s</p><h3 style="font-size:36px;font-weight:700">Real vs. mock</h3><p style="font-size:24px;line-height:1.4;color:#A9B4CC">Say it plainly</p></div>
+<div data-build-in="left 4" style="position:absolute;left:1522px;top:420px;width:270px;height:320px;background:#33240A;border:1px solid #92400E;border-radius:24px;padding:32px;display:flex;flex-direction:column;gap:12px"><p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:32px;font-weight:700;color:#FBBF24">10 s</p><h3 style="font-size:36px;font-weight:700">Tester said…</h3><p style="font-size:24px;line-height:1.4;color:#A9B4CC">One line of evidence</p></div>
+<p data-build-in="fade 5" style="position:absolute;left:128px;top:800px;width:1664px;font-size:32px;color:#A9B4CC">4–5 groups demo live. Everyone else: <span style="color:#EEF2FA"><b>link + screenshots on the shared sheet.</b></span></p>
+</div>
+<div class="slide" id="guard" data-tr="push" style="background:#F4F6FB;color:#0A0F1F;font-family:'Space Grotesk', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;gap:24px">
+<div style="position:absolute;left:0;top:0;width:1920px;height:12px;background:linear-gradient(90deg, #22D3EE, #8B5CF6, #F472B6)"></div>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#6D28D9">Guardrails</p>
+<h2 style="font-size:72px;font-weight:700;line-height:1.1">How not to get caught out by judges</h2>
+<div style="flex:1;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:24px">
+<div style="background:#FDFDFF;border:1px solid #D9DEEA;border-radius:24px;padding:40px;display:flex;flex-direction:row;gap:32px;align-items:center"><span class="xicon" style="color:#BE185D;width:72px;height:72px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg></span><div style="flex:1;display:flex;flex-direction:column;gap:8px"><h3 style="font-size:36px;font-weight:700">No real personal data</h3><p style="font-size:24px;line-height:1.4;color:#4A5568">No IC, phone or matric numbers. Sample data only (PDPA 2010).</p></div></div>
+<div style="background:#FDFDFF;border:1px solid #D9DEEA;border-radius:24px;padding:40px;display:flex;flex-direction:row;gap:32px;align-items:center"><span class="xicon" style="color:#B45309;width:72px;height:72px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M17 6l3 3M15 8l2 2"/></svg></span><div style="flex:1;display:flex;flex-direction:column;gap:8px"><h3 style="font-size:36px;font-weight:700">Free projects can be public</h3><p style="font-size:24px;line-height:1.4;color:#4A5568">Never paste API keys or private UKM data into a prompt.</p></div></div>
+<div style="background:#FDFDFF;border:1px solid #D9DEEA;border-radius:24px;padding:40px;display:flex;flex-direction:row;gap:32px;align-items:center"><span class="xicon" style="color:#0E7490;width:72px;height:72px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l3 2.5 4 .5.5 4L22 12l-2.5 3-.5 4-4 .5L12 22l-3-2.5-4-.5-.5-4L2 12l2.5-3 .5-4 4-.5z"/><path d="M8 12l3 3 5-6"/></svg></span><div style="flex:1;display:flex;flex-direction:column;gap:8px"><h3 style="font-size:36px;font-weight:700">The app is not the startup</h3><p style="font-size:24px;line-height:1.4;color:#4A5568">An hour-long build is easy to copy. Your edge: user insight, data, channel.</p></div></div>
+<div style="background:#FDFDFF;border:1px solid #D9DEEA;border-radius:24px;padding:40px;display:flex;flex-direction:row;gap:32px;align-items:center"><span class="xicon" style="color:#6D28D9;width:72px;height:72px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg></span><div style="flex:1;display:flex;flex-direction:column;gap:8px"><h3 style="font-size:36px;font-weight:700">Keep your prompts</h3><p style="font-size:24px;line-height:1.4;color:#4A5568">Tools change fast. Your brief and prompts rebuild the app anywhere.</p></div></div>
+</div>
+</div>
+<div class="slide" id="real" data-tr="fade" style="background:linear-gradient(135deg, #F472B6 0%, #8B5CF6 50%, #22D3EE 100%);color:#0A0F1F;font-family:'Space Grotesk', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;justify-content:center;gap:56px">
+<h1 style="font-size:120px;font-weight:700;line-height:1.05">Say what is real.</h1>
+<div data-build-in="rise" style="position:absolute;left:128px;top:620px;width:1500px;background:#0A0F1F;border-radius:24px;padding:48px;display:flex;flex-direction:column;gap:16px">
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#22D3EE">your pitch line</p>
+<p style="font-size:40px;line-height:1.35;color:#EEF2FA">“Booking works end to end. Payments are mocked. 2 of 3 testers booked without help.”</p>
+</div>
+</div>
+<div class="slide" id="reflect" data-tr="push" style="background:#F4F6FB;color:#0A0F1F;font-family:'Space Grotesk', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;gap:24px">
+<div style="position:absolute;left:0;top:0;width:1920px;height:12px;background:linear-gradient(90deg, #22D3EE, #8B5CF6, #F472B6)"></div>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#6D28D9">Reflect · 2 min, in your group</p>
+<h2 style="font-size:72px;font-weight:700;line-height:1.1">Think about your thinking</h2>
+<div style="flex:1;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:24px">
+<div style="background:#FDFDFF;border:1px solid #D9DEEA;border-radius:24px;padding:36px;display:flex;flex-direction:row;gap:28px;align-items:center"><span class="xicon" style="color:#0E7490;width:64px;height:64px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-5-5"/></svg></span><div style="flex:1;display:flex;flex-direction:column;gap:6px"><p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#0E7490">SYSTEM</p><p style="font-size:32px;line-height:1.3;font-weight:600">What did the tester show us about the system?</p></div></div>
+<div style="background:#FDFDFF;border:1px solid #D9DEEA;border-radius:24px;padding:36px;display:flex;flex-direction:row;gap:28px;align-items:center"><span class="xicon" style="color:#6D28D9;width:64px;height:64px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-7 7-7s7 3 7 7"/><path d="M16 4a4 4 0 010 8M22 21c0-3-2-6-5-6.5"/></svg></span><div style="flex:1;display:flex;flex-direction:column;gap:6px"><p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#6D28D9">USER</p><p style="font-size:32px;line-height:1.3;font-weight:600">Did they behave the way we believed?</p></div></div>
+<div style="background:#FDFDFF;border:1px solid #D9DEEA;border-radius:24px;padding:36px;display:flex;flex-direction:row;gap:28px;align-items:center"><span class="xicon" style="color:#BE185D;width:64px;height:64px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-6"/></svg></span><div style="flex:1;display:flex;flex-direction:column;gap:6px"><p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#BE185D">HYPOTHESIS</p><p style="font-size:32px;line-height:1.3;font-weight:600">Confirmed, rejected, or still unclear?</p></div></div>
+<div style="background:#0A0F1F;border:1px solid #0A0F1F;border-radius:24px;padding:36px;display:flex;flex-direction:row;gap:28px;align-items:center"><span class="xicon" style="color:#FBBF24;width:64px;height:64px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 22h4"/><path d="M12 2a7 7 0 00-4 12.7V17h8v-2.3A7 7 0 0012 2z"/></svg></span><div style="flex:1;display:flex;flex-direction:column;gap:6px"><p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;color:#FBBF24">NEXT · DOUBLE DIAMOND</p><p style="font-size:32px;line-height:1.3;font-weight:600;color:#EEF2FA">Diverge again, or converge and build more?</p></div></div>
+</div>
+</div>
+<div class="slide" id="wrap" data-tr="fade" style="background:#0A0F1F;color:#EEF2FA;font-family:'Space Grotesk', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;gap:24px">
+<div style="position:absolute;left:0;top:0;width:1920px;height:12px;background:linear-gradient(90deg, #22D3EE, #8B5CF6, #F472B6)"></div>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#22D3EE">Before tomorrow’s pitch</p>
+<h2 style="font-size:72px;font-weight:700;line-height:1.1">Three things to do tonight</h2>
+<div data-build-in="rise 1" style="position:absolute;left:128px;top:400px;width:533px;height:400px;background:#131A2E;border:1px solid #155E75;border-radius:24px;padding:48px;display:flex;flex-direction:column;gap:20px"><p style="font-size:96px;font-weight:700;line-height:1;color:#22D3EE">1</p><h3 style="font-size:36px;font-weight:700;line-height:1.25">Show it to one real user</h3><p style="font-size:24px;line-height:1.4;color:#A9B4CC">Someone outside your group. Watch, don’t explain.</p></div>
+<div data-build-in="rise 2" style="position:absolute;left:693px;top:400px;width:533px;height:400px;background:#131A2E;border:1px solid #5B21B6;border-radius:24px;padding:48px;display:flex;flex-direction:column;gap:20px"><p style="font-size:96px;font-weight:700;line-height:1;color:#A78BFA">2</p><h3 style="font-size:36px;font-weight:700;line-height:1.25">Write a 20-second demo script</h3><p style="font-size:24px;line-height:1.4;color:#A9B4CC">Problem, one click-through, what is real.</p></div>
+<div data-build-in="rise 3" style="position:absolute;left:1258px;top:400px;width:534px;height:400px;background:#131A2E;border:1px solid #9D174D;border-radius:24px;padding:48px;display:flex;flex-direction:column;gap:20px"><p style="font-size:96px;font-weight:700;line-height:1;color:#F472B6">3</p><h3 style="font-size:36px;font-weight:700;line-height:1.25">Bring the link to the pitch</h3><p style="font-size:24px;line-height:1.4;color:#A9B4CC">Plus a screen recording, in case the Wi-Fi drops.</p></div>
+</div>
+<div class="slide" id="planb" data-tr="fade" data-hidden style="background:#F4F6FB;color:#0A0F1F;font-family:'Space Grotesk', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;gap:24px">
+<div style="position:absolute;left:0;top:0;width:1920px;height:12px;background:repeating-linear-gradient(90deg, #FBBF24 0px, #FBBF24 40px, #0A0F1F 40px, #0A0F1F 80px)"></div>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:24px;letter-spacing:4px;text-transform:uppercase;color:#B45309">Backup slide · no internet</p>
+<h2 style="font-size:72px;font-weight:700;line-height:1.1">Plan B: build on paper first</h2>
+<div style="flex:1;display:flex;flex-direction:row;gap:32px;align-items:stretch">
+<div style="flex:1;background:#FDFDFF;border:1px solid #D9DEEA;border-radius:24px;padding:48px;display:flex;flex-direction:column;gap:20px"><span class="xicon" style="color:#0E7490;width:64px;height:64px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M10 8l6 4-6 4z"/></svg></span><h3 style="font-size:36px;font-weight:700">Recorded demo</h3><p style="font-size:28px;line-height:1.4;color:#4A5568">Play the pre-recorded build instead of building live.</p></div>
+<div style="flex:1;background:#FDFDFF;border:1px solid #D9DEEA;border-radius:24px;padding:48px;display:flex;flex-direction:column;gap:20px"><span class="xicon" style="color:#6D28D9;width:64px;height:64px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="4"/><path d="M2 21c0-4 3-7 7-7s7 3 7 7"/><path d="M16 4a4 4 0 010 8M22 21c0-3-2-6-5-6.5"/></svg></span><h3 style="font-size:36px;font-weight:700">Paper prototype</h3><p style="font-size:28px;line-height:1.4;color:#4A5568">Sketch 4 phone screens on A4. A tester taps; a teammate swaps the paper.</p></div>
+<div style="flex:1;background:#FDFDFF;border:1px solid #D9DEEA;border-radius:24px;padding:48px;display:flex;flex-direction:column;gap:20px"><span class="xicon" style="color:#BE185D;width:64px;height:64px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></span><h3 style="font-size:36px;font-weight:700">Build tonight</h3><p style="font-size:28px;line-height:1.4;color:#4A5568">Prompt the AI version at 9.00–10.30 pm. Mentor check at 9.15 am tomorrow.</p></div>
+</div>
+</div>
+<div class="slide" id="thanks" data-tr="fade" style="background:radial-gradient(circle at 20% 80%, #3B1F7A 0%, #0A0F1F 60%);color:#EEF2FA;font-family:'Space Grotesk', Arial, sans-serif;padding:128px;display:flex;flex-direction:column;justify-content:center;gap:40px">
+<div style="position:absolute;left:0;top:0;width:1920px;height:12px;background:linear-gradient(90deg, #22D3EE, #8B5CF6, #F472B6)"></div>
+<div style="position:absolute;left:1335px;top:64px;width:457px;height:124px;background:#F7F8FC;border-radius:20px;padding:20px 28px;display:flex;flex-direction:row;gap:32px;align-items:center;box-shadow:0 16px 48px rgba(0,0,0,0.35)">
+<img src="assets/ukm.png" alt="Universiti Kebangsaan Malaysia logo" style="width:177px;height:84px;object-fit:contain">
+<img src="assets/ftsm.png" alt="Fakulti Teknologi dan Sains Maklumat (FTSM) logo" style="width:192px;height:72px;object-fit:contain">
+</div>
+<h1 style="font-size:120px;font-weight:700;line-height:1.05;width:1500px">Build to learn,</h1>
+<h1 style="font-size:120px;font-weight:700;line-height:1.05;width:1500px;background:linear-gradient(90deg, #22D3EE, #A78BFA, #F472B6);background-clip:text;-webkit-text-fill-color:transparent">not to impress.</h1>
+<p style="font-family:'JetBrains Mono', 'Courier New', monospace;font-size:28px;color:#A9B4CC">akmal@ukm.edu.my · akmal.app · CAIT, FTSM, UKM</p>
+</div>
+    </div>
+    <div class="blank" id="blank" hidden></div>
+    <div class="notes" id="notesPanel" hidden></div>
+    <div class="bar" id="bar" role="toolbar" aria-label="Slide controls">
+      <a href="index.html" target="mvp-site" title="Open the hub in a second tab">◆ Hub</a><span class="sep"></span>
+      <button type="button" id="bPrev" aria-label="Previous">←</button>
+      <span class="count" id="count">1 / 31</span>
+      <button type="button" id="bNext" aria-label="Next">→</button><span class="sep"></span>
+      <button type="button" id="bGrid" title="All slides (O)">All slides</button>
+      <button type="button" id="bNotes" title="Speaker notes (N)">Notes</button>
+      <button type="button" id="bPres" title="Presenter console (P)">Presenter</button>
+      <button type="button" id="bFull" title="Full screen (F)">Full screen</button>
+      <button type="button" id="bHelp" aria-label="Keyboard shortcuts">?</button>
+    </div>
+    <div class="ov" id="grid" hidden><div class="ovhead"><h2>All slides</h2><button class="x" type="button" data-close>Close</button></div><div class="grid" id="tiles"></div></div>
+    <div class="ov" id="help" hidden><div class="ovhead"><h2>Presenting</h2><button class="x" type="button" data-close>Close</button></div>
+      <div class="help"><p><kbd>→</kbd> <kbd>Space</kbd> <kbd>PgDn</kbd> next build or slide (clickers work) · <kbd>←</kbd> <kbd>PgUp</kbd> back · <kbd>Home</kbd>/<kbd>End</kbd> first/last</p>
+      <p><kbd>F</kbd> full screen · <kbd>B</kbd> black screen · <kbd>O</kbd> all slides · <kbd>N</kbd> notes · <kbd>P</kbd> presenter console · <kbd>H</kbd> include hidden slides (AI shift, Plan B) · <kbd>M</kbd> menu of all pages (Hub, Kit, Studio, gallery). Other pages open in a second tab, so the deck keeps its place.</p>
+      <p><b>Two-screen setup:</b> open this page on the projector and press <kbd>F</kbd>. In a second browser window on your laptop, open the same page and press <kbd>P</kbd>. The two windows stay in step: drive the talk from the console. This works on the same computer and the same browser.</p>
+      <p>Timers and animations start when their slide first appears. Participants can open this page on their own laptops and browse at their own pace.</p></div></div>
+  </div>
+  <aside class="console" id="console" aria-label="Presenter console">
+    <div class="c-top"><span class="c-clock" id="cClock">--:--</span><span class="c-el">elapsed <b id="cEl">00:00</b><button class="x" type="button" id="cElReset" style="height:30px;padding:0 10px">reset</button></span></div>
+    <div><div class="c-meta" id="cMeta"></div><div class="c-now" id="cNow"></div></div>
+    <div class="c-next" id="cNext"></div>
+    <div class="c-notes" id="cNotes" aria-live="polite"></div>
+    <div class="c-btns"><button type="button" id="cPrev">← Back</button><button type="button" class="big" id="cNextB">Next →</button><button type="button" id="cBlank">Black</button><button type="button" id="cOpen">Open audience window</button><button type="button" id="cExit">Exit console</button></div>
+    <div class="c-site"><span>Open in a second tab:</span><a class="hub" href="index.html" target="mvp-site">◆ Hub</a><a href="studio.html#facilitator" target="mvp-site">Group gallery</a><a href="kit.html" target="mvp-site">Kit</a><a href="studio.html" target="mvp-site">Studio</a><a href="guide.html" target="mvp-site">Guide</a></div>
+    <div class="sync" id="sync">Sync: this window only</div>
+  </aside>
+</div>
+<script src="assets/qrcode.js"></script>
+<script>
+(function(){
+"use strict";
+var NOTES={"cover": "Slide 1 (on screen while students settle, 10.25–10.30). Have Google AI Studio open in a second browser tab, Build mode, model selected, signed in. Have the backup recording ready in a third tab. Greet the room; no introduction speech yet — the next slide sets the 2-hour plan in under a minute.", "agenda": "10.30 (1 min). Three blocks. THINK: a live demo, then four thinking lenses (systems, design, computational, Lean UX), applied immediately on the Thinking Canvas, which becomes the build prompt. BUILD: two sprints around a peer test. SHOW: speed demos and a short reflection. Say the goal: by 12.30 every group has tested a hypothesis with a real person, has a live link, and has a 20-second demo for Dr Asif's pitch session this afternoon.", "demo": "10.31 (3 min). Ask the room for a campus problem; if nobody answers in 20 seconds, use the room-booking prompt shown. Type it into Google AI Studio Build mode and press Build. Generation usually takes 1–4 minutes: do NOT wait in silence. Leave it building and present the next two slides (Double Diamond, prototype vs MVP vs product); switch to the finished app at the \"Building is no longer the bottleneck\" slide. If the network is slow or the build fails, play the backup recording; the point lands either way.", "map": "10.33 (2 min, while the demo app generates in the other tab). The animation plays by itself when the slide appears: the problem diamond draws, then the solution diamond, then a marker travels to Develop and \"You are here\" lights up. Talk over it. Discover (Day 1: finding problems worth solving) and Define (this morning's value proposition) are the problem space. Develop is now: we explore solutions by prototyping, then converge on one MVP. Deliver is tomorrow's pitch and, after the bootcamp, real users. Key idea: each diamond first goes wide (diverge), then narrows (converge). If the peer test shows we defined the wrong problem, we go back to the first diamond; that is normal, not failure. The Double Diamond was introduced by the UK Design Council in 2004.", "pmp": "10.35 (2 min, demo still generating). Then go to the reveal slide and switch to the finished app. Click through the three cards. A prototype tests understanding; an MVP tests behaviour (do they use it, would they pay); a product tests scale. Today we build an MVP: the smallest thing a real user can try. Students often over-build: remind them that judges reward evidence of a real user, not feature count.", "reveal": "10.37–10.42 (up to 5 min, including the click-through; any time left over goes to the canvas). If the build is still running, give it one more minute or play the backup recording. Switch to the finished demo app; click through 2–3 screens so the room sees it works. Then this slide. Pause after the headline, click for the second line. This reframes the whole bootcamp: AI removes the build excuse, so the real work is the problem, the user and the test. Hand-over line: \"So the next 15 minutes are about thinking well: four lenses, then you use them.\"", "pyramid": "10.42 (2 min). The animation plays on its own: the left pyramid only half-builds its bottom layers and stalls with a question mark; then on the right a thin slice rises through every layer while the layer names light up from Functional to Meaningful. Point at the left first: many features, each half-working, nobody feels anything. Then the right: the MVP is a thin vertical slice. One core job that works (functional), does not break in the demo (reliable), a stranger can use without help (usable), is quicker than the old way (convenient), feels good (pleasurable) and matters to the user (meaningful). Viable means the whole slice, not just \"it runs\". This is why the canvas allows only three features. Layers from Stephen P. Anderson's User Experience Hierarchy of Needs (Seductive Interaction Design, 2011), which builds on Aarron Walter's pyramid (Designing for Emotion, 2011); the side-by-side MVP slice follows Belinda Waldock's figure at beingagile.co.uk.", "curve": "10.44 (2 min). The animation plays on its own: the path climbs from Needs to Hypothesis, swirls through the dashed exploring loop, lands on the pulsing MVP, then the build–measure–learn cycle draws and keeps turning. Walk it left to right. Design thinking climbs from needs to a concept (Day 1 and this morning). Lean UX turns the concept into a hypothesis and the smallest thing that tests it: the MVP. The dashed circle is the exploring loop where ideas get reshaped before building. Agile takes over with short build, measure, learn loops: that is exactly what Sprint 1, the peer test and Sprint 2 are. AI makes each Build step minutes instead of weeks, so we get many loops in one morning. Build–Measure–Learn is from Eric Ries, The Lean Startup (2011).", "systems": "10.46 (2 min). The animation plays on its own: the iceberg floats, the layers appear from the tip down with their BilikKu examples, and the Structure layer keeps glowing. Systems thinking asks why a problem keeps happening and who else is part of it. We usually see events (no room at 2 pm). Below the waterline are patterns (always full at peak), structures (walk-in only, no shared schedule) and mental models (first come, first served is fair). An app that only reacts to events is weak; an app that changes a structure (a shared live schedule) is strong. Also ask who else is in the system: the lab staff who manage rooms, the faculty office, other student groups. Their incentives decide whether your MVP can work. Canvas box 1 uses this lens.", "dt": "10.48 (2 min). Design thinking starts from a person and an insight, not a feature list. Day 1 covered empathise; today we define (POV), then prototype and test. The POV sentence forces three things: a specific user, a real need (a verb, not a feature) and an insight (why it is hard now). The How Might We question turns the POV into an open design challenge that the AI build answers. Groups write both in canvas box 2. Five modes after the Stanford d.school.", "ct": "10.50 (2 min). The animation runs the four habits on the BilikKu idea: the idea splits into five steps (decompose), a pattern is spotted (it works like a cinema seat picker), two steps are dropped and three kept (abstract), and the rule types itself in (algorithm). Each stage lights up its pill at the top, and each habit fills one part of the build prompt shown under the pills. Canvas box 4 becomes the prompt almost word for word. Jeannette Wing's 2006 essay in Communications of the ACM popularised the term.", "hypo": "10.52 (1 min). The animation fills the template with the BilikKu example: each coloured placeholder slides away and the real words take its place, then the signal row is highlighted and stamped \"observable in a 2-minute peer test\". Every idea hides one assumption that can kill it. Lean UX writes it as a hypothesis you can prove wrong: who, what they will do, why, and the signal that tells you. The signal must be observable in today's peer test. Groups write theirs in canvas box 3. Template adapted from Jeff Gothelf and Josh Seiden, Lean UX (2013).", "classic": "10.53 (1 min). Three real MVPs, almost no code. Dropbox (2008): Drew Houston posted a roughly 4-minute demo video before the product was ready; the waitlist reportedly jumped from about 5,000 to about 75,000 overnight. Zappos (1999): Nick Swinmurn photographed shoes in local stores and put them online; when someone ordered, he bought the pair and shipped it — that tested \"will people buy shoes online?\" with no warehouse. Buffer: a two-page site (what it does, leave your email), then a pricing page to see whether people would pay. Message: an MVP is a test, not a small product. Your AI-built app can mix all three. Sources: yourstory.com/2026/02/dropbox-fake-demo-video-75k-signups-mvp and hostinger.com/tutorials/minimum-viable-product-examples.", "aishift": "Optional, hidden to save time; unhide if the room needs it. Left first: the cost of a working MVP fell from weeks to an hour, so there is no excuse to pitch with slides only. Then right: AI cannot tell you whether anyone wants it. This is why the session ends with a peer test, not just a build. Bridge: \"So before you prompt anything, you write a brief.\"", "studio": "10.54 (1 min, then move straight to the canvas slide and its timer). MVP Studio is the interactive version of the Thinking Canvas, hint cards, prompt cards, peer-test sheet and reflection. Work is saved in the group's browser only, so one laptop per group, and don't clear it. Hints open in two levels, like the paper hint cards, and the app records how many each group used. The prompt builds itself from the canvas. At 12.08 each group copies its share code from the last step and posts it in the class chat or sheet; you paste the codes into the Facilitator view to show the gallery during demos. Paper sheets remain the backup if Wi-Fi fails. Before the day: share MVP Studio with a public link from its Share menu, otherwise students cannot open it.", "canvas": "10.54–11.06 (12 min, timer runs on this slide). Hand out Worksheet 1 (A3; the kit has the full version with a worked example and hint cards). Groups fill the four boxes in order; each box uses one lens they just saw: 1 systems thinking, 2 design thinking, 3 Lean UX, 4 computational thinking. Call the time for each box: 10.57 box 2, 11.00 box 3, 11.02 box 4. Scaffolding: groups that are stuck get a Level 1 hint card (sentence starters with the BilikKu example); groups doing well get only the Level 2 questions; strong groups get no hints. Mentors: stop any group that has started prompting already. Box 4 is the prompt.", "bridge": "11.06 (1 min). The arrows light up one by one and keep flowing from each canvas box to its prompt part. Nothing in the prompt is new: every part comes from a canvas box. Box 2's point of view becomes the role and goal; box 4's steps and rule become the core flow; the three circled steps become the features; box 1 (who is in the system) gives the look and realistic sample data; box 3's signal is not prompted at all, it becomes the peer test at 11.50. This is the scaffold groups can reuse on their own after the bootcamp.", "prompt": "11.07 (1 min). Each part comes straight from the Thinking Canvas: 1 = box 2 (point of view), 2 = box 4 steps plus the if–then rule, 3 = box 4's three circled steps, 4 = box 1 (who is in the system) plus sample data and language. Groups copy the template from Prompt Card A in the kit (or the shared link) and fill the brackets from their brief. Stress the \"only these 3\" wording: it stops the AI from adding features you did not ask for, which also shortens generation time.", "loop": "11.08 (1 min). This is the Agile build–measure–learn loop from the curve slide, shrunk to minutes: Prompt and Generate = build, Test = measure, Note = learn. The token on the left keeps cycling, and it deliberately waits longest at Generate while the progress bar fills, which is the point: generation is the slow step, and big prompts make it slower and riskier. Small prompts mean shorter waits and you can tell exactly which change broke something. Budget: the first build takes 2–5 minutes, each tweak 1–3 minutes, so a group gets about seven loops in Sprint 1. Never stack three changes in one prompt.", "iterate": "11.09 (1 min). Show these five as the only kinds of follow-up prompt. FIX and CHANGE in Sprint 1; WOW is saved for Sprint 2 because AI features take the longest to generate and break most often. Example WOW: \"Use Gemini inside the app so it suggests a weekly meal plan from the user's budget in RM.\" All five are on Prompt Card B in the kit.", "roles": "11.10 (1 min). Groups of 4–6 assign roles now; groups of 5–6 double up on User and Researcher. The \"while it generates\" line is the most important habit of the session: generation takes minutes, so each role has a job for the waiting time. Rotating the Builder at 11.32 keeps everyone hands-on.", "budget": "11.11 (1 min). Leave this slide up until you switch to the Sprint 1 timer. The checkpoints are planned around generation time: submit v1 by 11.15 so the first preview (2–5 minutes) arrives by 11.20. Three loops by 11.32, then rotate the Builder. 11.45 feature freeze: from here only fixes, because a failed big change late in the sprint can take 5+ minutes to recover. 11.50: link copied and three screenshots saved. Most builders have version history or undo; tell groups to use it rather than prompting around a broken build.", "tools": "11.11 (1 min). Everyone starts in Google AI Studio Build mode: free, uses their Google account, and can add a Firebase database and login on request. Lovable and Bolt.new are backups if AI Studio is blocked for a student account or rate-limited. When a group runs out of free credits, the next member logs in with their own account and continues; the prompts on paper make this quick. Re-check limits the week before the bootcamp.", "sprint1": "11.12–11.50 (38 min; the timer starts when this slide opens, so open it at 11.12). The animated preview on the right loops a simulated build so the room has a picture of what \"generating\" looks like; it is an illustration, not a real app. Call each checkpoint aloud: 11.15 \"every group should have pressed Build\"; 11.20 \"hands up if you see your first preview\"; 11.32 \"rotate Builder\"; 11.45 \"feature freeze, fixes only\"; 11.48 \"copy your link and take three screenshots\". Scaffolding: when a group asks \"what should we prompt next?\", answer with a question that sends them back to their canvas (Which step of box 4 is not working yet? Would that change help test box 3?). Circulate with the three mentor questions: Who exactly is your user? What can they do in the first 30 seconds? What is real and what is faked? Groups whose first build fails twice: switch to the backup tool with the same prompt.", "swap": "11.50–11.56 (6 min; testers return at 11.55). This is the Measure step of build–measure–learn: each group checks whether the signal written in canvas box 3 actually happened. Everyone stops building. Each group sends one tester clockwise to the next group. The 2-minute timer starts the first time this slide appears; once it reaches 00:00, stepping away and back restarts it for a second round. The team must not explain anything: they watch and note where the tester hesitates or gets lost on the Peer-test sheet. Last question to the tester: would you use it again? Testers return at 11.55. This is the only real user feedback many groups will have before the pitch.", "sprint2": "11.56–12.10 (14 min; timer starts on this slide). Times below: WOW by 11.59, freeze 12.06. The animated preview shows the Sprint 2 pattern: one fix first, then one AI feature. Fix the single biggest stuck point from the peer test first. Only groups with a working v1 attempt a WOW feature (e.g. Gemini inside the app); it must be submitted by 11.59 because AI features often take 3–5 minutes and may need one fix. 12.06 freeze. 12.08: each group posts its link and 3 screenshots to the shared sheet or padlet. If a WOW attempt breaks the app at 12.06, undo to the last working version: a working simple app beats a broken clever one.", "demos": "12.10–12.22 (12 min). Explain the 4-part format once, then call 4–5 groups (volunteers first, then pick groups whose app works). The 60-second timer starts when this slide first appears; after it reaches 00:00, step back and forward to restart it for the next group. Give each a quick verdict: one thing that works, one question a judge would ask. This rehearses the demo segment for this afternoon's Pitch Perfect session. If there are more than 10 groups, run the rest as a gallery on the shared sheet.", "guard": "12.22 (2 min). Four guardrails. A generated prototype is not production code: its database rules are often weak, so never collect real personal data (mention PDPA 2010). On some free tiers, projects are public. \"The app is not the startup\" links to the Business Model Canvas session after lunch: what makes it defensible is the insight, data and distribution, not the code. Keep the brief and prompts: they are the record of the idea and let you rebuild if a tool changes or is retired.", "real": "12.24 (1 min). Judges respect honesty about scope and punish a demo that pretends. Each group writes their own version of this line tonight: what works, what is mocked, and one piece of evidence from the peer test.", "reflect": "12.25 (2 min). Metacognition is what lets groups keep going without a mentor. Each group answers the four questions aloud in 30 seconds each, and the Scribe writes the answers on the back of the canvas. The last question links back to the Double Diamond: if the hypothesis was rejected, go back and redefine the problem (diverge); if it was confirmed, converge and build the next slice. The same four questions work after every future test.", "wrap": "12.27 (2 min). Homework for tonight's 10.00 pm pitch preparation and Day 3. Item 3: a 20–30 second phone screen recording is the safest demo at Tasik Chini. Remind them mentors will check the demo in the 9.15 am pitch practice tomorrow. Then the closing slide.", "planb": "Hidden slide: show it only if the internet fails. Unhide from the slide menu. The session still works: the brief, the build prompt and the peer test all run on paper, and the paper screens become the build prompt tonight. The pre-recorded demo replaces the live hook.", "thanks": "12.30. Close: thank the groups, point them to lunch and the 2.00 pm Business Model Canvas session, where the MVP fills in \"key activities\" and \"channels\". Stay for 2–3 minutes for questions if lunch allows."};
+var $=function(id){return document.getElementById(id)};
+var all=[].slice.call(document.querySelectorAll(".slide"));
+var showHidden=false,i=0,b=0,app=$("app"),frame=$("frame"),stage=$("stage");
+function seq(){return all.map(function(s,k){return k}).filter(function(k){return showHidden||!all[k].hasAttribute("data-hidden")})}
+function title(s){var h=s.querySelector("h1,h2");return h?h.textContent.replace(/\s+/g," ").trim():s.id}
+function steps(s){var o=[];[].slice.call(s.querySelectorAll("[data-build-in]")).forEach(function(e){var p=(e.getAttribute("data-build-in")||"").split(/\s+/);var n=parseInt(p[1],10);n=isNaN(n)?1:n;e._o=n;e._k=p[0]||"fade";if(o.indexOf(n)<0)o.push(n)});return o.sort(function(a,c){return a-c})}
+all.forEach(function(s){s._st=steps(s);var d=s.style.display;s.style.setProperty("--disp",d||"flex");s.style.removeProperty("display")});
+function fit(){var r=stage.getBoundingClientRect(),k=Math.min(r.width/1920,r.height/1080);frame.style.transform="translate("+(-960*k)+"px,"+(-540*k)+"px) scale("+k+")"}
+addEventListener("resize",fit);
+function apply(dir){var s=all[i],cut=b>0?s._st[b-1]:-Infinity;
+ all.forEach(function(x,k){if(k!==i){x.classList.remove("cur","enter-fade","enter-push","enter-pushb")}});
+ if(!s.classList.contains("cur")){s.classList.add("cur");if(dir){var t=s.getAttribute("data-tr")||"fade";s.classList.remove("enter-fade","enter-push","enter-pushb");void s.offsetWidth;s.classList.add(t==="push"?(dir<0?"enter-pushb":"enter-push"):"enter-fade")}}
+ [].slice.call(s.querySelectorAll("[data-build-in]")).forEach(function(e){var vis=e._o<=cut;if(!vis){e.classList.add("bh");e.classList.remove("bi")}else if(e.classList.contains("bh")){e.classList.remove("bh");e.style.setProperty("--ba","b-"+e._k);e.classList.remove("bi");void e.offsetWidth;e.classList.add("bi")}});
+ var sq=seq(),pos=sq.indexOf(i);$("count").textContent=(pos+1)+" / "+sq.length+(s.hasAttribute("data-hidden")?" · hidden":"");
+ try{history.replaceState(null,"","#"+s.id)}catch(e){}
+ renderConsole();if($("notesPanel").hidden===false)$("notesPanel").textContent=NOTES[s.id]||"No notes for this slide."}
+function go(k,bb,dir,quiet){i=k;b=bb;apply(dir);if(!quiet)broadcast()}
+function next(){var s=all[i];if(b<s._st.length){b++;apply(0);broadcast();return}var sq=seq(),p=sq.indexOf(i);if(p<sq.length-1)go(sq[p+1],0,1)}
+function prev(){if(b>0){b--;apply(0);broadcast();return}var sq=seq(),p=sq.indexOf(i);if(p>0){var k=sq[p-1];go(k,all[k]._st.length,-1)}}
+/* sync between windows of this browser */
+var ch=null,me=Math.random().toString(36).slice(2);try{ch=new BroadcastChannel("mvp-deck")}catch(e){}
+function broadcast(){var m={t:"go",id:all[i].id,b:b,h:showHidden,from:me};if(ch)try{ch.postMessage(m)}catch(e){}try{localStorage.setItem("mvp-deck",JSON.stringify(m))}catch(e){}}
+function recv(m){if(!m||m.from===me)return;if(m.t==="blank"){$("blank").hidden=!m.on;return}if(m.t!=="go")return;showHidden=!!m.h;var k=all.findIndex(function(s){return s.id===m.id});if(k<0)return;var dir=k===i?0:(k>i?1:-1);i=k;b=m.b;apply(dir);$("sync").textContent="Sync: in step with another window"}
+if(ch)ch.onmessage=function(e){recv(e.data)};
+addEventListener("storage",function(e){if(e.key==="mvp-deck"&&e.newValue){try{recv(JSON.parse(e.newValue))}catch(x){}}});
+/* QR + url on the studio slide */
+(function(){var base=location.href.split("#")[0].replace(/[^\/]*$/,""),url=base+"studio.html";
+ [].slice.call(document.querySelectorAll("[data-url]")).forEach(function(e){e.textContent=url.replace(/^https?:\/\//,"")});
+ [].slice.call(document.querySelectorAll("[data-qr]")).forEach(function(e){try{var q=qrcode(0,"M");q.addData(url);q.make();e.innerHTML=q.createSvgTag({cellSize:8,margin:2,scalable:true})}catch(x){e.textContent=url}})})();
+/* toolbar + keys */
+var hideT;function dk(){return document.getElementById("mvpdock")}
+function poke(){var bar=$("bar"),d=dk();bar.classList.remove("hide");if(d)d.classList.remove("hide");clearTimeout(hideT);hideT=setTimeout(function(){var d=dk(),busy=bar.matches(":hover")||bar.contains(document.activeElement)||(d&&(d.matches(":hover")||d.contains(document.activeElement)||!d.querySelector(".mvpdock-menu").hidden));if(!busy){bar.classList.add("hide");if(d)d.classList.add("hide")}else poke()},2600)}
+addEventListener("mvp:presenter",function(){presenter(!app.classList.contains("presenter"))});
+addEventListener("mousemove",poke);addEventListener("touchstart",poke,{passive:true});
+function full(){try{if(document.fullscreenElement)document.exitFullscreen();else document.documentElement.requestFullscreen().catch(function(){})}catch(e){}}
+function blank(){var bl=$("blank");bl.hidden=!bl.hidden;var m={t:"blank",on:!bl.hidden,from:me};if(ch)try{ch.postMessage(m)}catch(e){}}
+function toggle(id){var o=$(id);var open=o.hidden;["grid","help"].forEach(function(x){$(x).hidden=true});o.hidden=!open;if(!o.hidden&&id==="grid")tiles()}
+function notes(){var n=$("notesPanel");n.hidden=!n.hidden;if(!n.hidden)n.textContent=NOTES[all[i].id]||"No notes for this slide."}
+function tiles(){$("tiles").innerHTML=all.map(function(s,k){var h=s.hasAttribute("data-hidden");return '<button type="button" class="tile'+(k===i?' cur':'')+(h?' hid':'')+'" data-k="'+k+'"><b>'+(k+1)+'</b><span>'+title(s)+'</span></button>'}).join("")}
+$("tiles").addEventListener("click",function(e){var t=e.target.closest(".tile");if(!t)return;var k=+t.dataset.k;if(all[k].hasAttribute("data-hidden"))showHidden=true;$("grid").hidden=true;go(k,0,1)});
+[].slice.call(document.querySelectorAll("[data-close]")).forEach(function(x){x.addEventListener("click",function(){x.closest(".ov").hidden=true})});
+$("bPrev").onclick=prev;$("bNext").onclick=next;$("bGrid").onclick=function(){toggle("grid")};$("bHelp").onclick=function(){toggle("help")};$("bNotes").onclick=notes;$("bFull").onclick=full;$("bPres").onclick=function(){presenter(!app.classList.contains("presenter"))};
+stage.addEventListener("click",function(e){if(e.target.closest(".bar,.ov,.notes"))return;var r=stage.getBoundingClientRect();if(e.clientX>r.left+r.width*.35)next();else prev()});
+addEventListener("keydown",function(e){if(e.target.closest&&e.target.closest("input,textarea,select"))return;var k=e.key;
+ if(e.target.closest&&e.target.closest(".mvpdock")&&k!=="Escape")return;
+ if(k==="Escape"){$("grid").hidden=true;$("help").hidden=true;return}
+ if(k==="m"||k==="M"){if(window.mvpDock){poke();window.mvpDock.toggle()}return}
+ if(["ArrowRight","PageDown"," ","Enter","ArrowDown"].indexOf(k)>=0){e.preventDefault();next()}
+ else if(["ArrowLeft","PageUp","ArrowUp","Backspace"].indexOf(k)>=0){e.preventDefault();prev()}
+ else if(k==="Home"){go(seq()[0],0,-1)}else if(k==="End"){var sq=seq();go(sq[sq.length-1],0,1)}
+ else if(k==="f"||k==="F")full();else if(k==="b"||k==="B"||k==="."){blank()}else if(k==="o"||k==="O")toggle("grid");else if(k==="n"||k==="N")notes();
+ else if(k==="p"||k==="P")presenter(!app.classList.contains("presenter"));else if(k==="h"||k==="H"){showHidden=!showHidden;apply(0);broadcast()}else if(k==="?")toggle("help")});
+/* presenter console */
+var t0=Date.now();function pad(n){return String(n).padStart(2,"0")}
+function presenter(on){app.classList.toggle("presenter",on);setTimeout(fit,30);renderConsole();if(on)broadcast()}
+function renderConsole(){if(!app.classList.contains("presenter"))return;var s=all[i],sq=seq(),p=sq.indexOf(i),left=s._st.length-b;
+ $("cMeta").textContent="Slide "+(p+1)+" of "+sq.length+(left>0?" · "+left+" build"+(left>1?"s":"")+" left":"");$("cNow").textContent=title(s);
+ var nx=p<sq.length-1?all[sq[p+1]]:null;$("cNext").innerHTML=left>0?"Next: <b>next build on this slide</b>":nx?"Next slide: <b>"+title(nx)+"</b>":"<b>End of deck</b>";
+ $("cNotes").textContent=NOTES[s.id]||"No notes for this slide."}
+setInterval(function(){var d=new Date();$("cClock").textContent=pad(d.getHours())+":"+pad(d.getMinutes());var e=Math.floor((Date.now()-t0)/1000);$("cEl").textContent=pad(Math.floor(e/60))+":"+pad(e%60)},1000);
+$("cElReset").onclick=function(){t0=Date.now()};$("cPrev").onclick=prev;$("cNextB").onclick=next;$("cBlank").onclick=blank;$("cExit").onclick=function(){presenter(false)};
+$("cOpen").onclick=function(){var w=null;try{w=window.open(location.href.split("#")[0]+"#"+all[i].id,"mvp-audience")}catch(e){}if(!w)alertish()};
+function alertish(){$("sync").textContent="Pop-up blocked: open this page in a second window yourself."}
+/* start */
+var h=(location.hash||"").slice(1),start=all.findIndex(function(s){return s.id===h});if(start<0)start=0;if(all[start].hasAttribute("data-hidden"))showHidden=true;
+if(/[?&]presenter\b/.test(location.search))app.classList.add("presenter");
+fit();go(start,0,0,true);poke();
+addEventListener("hashchange",function(){var id=(location.hash||"").slice(1),k=all.findIndex(function(s){return s.id===id});if(k<0||k===i)return;if(all[k].hasAttribute("data-hidden"))showHidden=true;go(k,0,k>i?1:-1)});
+})();
+</script>
+<div class="mvpdock" id="mvpdock"><button type="button" class="mvpdock-btn" aria-expanded="false" aria-controls="mvpdockMenu"><i aria-hidden="true"></i>MENU<kbd>M</kbd></button><nav class="mvpdock-menu" id="mvpdockMenu" aria-label="All pages" hidden><b>Everyone</b><a href="index.html" style="--d:#22D3EE" target="mvp-site"><em>Hub</em><small>Start page · QR · every link</small></a><a href="slides.html" style="--d:#38BDF8" aria-current="page"><em>Slides</em><small>The deck, at your own pace</small></a><a href="kit.html" style="--d:#A78BFA" target="mvp-site"><em>Kit</em><small>Plan, concepts, prompts, rubric</small></a><a href="studio.html" style="--d:#F472B6" target="mvp-site"><em>Studio</em><small>Groups build their MVP here</small></a><a href="index.html#sheets" style="--d:#A3E635" target="mvp-site"><em>Sheets</em><small>Printable PDFs</small></a><b>Facilitator</b><a href="slides.html?presenter" style="--d:#FBBF24" data-pres><em>Presenter console</em><small>Notes, clock, next slide</small></a><a href="studio.html#facilitator" style="--d:#FB7185" target="mvp-site"><em>Group gallery</em><small>Paste share codes for demos</small></a><a href="guide.html" style="--d:#E2E8F0" target="mvp-site"><em>Guide</em><small>How this site works</small></a><p>From the slides, other pages open in a second tab, so the deck keeps its place. Press M to open this menu.</p></nav></div>
+<script>
+(function(){var d=document.getElementById("mvpdock");if(!d)return;var b=d.querySelector(".mvpdock-btn"),m=d.querySelector(".mvpdock-menu");
+function set(o){m.hidden=!o;b.setAttribute("aria-expanded",o?"true":"false")}
+b.addEventListener("click",function(e){e.stopPropagation();set(m.hidden)});
+document.addEventListener("click",function(e){if(!d.contains(e.target))set(false)});
+document.addEventListener("keydown",function(e){if(e.key==="Escape"&&!m.hidden){set(false);b.focus()}});
+m.addEventListener("click",function(e){var a=e.target.closest("a");if(!a)return;if(a.hasAttribute("data-pres")){e.preventDefault();window.dispatchEvent(new Event("mvp:presenter"))}set(false)});
+window.mvpDock={el:d,toggle:function(){set(m.hidden);if(!m.hidden){var f=m.querySelector("a[aria-current]")||m.querySelector("a");if(f)f.focus()}},close:function(){set(false)}};
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,472 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MVP Sprint Run Guide</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="How the MVP Sprint site works for the facilitator and for participants: screens, paths, minute-by-minute roles, saving and quick fixes.">
+<link rel="stylesheet" href="assets/fonts.css">
+<style>
+/* Layout: a facilitator's control map: role-switchable site map, a drawn three-screen setup, a two-lane minute-by-minute timeline with a live/rehearse playhead, the participant path, then saving rules and quick fixes. Single dark look shared with the rest of the site. */
+:root{--bg:#060A17;--panel:rgba(17,24,44,.86);--panel2:#0A1022;--line:#25304F;--line2:#33406A;--fg:#EEF2FA;--muted:#AAB5CD;--dim:#7F8BA8;--ink:#0A0F1F;
+--cyan:#22D3EE;--sky:#38BDF8;--violet:#A78BFA;--pink:#F472B6;--rose:#FB7185;--amber:#FBBF24;--lime:#A3E635;--white:#E2E8F0;
+--display:'Space Grotesk','Segoe UI',system-ui,Arial,sans-serif;--mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;color-scheme:dark}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--display);font-size:16px;line-height:1.6;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--bg)}
+.veil{position:fixed;inset:0;z-index:0;pointer-events:none;background:linear-gradient(rgba(34,211,238,.04) 1px,transparent 1px) 0 0/48px 48px,linear-gradient(90deg,rgba(34,211,238,.04) 1px,transparent 1px) 0 0/48px 48px,radial-gradient(900px 600px at 95% -5%,rgba(251,191,36,.13),transparent 60%),radial-gradient(900px 600px at -10% 35%,rgba(139,92,246,.16),transparent 60%)}
+.gbar{height:4px;background:linear-gradient(90deg,var(--amber),var(--cyan) 40%,#8B5CF6 70%,var(--pink));position:relative;z-index:2}
+main,footer{position:relative;z-index:1}
+.wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+a{color:var(--cyan)}
+:focus-visible{outline:2px solid var(--cyan);outline-offset:3px;border-radius:6px}
+h1,h2,h3{margin:0;line-height:1.08;text-wrap:balance}
+p{margin:0}
+.eyebrow{font-family:var(--mono);font-size:12.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--amber)}
+section{padding-block:44px}
+section>.head{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.9fr);gap:12px 40px;align-items:end;margin-bottom:24px}
+section>.head h2{font-size:clamp(30px,4vw,48px);letter-spacing:-.02em;margin-top:8px}
+section>.head p{color:var(--muted);max-width:56ch}
+.hero{padding-block:48px 8px}
+.hero h1{font-size:clamp(44px,7vw,92px);letter-spacing:-.035em;margin:14px 0 16px}
+.hero h1 span{background:linear-gradient(90deg,var(--amber),var(--pink) 55%,var(--violet));-webkit-background-clip:text;background-clip:text;color:transparent}
+.lede{font-size:19px;color:var(--muted);max-width:62ch}
+.board{background:var(--panel);border:1px solid var(--line);border-radius:24px;padding:18px;margin-top:28px}
+.scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.scroll svg{display:block;width:100%;min-width:760px;height:auto}
+svg text{font-family:var(--display)}
+svg .mono{font-family:var(--mono)}
+/* role switch */
+.roles{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+.roles span{font-family:var(--mono);font-size:12px;color:var(--dim);margin-right:4px}
+.chipbtn{font:inherit;font-size:14px;font-weight:700;color:var(--fg);background:transparent;border:1px solid var(--line2);border-radius:999px;padding:8px 16px;cursor:pointer;min-height:40px}
+.chipbtn[aria-pressed="true"]{background:var(--fg);color:var(--ink);border-color:var(--fg)}
+.chipbtn.y[aria-pressed="true"]{background:var(--amber);border-color:var(--amber)}
+.chipbtn.p[aria-pressed="true"]{background:var(--pink);border-color:var(--pink)}
+#map [data-r]{transition:opacity .35s}
+#map[data-role="y"] [data-r="p"],#map[data-role="p"] [data-r="y"]{opacity:.1}
+.rolenote{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:14px}
+.rolenote div{border:1px solid var(--line);border-radius:16px;padding:14px 16px;background:var(--panel2);transition:opacity .35s,border-color .35s}
+.rolenote b{font-size:17px}.rolenote p{color:var(--muted);font-size:15px;margin-top:4px}
+.rolenote .y b{color:var(--amber)}.rolenote .p b{color:var(--pink)}
+[data-show="y"] .rolenote .p,[data-show="p"] .rolenote .y{opacity:.35}
+.menuhint{display:flex;gap:14px;align-items:center;margin-top:14px;padding:14px 16px;border-radius:16px;border:1px dashed var(--line2);color:var(--muted);font-size:15px}
+.fakebtn{flex:none;display:inline-flex;align-items:center;gap:9px;height:40px;padding:0 14px;border-radius:999px;border:1px solid var(--line2);background:#0A0F1F;color:var(--fg);font-family:var(--mono);font-weight:700;font-size:12px;letter-spacing:.06em}
+.fakebtn i{width:11px;height:11px;transform:rotate(45deg);background:linear-gradient(135deg,var(--cyan),var(--pink));border-radius:2px}
+/* setup steps */
+.steps3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:16px;counter-reset:s}
+.steps3 li{list-style:none;background:var(--panel2);border:1px solid var(--line);border-radius:16px;padding:16px 18px;counter-increment:s;display:flex;flex-direction:column;gap:6px}
+.steps3 li::before{content:counter(s);font-family:var(--mono);font-weight:700;font-size:13px;color:var(--ink);background:var(--amber);width:26px;height:26px;border-radius:50%;display:grid;place-items:center}
+.steps3 b{font-size:17px}.steps3 p{color:var(--muted);font-size:15px}
+.steps3{padding:0;margin-bottom:0}
+.warn{margin-top:12px;font-size:15px;color:var(--muted);border-left:3px solid var(--amber);padding:4px 0 4px 14px}
+kbd{font-family:var(--mono);font-size:12.5px;background:#141C33;border:1px solid var(--line2);border-radius:6px;padding:1px 7px;color:var(--fg)}
+/* timeline */
+.tlbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:14px}
+.tlbar .state{font-family:var(--mono);font-size:12.5px;color:var(--dim);margin-left:auto}
+.tl{display:grid;grid-template-columns:96px minmax(0,1fr) minmax(0,1fr);gap:0 14px}
+.tl .lane{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;padding:0 4px 10px}
+.tl .lane.y{color:var(--amber)}.tl .lane.p{color:var(--pink)}
+.row{display:contents}
+.row>*{transition:background .3s,border-color .3s,opacity .3s}
+.t{position:relative;padding:14px 0 14px 4px;border-top:1px solid var(--line)}
+.t b{display:block;font-family:var(--mono);font-size:15px;font-variant-numeric:tabular-nums}
+.t small{display:block;font-size:13px;color:var(--muted);line-height:1.3;margin-top:2px}
+.cell{margin:8px 0;padding:12px 14px;border-radius:14px;background:var(--panel2);border:1px solid var(--line);font-size:15px;line-height:1.5;display:flex;flex-direction:column;gap:8px;min-width:0}
+.cell .m{display:none;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.cell.empty{color:var(--dim);font-style:italic}
+.pages{display:flex;flex-wrap:wrap;gap:6px}
+.pg{font-family:var(--mono);font-size:11.5px;font-weight:600;padding:3px 9px;border-radius:999px;border:1px solid currentColor;line-height:1.4}
+.pg.hub{color:var(--cyan)}.pg.console{color:var(--amber)}.pg.slides{color:var(--sky)}.pg.kit{color:var(--violet)}.pg.studio{color:var(--pink)}.pg.gallery{color:var(--rose)}.pg.sheets{color:var(--lime)}.pg.ai{color:var(--white)}
+.row.on .t b{color:var(--amber)}
+.row.on .t::before{content:"";position:absolute;left:-14px;top:18px;width:8px;height:8px;border-radius:50%;background:var(--amber);box-shadow:0 0 0 6px rgba(251,191,36,.2);animation:ping 1.4s infinite}
+@keyframes ping{50%{box-shadow:0 0 0 11px rgba(251,191,36,0)}}
+.row.on .cell.y{border-color:var(--amber);background:rgba(251,191,36,.08)}
+.row.on .cell.p{border-color:var(--pink);background:rgba(244,114,182,.08)}
+.tl.focus .row:not(.on)>*{opacity:.45}
+/* journey */
+.save{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:16px}
+.save div{background:var(--panel2);border:1px solid var(--line);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:6px}
+.save i{width:30px;height:4px;border-radius:2px;background:var(--c)}
+.save b{font-size:17px}.save p{font-size:14.5px;color:var(--muted)}
+.foot{margin-top:12px;font-size:14px;color:var(--dim)}
+/* fixes */
+.fixes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.fix{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px 18px}
+.fix h3{font-size:18px;display:flex;gap:10px;align-items:baseline}
+.fix h3::before{content:"!";flex:none;font-family:var(--mono);font-size:12px;font-weight:700;color:var(--ink);background:var(--rose);width:20px;height:20px;border-radius:6px;display:grid;place-items:center;transform:translateY(-2px)}
+.fix p{color:var(--muted);font-size:15px;margin-top:6px}
+.keys{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;margin-top:16px}
+.keys div{display:flex;gap:10px;align-items:center;background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:14.5px;color:var(--muted)}
+.keys kbd{min-width:34px;text-align:center}
+.check{display:grid;gap:8px;margin-top:6px}
+.check label{display:flex;gap:12px;align-items:flex-start;background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:12px 14px;cursor:pointer;font-size:15.5px}
+.check input{width:20px;height:20px;accent-color:var(--amber);margin:2px 0 0;flex:none}
+.check label:has(input:checked){border-color:rgba(163,230,53,.6)}
+.check label:has(input:checked) span{color:var(--dim);text-decoration:line-through}
+footer{padding-block:24px 96px;color:var(--dim);font-size:14px;border-top:1px solid var(--line)}
+/* svg motion */
+.flow{stroke-dasharray:6 8;animation:flow 1.2s linear infinite}
+@keyframes flow{to{stroke-dashoffset:-28}}
+.blink{animation:blink 1.6s ease-in-out infinite}
+@keyframes blink{50%{opacity:.3}}
+.grow{transform-box:fill-box;transform-origin:left center;animation:grow 6s linear infinite}
+@keyframes grow{from{transform:scaleX(1)}to{transform:scaleX(.05)}}
+@media (max-width:900px){section>.head{grid-template-columns:1fr}.steps3,.fixes,.rolenote{grid-template-columns:1fr}.save{grid-template-columns:1fr 1fr}}
+@media (max-width:720px){
+ .tl{grid-template-columns:1fr}.tl .lane{display:none}
+ .t{padding:16px 0 4px}.t b,.t small{display:inline}.t small{margin-left:8px}
+ .cell{margin:6px 0}.cell .m{display:block}.cell.y .m{color:var(--amber)}.cell.p .m{color:var(--pink)}
+ .row.on .t::before{left:auto;right:4px}
+ .save{grid-template-columns:1fr}.menuhint{flex-direction:column;align-items:flex-start}
+}
+@media (prefers-reduced-motion:reduce){.flow,.blink,.grow,.row.on .t::before{animation:none}}
+
+.sitebar{position:relative;z-index:25;background:#04070F;border-bottom:1px solid #1C2542;font-family:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace}
+.sitebar .in{max-width:1180px;margin:0 auto;display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding-block:8px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.sitebar .home{font-weight:700;font-size:13px;letter-spacing:.06em;color:#EEF2FA;text-decoration:none;margin-right:10px}
+.sitebar .home i{display:inline-block;width:10px;height:10px;transform:rotate(45deg);background:linear-gradient(135deg,#22D3EE,#F472B6);margin-right:8px}
+.sitebar a.l{font-size:12.5px;color:#AAB5CD;text-decoration:none;padding:6px 11px;border-radius:999px;border:1px solid transparent}
+.sitebar a.l:hover{color:#EEF2FA;border-color:#33406A}
+.sitebar a.l.on{color:#0A0F1F;background:#22D3EE;font-weight:700}
+
+
+.mvpdock{position:fixed;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:60;display:flex;flex-direction:column-reverse;align-items:flex-end;gap:10px;transition:opacity .3s;font-family:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace}
+.mvpdock.hide{opacity:0;pointer-events:none}
+.mvpdock-btn{display:inline-flex;align-items:center;gap:10px;height:46px;padding:0 14px;border-radius:999px;border:1px solid #33406A;background:rgba(10,15,31,.92);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);color:#EEF2FA;font-family:inherit;font-weight:700;font-size:12.5px;letter-spacing:.06em;cursor:pointer;box-shadow:0 12px 40px rgba(0,0,0,.45)}
+.mvpdock-btn:hover,.mvpdock-btn[aria-expanded="true"]{border-color:#22D3EE}
+.mvpdock-btn:focus-visible{outline:2px solid #22D3EE;outline-offset:3px}
+.mvpdock-btn i{width:12px;height:12px;transform:rotate(45deg);background:linear-gradient(135deg,#22D3EE,#F472B6);border-radius:2px}
+.mvpdock-btn kbd{font-family:inherit;font-size:11px;font-weight:600;color:#8792AD;border:1px solid #33406A;border-radius:5px;padding:2px 6px}
+.mvpdock-menu{width:min(330px,calc(100vw - 32px));max-height:calc(100vh - 110px);overflow:auto;background:rgba(10,15,31,.97);border:1px solid #33406A;border-radius:18px;padding:8px;box-shadow:0 24px 70px rgba(0,0,0,.6);display:grid;gap:2px;animation:mvpd .18s ease-out}
+
+.mvpdock-menu[hidden]{display:none}
+@keyframes mvpd{from{opacity:0;transform:translateY(8px)}}
+.mvpdock-menu b{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:#7F8BA8;padding:8px 12px 4px;font-weight:600}
+.mvpdock-menu a{display:grid;grid-template-columns:10px minmax(0,1fr);column-gap:12px;align-items:center;padding:8px 12px;border-radius:12px;text-decoration:none;color:#EEF2FA}
+.mvpdock-menu a:hover,.mvpdock-menu a:focus-visible{background:#1B2442;outline:none}
+.mvpdock-menu a[aria-current]{background:#141C33;box-shadow:inset 0 0 0 1px #33406A}
+.mvpdock-menu a::before{content:"";grid-row:span 2;width:10px;height:10px;border-radius:50%;background:var(--d,#22D3EE)}
+.mvpdock-menu em{font-family:'Space Grotesk',system-ui,Arial,sans-serif;font-style:normal;font-weight:700;font-size:15px;line-height:1.25}
+.mvpdock-menu small{font-size:11px;color:#8792AD;line-height:1.35}
+.mvpdock-menu p{margin:4px 0 0;padding:8px 12px 4px;border-top:1px solid #25304F;font-size:10.5px;color:#7F8BA8;line-height:1.45}
+@media (prefers-reduced-motion:reduce){.mvpdock-menu{animation:none}.mvpdock{transition:none}}
+@media print{.mvpdock{display:none}}
+</style>
+</head>
+<body>
+<div class="veil" aria-hidden="true"></div>
+<div class="gbar" aria-hidden="true"></div>
+<div class="sitebar"><div class="in"><a class="home" href="index.html"><i></i>MVP SPRINT</a><a class="l" href="index.html">Hub</a><a class="l" href="slides.html">Slides</a><a class="l" href="kit.html">Kit</a><a class="l" href="studio.html">Studio</a><a class="l" href="index.html#sheets">Sheets</a><a class="l on" href="guide.html">Guide</a></div></div>
+<main>
+<header class="wrap hero">
+  <p class="eyebrow">Facilitator guide · AI-Powered Prototyping · Sat 31 Oct, 10.30–12.30</p>
+  <h1>One link, <span>two ways through it</span></h1>
+  <p class="lede">The whole session lives in one folder on your website. You drive the projector from a presenter console on your laptop. Participants open the same site on their own laptops and move at their own pace. Their screens are never linked to yours.</p>
+
+  <div class="board" id="mapBoard" data-show="b">
+    <div class="roles" role="group" aria-label="Show the pages each role uses">
+      <span>Show</span>
+      <button type="button" class="chipbtn" data-role="b" aria-pressed="true">Both</button>
+      <button type="button" class="chipbtn y" data-role="y" aria-pressed="false">You</button>
+      <button type="button" class="chipbtn p" data-role="p" aria-pressed="false">Participants</button>
+    </div>
+    <div class="scroll">
+    <svg id="map" data-role="b" viewBox="0 0 1000 470" role="img" aria-label="Site map: the hub links to Slides, Presenter console, Kit, Sheets, MVP Studio and Group gallery. The console keeps the slides in step. Studio sends share codes to the gallery.">
+      <defs>
+        <radialGradient id="hubg" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#22D3EE" stop-opacity=".35"/><stop offset="1" stop-color="#22D3EE" stop-opacity=".04"/></radialGradient>
+        <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#AAB5CD"/></marker>
+      </defs>
+      <!-- edges -->
+      <g stroke-width="2" fill="none">
+        <path data-r="b" d="M500 230 L500 86" stroke="#A3E635" stroke-opacity=".55"/>
+        <path data-r="b" d="M500 230 L265 120" stroke="#38BDF8" stroke-opacity=".55"/>
+        <path data-r="y" d="M500 230 L265 340" stroke="#FBBF24" stroke-opacity=".55"/>
+        <path data-r="b" d="M500 230 L500 374" stroke="#A78BFA" stroke-opacity=".55"/>
+        <path data-r="p" d="M500 230 L735 120" stroke="#F472B6" stroke-opacity=".55"/>
+        <path data-r="y" d="M500 230 L735 340" stroke="#FB7185" stroke-opacity=".55"/>
+        <path data-r="y" class="flow" d="M160 304 L160 156" stroke="#FBBF24" stroke-width="3"/>
+        <path data-r="b" class="flow" d="M840 156 L840 304" stroke="#F472B6" stroke-width="3" marker-end="url(#ar)"/>
+      </g>
+      <!-- packets -->
+      <g>
+        <circle data-r="b" r="5" fill="#A3E635"><animateMotion dur="2.6s" repeatCount="indefinite" path="M500 230 L500 86"/></circle>
+        <circle data-r="b" r="5" fill="#38BDF8"><animateMotion dur="3.1s" repeatCount="indefinite" path="M500 230 L265 120"/></circle>
+        <circle data-r="y" r="5" fill="#FBBF24"><animateMotion dur="2.8s" repeatCount="indefinite" path="M500 230 L265 340"/></circle>
+        <circle data-r="b" r="5" fill="#A78BFA"><animateMotion dur="3.4s" repeatCount="indefinite" path="M500 230 L500 374"/></circle>
+        <circle data-r="p" r="6" fill="#F472B6"><animateMotion dur="2.2s" repeatCount="indefinite" path="M500 230 L735 120"/></circle>
+        <circle data-r="y" r="5" fill="#FB7185"><animateMotion dur="3s" repeatCount="indefinite" path="M500 230 L735 340"/></circle>
+        <circle data-r="y" r="6" fill="#FEF3C7"><animateMotion dur="1.6s" repeatCount="indefinite" path="M160 304 L160 156"/></circle>
+      </g>
+      <g data-r="y"><rect x="62" y="214" width="196" height="32" rx="16" fill="#060A17" stroke="#FBBF24"/><text x="160" y="235" text-anchor="middle" font-size="13" fill="#FBBF24" class="mono">in step · same browser</text></g>
+      <g data-r="b"><rect x="760" y="214" width="160" height="32" rx="16" fill="#060A17" stroke="#F472B6"/><text x="840" y="235" text-anchor="middle" font-size="13" fill="#F472B6" class="mono">share code</text></g>
+      <!-- hub -->
+      <g data-r="b">
+        <circle cx="500" cy="230" r="96" fill="none" stroke="#22D3EE" stroke-opacity=".5" stroke-dasharray="4 10"><animateTransform attributeName="transform" type="rotate" from="0 500 230" to="360 500 230" dur="30s" repeatCount="indefinite"/></circle>
+        <circle cx="500" cy="230" r="76" fill="url(#hubg)" stroke="#22D3EE" stroke-width="2"/>
+        <rect x="489" y="180" width="22" height="22" rx="3" transform="rotate(45 500 191)" fill="#22D3EE"/>
+        <text x="500" y="240" text-anchor="middle" font-size="28" font-weight="700" fill="#EEF2FA">Hub</text>
+        <text x="500" y="262" text-anchor="middle" font-size="13" fill="#AAB5CD" class="mono">index.html · QR</text>
+      </g>
+      <!-- nodes -->
+      <g data-r="b"><rect x="395" y="14" width="210" height="72" rx="16" fill="#0A1022" stroke="#A3E635" stroke-width="2"/><text x="500" y="45" text-anchor="middle" font-size="20" font-weight="700" fill="#EEF2FA">Sheets</text><text x="500" y="68" text-anchor="middle" font-size="12.5" fill="#A3E635" class="mono">PDFs · print or offline</text></g>
+      <g data-r="b"><rect x="55" y="84" width="210" height="72" rx="16" fill="#0A1022" stroke="#38BDF8" stroke-width="2"/><text x="160" y="115" text-anchor="middle" font-size="20" font-weight="700" fill="#EEF2FA">Slides</text><text x="160" y="138" text-anchor="middle" font-size="12.5" fill="#38BDF8" class="mono">slides.html · projector</text></g>
+      <g data-r="y"><rect x="55" y="304" width="210" height="72" rx="16" fill="#0A1022" stroke="#FBBF24" stroke-width="2"/><text x="160" y="335" text-anchor="middle" font-size="20" font-weight="700" fill="#EEF2FA">Presenter console</text><text x="160" y="358" text-anchor="middle" font-size="12.5" fill="#FBBF24" class="mono">slides.html?presenter</text></g>
+      <g data-r="b"><rect x="395" y="374" width="210" height="72" rx="16" fill="#0A1022" stroke="#A78BFA" stroke-width="2"/><text x="500" y="405" text-anchor="middle" font-size="20" font-weight="700" fill="#EEF2FA">Workshop kit</text><text x="500" y="428" text-anchor="middle" font-size="12.5" fill="#A78BFA" class="mono">kit.html · plan, prompts</text></g>
+      <g data-r="p"><rect x="735" y="84" width="210" height="72" rx="16" fill="rgba(244,114,182,.14)" stroke="#F472B6" stroke-width="2.5"/><text x="840" y="115" text-anchor="middle" font-size="20" font-weight="700" fill="#EEF2FA">MVP Studio</text><text x="840" y="138" text-anchor="middle" font-size="12.5" fill="#F472B6" class="mono">studio.html · groups</text></g>
+      <g data-r="y"><rect x="735" y="304" width="210" height="72" rx="16" fill="#0A1022" stroke="#FB7185" stroke-width="2"/><text x="840" y="335" text-anchor="middle" font-size="20" font-weight="700" fill="#EEF2FA">Group gallery</text><text x="840" y="358" text-anchor="middle" font-size="12.5" fill="#FB7185" class="mono">studio.html#facilitator</text></g>
+    </svg>
+    </div>
+    <div class="rolenote">
+      <div class="y"><b>You</b><p>Open the hub, then the presenter console. The slides go on the projector, and the group gallery sits in a second tab. Use the kit and sheets for reference.</p></div>
+      <div class="p"><b>Participants</b><p>Scan the QR to reach the hub, then go to MVP Studio. They can open the slides and kit to look back, and use the sheets if the Wi-Fi drops.</p></div>
+    </div>
+    <div class="menuhint"><span class="fakebtn"><i aria-hidden="true"></i>MENU</span><span>Every page has this button in the bottom-right corner. It lists all pages, so the hub is always one click away. On the slides it shows when you move the mouse, or press <kbd>M</kbd>.</span></div>
+  </div>
+</header>
+
+<section class="wrap" id="setup" aria-labelledby="setupH">
+  <div class="head">
+    <div><p class="eyebrow">Your side</p><h2 id="setupH">Three windows on one laptop</h2></div>
+    <p>Both slide windows run in the same browser on your laptop. The projector window follows whatever you do in the console. Participants' laptops only load pages from your website.</p>
+  </div>
+  <div class="board">
+    <div class="scroll">
+    <svg viewBox="0 0 1000 470" role="img" aria-label="Your laptop shows the presenter console with a second tab for the gallery. A link labelled same browser keeps the projector window in step. Participant laptops run MVP Studio and have no live link to your windows.">
+      <!-- laptop -->
+      <rect x="40" y="56" width="400" height="262" rx="14" fill="#0A1022" stroke="#33406A" stroke-width="2"/>
+      <path d="M14 326 H466 L446 350 H34 Z" fill="#1B2442" stroke="#33406A"/>
+      <!-- console window -->
+      <g>
+        <rect x="58" y="76" width="262" height="224" rx="10" fill="#0F172C" stroke="#FBBF24" stroke-width="2"/>
+        <rect x="58" y="76" width="262" height="24" rx="10" fill="#1B2442"/>
+        <circle cx="74" cy="88" r="4" fill="#F472B6"/><circle cx="88" cy="88" r="4" fill="#FBBF24"/><circle cx="102" cy="88" r="4" fill="#A3E635"/>
+        <text x="116" y="92" font-size="11" fill="#AAB5CD" class="mono">Presenter console</text>
+        <text x="74" y="136" font-size="30" font-weight="700" fill="#EEF2FA" class="mono">11:12</text>
+        <text x="206" y="134" font-size="11" fill="#AAB5CD" class="mono">elapsed 42:10</text>
+        <text x="74" y="160" font-size="13" font-weight="700" fill="#EEF2FA">Sprint 1 · build v1</text>
+        <rect x="74" y="172" width="230" height="7" rx="3" fill="#33406A"/><rect x="74" y="186" width="200" height="7" rx="3" fill="#33406A"/><rect x="74" y="200" width="214" height="7" rx="3" fill="#33406A"/>
+        <text x="74" y="228" font-size="11" fill="#AAB5CD" class="mono">Next: Swap · peer test</text>
+        <rect x="74" y="246" width="150" height="38" rx="10" fill="#22D3EE"/><text x="149" y="270" text-anchor="middle" font-size="14" font-weight="700" fill="#0A0F1F">Next →</text>
+        <rect x="232" y="246" width="72" height="38" rx="10" fill="none" stroke="#33406A"/><text x="268" y="270" text-anchor="middle" font-size="12" fill="#EEF2FA">Black</text>
+      </g>
+      <!-- second tab -->
+      <g>
+        <rect x="334" y="76" width="92" height="104" rx="10" fill="#0F172C" stroke="#FB7185" stroke-width="2"/>
+        <text x="380" y="100" text-anchor="middle" font-size="11" fill="#FB7185" class="mono">2nd tab</text>
+        <text x="380" y="122" text-anchor="middle" font-size="13" font-weight="700" fill="#EEF2FA">Group</text>
+        <text x="380" y="139" text-anchor="middle" font-size="13" font-weight="700" fill="#EEF2FA">gallery</text>
+        <rect x="350" y="150" width="26" height="18" rx="4" fill="#FB7185" fill-opacity=".5"/><rect x="384" y="150" width="26" height="18" rx="4" fill="#FB7185" fill-opacity=".3" class="blink"/>
+        <rect x="334" y="192" width="92" height="108" rx="10" fill="#0F172C" stroke="#22D3EE" stroke-dasharray="4 4"/>
+        <text x="380" y="236" text-anchor="middle" font-size="12" fill="#22D3EE" class="mono">Hub · Kit</text>
+        <text x="380" y="254" text-anchor="middle" font-size="11" fill="#AAB5CD">same 2nd tab</text>
+      </g>
+      <text x="240" y="380" text-anchor="middle" font-size="16" font-weight="700" fill="#EEF2FA">Your laptop</text>
+      <text x="240" y="401" text-anchor="middle" font-size="12.5" fill="#FBBF24" class="mono">console · press P</text>
+      <!-- link -->
+      <path d="M440 170 C 480 60, 520 60, 560 120" fill="none" stroke="#FBBF24" stroke-width="3" class="flow"/>
+      <circle r="6" fill="#FEF3C7"><animateMotion dur="1.8s" repeatCount="indefinite" path="M440 170 C 480 60, 520 60, 560 120"/></circle>
+      <rect x="370" y="20" width="160" height="30" rx="15" fill="#060A17" stroke="#FBBF24"/><text x="450" y="40" text-anchor="middle" font-size="12.5" fill="#FBBF24" class="mono">same browser</text>
+      <!-- projector -->
+      <g>
+        <rect x="560" y="60" width="400" height="228" rx="8" fill="#0A1022" stroke="#38BDF8" stroke-width="2.5"/>
+        <rect x="574" y="74" width="372" height="200" rx="4" fill="#04070F"/>
+        <text x="596" y="110" font-size="14" fill="#A78BFA" class="mono">SPRINT 1 · BUILD</text>
+        <text x="596" y="176" font-size="58" font-weight="700" fill="#EEF2FA" class="mono">37:57</text>
+        <rect x="596" y="200" width="320" height="10" rx="5" fill="#1B2442"/><rect x="596" y="200" width="320" height="10" rx="5" fill="#8B5CF6" class="grow"/>
+        <rect x="596" y="226" width="90" height="30" rx="8" fill="none" stroke="#22D3EE"/><rect x="696" y="226" width="90" height="30" rx="8" fill="none" stroke="#F472B6"/><rect x="796" y="226" width="120" height="30" rx="8" fill="#F472B6" fill-opacity=".2" stroke="#F472B6" class="blink"/>
+        <path d="M760 288 V306 M720 306 H800" stroke="#33406A" stroke-width="3"/>
+      </g>
+      <text x="760" y="330" text-anchor="middle" font-size="16" font-weight="700" fill="#EEF2FA">Projector</text>
+      <text x="760" y="351" text-anchor="middle" font-size="12.5" fill="#38BDF8" class="mono">slides window · press F</text>
+      <!-- participants -->
+      <g>
+        <g transform="translate(560 384)"><rect width="110" height="58" rx="6" fill="#0A1022" stroke="#F472B6"/><rect x="10" y="12" width="60" height="6" rx="3" fill="#F472B6"/><rect x="10" y="26" width="86" height="6" rx="3" fill="#33406A"/><rect x="10" y="40" width="40" height="6" rx="3" fill="#33406A" class="blink"/><path d="M-6 64 H116" stroke="#33406A" stroke-width="4"/></g>
+        <g transform="translate(705 384)"><rect width="110" height="58" rx="6" fill="#0A1022" stroke="#F472B6"/><rect x="10" y="12" width="44" height="6" rx="3" fill="#F472B6"/><rect x="10" y="26" width="76" height="6" rx="3" fill="#33406A" class="blink"/><rect x="10" y="40" width="66" height="6" rx="3" fill="#33406A"/><path d="M-6 64 H116" stroke="#33406A" stroke-width="4"/></g>
+        <g transform="translate(850 384)"><rect width="110" height="58" rx="6" fill="#0A1022" stroke="#F472B6"/><rect x="10" y="12" width="70" height="6" rx="3" fill="#F472B6"/><rect x="10" y="26" width="50" height="6" rx="3" fill="#33406A"/><rect x="10" y="40" width="80" height="6" rx="3" fill="#33406A" class="blink"/><path d="M-6 64 H116" stroke="#33406A" stroke-width="4"/></g>
+        <text x="760" y="372" text-anchor="middle" font-size="12.5" fill="#F472B6" class="mono">participants · MVP Studio · own pace</text>
+      </g>
+      <!-- no link -->
+      <path d="M300 420 H545" stroke="#7F8BA8" stroke-width="2" stroke-dasharray="3 7" fill="none"/>
+      <circle cx="420" cy="420" r="13" fill="#060A17" stroke="#FB7185" stroke-width="2"/><path d="M414 414 L426 426 M426 414 L414 426" stroke="#FB7185" stroke-width="2.5"/>
+      <text x="420" y="452" text-anchor="middle" font-size="12.5" fill="#AAB5CD" class="mono">no live link to your screens</text>
+    </svg>
+    </div>
+    <ol class="steps3">
+      <li><b>Open the console</b><p>On the venue laptop, open your hub link, then <b>Presenter console</b>. Or open the slides and press <kbd>P</kbd>.</p></li>
+      <li><b>Send slides to the projector</b><p>Click <b>Open audience window</b> in the console, drag that window to the projector display and press <kbd>F</kbd>.</p></li>
+      <li><b>Keep the gallery ready</b><p>In the console, under "Open in a second tab", click <b>Group gallery</b>. Hub, Kit and Studio open in that same tab.</p></li>
+    </ol>
+    <p class="warn">Open everything from your website address, in one browser (for example Chrome only). The projector won't follow the console if the page was opened as a file from your disk or in a different browser.</p>
+  </div>
+</section>
+
+<section class="wrap" id="timeline" aria-labelledby="tlH">
+  <div class="head">
+    <div><p class="eyebrow">Minute by minute</p><h2 id="tlH">Who opens what, and when</h2></div>
+    <p>Your lane and theirs, side by side. Press Rehearse to step through the session. On the day, the current row lights up by the clock.</p>
+  </div>
+  <div class="board">
+    <div class="tlbar">
+      <button type="button" class="chipbtn y" id="tlPlay" aria-pressed="false">▶ Rehearse</button>
+      <button type="button" class="chipbtn" id="tlPrev" aria-label="Previous row">←</button>
+      <button type="button" class="chipbtn" id="tlNext" aria-label="Next row">→</button>
+      <span class="state" id="tlState" aria-live="polite">Showing every row</span>
+    </div>
+    <div class="tl" id="tl">
+      <div></div><div class="lane y">You · your laptop</div><div class="lane p">Participants · their laptops</div>
+    </div>
+  </div>
+</section>
+
+<section class="wrap" id="path" aria-labelledby="pathH">
+  <div class="head">
+    <div><p class="eyebrow" style="color:var(--pink)">Their side</p><h2 id="pathH">The participant path in MVP Studio</h2></div>
+    <p>Six steps in Studio. Building happens in Google AI Studio in another tab. Groups go back and forth between Iterate and the preview. Their share code is the only thing that reaches you.</p>
+  </div>
+  <div class="board">
+    <div class="scroll">
+    <svg viewBox="0 0 1100 340" role="img" aria-label="Participant path: scan the QR, then Join, Thinking Canvas, Build prompt, Iterate, Peer test, Reflect and submit. Build prompt and Iterate loop through Google AI Studio. The share code from Reflect and submit goes to your group gallery.">
+      <defs><marker id="ar2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#E2E8F0"/></marker></defs>
+      <path d="M70 190 H1030" stroke="#33406A" stroke-width="4"/>
+      <path d="M70 190 H1030" stroke="#F472B6" stroke-width="4" class="flow"/>
+      <!-- AI loop -->
+      <rect x="560" y="22" width="200" height="56" rx="28" fill="#E2E8F0"/>
+      <text x="660" y="47" text-anchor="middle" font-size="16" font-weight="700" fill="#0A0F1F">Google AI Studio</text>
+      <text x="660" y="66" text-anchor="middle" font-size="11.5" fill="#33406A" class="mono">build · preview · wait</text>
+      <path d="M560 160 C 560 110, 570 90, 590 80" fill="none" stroke="#E2E8F0" stroke-width="2" marker-end="url(#ar2)"/>
+      <text x="520" y="120" text-anchor="end" font-size="12.5" fill="#E2E8F0" class="mono">paste prompt</text>
+      <path d="M730 80 C 740 95, 720 140, 720 158" fill="none" stroke="#E2E8F0" stroke-width="2" marker-end="url(#ar2)"/>
+      <path d="M700 158 C 690 130, 680 110, 670 82" fill="none" stroke="#E2E8F0" stroke-width="2" stroke-dasharray="4 5" marker-end="url(#ar2)"/>
+      <text x="752" y="120" font-size="12.5" fill="#E2E8F0" class="mono">one change per prompt ⟲</text>
+      <circle r="5" fill="#FDE7F3"><animateMotion dur="4s" repeatCount="indefinite" path="M720 158 C 720 140, 740 95, 730 80 L 670 82 C 680 110, 690 130, 700 158 Z"/></circle>
+      <!-- gallery -->
+      <path d="M1030 222 V268" stroke="#FB7185" stroke-width="2.5" stroke-dasharray="5 6" class="flow" marker-end="url(#ar2)"/>
+      <rect x="900" y="272" width="190" height="50" rx="25" fill="#060A17" stroke="#FB7185" stroke-width="2"/>
+      <text x="995" y="295" text-anchor="middle" font-size="14.5" font-weight="700" fill="#EEF2FA">Your group gallery</text>
+      <text x="995" y="313" text-anchor="middle" font-size="11" fill="#FB7185" class="mono">paste share codes</text>
+      <text x="890" y="302" text-anchor="end" font-size="12.5" fill="#FB7185" class="mono">share code · 12.08</text>
+      <circle r="8" fill="#FDE7F3"><animateMotion dur="9s" repeatCount="indefinite" path="M70 190 H1030"/></circle>
+      <!-- steps -->
+      <g font-size="15" font-weight="700" text-anchor="middle">
+        <g><circle cx="70" cy="190" r="30" fill="#060A17" stroke="#22D3EE" stroke-width="2.5"/><rect x="58" y="178" width="10" height="10" fill="#22D3EE"/><rect x="72" y="178" width="10" height="10" fill="#22D3EE"/><rect x="58" y="192" width="10" height="10" fill="#22D3EE"/><rect x="74" y="194" width="6" height="6" fill="#22D3EE"/><text x="70" y="246" fill="#EEF2FA">Scan QR</text><text x="70" y="266" font-size="12" font-weight="400" fill="#AAB5CD" class="mono">10.54</text></g>
+        <g><circle cx="230" cy="190" r="30" fill="#060A17" stroke="#F472B6" stroke-width="2.5"/><text x="230" y="197" fill="#F472B6" font-size="20">1</text><text x="230" y="246" fill="#EEF2FA">Join</text><text x="230" y="266" font-size="12" font-weight="400" fill="#AAB5CD" class="mono">group · area</text></g>
+        <g><circle cx="390" cy="190" r="30" fill="#060A17" stroke="#F472B6" stroke-width="2.5"/><text x="390" y="197" fill="#F472B6" font-size="20">2</text><text x="390" y="246" fill="#EEF2FA">Thinking Canvas</text><text x="390" y="266" font-size="12" font-weight="400" fill="#AAB5CD" class="mono">10.55 · 12 min</text></g>
+        <g><circle cx="550" cy="190" r="30" fill="#060A17" stroke="#F472B6" stroke-width="2.5"/><text x="550" y="197" fill="#F472B6" font-size="20">3</text><text x="550" y="246" fill="#EEF2FA">Build prompt</text><text x="550" y="266" font-size="12" font-weight="400" fill="#AAB5CD" class="mono">copy · 11.06</text></g>
+        <g><circle cx="710" cy="190" r="30" fill="rgba(244,114,182,.25)" stroke="#F472B6" stroke-width="2.5"/><text x="710" y="197" fill="#EEF2FA" font-size="20">4</text><text x="710" y="246" fill="#EEF2FA">Iterate</text><text x="710" y="266" font-size="12" font-weight="400" fill="#AAB5CD" class="mono">11.12 – 12.06</text></g>
+        <g><circle cx="870" cy="190" r="30" fill="#060A17" stroke="#F472B6" stroke-width="2.5"/><text x="870" y="197" fill="#F472B6" font-size="20">5</text><text x="870" y="246" fill="#EEF2FA">Peer test</text><text x="870" y="266" font-size="12" font-weight="400" fill="#AAB5CD" class="mono">11.50</text></g>
+        <g><circle cx="1030" cy="190" r="30" fill="#060A17" stroke="#F472B6" stroke-width="2.5"/><text x="1030" y="197" fill="#F472B6" font-size="20">6</text><text x="1030" y="160" fill="#EEF2FA" font-size="13">Reflect &amp; submit</text></g>
+      </g>
+    </svg>
+    </div>
+    <div class="save">
+      <div style="--c:var(--pink)"><i></i><b>Studio work</b><p>Saved in each group's own browser. It stays as long as they keep the same laptop and browser and don't use a private window.</p></div>
+      <div style="--c:var(--rose)"><i></i><b>Share code</b><p>A short text summary of the group's work. Pasting it into the gallery rebuilds their card. Ask for it again if a group changes laptop.</p></div>
+      <div style="--c:var(--amber)"><i></i><b>Your gallery</b><p>Saved in your browser only. If you switch laptops, paste the codes again.</p></div>
+      <div style="--c:var(--sky)"><i></i><b>Slide position</b><p>Shared only between your console and projector windows. Participants browse their own copy of the slides.</p></div>
+    </div>
+    <p class="foot">Nothing is sent to a server. The site is plain files, so it also works on a slow connection once a page has loaded. Only Google AI Studio needs the internet.</p>
+  </div>
+</section>
+
+<section class="wrap" id="fixes" aria-labelledby="fxH">
+  <div class="head">
+    <div><p class="eyebrow" style="color:var(--rose)">On the day</p><h2 id="fxH">If something goes wrong</h2></div>
+    <p>The usual problems and the fastest way out of each one.</p>
+  </div>
+  <div class="fixes">
+    <div class="fix"><h3>The projector stops following the console</h3><p>Check that both windows are in the same browser and were opened from your web address. As a backup, click the projector window and use <kbd>←</kbd> <kbd>→</kbd> there.</p></div>
+    <div class="fix"><h3>The QR opens the wrong address</h3><p>The QR is drawn from the address in the browser bar. Open the slides and the hub from your published link, not from a file on your disk.</p></div>
+    <div class="fix"><h3>A group lost its work</h3><p>They probably changed laptop or browser, or used a private window. Paste their last share code into the gallery to recover the summary. The printed canvas is the fallback.</p></div>
+    <div class="fix"><h3>The menu or toolbar shows on the projector</h3><p>Move the mouse off the projector screen. Both hide after about three seconds. Press <kbd>B</kbd> to black out the screen at any time.</p></div>
+    <div class="fix"><h3>A timer needs a restart</h3><p>A timer starts the first time its slide appears. Reload the projector window on that slide and it reopens there with the timer at full time.</p></div>
+    <div class="fix"><h3>The Wi-Fi drops</h3><p>Studio, slides and kit keep working once loaded. Switch groups to the printed canvas and prompt cards. The hidden Plan B slide appears when you press <kbd>H</kbd>.</p></div>
+  </div>
+  <div class="keys" aria-label="Keys on the slides">
+    <div><kbd>→</kbd>Next build or slide</div><div><kbd>←</kbd>Back</div><div><kbd>P</kbd>Presenter console</div><div><kbd>F</kbd>Full screen</div>
+    <div><kbd>B</kbd>Black screen</div><div><kbd>O</kbd>All slides</div><div><kbd>N</kbd>Speaker notes</div><div><kbd>H</kbd>Hidden slides</div><div><kbd>M</kbd>Menu of all pages</div>
+  </div>
+</section>
+
+<section class="wrap" id="ready" aria-labelledby="rdH">
+  <div class="head">
+    <div><p class="eyebrow" style="color:var(--lime)">The day before</p><h2 id="rdH">Ready check</h2></div>
+    <p>Five checks on the laptop you will use at Tasik Chini. Ticks are saved in this browser. The full prep list is in the kit.</p>
+  </div>
+  <div class="check" id="readyList">
+    <label><input type="checkbox" id="rc1"><span>The <b>mvp-studio</b> folder is on your website and the hub opens from its link.</span></label>
+    <label><input type="checkbox" id="rc2"><span>Console and projector windows stay in step on the venue laptop and projector.</span></label>
+    <label><input type="checkbox" id="rc3"><span>The QR on the hub and on the Studio slide opens your site from a phone.</span></label>
+    <label><input type="checkbox" id="rc4"><span>You built the demo once in Google AI Studio with the demo prompt and the account you will use.</span></label>
+    <label><input type="checkbox" id="rc5"><span>The A3 canvas and A4 sheets are printed, one set per group, plus the hint and mentor cards.</span></label>
+  </div>
+</section>
+</main>
+<footer class="wrap">
+  <p>AI-Powered Prototyping · FTSM Technopreneurship Bootcamp 2026 · Ts. Dr. Mohd Nor Akmal Khalid, CAIT, FTSM, UKM</p>
+</footer>
+<script>
+(function(){
+"use strict";
+/* role switch on the site map */
+var board=document.getElementById("mapBoard"),map=document.getElementById("map");
+[].slice.call(board.querySelectorAll("[data-role]")).forEach(function(b){if(b.tagName!=="BUTTON")return;b.addEventListener("click",function(){var r=b.getAttribute("data-role");map.setAttribute("data-role",r);board.setAttribute("data-show",r);[].slice.call(board.querySelectorAll("button[data-role]")).forEach(function(x){x.setAttribute("aria-pressed",x===b?"true":"false")})})});
+
+/* timeline */
+var P={hub:"Hub",console:"Console",slides:"Slides",kit:"Kit",studio:"Studio",gallery:"Gallery",sheets:"Sheets",ai:"Google AI Studio"};
+var R=[
+ ["Before","Set up",-1,"Upload the mvp-studio folder. On the venue laptop, open the hub and then the presenter console. Tick the prep list in the kit and print the sheets.",["hub","console","kit","sheets"],"Bring a charged laptop and a Google account for Google AI Studio.",[]],
+ ["10.30","Open + live demo",630,"Show the cover, then the demo slide. Paste the demo prompt into Google AI Studio, press Build and let it run in the background.",["console","ai"],"",[]],
+ ["10.33","Four thinking lenses",633,"Drive the concept slides from the console. Each animation plays when its slide appears. Go back to the demo build at the reveal, 10.37.",["console"],"Watch the projector, or follow along in their own copy of the slides.",["slides"]],
+ ["10.54","Join",654,"Show the MVP Studio QR slide. The QR always points to your own site.",["console"],"Scan the QR, open MVP Studio and fill in Join: group number, startup name and problem area (or a quick-start idea).",["hub","studio"]],
+ ["10.55","Thinking Canvas · 12 min",655,"Show the canvas slide; its 12:00 timer starts by itself. Walk the room with the hint cards.",["console","sheets"],"Fill the canvas with the dropdowns. If stuck, open hints at level 3, then 2, then 1.",["studio"]],
+ ["11.06","Prompt and loop",666,"Show the bridge, prompt and loop slides, then roles, time budget and tools.",["console"],"Build prompt step: run the checks, then Copy prompt.",["studio"]],
+ ["11.12","Sprint 1 · 38 min",672,"Show the Sprint 1 slide (38:00). Call the checkpoints: v1 at 11.15, preview at 11.20, rotate roles at 11.32, freeze at 11.45.",["console"],"Paste the prompt into Google AI Studio and wait for the build. Then make one change per prompt using Iterate.",["studio","ai"]],
+ ["11.50","Peer test · 6 min",710,"Show the swap slide with its 2:00 timer. Pair the groups.",["console"],"Test another group's app in the Peer test step and note what the tester did.",["studio"]],
+ ["11.56","Sprint 2 · 14 min",716,"Show the Sprint 2 slide (14:00). Call WOW by 11.59, freeze at 12.06, share codes by 12.08.",["console"],"Make the last fixes, then Reflect & submit, Copy share code and send it to you.",["studio","ai"]],
+ ["12.08","Collect share codes",728,"In the Group gallery tab, paste the share codes. One card appears per group.",["gallery"],"Send the share code in the session chat. Keep the app preview open for the demo.",["studio"]],
+ ["12.10","Demos · 1 min each",730,"Show the demos slide; its 1:00 timer runs per group. Bring up a group's card from the gallery when needed.",["console","gallery"],"Present using the 20-second demo script on their card.",["studio","ai"]],
+ ["12.22","Close",742,"Guardrails, real MVPs, reflect, wrap and thanks.",["console"],"Export our work (.md) before closing the browser.",["studio"]]
+];
+var tl=document.getElementById("tl");
+function chips(a){return a.length?'<div class="pages">'+a.map(function(k){return '<span class="pg '+k+'">'+P[k]+'</span>'}).join("")+'</div>':""}
+function esc(t){return t.replace(/&/g,"&amp;").replace(/</g,"&lt;")}
+tl.insertAdjacentHTML("beforeend",R.map(function(r,i){
+ return '<div class="row" data-i="'+i+'"><div class="t"><b>'+r[0]+'</b><small>'+esc(r[1])+'</small></div>'+
+  '<div class="cell y"><span class="m">You</span><span>'+esc(r[3])+'</span>'+chips(r[4])+'</div>'+
+  '<div class="cell p'+(r[5]?'':' empty')+'"><span class="m">Participants</span><span>'+(r[5]?esc(r[5]):'Watching the projector.')+'</span>'+chips(r[6])+'</div></div>'}).join(""));
+var rows=[].slice.call(tl.querySelectorAll(".row")),cur=-1,timer=null,live=false,st=document.getElementById("tlState"),play=document.getElementById("tlPlay");
+function show(i,why){cur=i;rows.forEach(function(r,k){r.classList.toggle("on",k===i)});tl.classList.toggle("focus",i>=0);
+ st.textContent=i<0?"Showing every row":(why||"Row "+(i+1)+" of "+R.length)+" · "+R[i][0]+" "+R[i][1];
+ if(i>=0&&why!=="live"){var el=rows[i].querySelector(".t"),r=el.getBoundingClientRect();if(r.top<80||r.bottom>innerHeight-80)el.scrollIntoView({block:"center",behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"})}}
+function stop(){clearInterval(timer);timer=null;play.setAttribute("aria-pressed","false");play.textContent="▶ Rehearse"}
+play.addEventListener("click",function(){if(timer){stop();return}live=false;play.setAttribute("aria-pressed","true");play.textContent="❚❚ Pause";if(cur>=R.length-1||cur<0)show(0,"Rehearsing");timer=setInterval(function(){if(cur>=R.length-1){stop();return}show(cur+1,"Rehearsing")},2600)});
+document.getElementById("tlNext").addEventListener("click",function(){stop();live=false;show(Math.min(R.length-1,cur+1))});
+document.getElementById("tlPrev").addEventListener("click",function(){stop();live=false;show(Math.max(0,cur-1))});
+rows.forEach(function(r,k){r.addEventListener("click",function(){stop();live=false;show(cur===k?-1:k)})});
+/* live on the session day (31 Oct 2026, Malaysia time) */
+function tick(){if(timer)return;var d=new Date(),my=new Date(d.getTime()+(d.getTimezoneOffset()+480)*60000);
+ if(my.getFullYear()===2026&&my.getMonth()===9&&my.getDate()===31){var m=my.getHours()*60+my.getMinutes(),k=-1;R.forEach(function(r,i){if(r[2]>=0&&m>=r[2])k=i});if(m<630)k=0;if(m<=760){live=true;if(k!==cur)show(k,"live");st.textContent="Live · "+R[k][0]+" "+R[k][1]}}}
+tick();setInterval(tick,30000);
+
+/* ready check */
+[].slice.call(document.querySelectorAll("#readyList input")).forEach(function(c){try{c.checked=localStorage.getItem("mvpguide:"+c.id)==="1"}catch(e){}c.addEventListener("change",function(){try{localStorage.setItem("mvpguide:"+c.id,c.checked?"1":"0")}catch(e){}})});
+})();
+</script>
+
+<div class="mvpdock" id="mvpdock"><button type="button" class="mvpdock-btn" aria-expanded="false" aria-controls="mvpdockMenu"><i aria-hidden="true"></i>MENU</button><nav class="mvpdock-menu" id="mvpdockMenu" aria-label="All pages" hidden><b>Everyone</b><a href="index.html" style="--d:#22D3EE"><em>Hub</em><small>Start page · QR · every link</small></a><a href="slides.html" style="--d:#38BDF8"><em>Slides</em><small>The deck, at your own pace</small></a><a href="kit.html" style="--d:#A78BFA"><em>Kit</em><small>Plan, concepts, prompts, rubric</small></a><a href="studio.html" style="--d:#F472B6"><em>Studio</em><small>Groups build their MVP here</small></a><a href="index.html#sheets" style="--d:#A3E635"><em>Sheets</em><small>Printable PDFs</small></a><b>Facilitator</b><a href="slides.html?presenter" style="--d:#FBBF24"><em>Presenter console</em><small>Notes, clock, next slide</small></a><a href="studio.html#facilitator" style="--d:#FB7185"><em>Group gallery</em><small>Paste share codes for demos</small></a><a href="guide.html" style="--d:#E2E8F0" aria-current="page"><em>Guide</em><small>How this site works</small></a></nav></div>
+<script>
+(function(){var d=document.getElementById("mvpdock");if(!d)return;var b=d.querySelector(".mvpdock-btn"),m=d.querySelector(".mvpdock-menu");
+function set(o){m.hidden=!o;b.setAttribute("aria-expanded",o?"true":"false")}
+b.addEventListener("click",function(e){e.stopPropagation();set(m.hidden)});
+document.addEventListener("click",function(e){if(!d.contains(e.target))set(false)});
+document.addEventListener("keydown",function(e){if(e.key==="Escape"&&!m.hidden){set(false);b.focus()}});
+m.addEventListener("click",function(e){var a=e.target.closest("a");if(!a)return;if(a.hasAttribute("data-pres")){e.preventDefault();window.dispatchEvent(new Event("mvp:presenter"))}set(false)});
+window.mvpDock={el:d,toggle:function(){set(m.hidden);if(!m.hidden){var f=m.querySelector("a[aria-current]")||m.querySelector("a");if(f)f.focus()}},close:function(){set(false)}};
+})();
+</script>
+</body>
+</html>

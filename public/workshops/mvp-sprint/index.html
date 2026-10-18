@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AI-Powered Prototyping · MVP Sprint</title>
+<meta name="description" content="Slides, workshop kit, MVP Studio and printable sheets for the AI-Powered Prototyping session, FTSM Technopreneurship Bootcamp 2026.">
+<link rel="stylesheet" href="assets/fonts.css">
+<style>
+/* Layout: launcher hub over the live circuit backdrop: thesis + QR, four doors (Studio first for participants), today's arc, sheets. */
+:root{--bg:#060A17;--panel:rgba(17,24,44,.84);--line:#25304F;--line2:#33406A;--fg:#EEF2FA;--muted:#AAB5CD;--dim:#7F8BA8;--cyan:#22D3EE;--violet:#A78BFA;--pink:#F472B6;--amber:#FBBF24;--lime:#A3E635;--ink:#0A0F1F;
+--display:'Space Grotesk','Segoe UI',system-ui,Arial,sans-serif;--mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--display);font-size:16px;line-height:1.6;overflow-x:hidden}
+#bg{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.veil{position:fixed;inset:0;z-index:0;pointer-events:none;background:linear-gradient(rgba(34,211,238,.045) 1px,transparent 1px) 0 0/48px 48px,linear-gradient(90deg,rgba(34,211,238,.045) 1px,transparent 1px) 0 0/48px 48px,radial-gradient(1000px 640px at 90% -10%,rgba(139,92,246,.24),transparent 60%),radial-gradient(800px 600px at -10% 40%,rgba(34,211,238,.13),transparent 60%)}
+.gbar{height:4px;background:linear-gradient(90deg,var(--cyan),#8B5CF6,var(--pink));position:relative;z-index:2}
+.wrap{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+a{color:var(--cyan)}
+:focus-visible{outline:2px solid var(--cyan);outline-offset:3px;border-radius:8px}
+h1,h2,h3{margin:0;line-height:1.08;text-wrap:balance}
+p{margin:0}
+.eyebrow{font-family:var(--mono);font-size:12.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--cyan)}
+.hero{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:40px;align-items:center;padding-block:48px 36px}
+.logos{display:inline-flex;gap:16px;align-items:center;background:#F7F8FC;border-radius:14px;padding:10px 16px;margin-bottom:22px}
+.logos img{height:40px;width:auto;display:block}
+h1{font-size:clamp(46px,7.4vw,96px);letter-spacing:-.03em;margin:14px 0 16px}
+h1 span{background:linear-gradient(90deg,var(--cyan),var(--violet) 50%,var(--pink));-webkit-background-clip:text;background-clip:text;color:transparent}
+.lede{font-size:19px;color:var(--muted);max-width:54ch}
+.qrcard{background:#F7F8FC;color:var(--ink);border-radius:22px;padding:18px;display:flex;flex-direction:column;align-items:center;gap:10px;box-shadow:0 30px 80px rgba(139,92,246,.30)}
+.qrcard .qr{width:100%;aspect-ratio:1}.qrcard .qr svg{width:100%;height:100%;display:block}
+.qrcard b{font-size:18px}.qrcard small{font-family:var(--mono);font-size:11.5px;color:#4A5568;text-align:center;overflow-wrap:anywhere}
+.doors{display:grid;grid-template-columns:1.25fr 1fr 1fr;grid-template-rows:auto auto;gap:16px;padding-bottom:28px}
+.door{position:relative;display:flex;flex-direction:column;gap:10px;text-decoration:none;color:var(--fg);background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:24px;min-height:200px;overflow:hidden;transition:transform .2s,border-color .2s}
+.door:hover{transform:translateY(-3px);border-color:var(--c,var(--cyan));color:var(--fg)}
+.door h2{font-size:32px}
+.door p{color:var(--muted);font-size:15.5px}
+.door .go{margin-top:auto;font-family:var(--mono);font-size:13px;color:var(--c,var(--cyan))}
+.door .who{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--c,var(--cyan))}
+.door.studio{grid-row:span 2;--c:var(--pink);background:linear-gradient(160deg,rgba(244,114,182,.22),rgba(139,92,246,.16) 45%,var(--panel) 80%)}
+.door.studio h2{font-size:clamp(38px,4.4vw,54px)}
+.door.slides{--c:var(--cyan)}.door.kit{--c:var(--violet)}.door.pres{--c:var(--amber)}.door.sheets{--c:var(--lime)}
+.mini{height:84px;border-radius:12px;background:#0A1022;border:1px solid var(--line);position:relative;overflow:hidden}
+.mini svg{position:absolute;inset:0;width:100%;height:100%}
+.flow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;padding-block:8px 36px}
+.seg{border-radius:16px;padding:16px 18px;background:var(--panel);border:1px solid var(--line)}
+.seg b{font-size:26px;display:block}.seg span{font-family:var(--mono);font-size:13px;color:var(--muted)}
+.seg i{display:block;height:6px;border-radius:3px;margin-bottom:12px}
+.sheets{padding-block:12px 64px}
+.sheets h2{font-size:clamp(28px,3.4vw,40px);margin:8px 0 6px}
+.sheets>p{color:var(--muted);margin-bottom:18px}
+.dl{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.dl a{display:flex;flex-direction:column;gap:2px;text-decoration:none;color:var(--fg);background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px;min-height:44px}
+.dl a:hover{border-color:var(--lime);color:var(--fg)}
+.dl small{font-family:var(--mono);font-size:12px;color:var(--dim)}
+.dl a.all{background:linear-gradient(135deg,rgba(163,230,53,.16),rgba(34,211,238,.12));border-color:var(--line2)}
+.guide{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:6px 22px;text-decoration:none;color:var(--fg);background:linear-gradient(100deg,rgba(251,191,36,.14),rgba(34,211,238,.08) 60%,var(--panel));border:1px solid var(--line2);border-radius:18px;padding:18px 22px}
+.guide:hover{border-color:var(--amber);color:var(--fg)}
+.guide .who{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--amber)}
+.guide b{font-size:22px}.guide .sub{grid-column:2;color:var(--muted);font-size:15px}.guide .go{grid-row:1/span 2;grid-column:3;font-family:var(--mono);font-size:13px;color:var(--amber)}
+@media (max-width:700px){.guide{grid-template-columns:1fr}.guide .sub,.guide .go{grid-column:auto;grid-row:auto}}
+footer{padding-block:20px 48px;color:var(--dim);font-size:14px;border-top:1px solid var(--line)}
+.note{font-size:14px;color:var(--dim)}
+@media (max-width:900px){.hero{grid-template-columns:1fr}.qrcard{max-width:280px}.doors{grid-template-columns:1fr 1fr}.door.studio{grid-row:auto;grid-column:1/-1}}
+@media (max-width:600px){.doors,.flow,.dl{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){.door{transition:none}}
+
+.sitebar{position:relative;z-index:25;background:#04070F;border-bottom:1px solid #1C2542;font-family:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace}
+.sitebar .in{max-width:1180px;margin:0 auto;display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding-block:8px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.sitebar .home{font-weight:700;font-size:13px;letter-spacing:.06em;color:#EEF2FA;text-decoration:none;margin-right:10px}
+.sitebar .home i{display:inline-block;width:10px;height:10px;transform:rotate(45deg);background:linear-gradient(135deg,#22D3EE,#F472B6);margin-right:8px}
+.sitebar a.l{font-size:12.5px;color:#AAB5CD;text-decoration:none;padding:6px 11px;border-radius:999px;border:1px solid transparent}
+.sitebar a.l:hover{color:#EEF2FA;border-color:#33406A}
+.sitebar a.l.on{color:#0A0F1F;background:#22D3EE;font-weight:700}
+
+
+.mvpdock{position:fixed;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:60;display:flex;flex-direction:column-reverse;align-items:flex-end;gap:10px;transition:opacity .3s;font-family:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace}
+.mvpdock.hide{opacity:0;pointer-events:none}
+.mvpdock-btn{display:inline-flex;align-items:center;gap:10px;height:46px;padding:0 14px;border-radius:999px;border:1px solid #33406A;background:rgba(10,15,31,.92);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);color:#EEF2FA;font-family:inherit;font-weight:700;font-size:12.5px;letter-spacing:.06em;cursor:pointer;box-shadow:0 12px 40px rgba(0,0,0,.45)}
+.mvpdock-btn:hover,.mvpdock-btn[aria-expanded="true"]{border-color:#22D3EE}
+.mvpdock-btn:focus-visible{outline:2px solid #22D3EE;outline-offset:3px}
+.mvpdock-btn i{width:12px;height:12px;transform:rotate(45deg);background:linear-gradient(135deg,#22D3EE,#F472B6);border-radius:2px}
+.mvpdock-btn kbd{font-family:inherit;font-size:11px;font-weight:600;color:#8792AD;border:1px solid #33406A;border-radius:5px;padding:2px 6px}
+.mvpdock-menu{width:min(330px,calc(100vw - 32px));max-height:calc(100vh - 110px);overflow:auto;background:rgba(10,15,31,.97);border:1px solid #33406A;border-radius:18px;padding:8px;box-shadow:0 24px 70px rgba(0,0,0,.6);display:grid;gap:2px;animation:mvpd .18s ease-out}
+
+.mvpdock-menu[hidden]{display:none}
+@keyframes mvpd{from{opacity:0;transform:translateY(8px)}}
+.mvpdock-menu b{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:#7F8BA8;padding:8px 12px 4px;font-weight:600}
+.mvpdock-menu a{display:grid;grid-template-columns:10px minmax(0,1fr);column-gap:12px;align-items:center;padding:8px 12px;border-radius:12px;text-decoration:none;color:#EEF2FA}
+.mvpdock-menu a:hover,.mvpdock-menu a:focus-visible{background:#1B2442;outline:none}
+.mvpdock-menu a[aria-current]{background:#141C33;box-shadow:inset 0 0 0 1px #33406A}
+.mvpdock-menu a::before{content:"";grid-row:span 2;width:10px;height:10px;border-radius:50%;background:var(--d,#22D3EE)}
+.mvpdock-menu em{font-family:'Space Grotesk',system-ui,Arial,sans-serif;font-style:normal;font-weight:700;font-size:15px;line-height:1.25}
+.mvpdock-menu small{font-size:11px;color:#8792AD;line-height:1.35}
+.mvpdock-menu p{margin:4px 0 0;padding:8px 12px 4px;border-top:1px solid #25304F;font-size:10.5px;color:#7F8BA8;line-height:1.45}
+@media (prefers-reduced-motion:reduce){.mvpdock-menu{animation:none}.mvpdock{transition:none}}
+@media print{.mvpdock{display:none}}
+</style>
+</head>
+<body>
+<canvas id="bg" aria-hidden="true"></canvas><div class="veil" aria-hidden="true"></div>
+<div class="gbar" aria-hidden="true"></div>
+<div class="sitebar"><div class="in"><a class="home" href="index.html"><i></i>MVP SPRINT</a><a class="l on" href="index.html">Hub</a><a class="l" href="slides.html">Slides</a><a class="l" href="kit.html">Kit</a><a class="l" href="studio.html">Studio</a><a class="l" href="index.html#sheets">Sheets</a><a class="l" href="guide.html">Guide</a></div></div>
+<main>
+<header class="wrap hero">
+  <div>
+    <div class="logos"><img src="assets/ukm.png" alt="Universiti Kebangsaan Malaysia"><img src="assets/ftsm.png" alt="Fakulti Teknologi dan Sains Maklumat (FTSM)"></div>
+    <p class="eyebrow">FTSM Technopreneurship Bootcamp 2026 · Day 2 · Build</p>
+    <h1>AI-Powered <span>Prototyping</span></h1>
+    <p class="lede">One link for the whole session. Groups work in MVP Studio; the slides, kit and printable sheets are all here too. Sat 31 Oct 2026, 10.30–12.30, Tasik Chini.</p>
+  </div>
+  <div class="qrcard"><div class="qr" id="qr" role="img" aria-label="QR code for this page"></div><b>Scan to join</b><small id="here"></small></div>
+</header>
+
+<section class="wrap doors" aria-label="Open">
+  <a class="door studio" href="studio.html">
+    <span class="who">For groups · start here</span>
+    <h2>MVP Studio</h2>
+    <p>Pick a problem area or a quick-start idea, fill the Thinking Canvas with hints when you need them, and get a ready-to-paste build prompt. Then iterate, run the peer test, reflect and send your share code.</p>
+    <div class="mini" aria-hidden="true"><svg viewBox="0 0 400 84"><rect x="12" y="14" width="88" height="56" rx="10" fill="none" stroke="#22D3EE" stroke-width="2"/><rect x="112" y="14" width="88" height="56" rx="10" fill="none" stroke="#A78BFA" stroke-width="2"/><rect x="212" y="14" width="88" height="56" rx="10" fill="#F472B6" fill-opacity=".25" stroke="#F472B6" stroke-width="2"/><rect x="312" y="14" width="76" height="56" rx="10" fill="none" stroke="#FBBF24" stroke-width="2"/><circle r="6" fill="#FDE7F3"><animateMotion dur="5s" repeatCount="indefinite" path="M56 42 H156 H256 H350"/></circle></svg></div>
+    <span class="go">Open MVP Studio →</span>
+  </a>
+  <a class="door slides" href="slides.html">
+    <span class="who">Follow along</span><h2>Slides</h2>
+    <p>The animated deck. Browse at your own pace; the facilitator presents the same slides.</p>
+    <span class="go">Open slides →</span>
+  </a>
+  <a class="door kit" href="kit.html">
+    <span class="who">Concepts &amp; plan</span><h2>Workshop kit</h2>
+    <p>Run sheet, the four thinking lenses as live visuals, prompt builder, rubric and prep list.</p>
+    <span class="go">Open the kit →</span>
+  </a>
+  <a class="door pres" href="slides.html?presenter">
+    <span class="who">Facilitator</span><h2>Presenter console</h2>
+    <p>Notes, next slide and clock. Open the slides on the projector too; the two windows stay in step.</p>
+    <span class="go">Open console →</span>
+  </a>
+  <a class="door sheets" href="#sheets">
+    <span class="who">Print or offline</span><h2>Sheets</h2>
+    <p>Canvas, idea and option banks, prompt cards, peer-test sheet, hint and mentor cards.</p>
+    <span class="go">See the PDFs ↓</span>
+  </a>
+</section>
+
+<section class="wrap flow" aria-label="Today's arc">
+  <div class="seg"><i style="background:var(--cyan)"></i><b>Think · 42 min</b><span>10.30 – 11.12 · demo, 4 lenses, canvas</span></div>
+  <div class="seg"><i style="background:#8B5CF6"></i><b>Build · 58 min</b><span>11.12 – 12.10 · 2 sprints + peer test</span></div>
+  <div class="seg"><i style="background:var(--pink)"></i><b>Show · 20 min</b><span>12.10 – 12.30 · demos, reflect</span></div>
+</section>
+
+<section class="wrap" aria-label="Facilitator guide" style="padding-bottom:40px">
+  <a class="guide" href="guide.html"><span class="who">Facilitator</span><b>How this site works</b><span class="sub">Your screens, the participants' path and who opens what, minute by minute.</span><span class="go">Open the guide →</span></a>
+</section>
+
+<section class="wrap sheets" id="sheets" aria-labelledby="shH">
+  <p class="eyebrow" style="color:var(--lime)">Printable sheets</p>
+  <h2 id="shH">Same steps on paper</h2>
+  <p>Print the Thinking Canvas on A3 landscape and the rest on A4. Use them if the Wi-Fi drops.</p>
+  <div class="dl"><a class="all" href="sheets/00-all-sheets.pdf" download><b>All sheets</b><small>one PDF · A3 + A4 · PDF</small></a><a class="" href="sheets/01-thinking-canvas-A3.pdf" download><b>Thinking Canvas</b><small>A3 landscape · PDF</small></a><a class="" href="sheets/02-idea-bank.pdf" download><b>Idea bank</b><small>A4 · PDF</small></a><a class="" href="sheets/03-option-bank.pdf" download><b>Option bank</b><small>A4 · PDF</small></a><a class="" href="sheets/04-hint-cards.pdf" download><b>Hint cards</b><small>A4 · mentors · PDF</small></a><a class="" href="sheets/05-prompt-card-A.pdf" download><b>Prompt Card A</b><small>A4 · PDF</small></a><a class="" href="sheets/06-prompt-card-B.pdf" download><b>Prompt Card B</b><small>A4 · PDF</small></a><a class="" href="sheets/07-peer-test-sheet.pdf" download><b>Peer-test sheet</b><small>A4 · PDF</small></a><a class="" href="sheets/08-mentor-card.pdf" download><b>Mentor card</b><small>A4 · mentors · PDF</small></a></div>
+</section>
+</main>
+<footer class="wrap">
+  <p>Ts. Dr. Mohd Nor Akmal Khalid · CAIT, FTSM, Universiti Kebangsaan Malaysia · akmal@ukm.edu.my</p>
+  <p class="note" style="margin-top:6px">Work in MVP Studio is saved only in each group's own browser. Nothing is sent to a server.</p>
+</footer>
+<script src="assets/qrcode.js"></script>
+<script>
+(function(){
+var url=location.href.split("#")[0].split("?")[0];
+document.getElementById("here").textContent=url.replace(/^https?:\/\//,"");
+try{var q=qrcode(0,"M");q.addData(url);q.make();document.getElementById("qr").innerHTML=q.createSvgTag({cellSize:6,margin:1,scalable:true})}catch(e){}
+var RM=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches,c=document.getElementById("bg"),x=c.getContext&&c.getContext("2d");if(!x)return;
+var W,H,N=[],d=Math.min(2,devicePixelRatio||1),cols=["34,211,238","167,139,250","244,114,182"],run=true;
+function size(){W=c.width=innerWidth*d;H=c.height=innerHeight*d;N=[];var n=Math.round(Math.min(64,innerWidth*innerHeight/26000));for(var i=0;i<n;i++)N.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.25*d,vy:(Math.random()-.5)*.25*d,c:cols[i%3]})}
+function draw(){x.clearRect(0,0,W,H);var L=150*d;for(var i=0;i<N.length;i++){var a=N[i];if(!RM){a.x+=a.vx;a.y+=a.vy;if(a.x<0||a.x>W)a.vx*=-1;if(a.y<0||a.y>H)a.vy*=-1}for(var j=i+1;j<N.length;j++){var b=N[j],dx=a.x-b.x,dy=a.y-b.y,q=Math.sqrt(dx*dx+dy*dy);if(q<L){x.strokeStyle="rgba("+a.c+","+(.16*(1-q/L))+")";x.lineWidth=d;x.beginPath();x.moveTo(a.x,a.y);x.lineTo(a.x,b.y);x.lineTo(b.x,b.y);x.stroke()}}x.fillStyle="rgba("+a.c+",.55)";x.fillRect(a.x-1.5*d,a.y-1.5*d,3*d,3*d)}if(run&&!RM)requestAnimationFrame(draw)}
+size();addEventListener("resize",function(){size();if(RM)draw()});document.addEventListener("visibilitychange",function(){var w=run;run=!document.hidden;if(run&&!w)draw()});draw();
+})();
+</script>
+<div class="mvpdock" id="mvpdock"><button type="button" class="mvpdock-btn" aria-expanded="false" aria-controls="mvpdockMenu"><i aria-hidden="true"></i>MENU</button><nav class="mvpdock-menu" id="mvpdockMenu" aria-label="All pages" hidden><b>Everyone</b><a href="index.html" style="--d:#22D3EE" aria-current="page"><em>Hub</em><small>Start page · QR · every link</small></a><a href="slides.html" style="--d:#38BDF8"><em>Slides</em><small>The deck, at your own pace</small></a><a href="kit.html" style="--d:#A78BFA"><em>Kit</em><small>Plan, concepts, prompts, rubric</small></a><a href="studio.html" style="--d:#F472B6"><em>Studio</em><small>Groups build their MVP here</small></a><a href="index.html#sheets" style="--d:#A3E635"><em>Sheets</em><small>Printable PDFs</small></a><b>Facilitator</b><a href="slides.html?presenter" style="--d:#FBBF24"><em>Presenter console</em><small>Notes, clock, next slide</small></a><a href="studio.html#facilitator" style="--d:#FB7185"><em>Group gallery</em><small>Paste share codes for demos</small></a><a href="guide.html" style="--d:#E2E8F0"><em>Guide</em><small>How this site works</small></a></nav></div>
+<script>
+(function(){var d=document.getElementById("mvpdock");if(!d)return;var b=d.querySelector(".mvpdock-btn"),m=d.querySelector(".mvpdock-menu");
+function set(o){m.hidden=!o;b.setAttribute("aria-expanded",o?"true":"false")}
+b.addEventListener("click",function(e){e.stopPropagation();set(m.hidden)});
+document.addEventListener("click",function(e){if(!d.contains(e.target))set(false)});
+document.addEventListener("keydown",function(e){if(e.key==="Escape"&&!m.hidden){set(false);b.focus()}});
+m.addEventListener("click",function(e){var a=e.target.closest("a");if(!a)return;if(a.hasAttribute("data-pres")){e.preventDefault();window.dispatchEvent(new Event("mvp:presenter"))}set(false)});
+window.mvpDock={el:d,toggle:function(){set(m.hidden);if(!m.hidden){var f=m.querySelector("a[aria-current]")||m.querySelector("a");if(f)f.focus()}},close:function(){set(false)}};
+})();
+</script>
+</body>
+</html>
