@@ -1007,13 +1007,15 @@ function flow(lines, boxes, ops) {
   }
   return { used: placed + over, cap, over };
 }
+/* Box height needed for n lines (inverse of capacity). */
+function heightFor(n) { return n <= 0 ? 0 : (n - 1) * LH + 2 + ASC + DESC + 0.6; }
 function boxGeom(b) { return () => ({ x: b.x0 + PAD, w: b.x1 - b.x0 - 2 * PAD }); }
 
 /* Table rows: each row as tall as its tallest cell. */
 function table(rows, spec, ops) {
   let y = spec.top + 2;
   const avail = spec.bottom - spec.top - 2;
-  let used = 0, over = false, drawn = 0;
+  let used = 0, over = false, drawn = 0, needPt = 0;
   const keys = spec.keys;
   rows.forEach((row, ri) => {
     const cells = keys.map((k, ci) => {
@@ -1025,6 +1027,7 @@ function table(rows, spec, ops) {
     });
     const n = Math.max(1, ...cells.map(c => c.length));
     const h = n * LH;
+    needPt += h + spec.gap;
     if (y + h - (LH - ASC - DESC) > spec.bottom + 0.5) { over = true; used += h + spec.gap; return; }
     cells.forEach(lines => lines.forEach((ln, i) => { for (const r of ln.runs) ops.push({ p: spec.p, x: r.x, y: y + ASC + i * LH, t: r.t, f: r.f }); }));
     if (spec.status) spec.status(row, y, ops);
@@ -1034,7 +1037,7 @@ function table(rows, spec, ops) {
     if (spec.rule && ri < rows.length - 1 && y < spec.bottom - 4) { ops.push({ p: spec.p, rule: [spec.rx[0], y - spec.gap / 2 - 0.5, spec.rx[1]] }); }
   });
   const capL = Math.floor(avail / LH);
-  return { used: Math.ceil(used / LH), cap: capL, over: over ? 1 : 0 };
+  return { used: Math.ceil(used / LH), cap: capL, over: over ? 1 : 0, needPt: rows.length ? needPt + 2 - spec.gap + 0.4 : 0 };
 }
 
 /* Single-line value after a printed label. */
@@ -1066,8 +1069,93 @@ function money(n, cur) {
 }
 function amountNum(s) { const v = parseFloat(String(s || "").replace(/[^\d.]/g, "")); return isFinite(v) ? v : 0; }
 
+/* ---------- auto-fit: lend empty space between boxes on the same page ----------
+   Each flexible box or table body may grow or shrink; the blank strips between
+   them (headings, instructions, rules) are copied 1:1, so every heading stays on
+   its own page, the form stays 8 pages and the text stays 10 pt. */
+const FLEX = [
+  ["education", 1, "t"], ["degrees", 1, "t"], ["experience", 1, "b"], ["awards", 1, "b"], ["grants", 1, "t"],
+  ["necessity", 3, "b"], ["collab", 3, "t"], ["concept.0", 3, "b"],
+  ["concept.1", 4, "b"], ["keywords", 4, "b"],
+  ["method", 5, "b"], ["results", 5, "b"]
+].map(([key, p, kind]) => {
+  const [id, idx] = key.split(".");
+  const g = kind === "t" ? TABLE[id] : BOX[id][+(idx || 0)];
+  return { key, id, idx: +(idx || 0), p, kind, top: g.top, bottom: g.bottom, h: g.bottom - g.top };
+});
+const FLEX_PAGES = [1, 3, 4, 5];
+const MIN_BOX = heightFor(2) + 0.5, MIN_TABLE = LH + 4;
+
+/* Geometry for a given set of heights (null = the printed form as-is). */
+function makeGeo(alloc) {
+  const segs = {}, changed = new Set();
+  for (const p of FLEX_PAGES) {
+    const items = FLEX.filter(f => f.p === p).sort((a, b) => a.top - b.top);
+    let y = 0, d = 0; const list = [];
+    for (const f of items) {
+      const H = alloc && alloc[f.key] != null ? alloc[f.key] : f.h;
+      if (Math.abs(H - f.h) > 0.01) changed.add(p);
+      const s0 = f.top + 1, s1 = f.bottom - 1;     // keep the ruled edges unscaled
+      if (s0 > y) list.push([y, s0, s0 - y]);
+      list.push([s0, s1, (s1 - s0) + (H - f.h)]);
+      y = s1;
+    }
+    list.push([y, PAGE_H, PAGE_H - y]);
+    segs[p] = list;
+  }
+  const map = (p, yy) => {
+    const list = segs[p]; if (!list) return yy;
+    let dy = 0;
+    for (const [a, b, h] of list) { if (yy <= b + 1e-6) return dy + (yy - a) * (h / (b - a)); dy += h; }
+    return yy;
+  };
+  const BX = {}, TB = {};
+  for (const [k, arr] of Object.entries(BOX)) BX[k] = arr.map(b => ({ ...b, top: map(b.p, b.top), bottom: map(b.p, b.bottom) }));
+  for (const [k, t] of Object.entries(TABLE)) TB[k] = { ...t, top: map(t.p, t.top), bottom: map(t.p, t.bottom) };
+  return { BOX: BX, TABLE: TB, map, segs, changed, alloc: alloc || null };
+}
+const GEO0 = makeGeo(null);
+
+/* Share one page's spare height: boxes that overflow borrow from boxes with room. */
+function allot(items) {
+  const out = {};
+  let D = 0, Sl = 0;
+  for (const it of items) {
+    it.def = Math.max(0, it.need - it.h);
+    it.slack = it.def ? 0 : Math.max(0, it.h - Math.max(it.need, it.min));
+    D += it.def; Sl += it.slack;
+  }
+  const take = Math.min(D, Sl);
+  for (const it of items) out[it.key] = it.h + (D ? it.def * take / D : 0) - (Sl ? it.slack * take / Sl : 0);
+  return out;
+}
+function autoAlloc(L0) {
+  const f = L0.fit, alloc = {};
+  const item = (key, need) => { const F = FLEX.find(x => x.key === key); return { key, h: F.h, need, min: F.kind === "t" ? Math.min(F.h, Math.max(MIN_TABLE, need)) : Math.min(F.h, MIN_BOX) }; };
+  const nb = id => heightFor(f[id].used);
+  Object.assign(alloc, allot([item("education", f.education.needPt), item("degrees", f.degrees.needPt), item("experience", nb("experience")), item("awards", nb("awards")), item("grants", f.grants.needPt)]));
+  Object.assign(alloc, allot([item("method", nb("method")), item("results", nb("results"))]));
+  // concept runs from page 4 onto page 5: try page 5 first, then page 4
+  const n = f.concept.used, cap0 = capacity(BOX.concept[0]);
+  Object.assign(alloc, allot([item("concept.1", n > cap0 ? heightFor(n - cap0) : 0), item("keywords", nb("keywords"))]));
+  const cap1 = capacity({ top: 0, bottom: alloc["concept.1"] });
+  const rest = Math.max(0, n - cap0 - cap1);
+  Object.assign(alloc, allot([item("necessity", nb("necessity")), item("collab", f.collab.needPt), item("concept.0", n >= cap0 ? heightFor(cap0 + rest) : heightFor(n))]));
+  return FLEX.some(F => Math.abs(alloc[F.key] - F.h) > 0.01) ? alloc : null;
+}
+
 /* Everything that goes onto the form, plus fit figures for every box. */
 function computeLayout(S) {
+  const L0 = layoutWith(S, GEO0);
+  if (S.settings && S.settings.autofit === false) return L0;
+  const alloc = autoAlloc(L0);
+  if (!alloc) return L0;
+  const L = layoutWith(S, makeGeo(alloc));
+  for (const [k, v] of Object.entries(L.fit)) if (L0.fit[k] && v.cap !== L0.fit[k].cap) v.adj = v.cap - L0.fit[k].cap;
+  return L;
+}
+function layoutWith(S, G) {
+  const BOX = G.BOX, TABLE = G.TABLE;
   MISSING.clear();
   const ops = [];
   const fit = {};
@@ -1092,7 +1180,7 @@ function computeLayout(S) {
     if (!v) continue;
     const [a, b] = LANG.cols[sk];
     const w = wid(v, "R");
-    ops.push({ p: 1, x: (a + b) / 2 - w / 2, y: LANG.rows[lg], t: v, f: "R" });
+    ops.push({ p: 1, x: (a + b) / 2 - w / 2, y: G.map(1, LANG.rows[lg]), t: v, f: "R" });
   }
   // page 2 — grants by third parties (status drawn as a vector mark)
   {
@@ -1142,7 +1230,7 @@ function computeLayout(S) {
   fit.budget = table(brows, TABLE.budget, ops);
   const total = S.budget.reduce((s, r) => s + amountNum(r.amount), 0);
   if (total > 0) { const t = fmtAmt(total, cur); const w = wid(t, "B"); ops.push({ p: 7, x: TOTAL_CELL.x1 - 5 - w, y: TOTAL_CELL.base, t, f: "B" }); }
-  return { ops, fit, total, missing: [...MISSING] };
+  return { ops, fit, total, missing: [...MISSING], geo: G };
 }
 function fmtAmt(n, cur) { return cur === "USD" ? n.toLocaleString("en-US", { maximumFractionDigits: 0 }) : Math.round(n).toLocaleString("en-US"); }
 function oneLineFits(t, w) { return wid(t, "R") > w ? 1 : 0; }
@@ -1158,6 +1246,7 @@ async function buildPDF(S, opts = {}) {
   const F = {};
   for (const k of ["R", "B", "I", "BI"]) F[k] = await doc.embedFont(fontBytes[k], { subset: true });
   if (needJP) F.JP = await doc.embedFont(fontBytes.JP, { subset: false });   // fontkit subsetting garbles this CJK font; embed whole
+  for (const p of [...L.geo.changed].sort((a, b) => a - b)) await restackPage(doc, p, L.geo.segs[p]);
   const pages = doc.getPages();
   const black = PDFLib.rgb(0, 0, 0);
   for (const o of L.ops) {
@@ -1184,8 +1273,329 @@ async function buildPDF(S, opts = {}) {
   const bytes = await doc.save();
   return { bytes, layout: L };
 }
+/* Rebuild one form page from horizontal slices of the original, each slice
+   drawn at its new height (blank box interiors stretch or shrink; everything
+   printed between them is copied at full size). */
+async function restackPage(doc, p, segs) {
+  const src = doc.getPage(p);
+  const { width: W, height: H } = src.getSize();
+  const page = doc.insertPage(p, [W, H]);
+  let y = 0;
+  for (const [t, b, h] of segs) {
+    if (h <= 0.01 || b - t <= 0.01) { y += Math.max(0, h); continue; }
+    const emb = await doc.embedPage(src, { left: 0, right: W, top: H - t, bottom: H - b });
+    page.drawPage(emb, { x: 0, y: H - (y + h), xScale: 1, yScale: h / (b - t) });
+    y += h;
+  }
+  doc.removePage(p + 1);
+}
 let formBytesCache = null;
 async function getFormBytes() { if (!formBytesCache) formBytesCache = await fetchBytes("form-fy2026.pdf"); return formBytesCache.slice(0); }
+/* =====================================================================
+   Word (.docx) export — an editable copy of the same 8 pages.
+   Built in the browser: WordprocessingML + a small ZIP writer.
+   Box and table heights follow the same auto-fit layout as the PDF.
+   The PDF stays the exact submission file; Word may reflow slightly.
+   ===================================================================== */
+const DX = {
+  W: 11906, H: 16838,                   // A4 in twips
+  ML: 964, MR: 864, MT: 1440, MB: 900, HD: 560, FT: 480,
+  get TW() { return this.W - this.ML - this.MR; }
+};
+const tw = pt => Math.max(0, Math.round(pt * 20));
+function xesc(s) { return String(s == null ? "" : s).replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;"); }
+
+/* runs: [{t, b, i, u}] -> <w:r>… */
+function wRun(t, o = {}) {
+  if (!t) return "";
+  const rp = `${o.b ? "<w:b/>" : ""}${o.i ? "<w:i/>" : ""}${o.u ? '<w:u w:val="single"/>' : ""}${o.sz ? `<w:sz w:val="${o.sz}"/><w:szCs w:val="${o.sz}"/>` : ""}`;
+  return t.split("\t").map((part, k) => (k ? "<w:r><w:tab/></w:r>" : "") + (part ? `<w:r>${rp ? `<w:rPr>${rp}</w:rPr>` : ""}<w:t xml:space="preserve">${xesc(part)}</w:t></w:r>` : "")).join("");
+}
+function inlineRuns(s, base = {}) { return parseInline(s).map(seg => wRun(seg.t, { ...base, b: base.b || seg.st === "B" || seg.st === "BI", i: base.i || seg.st === "I" || seg.st === "BI" })).join(""); }
+function wPara(inner, o = {}) {
+  const pp = `${o.style ? `<w:pStyle w:val="${o.style}"/>` : ""}${o.keep ? "<w:keepNext/>" : ""}${o.brk ? "<w:pageBreakBefore/>" : ""}${o.tabs || ""}${o.after != null ? `<w:spacing w:before="${o.before || 0}" w:after="${o.after}"/>` : ""}${o.ind || ""}${o.jc ? `<w:jc w:val="${o.jc}"/>` : ""}`;
+  return `<w:p>${pp ? `<w:pPr>${pp}</w:pPr>` : ""}${inner || ""}</w:p>`;
+}
+/* Free text (kit markup: **bold**, *italic*, bullets) -> paragraphs */
+function textParas(text, base = {}) {
+  const src = String(text || "").replace(/\r/g, "").split("\n");
+  if (!src.some(l => l.trim())) return wPara("");
+  return src.map(raw => {
+    if (!raw.trim()) return wPara("");
+    const bm = /^\s*(?:[-•]|\d{1,2}[.)]|\([a-z0-9ivx]{1,4}\))\s+/.exec(raw);
+    if (!bm) return wPara(inlineRuns(raw, base));
+    let marker = bm[0].trim(); if (marker === "-") marker = "•";
+    const hang = tw(Math.max(11, wid(marker, "R") + 4.5));
+    return wPara(wRun(marker + "\t", base) + inlineRuns(raw.slice(bm[0].length), base), { ind: `<w:ind w:left="${hang}" w:hanging="${hang}"/>`, tabs: `<w:tabs><w:tab w:val="left" w:pos="${hang}"/></w:tabs>` });
+  }).join("");
+}
+/* Heading line printed above a box: bold label + instruction */
+function wHead(label, rest, o = {}) { return wPara(wRun(label, { b: true }) + (rest ? inlineRuns(rest) : ""), { keep: true, brk: o.brk, after: o.after != null ? o.after : 60, before: o.before || 0, jc: "both" }); }
+
+/* Tables. cols: widths in pt; rows: [{cells:[{xml, span, shade}], h, exact, header}] */
+function wTable(cols, rows, o = {}) {
+  const total = cols.reduce((a, b) => a + b, 0);
+  const scale = DX.TW / tw(total);
+  const grid = cols.map(c => Math.round(tw(c) * scale));
+  const B = (v) => v ? `w:val="single" w:sz="4" w:space="0" w:color="000000"` : `w:val="nil"`;
+  const inH = o.insideH !== false, inV = o.insideV !== false;
+  const tblPr = `<w:tblPr><w:tblW w:w="${DX.TW}" w:type="dxa"/><w:tblLayout w:type="fixed"/>
+<w:tblBorders><w:top ${B(true)}/><w:left ${B(true)}/><w:bottom ${B(true)}/><w:right ${B(true)}/><w:insideH ${B(inH)}/><w:insideV ${B(inV)}/></w:tblBorders>
+<w:tblCellMar><w:top w:w="0" w:type="dxa"/><w:left w:w="${tw(o.pad != null ? o.pad : PAD)}" w:type="dxa"/><w:bottom w:w="0" w:type="dxa"/><w:right w:w="${tw(o.pad != null ? o.pad : PAD)}" w:type="dxa"/></w:tblCellMar></w:tblPr>`;
+  const body = rows.map(r => {
+    let gi = 0;
+    const cells = r.cells.map(c => {
+      const span = c.span || 1;
+      const w = grid.slice(gi, gi + span).reduce((a, b) => a + b, 0); gi += span;
+      const bord = c.borders ? `<w:tcBorders>${c.borders}</w:tcBorders>` : "";
+      return `<w:tc><w:tcPr><w:tcW w:w="${w}" w:type="dxa"/>${span > 1 ? `<w:gridSpan w:val="${span}"/>` : ""}${bord}${c.vAlign ? `<w:vAlign w:val="${c.vAlign}"/>` : ""}</w:tcPr>${c.xml || wPara("")}</w:tc>`;
+    }).join("");
+    const trPr = `${r.h ? `<w:trHeight w:val="${tw(r.h)}" w:hRule="${r.exact ? "exact" : "atLeast"}"/>` : ""}${r.header ? "<w:cantSplit/>" : ""}`;
+    return `<w:tr>${trPr ? `<w:trPr>${trPr}</w:trPr>` : ""}${cells}</w:tr>`;
+  }).join("");
+  return `<w:tbl>${tblPr}<w:tblGrid>${grid.map(g => `<w:gridCol w:w="${g}"/>`).join("")}</w:tblGrid>${body}</w:tbl>`;
+}
+const NOB = `<w:top w:val="nil"/><w:bottom w:val="nil"/>`;
+const NOTOP = `<w:top w:val="nil"/>`;
+const NOBOT = `<w:bottom w:val="nil"/>`;
+function nonEmpty(rows) { return rows.filter(r => Object.values(r).some(v => String(v || "").trim())); }
+/* Height Word needs for one table row (same measure as the PDF engine). */
+function rowLines(row, spec, keys) {
+  return Math.max(1, ...keys.map((k, ci) => { const cc = spec.cols[ci]; const w = cc[1] - cc[0] - 2 * spec.pad; return layoutText(row[k] || "", () => ({ x: 0, w })).filter((l, i, a) => !(l.blank && i === a.length - 1)).length; }));
+}
+/* Split text so the first part fills n lines of a box (for the concept's page break). */
+function splitAtLines(text, w, n) {
+  const g = () => ({ x: 0, w });
+  const src = String(text || "").replace(/\r/g, "").split("\n");
+  const A = []; let used = 0, i = 0;
+  for (; i < src.length; i++) {
+    const c = src[i].trim() ? layoutText(src[i], g).length : 1;
+    if (used + c <= n) { A.push(src[i]); used += c; continue; }
+    const r = n - used;
+    if (r > 0 && src[i].trim()) {
+      const ws = src[i].split(" ");
+      let lo = 0, hi = ws.length;
+      while (lo < hi) { const m = (lo + hi + 1) >> 1; if (layoutText(ws.slice(0, m).join(" "), g).length <= r) lo = m; else hi = m - 1; }
+      if (lo > 0) { A.push(ws.slice(0, lo).join(" ")); src[i] = ws.slice(lo).join(" "); }
+    }
+    break;
+  }
+  return [A.join("\n"), src.slice(i).join("\n").replace(/^\n+/, "")];
+}
+
+function buildDocxXml(S, L) {
+  const G = L.geo, BXg = G.BOX, TBg = G.TABLE;
+  const bh = (id, k = 0) => BXg[id][k].bottom - BXg[id][k].top;
+  const th = id => TBg[id].bottom - TBg[id].top;
+  const parts = [];
+  const box = (text, h, extra = "") => wTable([503.9], [{ cells: [{ xml: extra + textParas(text) }], h }]);
+  const keyRows = (rows, spec, keys, H, colsOut, o = {}) => {
+    const out = []; let sum = 0;
+    rows.forEach((r, i) => {
+      const n = rowLines(r, spec, keys); const h = n * LH + (o.gap || 0);
+      sum += h;
+      out.push({ h, cells: keys.map((k, ci) => ({ xml: o.cell ? o.cell(r, k, ci) : (k === "amountFmt" ? wPara(wRun(r[k] || ""), { jc: "right" }) : textParas(r[k] || "")), borders: o.noInsideH ? NOB : (i === rows.length - 1 && H - sum > 2 ? NOBOT : "") })) });
+    });
+    const rest = (H - sum) * 0.97;
+    if (rest > 2) out.push({ h: rest, exact: true, cells: colsOut.map(() => ({ xml: wPara(""), borders: o.noInsideH ? NOTOP : NOTOP })) });
+    if (!out.length) out.push({ h: H, cells: colsOut.map(() => ({ xml: wPara("") })) });
+    return out;
+  };
+
+  /* ---- page 1: research summary ---- */
+  parts.push(wHead("Research Summary; ", "Please summarize the Concept of Research Project to be described on page 4-5 **in 200-300 words**. And **if possible,** please also add a Japanese version of the summary (approximately 200 Japanese characters)."));
+  parts.push(box(S.summary.en + ((S.summary.ja || "").trim() ? "\n\n" + S.summary.ja : ""), bh("summary") * 0.985));
+
+  /* ---- page 2: CV ---- */
+  parts.push(wHead("Curriculum Vitae of Applicant;", "", { brk: true }));
+  {
+    const ed = TABLE.education, dg = TABLE.degrees;
+    const edc = ed.cols.map(c => c[1] - c[0]), dgc = dg.cols.map(c => c[1] - c[0]);
+    const lbl = (t) => wPara(wRun(t));
+    parts.push(wTable(edc, [{ cells: ["Education: (School)", "(Faculty/Department)", "(Year)"].map(t => ({ xml: lbl(t), borders: NOBOT })) }].concat(
+      keyRows(nonEmpty(S.cv.education), ed, ed.keys, th("education"), edc, { noInsideH: true })), { insideH: false, insideV: false, pad: 0 }));
+    parts.push(wTable(dgc, [{ cells: ["Academic degree(s): (Degree)", "(Field)", "(School)", "(Year)"].map(t => ({ xml: lbl(t), borders: NOBOT })) }].concat(
+      keyRows(nonEmpty(S.cv.degrees), dg, dg.keys, th("degrees"), dgc, { noInsideH: true })), { insideH: false, insideV: false, pad: 0 }));
+    const lab = (label, text, h) => wTable([503.9], [{ cells: [{ xml: wPara(wRun(label)), borders: NOBOT }] }, { h, cells: [{ xml: textParas(text), borders: NOTOP }] }], { insideH: false });
+    parts.push(lab("Professional experience (after education):", S.cv.experience, bh("experience") * 0.97));
+    parts.push(lab("Awards (e.g., scholarships, fellowships, grants) and memberships:", S.cv.awards, bh("awards") * 0.97));
+    const c = x => ({ xml: wPara(wRun(x), { jc: "center" }) });
+    parts.push(wTable([81.3, 127.2, 144.5, 144.9], [
+      { cells: [{ xml: wPara(wRun("Language Ability (Evaluate by Excellent, Good, Fair, and Non):")), span: 4 }] },
+      { cells: ["Language", "Reading", "Writing", "Speaking"].map(c) },
+      { cells: [c("Japanese"), c(S.cv.lang.ja.r), c(S.cv.lang.ja.w), c(S.cv.lang.ja.s)] },
+      { cells: [c("English"), c(S.cv.lang.en.r), c(S.cv.lang.en.w), c(S.cv.lang.en.s)] }]));
+  }
+  parts.push(wPara(""));
+  parts.push(wHead("Grants by Third Parties; ", "In case that the applicant and/or collaborator(s) has/have ever received, or is/are to be awarded with, or has/have applied to, or plan(s) to apply to a grant from other organization(s) than The Sumitomo Foundation with the research same as or similar to this application, please fill in the following table."));
+  {
+    const sp = TABLE.grants, cw = sp.cols.map(c => c[1] - c[0]);
+    const hdr = ["Name(s) of Grant or Other", "Name(s) of Applicant or Collaborator(s)", "Subject of Research", "Duration of Grant or Other", "Amount (Currency) JPY or USD", "Status"];
+    const rows = nonEmpty(S.grants);
+    parts.push(wTable(cw, [{ header: true, cells: hdr.map(t => ({ xml: wPara(wRun(t), { jc: "center" }), vAlign: "center" })) }].concat(
+      keyRows(rows, sp, sp.keys, th("grants"), cw, { gap: sp.gap, cell: (r, k) => k === "status" ? wPara(wRun(r.status || ""), { jc: "center" }) : textParas(r[k] || "") })), { pad: 3 }));
+  }
+  parts.push(wPara(wRun("Please mark in the “Status” either: ◎Received, ○Awarded, △Applied, or ×Plan to apply"), { after: 0 }));
+
+  /* ---- page 3: research field, publications ---- */
+  parts.push(wHead("Special Research Field of Applicant;", "", { brk: true }));
+  parts.push(box(S.field, bh("field") * 0.97));
+  parts.push(wPara(""));
+  parts.push(wHead("Major Academic Achievements of Applicant; ", "Please fill in this form with major cases of articles or books published during **the last five (5) years** and simplest descriptions thereof, and place a check (レ) in the column preceding the entry for case(s) connected with the Research Project."));
+  {
+    const L1 = (lab, v) => wPara(wRun(lab + " ") + inlineRuns(String(v || "").replace(/\n/g, " ")));
+    const tick = x => ({ xml: wPara(wRun(x ? "レ" : ""), { jc: "center" }), vAlign: "center" });
+    const rows = [{ cells: [{ xml: wPara(wRun("Published articles")), span: 3 }] }];
+    S.articles.forEach(a => rows.push({ h: PUB.artH, exact: true, cells: [tick(a.linked), { xml: L1("Subject:", a.subject) + L1("Brief description:", a.desc) }, { xml: L1("Date(M/Y):", a.date) + L1("Journal:", a.journal) + L1("Vol., Page:", a.vol) }] }));
+    rows.push({ cells: [{ xml: wPara(wRun("Published books")), span: 3 }] });
+    S.books.forEach(b => rows.push({ h: PUB.bookH, exact: true, cells: [tick(b.linked), { xml: L1("Title:", b.title) + L1("Brief description:", b.desc) }, { xml: L1("Date(M/Y):", b.date) + L1("Publisher:", b.publisher) }] }));
+    parts.push(wTable([16.9, 338.4, 148.6], rows, { pad: 3 }));
+  }
+
+  /* ---- page 4: collaborators, concept (part 1) ---- */
+  parts.push(wHead("Collaborator(s); ", "**In the case of collaborative research, please fill out this section.**", { brk: true }));
+  parts.push(wTable([503.9], [{ cells: [{ xml: wPara(wRun("Necessity of Collaborator(s):")), borders: NOBOT }] }, { h: bh("necessity") * 0.97, cells: [{ xml: textParas(S.collab.necessity), borders: NOTOP }] }], { insideH: false }));
+  parts.push(wPara(""));
+  parts.push(wPara(wRun("List of Collaborator(s)"), { keep: true, after: 40 }));
+  {
+    const sp = TABLE.collab, cw = sp.cols.map(c => c[1] - c[0]);
+    const hdr = ["Name", "Birthday (M/D/YY)", "Affiliation", "Position/ Job Title", "Education", "Major role in the project"];
+    parts.push(wTable(cw, [{ header: true, cells: hdr.map(t => ({ xml: wPara(wRun(t), { jc: "center" }), vAlign: "center" })) }].concat(
+      keyRows(nonEmpty(S.collab.list), sp, sp.keys, th("collab"), cw, { gap: sp.gap })), { pad: 3 }));
+  }
+  parts.push(wPara(""));
+  parts.push(wHead("Concept of Research Project; ", "Please fill out this column, explaining (i) particular motivations leading to the Research Project, (ii) the significance of the Research Project, and (iii) a comparison between this Research Project and other domestic or foreign projects."));
+  const cw0 = BOX.concept[0].x1 - BOX.concept[0].x0 - 2 * PAD;
+  const [c1, c2] = splitAtLines(S.concept, cw0, capacity(BXg.concept[0]));
+  parts.push(box(c1, bh("concept", 0) * 0.97));
+  parts.push(wPara(wRun("(Continued on Page 5)"), { jc: "right", after: 0 }));
+
+  /* ---- page 5: concept (part 2), keywords ---- */
+  parts.push(wHead("Concept of Research Project; ", "(Continuing from Page 4)", { brk: true }));
+  parts.push(box(c2, bh("concept", 1) * 0.97));
+  parts.push(wPara(""));
+  parts.push(wHead("Key word of Research Field of Application; ", "(**around 4 words**)"));
+  parts.push(box(S.keywords, bh("keywords") * 0.97));
+
+  /* ---- page 6: methodology, expected results ---- */
+  parts.push(wHead("Methodology of Research Project; ", "Please explain reasons for choosing this methodology as well as major research materials to be investigated. If a visit to Japan is planned in the research project, please mention the name(s) of researcher(s) and institution(s) in Japan to be visited.", { brk: true }));
+  parts.push(box(S.method, bh("method") * 0.97));
+  parts.push(wPara(""));
+  parts.push(wHead("Expected Results of Research Project; ", "In addition to general contribution expected of the research project, please fill out this column including media of publication, e.g., articles and books, and expected time of publication."));
+  parts.push(box(S.results, bh("results") * 0.97));
+
+  /* ---- page 7: schedule ---- */
+  parts.push(wHead("Research Project Schedule; ", "[**Full-year** schedule for the grant period (April 2027 – March 2028)]", { brk: true }));
+  {
+    const sp = TABLE.schedule, cw = sp.cols.map(c => c[1] - c[0]);
+    parts.push(wTable(cw, [{ header: true, cells: ["Time", "Research Project Activities", "Place"].map(t => ({ xml: wPara(wRun(t), { jc: "center" }) })) }].concat(
+      keyRows(nonEmpty(S.schedule), sp, sp.keys, th("schedule") * 0.97, cw, { gap: sp.gap })), { pad: 5 }));
+  }
+
+  /* ---- page 8: budget ---- */
+  parts.push(wHead("Line Item of Applied Grant Amount; ", "Please use the categories given in the list of \"Categories for Applicable Expenses\" in the \"Procedure & Instruction for Application\". For \"Currency\", use the same currency as that of the \"Applied Grant Amount\" shown on the cover page in the system.", { brk: true }));
+  {
+    const sp = TABLE.budget, cw = sp.cols.map(c => c[1] - c[0]);
+    const cur = S.cover.currency || "JPY";
+    const brows = nonEmpty(S.budget).map(r => ({ ...r, amountFmt: r.amount ? fmtAmt(amountNum(r.amount), cur) : "" }));
+    const total = S.budget.reduce((s, r) => s + amountNum(r.amount), 0);
+    const rows = [{ header: true, cells: ["Category", "Amount (Currency) JPY or USD", "Calculation Basis and Other Details"].map(t => ({ xml: wPara(wRun(t), { jc: "center" }), vAlign: "center" })) }]
+      .concat(keyRows(brows, sp, sp.keys, th("budget") * 0.97, cw, { gap: sp.gap }))
+      .concat([{ cells: [{ xml: wPara(wRun("Total", { b: true }), { jc: "center" }), vAlign: "center" }, { xml: wPara(wRun(total > 0 ? fmtAmt(total, cur) : "", { b: true }), { jc: "right" }), vAlign: "center" },
+        { xml: wPara(wRun("← Total amount shall be summed up by JPY10,000 unit in case of JPY or by USD100 unit in case of USD, and shall be equal to \"Applied Grant Amount\" on the cover page in the system", { sz: 16 })) }] }]);
+    parts.push(wTable(cw, rows, { pad: 5 }));
+  }
+  parts.push(wPara("", { after: 0 }));
+
+  const sect = `<w:sectPr><w:headerReference w:type="default" r:id="rIdH1"/><w:headerReference w:type="first" r:id="rIdH2"/><w:footerReference w:type="default" r:id="rIdF1"/><w:footerReference w:type="first" r:id="rIdF1"/>
+<w:pgSz w:w="${DX.W}" w:h="${DX.H}"/><w:pgMar w:top="${DX.MT}" w:right="${DX.MR}" w:bottom="${DX.MB}" w:left="${DX.ML}" w:header="${DX.HD}" w:footer="${DX.FT}" w:gutter="0"/><w:titlePg/></w:sectPr>`;
+  if (S.meta && S.meta.example) parts.unshift(wPara(wRun("WORKED EXAMPLE – NOT A REAL APPLICATION", { b: true }), { jc: "center", after: 60 }));
+  return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><w:body>${parts.join("")}${sect}</w:body></w:document>`;
+}
+
+function headerXml(S, first) {
+  const name = (S.cover.name || "").trim();
+  const right = DX.TW;
+  const l1 = wPara(wRun("（For FY2026）: Strictly fill out ") + wRun("10 points", { b: true, u: true }) + wRun(" font size", { b: true }) + wRun(" and fill in ") + wRun("8 pages only", { b: true, u: true }), { after: first ? 120 : 60 });
+  const l2 = wPara((first ? wRun("Application Form", { b: true, sz: 24 }) : "") + wRun("\tApplicant Name ") + (name ? wRun(" " + name + " ", { u: true }) : wRun("                                        ", { u: true })),
+    { tabs: `<w:tabs><w:tab w:val="right" w:pos="${right - tw(190)}"/></w:tabs>`, jc: first ? "left" : "right", after: 0 });
+  return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:hdr xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">${l1}${first ? l2 : wPara(wRun("Applicant Name ") + (name ? wRun(" " + name + " ", { u: true }) : wRun("                                        ", { u: true })), { jc: "right", after: 0 })}</w:hdr>`;
+}
+function footerXml() {
+  return `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:ftr xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:p><w:pPr><w:jc w:val="center"/></w:pPr><w:r><w:t xml:space="preserve">－ </w:t></w:r><w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText xml:space="preserve"> PAGE </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>1</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r><w:r><w:t xml:space="preserve"> －</w:t></w:r></w:p></w:ftr>`;
+}
+const STYLES_XML = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+<w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman" w:eastAsia="MS Mincho" w:cs="Times New Roman"/><w:sz w:val="20"/><w:szCs w:val="20"/><w:lang w:val="en-US" w:eastAsia="ja-JP"/></w:rPr></w:rPrDefault>
+<w:pPrDefault><w:pPr><w:spacing w:after="0" w:line="230" w:lineRule="exact"/></w:pPr></w:pPrDefault></w:docDefaults>
+<w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/><w:qFormat/></w:style>
+<w:style w:type="table" w:default="1" w:styleId="TableNormal"><w:name w:val="Normal Table"/><w:tblPr><w:tblInd w:w="0" w:type="dxa"/><w:tblCellMar><w:top w:w="0" w:type="dxa"/><w:left w:w="108" w:type="dxa"/><w:bottom w:w="0" w:type="dxa"/><w:right w:w="108" w:type="dxa"/></w:tblCellMar></w:tblPr></w:style>
+</w:styles>`;
+
+/* ---------- minimal ZIP (stored) ---------- */
+const CRC_T = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+function crc32(u8) { let c = 0xFFFFFFFF; for (let i = 0; i < u8.length; i++) c = CRC_T[(c ^ u8[i]) & 0xFF] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; }
+function zipStore(files) {
+  const enc = new TextEncoder(), chunks = [], central = [];
+  let off = 0;
+  const d = new Date(), dt = ((d.getHours() << 11) | (d.getMinutes() << 5) | (d.getSeconds() >> 1)) & 0xFFFF, dd = (((d.getFullYear() - 1980) << 9) | ((d.getMonth() + 1) << 5) | d.getDate()) & 0xFFFF;
+  for (const [name, data] of files) {
+    const nb = enc.encode(name), body = typeof data === "string" ? enc.encode(data) : data, crc = crc32(body);
+    const h = new DataView(new ArrayBuffer(30));
+    h.setUint32(0, 0x04034b50, true); h.setUint16(4, 20, true); h.setUint16(6, 0x0800, true); h.setUint16(8, 0, true);
+    h.setUint16(10, dt, true); h.setUint16(12, dd, true); h.setUint32(14, crc, true); h.setUint32(18, body.length, true); h.setUint32(22, body.length, true);
+    h.setUint16(26, nb.length, true); h.setUint16(28, 0, true);
+    chunks.push(new Uint8Array(h.buffer), nb, body);
+    const c = new DataView(new ArrayBuffer(46));
+    c.setUint32(0, 0x02014b50, true); c.setUint16(4, 20, true); c.setUint16(6, 20, true); c.setUint16(8, 0x0800, true); c.setUint16(10, 0, true);
+    c.setUint16(12, dt, true); c.setUint16(14, dd, true); c.setUint32(16, crc, true); c.setUint32(20, body.length, true); c.setUint32(24, body.length, true);
+    c.setUint16(28, nb.length, true); c.setUint32(42, off, true);
+    central.push(new Uint8Array(c.buffer), nb);
+    off += 30 + nb.length + body.length;
+  }
+  const csize = central.reduce((s, a) => s + a.length, 0);
+  const e = new DataView(new ArrayBuffer(22));
+  e.setUint32(0, 0x06054b50, true); e.setUint16(8, files.length, true); e.setUint16(10, files.length, true); e.setUint32(12, csize, true); e.setUint32(16, off, true);
+  return new Blob([...chunks, ...central, new Uint8Array(e.buffer)], { type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
+}
+
+async function buildDOCX(S) {
+  await loadLatinFonts();
+  if (hasCJK(JSON.stringify(S))) { try { await ensureJP(); } catch (e) {} }
+  const L = computeLayout(S);
+  const now = new Date().toISOString().replace(/\.\d+Z$/, "Z");
+  const W = "http://schemas.openxmlformats.org/";
+  return zipStore([
+    ["[Content_Types].xml", `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Types xmlns="${W}package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/>
+<Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>
+<Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/>
+<Override PartName="/word/settings.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.settings+xml"/>
+<Override PartName="/word/header1.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.header+xml"/>
+<Override PartName="/word/header2.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.header+xml"/>
+<Override PartName="/word/footer1.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.footer+xml"/>
+<Override PartName="/docProps/core.xml" ContentType="application/vnd.openxmlformats-package.core-properties+xml"/>
+<Override PartName="/docProps/app.xml" ContentType="application/vnd.openxmlformats-officedocument.extended-properties+xml"/></Types>`],
+    ["_rels/.rels", `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="${W}package/2006/relationships"><Relationship Id="rId1" Type="${W}officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/><Relationship Id="rId2" Type="${W}package/2006/relationships/metadata/core-properties" Target="docProps/core.xml"/><Relationship Id="rId3" Type="${W}officeDocument/2006/relationships/extended-properties" Target="docProps/app.xml"/></Relationships>`],
+    ["word/_rels/document.xml.rels", `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="${W}package/2006/relationships"><Relationship Id="rIdS" Type="${W}officeDocument/2006/relationships/styles" Target="styles.xml"/><Relationship Id="rIdT" Type="${W}officeDocument/2006/relationships/settings" Target="settings.xml"/><Relationship Id="rIdH1" Type="${W}officeDocument/2006/relationships/header" Target="header1.xml"/><Relationship Id="rIdH2" Type="${W}officeDocument/2006/relationships/header" Target="header2.xml"/><Relationship Id="rIdF1" Type="${W}officeDocument/2006/relationships/footer" Target="footer1.xml"/></Relationships>`],
+    ["word/document.xml", buildDocxXml(S, L)],
+    ["word/styles.xml", STYLES_XML],
+    ["word/settings.xml", `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:settings xmlns:w="${W}wordprocessingml/2006/main"><w:defaultTabStop w:val="720"/><w:compat><w:compatSetting w:name="compatibilityMode" w:uri="http://schemas.microsoft.com/office/word" w:val="15"/></w:compat></w:settings>`],
+    ["word/header1.xml", headerXml(S, false)],
+    ["word/header2.xml", headerXml(S, true)],
+    ["word/footer1.xml", footerXml()],
+    ["docProps/core.xml", `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<cp:coreProperties xmlns:cp="${W}package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><dc:title>${xesc("Application Form FY2026 - " + (S.cover.title || "Japan-Related Research Project"))}</dc:title><dc:creator>${xesc(S.cover.name || "")}</dc:creator><dc:subject>The Sumitomo Foundation FY2026 Grant for Japan-Related Research Projects</dc:subject><dcterms:created xsi:type="dcterms:W3CDTF">${now}</dcterms:created><dcterms:modified xsi:type="dcterms:W3CDTF">${now}</dcterms:modified></cp:coreProperties>`],
+    ["docProps/app.xml", `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Properties xmlns="${W}officeDocument/2006/extended-properties"><Application>Sumitomo Grant Kit</Application></Properties>`]
+  ]);
+}
 /* =====================================================================
    Local AI: a small language model that runs inside the browser
    (Transformers.js + ONNX Runtime Web, in a background worker).
@@ -1463,7 +1873,7 @@ function blankState() {
     concept: "", keywords: "", method: "", results: "",
     schedule: Array.from({ length: 4 }, () => blankRow(["time", "activity", "place"])),
     budget: Array.from({ length: 3 }, () => blankRow(["cat", "amount", "basis"])),
-    notes: {}, checklist: {}
+    notes: {}, checklist: {}, settings: { autofit: true }
   };
 }
 function normalize(s) {
@@ -1783,7 +2193,7 @@ function renderStart() {
       <li><a href="https://www.sumitomo.or.jp/e/Jare/jarelie2025.pdf" target="_blank" rel="noopener">FY2025 awarded projects</a></li>
     </ul></div>
   </aside></div>
-  <div class="about"><div><b>Sumitomo Grant Kit</b> · ${OFFLINE ? "Participant edition (offline)" : "Online edition"} v1.2, 16 October 2026 · © 2026 Ts. Dr. Mohd Nor Akmal Khalid, Center for Artificial Intelligence Technology (CAIT), Faculty of Information Science and Technology, Universiti Kebangsaan Malaysia. All rights reserved.</div>
+  <div class="about"><div><b>Sumitomo Grant Kit</b> · ${OFFLINE ? "Participant edition (offline)" : "Online edition"} v1.3, 19 October 2026 · © 2026 Ts. Dr. Mohd Nor Akmal Khalid, Center for Artificial Intelligence Technology (CAIT), Faculty of Information Science and Technology, Universiti Kebangsaan Malaysia. All rights reserved.</div>
   <div>The FY2026 Application Form, Application Guide, Procedure & Instruction and FAQ belong to The Sumitomo Foundation; the kit reproduces the blank form only so applicants can fill it. It is an independent preparation aid, not a Foundation product.</div>
   <div>Third-party components: Liberation Serif and Noto Serif CJK fonts (SIL Open Font License 1.1); pdf-lib and fontkit (MIT License); PDF.js (Apache License 2.0); Transformers.js (Apache License 2.0); ONNX Runtime Web (MIT License); Qwen3 language models, downloaded or imported at run time (Apache License 2.0); Plus Jakarta Sans font (SIL Open Font License 1.1). UKM, FTSM and CAIT logos are the property of Universiti Kebangsaan Malaysia.</div></div>
   </section>`;
@@ -1801,11 +2211,12 @@ function basisCalc(basis) {
   const m = String(basis || "").replace(/,/g, "").match(/(\d+(?:\.\d+)?)\s*[^\d\n×x*]{0,30}?\s*[x×*]\s*(?:JPY|USD|¥|\$|RM)?\s*(\d+(?:\.\d+)?)/i);
   return m ? parseFloat(m[1]) * parseFloat(m[2]) : null;
 }
+const FIT_LABEL = { summary: "Research summary", education: "Education", degrees: "Degrees", experience: "Professional experience", awards: "Awards", grants: "Grants table", field: "Research field", pubs: "Publications", necessity: "Necessity of collaborators", collab: "Collaborator list", concept: "Concept", keywords: "Keywords", method: "Methodology", results: "Expected results", schedule: "Schedule", budget: "Budget table", name: "Applicant name" };
 function runChecks() {
   const out = [];
   const add = (lvl, sec, msg) => out.push({ lvl, sec, msg });
   const f = LAY ? LAY.fit : {};
-  const label = { summary: "Research summary", education: "Education", degrees: "Degrees", experience: "Professional experience", awards: "Awards", grants: "Grants table", field: "Research field", pubs: "Publications", necessity: "Necessity of collaborators", collab: "Collaborator list", concept: "Concept", keywords: "Keywords", method: "Methodology", results: "Expected results", schedule: "Schedule", budget: "Budget table", name: "Applicant name" };
+  const label = FIT_LABEL;
   const secOf = { summary: "summary", education: "cv", degrees: "cv", experience: "cv", awards: "cv", grants: "grants", field: "pubs", pubs: "pubs", necessity: "collab", collab: "collab", concept: "concept", keywords: "concept", method: "method", results: "method", schedule: "schedule", budget: "budget", name: "cover" };
   for (const [k, v] of Object.entries(f)) if (v.over) add("err", secOf[k], `${label[k]}: text does not fit its box at 10 pt. Shorten it; the extra will not print.`);
   if (LAY && LAY.missing.length) add("err", null, `These characters have no font in the form and print as "?": ${LAY.missing.join(" ")}`);
@@ -1879,12 +2290,15 @@ function refit() {
     if (v.over) { cls = "over"; txt = k === "pubs" ? `${v.over} line(s) too long` : `over by ${Math.max(1, v.used - v.cap)} line(s)`; }
     else if (cap && used / cap > 0.92) { cls = "near"; txt = `${used} of ${cap} lines · nearly full`; }
     else txt = cap ? `${used} of ${cap} lines` : "fits";
+    if (v.adj > 0) txt += ` · +${v.adj} borrowed`; else if (v.adj < 0) txt += ` · ${-v.adj} lent`;
     st.className = "state " + cls; st.textContent = txt;
     const n = Math.min(Math.max(cap, v.used), 120);
     let h = "";
     for (let i = 0; i < n; i++) h += `<i class="${i < cap ? (i < used ? "u" : "") : "x"}"></i>`;
     cells.innerHTML = h;
   }
+  const an = $("[data-autofitnote]");
+  if (an) { const moved = Object.entries(LAY.fit).filter(([k, v]) => v.adj); an.innerHTML = (S.settings || {}).autofit === false ? "Auto-fit is off: every box keeps the size printed on the form." : moved.length ? "Auto-fit resized: " + moved.map(([k, v]) => `${esc(FIT_LABEL[k] || k)} ${v.adj > 0 ? "+" : ""}${v.adj} line(s)`).join(", ") + "." : "Auto-fit is on. Every box fits at its printed size, so nothing was moved."; }
   updateCounters();
   renderRailStatusOnly();
 }
@@ -1939,9 +2353,12 @@ function renderReview() {
   <div class="card" style="margin-bottom:20px"><div class="card-title"><h3 class="h3i"><span class="mi sky">${icon("grid")}</span>Your form at a glance</h3><span class="tag">click a page to fix it</span></div>${formMap()}</div>
   <div class="cols"><div class="editor">
     <div class="card tint-red"><div class="card-title"><h3 class="h3i"><span class="mi red">${icon("alert")}</span>Automatic checks</h3><span class="tag">rules from the Guide, Procedure, FAQ and FY2025 review</span></div><div class="checks" data-allchecks></div></div>
-    <div class="card tint-ai"><div class="card-title"><h3 class="h3i"><span class="mi ai">${icon("pdf")}</span>Generate the PDF</h3><span class="tag">official FY2026 form · 10 pt</span></div>
+    <div class="card tint-ai"><div class="card-title"><h3 class="h3i"><span class="mi ai">${icon("pdf")}</span>Generate PDF &amp; Word</h3><span class="tag">official FY2026 form · 10 pt</span></div>
       <p class="small muted">Your text is written onto the official form file itself. Fonts are metric-compatible with Times New Roman; Japanese text uses a Mincho face.</p>
-      <div class="ai-actions" style="margin-top:8px"><button class="btn cta" data-act="download">${icon("pdf")}Save PDF</button><button class="btn" data-preview="1,2,3,4,5,6,7,8">${icon("eye")}Preview all 8 pages</button></div>
+      <label class="check autofit"><input type="checkbox" data-k="settings.autofit" ${(S.settings || {}).autofit !== false ? "checked" : ""}> <span><b>Auto-fit boxes on the same page.</b> When a box overflows, it borrows empty lines from other boxes on that page (for example Methodology from Expected Results). Every heading stays on its own page, the text stays 10 pt and the form stays 8 pages. Untick to keep the original box sizes.</span></label>
+      <p class="small" data-autofitnote></p>
+      <div class="ai-actions" style="margin-top:8px"><button class="btn cta" data-act="download">${icon("pdf")}Save PDF</button><button class="btn" data-act="docx">${icon("doc")}Save Word (.docx)</button><button class="btn" data-preview="1,2,3,4,5,6,7,8">${icon("eye")}Preview all 8 pages</button></div>
+      <p class="small muted">Upload the <b>PDF</b>: it is the exact 8-page form. The Word file is an editable copy with the same layout, for sharing with a mentor or co-author; Word can shift lines slightly, so check it still has 8 pages if you edit it and convert it yourself.</p>
       <p class="small" data-dlnote></p>
       <div class="preview" data-pv style="margin-top:12px"></div></div>
     <div class="card tint-amber"><h3 class="h3i"><span class="mi amber">${icon("check")}</span>Submission checklist</h3><div class="checks" style="margin-top:8px">${items.map(([k, t]) => `<label class="check"><input type="checkbox" data-k="checklist.${k}" ${S.checklist[k] ? "checked" : ""}> <span>${esc(t)}</span></label>`).join("")}</div>
@@ -2142,6 +2559,18 @@ async function downloadPDF() {
     toast("Could not build the PDF: " + (e.message || e.code || e));
   }
 }
+async function downloadDOCX() {
+  try {
+    toast("Building the Word file…");
+    const blob = await buildDOCX(S);
+    const nm = (S.cover.name || "Applicant").replace(/^(dr|prof|ts|assoc|ir)\.?\s+/gi, "").replace(/[^A-Za-z0-9]+/g, "_").replace(/^_|_$/g, "").slice(0, 40) || "Applicant";
+    const ok = await saveFile(`Sumitomo_FY2026_ApplicationForm_${nm}${S.meta.example ? "_EXAMPLE" : ""}.docx`, blob);
+    if (ok) toast("Word file saved");
+  } catch (e) {
+    if (e && e.code === "declined") return;
+    toast("Could not build the Word file: " + (e.message || e.code || e));
+  }
+}
 async function exportJSON() {
   const D = viewingExample ? MY : S;
   try { const ok = await saveFile(`sumitomo-draft-${new Date().toISOString().slice(0, 10)}.json`, new Blob([JSON.stringify(D, null, 2)], { type: "application/json" })); if (ok) toast("Draft file saved"); else copyText(JSON.stringify(D, null, 2)); }
@@ -2244,6 +2673,7 @@ document.addEventListener("click", async e => {
     if (a === "exitexample") { exitExample(); }
     if (a === "toggleexample") { viewingExample ? exitExample() : enterExample(); }
     if (a === "download") downloadPDF();
+    if (a === "docx") downloadDOCX();
     if (a === "aiload") { const r = $('input[name="lmodel"]:checked'); loadLocalAI(r ? r.value : "light"); }
     if (a === "aiunload") { if (LOCAL.worker) LOCAL.worker.terminate(); LOCAL.worker = null; LOCAL.state = "off"; renderLocalStatus(); setAIStatus(); refreshCachedNote(); }
     if (a === "theme") setTheme(document.documentElement.getAttribute("data-kit-theme") === "dark" ? "bright" : "dark", true);
