@@ -362,6 +362,24 @@ html.guide .credits{grid-template-columns:repeat(auto-fit,minmax(min(100%,280px)
 html.guide #cover .photo{position:relative!important;left:auto!important;top:auto!important;width:100%!important;height:300px!important}
 @media (prefers-reduced-motion: reduce){.photo img,.bgphoto img,.grad,.tip .ic{animation:none!important}}
 
+
+/* copy & paste QoL */
+.copy{cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
+.copy.go{background:rgba(39,189,235,.18);border-color:rgba(39,189,235,.55)}
+.codebar .copy+.copy{margin-left:6px}
+.codebar{flex-wrap:wrap;row-gap:6px}
+.searchbox .copy{color:var(--fg);border:1px solid var(--line);background:var(--surf2);border-radius:8px;padding:7px 10px;font:600 12px/1 var(--f-mono)}
+.searchbox .copy.go{background:color-mix(in srgb,var(--cyan) 18%,transparent);border-color:color-mix(in srgb,var(--cyan) 55%,transparent)}
+.copy.done{background:#1F7A4D!important;border-color:#1F7A4D!important;color:#FFFFFF!important}
+.bubble .copy{color:var(--fg);border-color:var(--line);background:var(--surf)}
+.bubble .copy.go{background:color-mix(in srgb,var(--cyan) 18%,var(--surf))}
+#hud{opacity:.3;transition:opacity .25s}
+#hud:hover,#hud:focus-within{opacity:1}
+html.guide #hud{opacity:1}
+#toast{position:fixed;left:50%;bottom:64px;transform:translate(-50%,20px);opacity:0;z-index:70;padding:12px 20px;border-radius:12px;background:#1F7A4D;color:#FFFFFF;font:600 15px/1.2 var(--f-body);box-shadow:0 10px 30px rgba(0,0,0,.3);pointer-events:none;transition:opacity .25s, transform .25s}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+#promptPack{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-content:start}
+html.guide #promptPack{grid-template-columns:1fr}
 </style>
 <div id="viewport"><div id="stage">
 
@@ -1697,6 +1715,15 @@ html.guide #cover .photo{position:relative!important;left:auto!important;top:aut
   </div>
 </section>
 
+<!-- ================= PROMPT PACK ================= -->
+<section class="slide s-open" id="prompts" data-tag-ms="Pek prompt" data-tag-en="Prompt pack" data-title-ms="Pek prompt bengkel" data-title-en="Workshop prompt pack">
+  <div class="row" style="align-items:flex-end;gap:16px"><div class="col f1" style="gap:8px"><div class="eyebrow"><span lang="ms">Bawa pulang · salin &amp; tampal</span><span lang="en">Take-home · copy &amp; paste</span></div>
+  <h2 style="font-size:42px"><span lang="ms">Pek prompt: <span id="packCount">0</span> prompt bengkel, sedia digunakan</span><span lang="en">Prompt pack: every workshop prompt, ready to use</span></h2></div>
+  <div><button class="btn solid" id="copyAll">⧉ <span lang="ms">Salin semua</span><span lang="en">Copy all</span></button></div></div>
+  <p class="small"><span lang="ms">Butang <b>⧉ + ↗</b> menyalin prompt dan membuka alatnya dalam tab baharu: tampal dengan Ctrl+V. Tekan <b>C</b> pada mana-mana slaid untuk menyalin prompt pertamanya.</span><span lang="en">The <b>⧉ + ↗</b> button copies the prompt and opens its tool in a new tab: paste with Ctrl+V. Press <b>C</b> on any slide to copy its first prompt.</span></p>
+  <div class="scroll" style="flex:1;min-height:0"><div id="promptPack"></div></div>
+</section>
+
 <!-- ================= RESOURCES ================= -->
 <section class="slide s-open" id="resources" data-tag-ms="Sumber &amp; bacaan lanjut" data-tag-en="Resources &amp; further reading" data-title-ms="Sumber &amp; bacaan lanjut" data-title-en="Resources &amp; further reading">
   <div class="row" style="align-items:flex-end;gap:16px"><div class="col f1" style="gap:8px"><div class="eyebrow"><span lang="ms">Rujukan utama dengan DOI</span><span lang="en">Key references with DOIs</span></div><h2 style="font-size:42px"><span lang="ms">Sumber &amp; bacaan lanjut</span><span lang="en">Resources &amp; further reading</span></h2></div>
@@ -1931,6 +1958,7 @@ function prev(){
   if(n>0){setShown(s,pv??0);return}
   if(cur>0) go(cur-1,true);
 }
+window.addEventListener('hashchange',()=>{ const k=slides.findIndex(s=>s.id===location.hash.slice(1)); if(k>=0&&k!==cur){ if(root.classList.contains('guide')) slides[k].scrollIntoView({behavior:'smooth'}); else go(k) } });
 const startId=location.hash.slice(1); const si=slides.findIndex(s=>s.id===startId);
 go(si>0?si:0);
 
@@ -1959,7 +1987,7 @@ function openToc(){
   panel.hidden=false; pbody.querySelector('.cur')?.focus();
 }
 function openHelp(){
-  const k=[['→ / Space / PgDn',{ms:'Langkah / slaid seterusnya',en:'Next build / slide'}],['← / PgUp',{ms:'Kembali',en:'Back'}],['Home / End',{ms:'Slaid pertama / akhir',en:'First / last slide'}],['1 · 2 · 3',{ms:'Lompat ke Sesi 1, 2, 3',en:'Jump to Session 1, 2, 3'}],['L',{ms:'Tukar bahasa BM ⇄ EN',en:'Switch language BM ⇄ EN'}],['T',{ms:'Tema terang / gelap',en:'Light / dark theme'}],['G',{ms:'Mod Panduan (dokumen boleh skrol)',en:'Guide mode (scrollable document)'}],['O',{ms:'Kandungan',en:'Contents'}],['F',{ms:'Skrin penuh',en:'Fullscreen'}],['Esc',{ms:'Tutup panel',en:'Close panel'}],[L({ms:'Klik / leret',en:'Click / swipe'}),{ms:'Klik ruang kosong: kanan = maju, kiri = undur',en:'Click empty space: right = forward, left = back'}]];
+  const k=[['→ / Space / PgDn',{ms:'Langkah / slaid seterusnya',en:'Next build / slide'}],['← / PgUp',{ms:'Kembali',en:'Back'}],['Home / End',{ms:'Slaid pertama / akhir',en:'First / last slide'}],['1 · 2 · 3',{ms:'Lompat ke Sesi 1, 2, 3',en:'Jump to Session 1, 2, 3'}],['L',{ms:'Tukar bahasa BM ⇄ EN',en:'Switch language BM ⇄ EN'}],['T',{ms:'Tema terang / gelap',en:'Light / dark theme'}],['G',{ms:'Mod Panduan (dokumen boleh skrol)',en:'Guide mode (scrollable document)'}],['O',{ms:'Kandungan',en:'Contents'}],['F',{ms:'Skrin penuh',en:'Fullscreen'}],['C',{ms:'Salin prompt pertama pada slaid ini',en:'Copy the first prompt on this slide'}],['Esc',{ms:'Tutup panel',en:'Close panel'}],[L({ms:'Klik / leret',en:'Click / swipe'}),{ms:'Klik ruang kosong: kanan = maju, kiri = undur',en:'Click empty space: right = forward, left = back'}]];
   pbody.innerHTML=`<h3>${L({ms:'Kawalan',en:'Controls'})}</h3><div class="keys">${k.map(([a,b])=>`<kbd>${a}</kbd><span>${L(b)}</span>`).join('')}</div>`;
   panel.hidden=false;
 }
@@ -1984,6 +2012,8 @@ document.addEventListener('keydown',e=>{
   else if(k==='g'||k==='G'){toggleGuide()}
   else if(k==='o'||k==='O'){openToc()}
   else if(k==='f'||k==='F'){fs()}
+  else if(k==='c'||k==='C'){ const s=slides[cur]; const ws=[...s.querySelectorAll('.codewrap,.searchbox')].filter(w=>w.offsetParent!==null && !w.closest('[hidden]') && !(w.closest('.tabpane')&&!w.closest('.tabpane').classList.contains('on')));
+    const w=ws.find(x=>/prompt/i.test((x.querySelector('.codebar')||{textContent:''}).textContent))||ws[0]; if(w){ const b=w.querySelector('.copy:not(.go)'); copyText(textOf(srcOf(b)),b) } else toast(L({ms:'Tiada prompt pada slaid ini',en:'No prompt on this slide'})) }
   else if(k==='?'){openHelp()}
   else if(['1','2','3'].includes(k)){const id={1:'s1',2:'s2',3:'s3'}[k];go(slides.findIndex(s=>s.id===id))}
 });
@@ -1994,14 +2024,62 @@ document.querySelectorAll('.tabgroup').forEach(g=>{
   tabs.forEach((t,i)=>t.addEventListener('click',()=>{tabs.forEach((x,j)=>x.setAttribute('aria-selected',j===i));panes.forEach((p,j)=>p.classList.toggle('on',j===i))}));
 });
 
-/* ---------- copy ---------- */
+/* ---------- copy & paste helpers ---------- */
+// text of a prompt/code box in the CURRENT language, one line per .l row, regardless of visibility
+function textOf(node){
+  const c=node.cloneNode(true);
+  c.querySelectorAll('[lang]').forEach(x=>{ if(x.getAttribute('lang')!==lang) x.remove() });
+  c.querySelectorAll('.copy,.go,.explain').forEach(x=>x.remove());
+  c.querySelectorAll('.l').forEach(x=>x.append('\n'));
+  c.querySelectorAll('br').forEach(x=>x.replaceWith('\n'));
+  return c.textContent.replace(/[ \t]+\n/g,'\n').replace(/\n{3,}/g,'\n\n').trim();
+}
+function srcOf(btn){
+  const w=btn.closest('.codewrap,.searchbox,[data-copywrap]'); if(!w) return null;
+  return w.querySelector('pre,.q,[data-copysrc]');
+}
+function copyText(text,btn,keepNav){
+  const label=btn.innerHTML;
+  const done=()=>{ btn.innerHTML=L({ms:'✓ Disalin · tampal Ctrl+V',en:'✓ Copied · paste Ctrl+V'}); btn.classList.add('done'); toast(L({ms:'Disalin! Tampal dengan Ctrl+V (Mac: ⌘V)',en:'Copied! Paste with Ctrl+V (Mac: ⌘V)'})); setTimeout(()=>{btn.innerHTML=label;btn.classList.remove('done')},1800) };
+  const fallback=()=>{ const ta=document.createElement('textarea'); ta.value=text; ta.style.cssText='position:fixed;left:-9999px'; document.body.appendChild(ta); ta.select(); let ok=false; try{ ok=document.execCommand('copy') }catch(err){} ta.remove(); ok?done():toast(L({ms:'Pilih teks dan tekan Ctrl+C',en:'Select the text and press Ctrl+C'})) };
+  try{ navigator.clipboard.writeText(text).then(done,fallback) }catch(err){ fallback() }
+}
+let toastEl=null,toastT=null;
+function toast(msg){
+  if(!toastEl){ toastEl=document.createElement('div'); toastEl.id='toast'; toastEl.setAttribute('role','status'); document.body.appendChild(toastEl) }
+  toastEl.textContent=msg; toastEl.classList.add('on'); clearTimeout(toastT); toastT=setTimeout(()=>toastEl.classList.remove('on'),2000);
+}
+// add a copy button to every prompt/code box that lacks one, plus "open tool" shortcuts
+const TOOL={gemini:['Gemini','https://gemini.google.com/app'],notebooklm:['NotebookLM','https://notebooklm.google.com'],scopus:['Scopus','https://www.scopus.com/search/form.uri?display=advanced'],wos:['Web of Science','https://www.webofscience.com/wos/woscc/advanced-search'],mycite:['MyCite','https://www.mycite.my'],scholar:['Scholar','https://scholar.google.com'],elicit:['Elicit','https://elicit.com'],doi:['doi.org','https://doi.org']};
+function toolFor(w){
+  const bar=(w.querySelector('.codebar')||{textContent:''}).textContent.toLowerCase(), sid=w.closest('.slide').id;
+  if(w.classList.contains('searchbox')) return 'scopus';
+  if(/web of science/.test(bar)) return 'wos';
+  if(/mycite/.test(bar)) return 'mycite';
+  if(/scopus/.test(bar)) return 'scopus';
+  if(/rujukan|reference/.test(bar)) return 'doi';
+  if(sid==='demo5') return 'notebooklm';
+  if(/prompt/.test(bar)||w.closest('.bubble')) return 'gemini';
+  return null;
+}
+document.querySelectorAll('.codewrap').forEach(w=>{
+  if(w.id==='discOut'||w.querySelector('#discOut')) {}
+  let bar=w.querySelector('.codebar');
+  if(!bar){ bar=document.createElement('div'); bar.className='codebar'; bar.innerHTML='<span>TEXT</span><span class="sp"></span>'; w.prepend(bar) }
+  if(!bar.querySelector('.sp')) bar.insertAdjacentHTML('beforeend','<span class="sp"></span>');
+  if(!bar.querySelector('.copy')) bar.insertAdjacentHTML('beforeend','<button class="copy">⧉ copy</button>');
+  const t=toolFor(w);
+  if(t && !bar.querySelector('.go')) bar.querySelector('.copy').insertAdjacentHTML('beforebegin',`<a class="copy go" href="${TOOL[t][1]}" target="_blank" rel="noopener" title="Copy, then open ${TOOL[t][0]}">⧉ + ↗ ${TOOL[t][0]}</a>`);
+});
+document.querySelectorAll('.searchbox').forEach(sb=>{
+  sb.insertAdjacentHTML('beforeend','<button class="copy" title="Copy question">⧉</button><a class="copy go" href="'+TOOL.scopus[1]+'" target="_blank" rel="noopener">⧉ + ↗ Scopus AI</a>');
+});
 document.addEventListener('click',e=>{
   const c=e.target.closest('.copy'); if(!c) return;
-  const w=c.closest('.codewrap'); const pre=w&&w.querySelector('pre'); if(!pre) return;
-  const text=pre.innerText.replace(/\n{3,}/g,'\n\n').trim();
-  const done=()=>{const o=c.textContent;c.textContent='✓ copied';c.classList.add('done');setTimeout(()=>{c.textContent=o;c.classList.remove('done')},1400)};
-  const fallback=()=>{const r=document.createRange();r.selectNodeContents(pre);const s=getSelection();s.removeAllRanges();s.addRange(r);c.textContent=lang==='ms'?'Ctrl+C':'Ctrl+C';};
-  try{ navigator.clipboard.writeText(text).then(done,fallback) }catch(err){ fallback() }
+  const src=srcOf(c); if(!src) return;
+  const text=textOf(src);
+  if(c.classList.contains('go')){ copyText(text,c,true); return }   // link still opens the tool in a new tab
+  e.preventDefault(); copyText(text,c);
 });
 
 /* ---------- line explanations ---------- */
@@ -2235,6 +2313,23 @@ document.querySelectorAll('[data-timer]').forEach(t=>{
     list.innerHTML=R.filter(r=>(cat==='all'||r[0]===cat)&&(!f||r[1].toLowerCase().includes(f))).map(r=>`<div class="card" style="padding:10px 14px;gap:6px"><span class="chip ${col[r[0]]}" style="align-self:flex-start;font-size:11px">${L(catName[r[0]])}</span><span style="font-size:14.5px;line-height:1.4">${r[1].replace(/&/g,'&amp;')}</span><a href="${r[2]}" target="_blank" rel="noopener" class="mono" style="font-size:13px">${r[3]}</a></div>`).join('') || `<p class="small">${L({ms:'Tiada padanan.',en:'No matches.'})}</p>` }
   document.querySelectorAll('#resTabs .tab').forEach(t=>t.addEventListener('click',()=>{cat=t.dataset.cat;document.querySelectorAll('#resTabs .tab').forEach(x=>x.setAttribute('aria-selected',x===t));draw()}));
   q.addEventListener('input',draw); draw(); document.addEventListener('langchange',draw);
+})();
+
+/* ---------- prompt pack ---------- */
+(function(){
+  const host=document.getElementById('promptPack'); if(!host) return;
+  const items=[...document.querySelectorAll('.codewrap')].filter(w=>w.closest('.slide').id!=='prompts' && /prompt/i.test((w.querySelector('.codebar')||{textContent:''}).textContent));
+  const slideTitle=w=>{const s=w.closest('.slide'); return {ms:s.dataset.titleMs,en:s.dataset.titleEn}};
+  const draw=()=>{
+    host.innerHTML=items.map((w,i)=>{const t=toolFor(w)||'gemini'; return `<div class="codewrap" data-pack="${i}"><div class="codebar"><span>${String(i+1).padStart(2,'0')} · ${L(slideTitle(w))}</span><span class="sp"></span><a class="copy go" href="${TOOL[t][1]}" target="_blank" rel="noopener">⧉ + ↗ ${TOOL[t][0]}</a><button class="copy">⧉ copy</button></div><pre class="code" style="padding:10px 14px;font-family:var(--f-body);font-size:14.5px;white-space:pre-wrap"></pre></div>`}).join('');
+    host.querySelectorAll('[data-pack]').forEach(c=>{ c.querySelector('pre').textContent=textOf(items[+c.dataset.pack].querySelector('pre')) });
+    document.getElementById('packCount').textContent=items.length;
+  };
+  draw(); document.addEventListener('langchange',draw);
+  document.getElementById('copyAll').addEventListener('click',e=>{
+    const all=items.map((w,i)=>`### ${String(i+1).padStart(2,'0')} · ${L(slideTitle(w))}\n${textOf(w.querySelector('pre'))}`).join('\n\n');
+    copyText(L({ms:'PEK PROMPT · Bengkel Kajian Literatur AI (FSSK × PTSL, 20.10.2026)',en:'PROMPT PACK · AI Literature Review Workshop (FSSK × PTSL, 20.10.2026)'})+'\n\n'+all,e.currentTarget);
+  });
 })();
 
 /* ---------- photo credits ---------- */
