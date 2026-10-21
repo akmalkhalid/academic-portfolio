@@ -374,6 +374,13 @@ body:not(.lang-bm) .lang-bm{display:none}
   .slide.active .n3:nth-child(1){animation-delay:.75s}.slide.active .n3:nth-child(2){animation-delay:.9s}.slide.active .n3:nth-child(3){animation-delay:1.05s}
 }
 </style>
+<style id="mobile-fixes">/* Phone/tablet layout fixes (Oct 2026). Scoped to small or touch screens; desktop presentation unchanged. */
+@media (max-width:900px),(max-height:520px){
+  .slide{justify-content:safe center;overflow-y:auto}
+}
+@media (max-height:520px){ .logo-lockup{position:static;margin-top:18px;justify-content:flex-start} }
+@media (hover:none) and (pointer:coarse){ #hint{display:none} }
+</style>
 </head>
 <body class="lang-en">
 

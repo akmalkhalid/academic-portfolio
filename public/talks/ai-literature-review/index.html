@@ -355,6 +355,18 @@ table.mx input:focus{outline:2px solid var(--teal);border-radius:4px}
 
 @media (max-width:900px){.tgrid{grid-template-columns:repeat(3,1fr)}}
 </style>
+<style id="mobile-fixes">/* Phone/tablet layout fixes (Oct 2026). Scoped to small or touch screens; desktop presentation unchanged. */
+@media (max-width:700px){
+  .slide{padding:40px 20px 56px}
+  .grid.g2,.grid.g3{grid-template-columns:1fr}
+  .prompt.cprompt{flex-wrap:wrap}
+  table.mx{display:block;overflow-x:auto;max-width:100%}
+  #credit,#title{display:none}
+  #bar{gap:4px;padding:0 8px;justify-content:space-between}
+}
+@media (max-height:520px){ .slide{padding:32px 40px 52px} }
+@media (hover:none) and (pointer:coarse){ #hint{display:none!important} }
+</style>
 </head>
 <body>
 <div id="prog"></div>

@@ -130,6 +130,17 @@ ol{margin-left:1.4em}ol li{margin:.4em 0}
 .hint{position:fixed;left:18px;bottom:12px;font-family:var(--mono);font-size:.72rem;color:#42586b;z-index:50}
 :focus-visible{outline:2px solid var(--amber);outline-offset:3px}
 </style>
+<style id="mobile-fixes">/* Phone/tablet layout fixes (Oct 2026). Scoped to small or touch screens; desktop presentation unchanged. */
+@media (max-width:700px){
+  .two{grid-template-columns:1fr}
+  .slide > *{max-width:100%}
+  .codecard{max-width:100%}
+}
+@media (max-height:520px){
+  .slide{justify-content:safe center;overflow-y:auto;padding-bottom:48px}
+}
+@media (hover:none) and (pointer:coarse){ .hint{display:none} }
+</style>
 </head>
 <body>
 
