@@ -42,6 +42,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <p style={s('font-size:13px;color:#8a8279;margin:0')}>© {new Date().getFullYear()} {cfg.authorName} · FTSM, UKM</p>
             <p style={s("font-family:'JetBrains Mono',monospace;font-size:11px;color:#a39a8f;margin:0")}>Cookie-free analytics · honours Do-Not-Track · no personal data stored</p>
             <div style={s('display:flex;gap:18px;font-size:13px')}>
+              <a href="/toolkit/" style={s('color:#57514b;text-decoration:none')}>Toolkit</a>
               {social.scholar && <a href={social.scholar} target="_blank" rel="noopener noreferrer" style={s('color:#57514b;text-decoration:none')}>Scholar</a>}
               {social.orcid && <a href={social.orcid} target="_blank" rel="noopener noreferrer" style={s('color:#57514b;text-decoration:none')}>ORCID</a>}
               {social.linkedin && <a href={social.linkedin} target="_blank" rel="noopener noreferrer" style={s('color:#57514b;text-decoration:none')}>LinkedIn</a>}
