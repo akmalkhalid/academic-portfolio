@@ -150,6 +150,12 @@ export default function PlaygroundClient({ counts }: { counts: Record<string, nu
           </h2>
           <span style={mono('font-size:12px;color:#a39a8f')}>{TOOLS.length} tools · free · no sign-up</span>
         </div>
+        <p style={s('font-size:14px;line-height:1.6;color:#57514b;margin:-6px 0 18px')}>
+          Looking for the third-party AI tools from my workshops?{' '}
+          <a href="/toolkit/" style={s('color:#16142e;font-weight:500;text-decoration:none;border-bottom:1px solid #d9d3ca')}>
+            See the full toolkit →
+          </a>
+        </p>
         <div className="pillar-grid">
           {TOOLS.map((t) => (
             <a

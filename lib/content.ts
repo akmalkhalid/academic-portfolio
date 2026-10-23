@@ -191,3 +191,52 @@ export function getAllResearchSlots(): ResearchSlot[] {
   const raw = fs.readFileSync(path.join(CONTENT_DIR, 'research-slots/slots.yml'), 'utf-8')
   return yaml.load(raw) as ResearchSlot[]
 }
+
+// ---- Toolkit (/toolkit) ---------------------------------------------------
+// Tools I recommend in talks and workshops, grouped by research workflow stage.
+// Source of truth: content/toolkit.yml (see the notes at the top of that file).
+
+export type ToolkitTool = {
+  name: string
+  url: string
+  /** Tracked partner link. Used only when non-empty and the section allows it. */
+  partnerLink?: string
+  price: 'Free' | 'Free tier' | 'Open source' | 'Paid' | 'Institutional'
+  why: string
+  /** Built by me (lives on this site). */
+  own?: boolean
+  usedIn?: string[]
+}
+
+export type ToolkitSection = {
+  id: string
+  title: string
+  lede?: string
+  noPartnerLinks?: boolean
+  tools: ToolkitTool[]
+}
+
+export type Toolkit = {
+  sessions: Record<string, { title: string; href: string }>
+  sections: ToolkitSection[]
+}
+
+let _toolkit: Toolkit | null = null
+
+export function getToolkit(): Toolkit {
+  if (_toolkit) return _toolkit
+  const raw = fs.readFileSync(path.join(CONTENT_DIR, 'toolkit.yml'), 'utf-8')
+  const data = yaml.load(raw) as Toolkit
+  // Fail the build on a typo in usedIn rather than silently dropping a link.
+  for (const sec of data.sections) {
+    for (const t of sec.tools) {
+      for (const k of t.usedIn || []) {
+        if (!data.sessions[k]) throw new Error(`toolkit.yml: unknown session "${k}" on ${t.name}`)
+      }
+      // Partner links are switched off for the whole section when required.
+      if (sec.noPartnerLinks) t.partnerLink = ''
+    }
+  }
+  _toolkit = data
+  return _toolkit
+}

@@ -23,7 +23,7 @@ const NAV = [
 // there is no flash of the light bar over the dark fold.
 const DARK_TOP = new Set([
   '', '/about', '/research', '/publications', '/playground',
-  '/teaching', '/cv', '/contact', '/postgraduate-guide',
+  '/teaching', '/cv', '/contact', '/postgraduate-guide', '/toolkit',
 ])
 
 export default function SiteNav({ shortName }: { shortName: string }) {

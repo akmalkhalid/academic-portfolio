@@ -1,0 +1,240 @@
+# The AI research toolkit — rendered at /toolkit.
+#
+# Every tool here appears in at least one of my talks or workshop decks
+# (public/talks, public/workshops). Keep it that way: the page is advice first.
+#
+# HOW PARTNER (AFFILIATE) LINKS WORK
+#   - `url` is the tool's normal website. It is always safe to publish.
+#   - `partnerLink` is optional. Paste your tracked link here only AFTER you
+#     have joined that tool's programme. When it is set, the card links there,
+#     shows a small "partner link" tag, and the disclosure note appears at the
+#     top of the page automatically. Leave it "" otherwise.
+#   - Sections with `noPartnerLinks: true` ignore partnerLink entirely. Use it
+#     for tools tied to the UKM / Google AI Champion role.
+#
+# Programmes that existed when this file was written (Oct 2026) — check terms
+# before joining:
+#   Elicit (Rewardful), Scite (Rewardful / ShareASale), Consensus (PartnerStack),
+#   SciSpace (influencer programme), Lovable (Impact).
+#
+# Within each section, list free and open options first.
+#
+# price: one of  Free | Free tier | Open source | Paid | Institutional
+# usedIn: keys from `sessions` below.
+
+sessions:
+  bkla:   { title: "Bengkel Kajian Literatur AI", href: "/workshops/bengkel-kajian-literatur-ai/" }
+  airp:   { title: "AI in Research & Pedagogy", href: "/workshops/ai-research-pedagogy/" }
+  litrev: { title: "AI for Literature Review clinic", href: "/talks/ai-literature-review/" }
+  fep:    { title: "AI in Research (FEP)", href: "/talks/ai-in-research/" }
+  clin:   { title: "AI in Clinical Research", href: "/talks/ai-clinical-research/" }
+  gemini: { title: "Gemini productivity", href: "/talks/gemini-productivity/" }
+  evolusi: { title: "Evolusi AI", href: "/talks/evolusi-ai/" }
+  mvp:    { title: "MVP Sprint", href: "/workshops/mvp-sprint/" }
+  ollama: { title: "Ollama + Hermes Agent", href: "/workshops/ollama-hermes/" }
+  sim:    { title: "SIM Builder", href: "/workshops/sim-builder/" }
+  pea:    { title: "Prompt Engineering Architect", href: "/workshops/prompt-engineering-architect/" }
+
+sections:
+  - id: assistants
+    title: "Everyday AI assistants"
+    lede: "The general assistants I use in almost every session. UKM staff and students: use your university Google account for Gemini and NotebookLM."
+    noPartnerLinks: true
+    tools:
+      - name: "Gemini & Gems"
+        url: "https://gemini.google.com"
+        price: "Free tier"
+        why: "Drafting, summarising and reusable custom assistants (Gems) inside Google Workspace."
+        usedIn: [gemini, fep, airp, bkla]
+      - name: "NotebookLM"
+        url: "https://notebooklm.google.com"
+        price: "Free tier"
+        why: "Ask questions of your own PDFs and notes, with every answer cited back to the source."
+        usedIn: [litrev, bkla, airp, fep, clin]
+      - name: "Claude"
+        url: "https://claude.ai"
+        price: "Free tier"
+        why: "Long documents, careful writing feedback and building small tools."
+        usedIn: [fep, airp, bkla, sim, pea]
+      - name: "ChatGPT"
+        url: "https://chatgpt.com"
+        price: "Free tier"
+        why: "The assistant most participants already have; useful for comparing answers."
+        usedIn: [fep, airp, bkla, clin]
+
+  - id: search
+    title: "Search and read the literature"
+    lede: "Start with the databases your library pays for, then use AI search to widen and question what you found."
+    tools:
+      - name: "Google Scholar"
+        url: "https://scholar.google.com"
+        price: "Free"
+        why: "Broadest free index, good for forward-citation chasing."
+        usedIn: [litrev, bkla]
+      - name: "Semantic Scholar"
+        url: "https://www.semanticscholar.org"
+        price: "Free"
+        why: "Free AI-assisted search with paper summaries and citation context."
+        usedIn: [fep, airp, bkla]
+      - name: "Scopus"
+        url: "https://www.scopus.com"
+        price: "Institutional"
+        why: "The reference database for systematic searches and journal quartiles."
+        usedIn: [litrev, bkla, airp, fep, clin]
+      - name: "Web of Science"
+        url: "https://www.webofscience.com"
+        price: "Institutional"
+        why: "Second curated database to make a systematic search reproducible."
+        usedIn: [litrev, bkla, airp, fep]
+      - name: "Elicit"
+        url: "https://elicit.com"
+        partnerLink: ""
+        price: "Free tier"
+        why: "Finds papers for a research question and extracts findings into a table."
+        usedIn: [litrev, bkla, airp, fep]
+      - name: "Consensus"
+        url: "https://consensus.app"
+        partnerLink: ""
+        price: "Free tier"
+        why: "Answers yes/no research questions by showing where published evidence agrees."
+        usedIn: [fep, airp, bkla]
+      - name: "Scite"
+        url: "https://scite.ai"
+        partnerLink: ""
+        price: "Paid"
+        why: "Shows whether later papers support or contradict a claim you plan to cite."
+        usedIn: [litrev, fep, airp]
+      - name: "SciSpace"
+        url: "https://scispace.com"
+        partnerLink: ""
+        price: "Free tier"
+        why: "Reads a paper alongside you and explains methods and terms in plain language."
+        usedIn: [airp, bkla]
+      - name: "Perplexity"
+        url: "https://www.perplexity.ai"
+        price: "Free tier"
+        why: "Fast web answers with sources; useful for scoping, not for citing."
+        usedIn: [litrev, airp]
+
+  - id: map
+    title: "Map how papers connect"
+    lede: "Citation maps show the clusters and gaps a keyword search hides."
+    tools:
+      - name: "Inciteful"
+        url: "https://inciteful.xyz"
+        price: "Free"
+        why: "Builds a citation network from a few seed papers and ranks what you missed."
+        usedIn: [airp, bkla]
+      - name: "ResearchRabbit"
+        url: "https://www.researchrabbit.ai"
+        price: "Free tier"
+        why: "Grow a collection from seed papers and get alerts as the field moves."
+        usedIn: [airp, bkla]
+      - name: "Connected Papers"
+        url: "https://www.connectedpapers.com"
+        price: "Free tier"
+        why: "One-click similarity graph around a single paper."
+        usedIn: [airp, bkla]
+      - name: "Litmaps"
+        url: "https://www.litmaps.com"
+        price: "Free tier"
+        why: "Timeline-style citation maps that are easy to show a supervisor."
+        usedIn: [airp, bkla]
+
+  - id: screen
+    title: "Screen studies for a systematic review"
+    lede: "For PRISMA-style reviews, where two people must screen the same records."
+    tools:
+      - name: "ASReview"
+        url: "https://asreview.nl"
+        price: "Open source"
+        why: "Active learning puts the most likely relevant abstracts first; runs on your own machine."
+        usedIn: [fep, bkla]
+      - name: "Rayyan"
+        url: "https://www.rayyan.ai"
+        price: "Free tier"
+        why: "Blind double-screening with conflict resolution, free for small teams."
+        usedIn: [litrev, bkla, airp, fep]
+      - name: "Covidence"
+        url: "https://www.covidence.org"
+        price: "Paid"
+        why: "End-to-end review workflow if your institution subscribes."
+        usedIn: [fep, bkla]
+
+  - id: references
+    title: "Manage and format references"
+    lede: "Pick one manager and keep every PDF in it from day one."
+    tools:
+      - name: "Gaya UKM Reference Formatter"
+        url: "/tools/gaya-ukm-formatter/"
+        own: true
+        price: "Free"
+        why: "My own tool: turns BibTeX, a .bib file or a DOI into a clean Gaya UKM reference list."
+        usedIn: []
+      - name: "Zotero"
+        url: "https://www.zotero.org"
+        price: "Open source"
+        why: "Free, open and works with Word and Google Docs. My default recommendation."
+        usedIn: [litrev, bkla, airp, fep]
+      - name: "Mendeley"
+        url: "https://www.mendeley.com"
+        price: "Free"
+        why: "Fine if your group already shares a Mendeley library."
+        usedIn: [litrev, airp]
+      - name: "EndNote"
+        url: "https://endnote.com"
+        price: "Paid"
+        why: "Common in clinical and health faculties; use it if your team does."
+        usedIn: [litrev, airp, clin]
+
+  - id: integrity
+    title: "Write in your own voice"
+    lede: "A small tool I built for a problem that keeps coming up in workshops."
+    tools:
+      - name: "Human Voice check"
+        url: "/tools/human-voice-check/"
+        own: true
+        price: "Free"
+        why: "Flags paragraph patterns that read as machine-written and asks what only you can answer. Runs locally."
+        usedIn: []
+
+  - id: local
+    title: "Run AI on your own computer"
+    lede: "For sensitive data that should never leave your machine."
+    tools:
+      - name: "Ollama"
+        url: "https://ollama.com"
+        price: "Open source"
+        why: "Download and run open models locally with one command."
+        usedIn: [ollama, evolusi, fep]
+      - name: "LM Studio"
+        url: "https://lmstudio.ai"
+        price: "Free"
+        why: "Desktop app for trying local models without the command line."
+        usedIn: [fep, evolusi]
+
+  - id: build
+    title: "Prototype and build"
+    lede: "From an idea to a working demo in an afternoon."
+    tools:
+      - name: "Google AI Studio"
+        url: "https://aistudio.google.com"
+        price: "Free tier"
+        why: "Try Gemini models and build a first app without setup."
+        usedIn: [mvp]
+      - name: "Lovable"
+        url: "https://lovable.dev"
+        partnerLink: ""
+        price: "Free tier"
+        why: "Describe a web app in plain language and get a working, editable version."
+        usedIn: [mvp]
+      - name: "Bolt"
+        url: "https://bolt.new"
+        price: "Free tier"
+        why: "Similar to Lovable; useful to compare outputs for the same brief."
+        usedIn: [mvp]
+      - name: "Cursor"
+        url: "https://cursor.com"
+        price: "Free tier"
+        why: "AI code editor for when the prototype needs real code."
+        usedIn: [pea]
