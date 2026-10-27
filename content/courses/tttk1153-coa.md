@@ -19,4 +19,8 @@ labs:
     href: "/courses/coa-tutorial-3/"
     emoji: "💾"
     blurb: "Memory basics, RAM, ROM and cache, disks and RAID, then flash, optical, cloud and error handling — guided, with a protected submission file."
+  - title: "Tutorial 4 · Input/Output Systems and Interconnection"
+    href: "/courses/coa-tutorial-4/"
+    emoji: "🔌"
+    blurb: "I/O basics, I/O techniques and interrupts, buses, then channels and interconnects — guided, with a protected submission file."
 ---
