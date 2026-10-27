@@ -30,6 +30,7 @@ sessions:
   clin:   { title: "AI in Clinical Research", href: "/talks/ai-clinical-research/" }
   gemini: { title: "Gemini productivity", href: "/talks/gemini-productivity/" }
   evolusi: { title: "Evolusi AI", href: "/talks/evolusi-ai/" }
+  scicomm: { title: "Scientific Communication using AI", href: "/talks/scientific-communication-ai/" }
   mvp:    { title: "MVP Sprint", href: "/workshops/mvp-sprint/" }
   ollama: { title: "Ollama + Hermes Agent", href: "/workshops/ollama-hermes/" }
   sim:    { title: "SIM Builder", href: "/workshops/sim-builder/" }
@@ -45,12 +46,12 @@ sections:
         url: "https://gemini.google.com"
         price: "Free tier"
         why: "Drafting, summarising and reusable custom assistants (Gems) inside Google Workspace."
-        usedIn: [gemini, fep, airp, bkla]
+        usedIn: [gemini, fep, airp, bkla, scicomm]
       - name: "NotebookLM"
         url: "https://notebooklm.google.com"
         price: "Free tier"
         why: "Ask questions of your own PDFs and notes, with every answer cited back to the source."
-        usedIn: [litrev, bkla, airp, fep, clin]
+        usedIn: [litrev, bkla, airp, fep, clin, scicomm]
       - name: "Claude"
         url: "https://claude.ai"
         price: "Free tier"
@@ -175,7 +176,7 @@ sections:
         url: "https://www.zotero.org"
         price: "Open source"
         why: "Free, open and works with Word and Google Docs. My default recommendation."
-        usedIn: [litrev, bkla, airp, fep]
+        usedIn: [litrev, bkla, airp, fep, scicomm]
       - name: "Mendeley"
         url: "https://www.mendeley.com"
         price: "Free"
