@@ -11,4 +11,8 @@ labs:
     href: "/courses/genai-society/"
     emoji: "🧠"
     blurb: "Tokens, attention, diffusion, reasoning models and agents — then the hard part: how we measure them and what they change."
+  - title: "Lab 2 · Introduction to Prolog & Syntax"
+    href: "/courses/prolog-intro/"
+    emoji: "🦉"
+    blurb: "Facts, rules and queries on a Malaysian family knowledge base — then unification, recursion and lists, with the demo .pl ready to consult."
 ---
