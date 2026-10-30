@@ -14,6 +14,7 @@
 .sitebar a.l{font-size:12.5px;color:#AAB5CD;text-decoration:none;padding:6px 11px;border-radius:999px;border:1px solid transparent}
 .sitebar a.l:hover{color:#EEF2FA;border-color:#33406A}
 .sitebar a.l.on{color:#0A0F1F;background:#22D3EE;font-weight:700}
+html:not(.fac) .mode{display:none!important}
 
 .mvpdock{position:fixed;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:60;display:flex;flex-direction:column-reverse;align-items:flex-end;gap:10px;transition:opacity .3s;font-family:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace}
 .mvpdock.hide{opacity:0;pointer-events:none}
@@ -36,10 +37,13 @@
 .mvpdock-menu p{margin:4px 0 0;padding:8px 12px 4px;border-top:1px solid #25304F;font-size:10.5px;color:#7F8BA8;line-height:1.45}
 @media (prefers-reduced-motion:reduce){.mvpdock-menu{animation:none}.mvpdock{transition:none}}
 @media print{.mvpdock{display:none}}
+
+html:not(.fac) [data-fac]{display:none!important}
 </style>
+<script>(function(){try{var q=location.search+location.hash,p=location.pathname;if(/[?&]student\b/.test(q))localStorage.removeItem("mvp:fac");else if(/[?&](facilitator|presenter)\b|#facilitator/.test(q)||/(guide|kit)\.html$/.test(p))localStorage.setItem("mvp:fac","1");if(localStorage.getItem("mvp:fac")==="1")document.documentElement.classList.add("fac")}catch(e){}})();</script>
 </head>
 <body>
-<div class="sitebar"><div class="in"><a class="home" href="index.html"><i></i>MVP SPRINT</a><a class="l" href="index.html">Hub</a><a class="l" href="slides.html">Slides</a><a class="l" href="kit.html">Kit</a><a class="l on" href="studio.html">Studio</a><a class="l" href="index.html#sheets">Sheets</a><a class="l" href="guide.html">Guide</a></div></div>
+<div class="sitebar"><div class="in"><a class="home" href="index.html"><i></i>MVP SPRINT</a><a class="l" href="index.html">Hub</a><a class="l on" href="studio.html">Studio</a><a class="l" href="slides.html">Slides</a><a class="l" href="index.html#sheets">Sheets</a><a class="l" href="kit.html" data-fac>Kit</a><a class="l" href="guide.html" data-fac>Guide</a></div></div>
 <style>
 /* Layout: sticky header + stepper, one working panel per step, max 1120px; single dark look matching the session deck */
 :root{
@@ -645,7 +649,7 @@ render();
 </script>
 
 <script>addEventListener("hashchange",function(){var b=document.getElementById(location.hash==="#facilitator"?"modeFac":"modeGroup");if(b)b.click()});</script>
-<div class="mvpdock" id="mvpdock"><button type="button" class="mvpdock-btn" aria-expanded="false" aria-controls="mvpdockMenu"><i aria-hidden="true"></i>MENU</button><nav class="mvpdock-menu" id="mvpdockMenu" aria-label="All pages" hidden><b>Everyone</b><a href="index.html" style="--d:#22D3EE"><em>Hub</em><small>Start page · QR · every link</small></a><a href="slides.html" style="--d:#38BDF8"><em>Slides</em><small>The deck, at your own pace</small></a><a href="kit.html" style="--d:#A78BFA"><em>Kit</em><small>Plan, concepts, prompts, rubric</small></a><a href="studio.html" style="--d:#F472B6" aria-current="page"><em>Studio</em><small>Groups build their MVP here</small></a><a href="index.html#sheets" style="--d:#A3E635"><em>Sheets</em><small>Printable PDFs</small></a><b>Facilitator</b><a href="slides.html?presenter" style="--d:#FBBF24"><em>Presenter console</em><small>Notes, clock, next slide</small></a><a href="studio.html#facilitator" style="--d:#FB7185"><em>Group gallery</em><small>Paste share codes for demos</small></a><a href="guide.html" style="--d:#E2E8F0"><em>Guide</em><small>How this site works</small></a></nav></div>
+<div class="mvpdock" id="mvpdock"><button type="button" class="mvpdock-btn" aria-expanded="false" aria-controls="mvpdockMenu"><i aria-hidden="true"></i>MENU</button><nav class="mvpdock-menu" id="mvpdockMenu" aria-label="All pages" hidden><b>Pages</b><a href="index.html" style="--d:#22D3EE"><em>Hub</em><small>Start page</small></a><a href="studio.html" style="--d:#F472B6" aria-current="page"><em>Studio</em><small>Your group works here</small></a><a href="slides.html" style="--d:#38BDF8"><em>Slides</em><small>Look back at a slide</small></a><a href="index.html#sheets" style="--d:#A3E635"><em>Sheets</em><small>Paper backup (PDF)</small></a><b data-fac>Facilitator</b><a href="slides.html?presenter" style="--d:#FBBF24" data-fac><em>Presenter console</em><small>Notes, clock, next slide</small></a><a href="studio.html#facilitator" style="--d:#FB7185" data-fac><em>Group gallery</em><small>Paste share codes for demos</small></a><a href="kit.html" style="--d:#A78BFA" data-fac><em>Kit</em><small>Run sheet, concepts, rubric, prep</small></a><a href="guide.html" style="--d:#E2E8F0" data-fac><em>Guide</em><small>How this site works</small></a></nav></div>
 <script>
 (function(){var d=document.getElementById("mvpdock");if(!d)return;var b=d.querySelector(".mvpdock-btn"),m=d.querySelector(".mvpdock-menu");
 function set(o){m.hidden=!o;b.setAttribute("aria-expanded",o?"true":"false")}

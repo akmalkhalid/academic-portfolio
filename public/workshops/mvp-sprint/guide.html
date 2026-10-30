@@ -155,12 +155,15 @@ footer{padding-block:24px 96px;color:var(--dim);font-size:14px;border-top:1px so
 .mvpdock-menu p{margin:4px 0 0;padding:8px 12px 4px;border-top:1px solid #25304F;font-size:10.5px;color:#7F8BA8;line-height:1.45}
 @media (prefers-reduced-motion:reduce){.mvpdock-menu{animation:none}.mvpdock{transition:none}}
 @media print{.mvpdock{display:none}}
+
+html:not(.fac) [data-fac]{display:none!important}
 </style>
+<script>(function(){try{var q=location.search+location.hash,p=location.pathname;if(/[?&]student\b/.test(q))localStorage.removeItem("mvp:fac");else if(/[?&](facilitator|presenter)\b|#facilitator/.test(q)||/(guide|kit)\.html$/.test(p))localStorage.setItem("mvp:fac","1");if(localStorage.getItem("mvp:fac")==="1")document.documentElement.classList.add("fac")}catch(e){}})();</script>
 </head>
 <body>
 <div class="veil" aria-hidden="true"></div>
 <div class="gbar" aria-hidden="true"></div>
-<div class="sitebar"><div class="in"><a class="home" href="index.html"><i></i>MVP SPRINT</a><a class="l" href="index.html">Hub</a><a class="l" href="slides.html">Slides</a><a class="l" href="kit.html">Kit</a><a class="l" href="studio.html">Studio</a><a class="l" href="index.html#sheets">Sheets</a><a class="l on" href="guide.html">Guide</a></div></div>
+<div class="sitebar"><div class="in"><a class="home" href="index.html"><i></i>MVP SPRINT</a><a class="l" href="index.html">Hub</a><a class="l" href="studio.html">Studio</a><a class="l" href="slides.html">Slides</a><a class="l" href="index.html#sheets">Sheets</a><a class="l" href="kit.html" data-fac>Kit</a><a class="l on" href="guide.html" data-fac>Guide</a></div></div>
 <main>
 <header class="wrap hero">
   <p class="eyebrow">Facilitator guide · AI-Powered Prototyping · Sat 31 Oct, 10.30–12.30</p>
@@ -185,7 +188,7 @@ footer{padding-block:24px 96px;color:var(--dim);font-size:14px;border-top:1px so
         <path data-r="b" d="M500 230 L500 86" stroke="#A3E635" stroke-opacity=".55"/>
         <path data-r="b" d="M500 230 L265 120" stroke="#38BDF8" stroke-opacity=".55"/>
         <path data-r="y" d="M500 230 L265 340" stroke="#FBBF24" stroke-opacity=".55"/>
-        <path data-r="b" d="M500 230 L500 374" stroke="#A78BFA" stroke-opacity=".55"/>
+        <path data-r="y" d="M500 230 L500 374" stroke="#A78BFA" stroke-opacity=".55"/>
         <path data-r="p" d="M500 230 L735 120" stroke="#F472B6" stroke-opacity=".55"/>
         <path data-r="y" d="M500 230 L735 340" stroke="#FB7185" stroke-opacity=".55"/>
         <path data-r="y" class="flow" d="M160 304 L160 156" stroke="#FBBF24" stroke-width="3"/>
@@ -196,7 +199,7 @@ footer{padding-block:24px 96px;color:var(--dim);font-size:14px;border-top:1px so
         <circle data-r="b" r="5" fill="#A3E635"><animateMotion dur="2.6s" repeatCount="indefinite" path="M500 230 L500 86"/></circle>
         <circle data-r="b" r="5" fill="#38BDF8"><animateMotion dur="3.1s" repeatCount="indefinite" path="M500 230 L265 120"/></circle>
         <circle data-r="y" r="5" fill="#FBBF24"><animateMotion dur="2.8s" repeatCount="indefinite" path="M500 230 L265 340"/></circle>
-        <circle data-r="b" r="5" fill="#A78BFA"><animateMotion dur="3.4s" repeatCount="indefinite" path="M500 230 L500 374"/></circle>
+        <circle data-r="y" r="5" fill="#A78BFA"><animateMotion dur="3.4s" repeatCount="indefinite" path="M500 230 L500 374"/></circle>
         <circle data-r="p" r="6" fill="#F472B6"><animateMotion dur="2.2s" repeatCount="indefinite" path="M500 230 L735 120"/></circle>
         <circle data-r="y" r="5" fill="#FB7185"><animateMotion dur="3s" repeatCount="indefinite" path="M500 230 L735 340"/></circle>
         <circle data-r="y" r="6" fill="#FEF3C7"><animateMotion dur="1.6s" repeatCount="indefinite" path="M160 304 L160 156"/></circle>
@@ -215,16 +218,16 @@ footer{padding-block:24px 96px;color:var(--dim);font-size:14px;border-top:1px so
       <g data-r="b"><rect x="395" y="14" width="210" height="72" rx="16" fill="#0A1022" stroke="#A3E635" stroke-width="2"/><text x="500" y="45" text-anchor="middle" font-size="20" font-weight="700" fill="#EEF2FA">Sheets</text><text x="500" y="68" text-anchor="middle" font-size="12.5" fill="#A3E635" class="mono">PDFs · print or offline</text></g>
       <g data-r="b"><rect x="55" y="84" width="210" height="72" rx="16" fill="#0A1022" stroke="#38BDF8" stroke-width="2"/><text x="160" y="115" text-anchor="middle" font-size="20" font-weight="700" fill="#EEF2FA">Slides</text><text x="160" y="138" text-anchor="middle" font-size="12.5" fill="#38BDF8" class="mono">slides.html · projector</text></g>
       <g data-r="y"><rect x="55" y="304" width="210" height="72" rx="16" fill="#0A1022" stroke="#FBBF24" stroke-width="2"/><text x="160" y="335" text-anchor="middle" font-size="20" font-weight="700" fill="#EEF2FA">Presenter console</text><text x="160" y="358" text-anchor="middle" font-size="12.5" fill="#FBBF24" class="mono">slides.html?presenter</text></g>
-      <g data-r="b"><rect x="395" y="374" width="210" height="72" rx="16" fill="#0A1022" stroke="#A78BFA" stroke-width="2"/><text x="500" y="405" text-anchor="middle" font-size="20" font-weight="700" fill="#EEF2FA">Workshop kit</text><text x="500" y="428" text-anchor="middle" font-size="12.5" fill="#A78BFA" class="mono">kit.html · plan, prompts</text></g>
+      <g data-r="y"><rect x="395" y="374" width="210" height="72" rx="16" fill="#0A1022" stroke="#A78BFA" stroke-width="2"/><text x="500" y="405" text-anchor="middle" font-size="20" font-weight="700" fill="#EEF2FA">Workshop kit</text><text x="500" y="428" text-anchor="middle" font-size="12.5" fill="#A78BFA" class="mono">kit.html · plan, prompts</text></g>
       <g data-r="p"><rect x="735" y="84" width="210" height="72" rx="16" fill="rgba(244,114,182,.14)" stroke="#F472B6" stroke-width="2.5"/><text x="840" y="115" text-anchor="middle" font-size="20" font-weight="700" fill="#EEF2FA">MVP Studio</text><text x="840" y="138" text-anchor="middle" font-size="12.5" fill="#F472B6" class="mono">studio.html · groups</text></g>
       <g data-r="y"><rect x="735" y="304" width="210" height="72" rx="16" fill="#0A1022" stroke="#FB7185" stroke-width="2"/><text x="840" y="335" text-anchor="middle" font-size="20" font-weight="700" fill="#EEF2FA">Group gallery</text><text x="840" y="358" text-anchor="middle" font-size="12.5" fill="#FB7185" class="mono">studio.html#facilitator</text></g>
     </svg>
     </div>
     <div class="rolenote">
       <div class="y"><b>You</b><p>Open the hub, then the presenter console. The slides go on the projector, and the group gallery sits in a second tab. Use the kit and sheets for reference.</p></div>
-      <div class="p"><b>Participants</b><p>Scan the QR to reach the hub, then go to MVP Studio. They can open the slides and kit to look back, and use the sheets if the Wi-Fi drops.</p></div>
+      <div class="p"><b>Participants</b><p>Scan the QR to reach the hub, then go to MVP Studio and stay there. The slides are there to look back at. The paper sheets are only for groups without a working laptop or Wi-Fi.</p></div>
     </div>
-    <div class="menuhint"><span class="fakebtn"><i aria-hidden="true"></i>MENU</span><span>Every page has this button in the bottom-right corner. It lists all pages, so the hub is always one click away. On the slides it shows when you move the mouse, or press <kbd>M</kbd>.</span></div>
+    <div class="menuhint"><span class="fakebtn"><i aria-hidden="true"></i>MENU</span><span>Every page has this button in the bottom-right corner, so the hub is always one click away. On the slides it shows when you move the mouse, or press <kbd>M</kbd>. Students see only Hub, Studio, Slides and Sheets. The facilitator links (console, gallery, kit, guide) appear only on a device where you have opened this guide, the kit or the console. To check what students see, add <kbd>?student</kbd> to the address.</span></div>
   </div>
 </header>
 
@@ -300,7 +303,7 @@ footer{padding-block:24px 96px;color:var(--dim);font-size:14px;border-top:1px so
       <li><b>Send slides to the projector</b><p>Click <b>Open audience window</b> in the console, drag that window to the projector display and press <kbd>F</kbd>.</p></li>
       <li><b>Keep the gallery ready</b><p>In the console, under "Open in a second tab", click <b>Group gallery</b>. Hub, Kit and Studio open in that same tab.</p></li>
     </ol>
-    <p class="warn">Open everything from your website address, in one browser (for example Chrome only). The projector won't follow the console if the page was opened as a file from your disk or in a different browser.</p>
+    <p class="warn">Opening this guide once on the venue laptop turns on the facilitator links there. Open everything from your website address, in one browser (for example Chrome only). The projector won't follow the console if the page was opened as a file from your disk or in a different browser.</p>
   </div>
 </section>
 
@@ -420,9 +423,9 @@ var P={hub:"Hub",console:"Console",slides:"Slides",kit:"Kit",studio:"Studio",gal
 var R=[
  ["Before","Set up",-1,"Upload the mvp-studio folder. On the venue laptop, open the hub and then the presenter console. Tick the prep list in the kit and print the sheets.",["hub","console","kit","sheets"],"Bring a charged laptop and a Google account for Google AI Studio.",[]],
  ["10.30","Open + live demo",630,"Show the cover, then the demo slide. Paste the demo prompt into Google AI Studio, press Build and let it run in the background.",["console","ai"],"",[]],
- ["10.33","Four thinking lenses",633,"Drive the concept slides from the console. Each animation plays when its slide appears. Go back to the demo build at the reveal, 10.37.",["console"],"Watch the projector, or follow along in their own copy of the slides.",["slides"]],
- ["10.54","Join",654,"Show the MVP Studio QR slide. The QR always points to your own site.",["console"],"Scan the QR, open MVP Studio and fill in Join: group number, startup name and problem area (or a quick-start idea).",["hub","studio"]],
- ["10.55","Thinking Canvas · 12 min",655,"Show the canvas slide; its 12:00 timer starts by itself. Walk the room with the hint cards.",["console","sheets"],"Fill the canvas with the dropdowns. If stuck, open hints at level 3, then 2, then 1.",["studio"]],
+ ["10.33","MVP ideas, then four lenses",633,"Drive the concept slides from the console; each click plays the next stage of an animation. Reveal the demo build at 10.37, then classic MVPs and the pyramid. The four lenses (10.45–10.52) carry the same numbers as canvas boxes 1–4; say so out loud.",["console"],"Watch the projector. No laptops needed yet.",[]],
+ ["10.53","Join",653,"Show the MVP Studio QR slide. Say: steps 1 to 3 now, steps 4 to 6 after 11.12, no prompting yet.",["console"],"Scan the QR, open MVP Studio and fill in Join: group number, startup name and problem area (or a quick-start idea).",["hub","studio"]],
+ ["10.55","Thinking Canvas · 12 min",655,"Show the canvas slide; its 12:00 timer starts by itself. Walk the room; mentors use the hint cards.",["console","sheets"],"Fill the canvas in Studio by picking options, then editing one word. Paper A3 only if their laptop fails.",["studio"]],
  ["11.06","Prompt and loop",666,"Show the bridge, prompt and loop slides, then roles, time budget and tools.",["console"],"Build prompt step: run the checks, then Copy prompt.",["studio"]],
  ["11.12","Sprint 1 · 38 min",672,"Show the Sprint 1 slide (38:00). Call the checkpoints: v1 at 11.15, preview at 11.20, rotate roles at 11.32, freeze at 11.45.",["console"],"Paste the prompt into Google AI Studio and wait for the build. Then make one change per prompt using Iterate.",["studio","ai"]],
  ["11.50","Peer test · 6 min",710,"Show the swap slide with its 2:00 timer. Pair the groups.",["console"],"Test another group's app in the Peer test step and note what the tester did.",["studio"]],
@@ -457,7 +460,7 @@ tick();setInterval(tick,30000);
 })();
 </script>
 
-<div class="mvpdock" id="mvpdock"><button type="button" class="mvpdock-btn" aria-expanded="false" aria-controls="mvpdockMenu"><i aria-hidden="true"></i>MENU</button><nav class="mvpdock-menu" id="mvpdockMenu" aria-label="All pages" hidden><b>Everyone</b><a href="index.html" style="--d:#22D3EE"><em>Hub</em><small>Start page · QR · every link</small></a><a href="slides.html" style="--d:#38BDF8"><em>Slides</em><small>The deck, at your own pace</small></a><a href="kit.html" style="--d:#A78BFA"><em>Kit</em><small>Plan, concepts, prompts, rubric</small></a><a href="studio.html" style="--d:#F472B6"><em>Studio</em><small>Groups build their MVP here</small></a><a href="index.html#sheets" style="--d:#A3E635"><em>Sheets</em><small>Printable PDFs</small></a><b>Facilitator</b><a href="slides.html?presenter" style="--d:#FBBF24"><em>Presenter console</em><small>Notes, clock, next slide</small></a><a href="studio.html#facilitator" style="--d:#FB7185"><em>Group gallery</em><small>Paste share codes for demos</small></a><a href="guide.html" style="--d:#E2E8F0" aria-current="page"><em>Guide</em><small>How this site works</small></a></nav></div>
+<div class="mvpdock" id="mvpdock"><button type="button" class="mvpdock-btn" aria-expanded="false" aria-controls="mvpdockMenu"><i aria-hidden="true"></i>MENU</button><nav class="mvpdock-menu" id="mvpdockMenu" aria-label="All pages" hidden><b>Pages</b><a href="index.html" style="--d:#22D3EE"><em>Hub</em><small>Start page</small></a><a href="studio.html" style="--d:#F472B6"><em>Studio</em><small>Your group works here</small></a><a href="slides.html" style="--d:#38BDF8"><em>Slides</em><small>Look back at a slide</small></a><a href="index.html#sheets" style="--d:#A3E635"><em>Sheets</em><small>Paper backup (PDF)</small></a><b data-fac>Facilitator</b><a href="slides.html?presenter" style="--d:#FBBF24" data-fac><em>Presenter console</em><small>Notes, clock, next slide</small></a><a href="studio.html#facilitator" style="--d:#FB7185" data-fac><em>Group gallery</em><small>Paste share codes for demos</small></a><a href="kit.html" style="--d:#A78BFA" data-fac><em>Kit</em><small>Run sheet, concepts, rubric, prep</small></a><a href="guide.html" style="--d:#E2E8F0" data-fac aria-current="page"><em>Guide</em><small>How this site works</small></a></nav></div>
 <script>
 (function(){var d=document.getElementById("mvpdock");if(!d)return;var b=d.querySelector(".mvpdock-btn"),m=d.querySelector(".mvpdock-menu");
 function set(o){m.hidden=!o;b.setAttribute("aria-expanded",o?"true":"false")}

@@ -6,6 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>AI-Powered Prototyping · Kit</title>
 <link rel="stylesheet" href="assets/fonts.css">
+<script>(function(){try{var q=location.search+location.hash,p=location.pathname;if(/[?&]student\b/.test(q))localStorage.removeItem("mvp:fac");else if(/[?&](facilitator|presenter)\b|#facilitator/.test(q)||/(guide|kit)\.html$/.test(p))localStorage.setItem("mvp:fac","1");if(localStorage.getItem("mvp:fac")==="1")document.documentElement.classList.add("fac")}catch(e){}})();</script>
 </head>
 <body>
 <style>
@@ -295,12 +296,14 @@ footer.end{padding-block:56px 72px;color:var(--dim);font-size:14px}
 .mvpdock-menu p{margin:4px 0 0;padding:8px 12px 4px;border-top:1px solid #25304F;font-size:10.5px;color:#7F8BA8;line-height:1.45}
 @media (prefers-reduced-motion:reduce){.mvpdock-menu{animation:none}.mvpdock{transition:none}}
 @media print{.mvpdock{display:none}}
+
+html:not(.fac) [data-fac]{display:none!important}
 </style>
 
 <canvas id="bg" aria-hidden="true"></canvas>
 <div class="grid-veil" aria-hidden="true"></div>
 <div class="gbar" aria-hidden="true"></div>
-<div class="sitebar"><div class="in"><a class="home" href="index.html"><i></i>MVP SPRINT</a><a class="l" href="index.html">Hub</a><a class="l" href="slides.html">Slides</a><a class="l on" href="kit.html">Kit</a><a class="l" href="studio.html">Studio</a><a class="l" href="index.html#sheets">Sheets</a><a class="l" href="guide.html">Guide</a></div></div>
+<div class="sitebar"><div class="in"><a class="home" href="index.html"><i></i>MVP SPRINT</a><a class="l" href="index.html">Hub</a><a class="l" href="studio.html">Studio</a><a class="l" href="slides.html">Slides</a><a class="l" href="index.html#sheets">Sheets</a><a class="l on" href="kit.html" data-fac>Kit</a><a class="l" href="guide.html" data-fac>Guide</a></div></div>
 
 <div class="rail">
   <div class="wrap">
@@ -520,6 +523,40 @@ footer.end{padding-block:56px 72px;color:var(--dim);font-size:14px}
     </article>
 
     <article class="concept">
+      <div class="screen viz" aria-label="Animated Lean UX hypothesis">
+        <svg viewBox="0 0 1664 600" role="img" aria-label="Hypothesis template whose placeholders are replaced by the BilikKu example and stamped observable in a peer test">
+          <rect x="0" y="0" width="1664" height="76" fill="#131A2E"/>
+          <text x="32" y="50" font-size="31" fill="#EEF2FA">We believe <tspan fill="#22D3EE">[user]</tspan> will <tspan fill="#F9A8D4">[behaviour]</tspan> because <tspan fill="#C4B5FD">[reason]</tspan>. We’ll know when <tspan fill="#FBBF24">[signal]</tspan>.</text>
+          <g font-size="34" font-weight="700" fill="#A9B4CC">
+            <text class="f" style="animation-delay:.5s" x="24" y="170">We believe</text><text class="f" style="animation-delay:.6s" x="24" y="270">will</text><text class="f" style="animation-delay:.7s" x="24" y="370">because</text><text class="f" style="animation-delay:.8s" x="24" y="470">We’ll know when</text>
+          </g>
+          <rect class="hy-hl" x="440" y="414" width="1200" height="84" rx="16" fill="#33240A" stroke="#B45309" stroke-width="2"/>
+          <g class="m" font-size="27">
+            <g class="hy-ph" style="animation-delay:.6s,1.6s"><rect x="460" y="132" width="200" height="54" rx="12" fill="#0F2A33" stroke="#22D3EE" stroke-width="2"/><text x="560" y="168" text-anchor="middle" fill="#22D3EE">[user]</text></g>
+            <g class="hy-ph" style="animation-delay:.6s,2.4s"><rect x="460" y="232" width="250" height="54" rx="12" fill="#2E1330" stroke="#F472B6" stroke-width="2"/><text x="585" y="268" text-anchor="middle" fill="#F9A8D4">[behaviour]</text></g>
+            <g class="hy-ph" style="animation-delay:.6s,3.2s"><rect x="460" y="332" width="210" height="54" rx="12" fill="#1E1446" stroke="#A78BFA" stroke-width="2"/><text x="565" y="368" text-anchor="middle" fill="#C4B5FD">[reason]</text></g>
+            <g class="hy-ph" style="animation-delay:.6s,4s"><rect x="460" y="432" width="210" height="54" rx="12" fill="#33240A" stroke="#FBBF24" stroke-width="2"/><text x="565" y="468" text-anchor="middle" fill="#FBBF24">[signal]</text></g>
+          </g>
+          <g font-size="36" font-weight="600">
+            <text class="ux" style="animation-delay:1.8s" x="460" y="170" fill="#22D3EE">off-campus final-year FTSM students</text>
+            <text class="ux" style="animation-delay:2.6s" x="460" y="270" fill="#F9A8D4">book rooms online instead of walking in</text>
+            <text class="ux" style="animation-delay:3.4s" x="460" y="370" fill="#C4B5FD">they can see free slots</text>
+            <text class="ux" style="animation-delay:4.2s" x="472" y="470" fill="#FBBF24" font-weight="700">2 of 3 testers book in under 30 seconds</text>
+          </g>
+          <g class="hy-st"><rect x="900" y="526" width="740" height="62" rx="31" fill="#A3E635"/><text x="1270" y="568" text-anchor="middle" font-size="29" font-weight="800" fill="#0A0F1F">✓ Observable in a 2-minute peer test</text></g>
+        </svg>
+        <button class="replay" type="button">↻ Replay</button>
+      </div>
+      <div>
+        <p class="eyebrow">Lens 3 · Canvas box 3</p>
+        <h3>Lean UX hypothesis</h3>
+        <p>Every idea hides one assumption that can kill it. Write it as a hypothesis a test can prove wrong: who, what they will do, why, and the signal you will see. The signal must be visible in today’s two-minute peer test.</p>
+        <p class="src">Format adapted from J. Gothelf &amp; J. Seiden, Lean UX (2013)</p>
+        <span class="tagline">Box 3 → the peer test at 11.50</span>
+      </div>
+    </article>
+
+    <article class="concept">
       <div class="screen light viz" aria-label="Animated computational thinking demo">
         <svg viewBox="0 0 1664 624" role="img" aria-label="The idea Book a discussion room is decomposed into five steps, matched to the cinema seat picker pattern, cut to three steps, and given an if-then rule">
           <g font-size="28" font-weight="700">
@@ -549,45 +586,11 @@ footer.end{padding-block:56px 72px;color:var(--dim);font-size:14px}
         <button class="replay" type="button">↻ Replay</button>
       </div>
       <div>
-        <p class="eyebrow">Lens 3 · Canvas box 4</p>
+        <p class="eyebrow">Lens 4 · Canvas box 4</p>
         <h3>Computational thinking</h3>
         <p>Think like a computer before you prompt one. Decompose the core job into steps, spot a familiar pattern, abstract away everything that does not test the hypothesis, and write the rule precisely. Each habit fills one part of the build prompt.</p>
         <p class="src">J. M. Wing (2006), Communications of the ACM 49(3)</p>
         <span class="tagline">Box 4 → CORE FLOW + FEATURES</span>
-      </div>
-    </article>
-
-    <article class="concept">
-      <div class="screen viz" aria-label="Animated Lean UX hypothesis">
-        <svg viewBox="0 0 1664 600" role="img" aria-label="Hypothesis template whose placeholders are replaced by the BilikKu example and stamped observable in a peer test">
-          <rect x="0" y="0" width="1664" height="76" fill="#131A2E"/>
-          <text x="32" y="50" font-size="31" fill="#EEF2FA">We believe <tspan fill="#22D3EE">[user]</tspan> will <tspan fill="#F9A8D4">[behaviour]</tspan> because <tspan fill="#C4B5FD">[reason]</tspan>. We’ll know when <tspan fill="#FBBF24">[signal]</tspan>.</text>
-          <g font-size="34" font-weight="700" fill="#A9B4CC">
-            <text class="f" style="animation-delay:.5s" x="24" y="170">We believe</text><text class="f" style="animation-delay:.6s" x="24" y="270">will</text><text class="f" style="animation-delay:.7s" x="24" y="370">because</text><text class="f" style="animation-delay:.8s" x="24" y="470">We’ll know when</text>
-          </g>
-          <rect class="hy-hl" x="440" y="414" width="1200" height="84" rx="16" fill="#33240A" stroke="#B45309" stroke-width="2"/>
-          <g class="m" font-size="27">
-            <g class="hy-ph" style="animation-delay:.6s,1.6s"><rect x="460" y="132" width="200" height="54" rx="12" fill="#0F2A33" stroke="#22D3EE" stroke-width="2"/><text x="560" y="168" text-anchor="middle" fill="#22D3EE">[user]</text></g>
-            <g class="hy-ph" style="animation-delay:.6s,2.4s"><rect x="460" y="232" width="250" height="54" rx="12" fill="#2E1330" stroke="#F472B6" stroke-width="2"/><text x="585" y="268" text-anchor="middle" fill="#F9A8D4">[behaviour]</text></g>
-            <g class="hy-ph" style="animation-delay:.6s,3.2s"><rect x="460" y="332" width="210" height="54" rx="12" fill="#1E1446" stroke="#A78BFA" stroke-width="2"/><text x="565" y="368" text-anchor="middle" fill="#C4B5FD">[reason]</text></g>
-            <g class="hy-ph" style="animation-delay:.6s,4s"><rect x="460" y="432" width="210" height="54" rx="12" fill="#33240A" stroke="#FBBF24" stroke-width="2"/><text x="565" y="468" text-anchor="middle" fill="#FBBF24">[signal]</text></g>
-          </g>
-          <g font-size="36" font-weight="600">
-            <text class="ux" style="animation-delay:1.8s" x="460" y="170" fill="#22D3EE">off-campus final-year FTSM students</text>
-            <text class="ux" style="animation-delay:2.6s" x="460" y="270" fill="#F9A8D4">book rooms online instead of walking in</text>
-            <text class="ux" style="animation-delay:3.4s" x="460" y="370" fill="#C4B5FD">they can see free slots</text>
-            <text class="ux" style="animation-delay:4.2s" x="472" y="470" fill="#FBBF24" font-weight="700">2 of 3 testers book in under 30 seconds</text>
-          </g>
-          <g class="hy-st"><rect x="900" y="526" width="740" height="62" rx="31" fill="#A3E635"/><text x="1270" y="568" text-anchor="middle" font-size="29" font-weight="800" fill="#0A0F1F">✓ Observable in a 2-minute peer test</text></g>
-        </svg>
-        <button class="replay" type="button">↻ Replay</button>
-      </div>
-      <div>
-        <p class="eyebrow">Lens 4 · Canvas box 3</p>
-        <h3>Lean UX hypothesis</h3>
-        <p>Every idea hides one assumption that can kill it. Write it as a hypothesis a test can prove wrong: who, what they will do, why, and the signal you will see. The signal must be visible in today’s two-minute peer test.</p>
-        <p class="src">Format adapted from J. Gothelf &amp; J. Seiden, Lean UX (2013)</p>
-        <span class="tagline">Box 3 → the peer test at 11.50</span>
       </div>
     </article>
 
@@ -773,14 +776,13 @@ var RS=[["10.25","Cover","Room settles; AI Studio, recording and deck open in th
 ["10.33","Double Diamond","Where the bootcamp sits","Demo still building","think",1],
 ["10.35","Prototype vs MVP vs product","Three questions","Demo still building","think",1],
 ["10.37","Reveal","Switch to the finished app and click through it","Done, or play the recording","think"],
-["10.42","MVP pyramid","Thin slice, not a wide base","","think"],
-["10.44","Design thinking + Lean UX + Agile","How an MVP is born","","think"],
-["10.46","Lens 1 · Systems thinking","Iceberg model","","think"],
-["10.48","Lens 2 · Design thinking","Point of view + How might we","","think"],
-["10.50","Lens 3 · Computational thinking","Decompose to algorithm","","think"],
-["10.52","Lens 4 · Hypothesis","Make the guess testable","","think"],
-["10.53","Classic MVPs","Dropbox, Zappos, Buffer","","think"],
-["10.54","MVP Studio QR","Groups open the app","","think"],
+["10.42","Classic MVPs","Dropbox, Zappos, Buffer","","think"],
+["10.43","MVP pyramid","Thin slice, not a wide base","","think"],
+["10.45","Lens 1 · Systems thinking","Canvas box 1 · iceberg","","think"],
+["10.47","Lens 2 · Design thinking","Canvas box 2 · POV + How might we","","think"],
+["10.49","Lens 3 · Hypothesis","Canvas box 3 · make the guess testable","","think"],
+["10.51","Lens 4 · Computational thinking","Canvas box 4 · decompose, cut to 3","","think"],
+["10.53","MVP Studio QR","Steps 1–3 now; no prompting yet","","think"],
 ["10.55","Thinking Canvas","12-minute timer, boxes 1 → 4","","think",0,1],
 ["11.07","Canvas → prompt · Build loop · Five verbs","The canvas becomes the prompt","","think"],
 ["11.10","Roles · Time budget · Toolkit","Assign roles and open AI Studio","","think"],
@@ -792,7 +794,7 @@ var RS=[["10.25","Cover","Room settles; AI Studio, recording and deck open in th
 ["12.25","Reflect","Four questions, one per lens","","show"],
 ["12.27","Tonight","Homework before the pitch","","show"],
 ["12.30","Close","Build to learn, not to impress","","show"]];
-var SID=["cover","agenda","demo","map","pmp","reveal","pyramid","curve","systems","dt","ct","hypo","classic","studio","canvas","bridge","roles","sprint1","swap","sprint2","demos","guard","reflect","wrap","thanks"];
+var SID=["cover","agenda","demo","map","pmp","reveal","classic","pyramid","systems","dt","hypo","ct","studio","canvas","bridge","roles","sprint1","swap","sprint2","demos","guard","reflect","wrap","thanks"];
 function toMin(s){var p=s.split(".");return (+p[0])*60+(+p[1])}
 var BASE=toMin("10.25");
 (function(){var host=$("sched");host.innerHTML=RS.map(function(r,i){return '<div class="row'+(r[6]?' big':'')+'" data-i="'+i+'"><span class="t">'+r[0]+'</span><span class="dot ph-'+r[4]+'"></span><span class="what"><b>'+r[1]+'</b><span>'+r[2]+'</span></span><span class="gen'+(r[5]?' yes':'')+'">'+(r[3]?(r[5]?'● ':'')+r[3]+'<br>':'')+'<a class="go" href="slides.html#'+SID[i]+'">open slide ↗</a></span></div>'}).join("");
@@ -868,7 +870,7 @@ var BASE=toMin("10.25");
 })();
 </script>
 
-<div class="mvpdock" id="mvpdock"><button type="button" class="mvpdock-btn" aria-expanded="false" aria-controls="mvpdockMenu"><i aria-hidden="true"></i>MENU</button><nav class="mvpdock-menu" id="mvpdockMenu" aria-label="All pages" hidden><b>Everyone</b><a href="index.html" style="--d:#22D3EE"><em>Hub</em><small>Start page · QR · every link</small></a><a href="slides.html" style="--d:#38BDF8"><em>Slides</em><small>The deck, at your own pace</small></a><a href="kit.html" style="--d:#A78BFA" aria-current="page"><em>Kit</em><small>Plan, concepts, prompts, rubric</small></a><a href="studio.html" style="--d:#F472B6"><em>Studio</em><small>Groups build their MVP here</small></a><a href="index.html#sheets" style="--d:#A3E635"><em>Sheets</em><small>Printable PDFs</small></a><b>Facilitator</b><a href="slides.html?presenter" style="--d:#FBBF24"><em>Presenter console</em><small>Notes, clock, next slide</small></a><a href="studio.html#facilitator" style="--d:#FB7185"><em>Group gallery</em><small>Paste share codes for demos</small></a><a href="guide.html" style="--d:#E2E8F0"><em>Guide</em><small>How this site works</small></a></nav></div>
+<div class="mvpdock" id="mvpdock"><button type="button" class="mvpdock-btn" aria-expanded="false" aria-controls="mvpdockMenu"><i aria-hidden="true"></i>MENU</button><nav class="mvpdock-menu" id="mvpdockMenu" aria-label="All pages" hidden><b>Pages</b><a href="index.html" style="--d:#22D3EE"><em>Hub</em><small>Start page</small></a><a href="studio.html" style="--d:#F472B6"><em>Studio</em><small>Your group works here</small></a><a href="slides.html" style="--d:#38BDF8"><em>Slides</em><small>Look back at a slide</small></a><a href="index.html#sheets" style="--d:#A3E635"><em>Sheets</em><small>Paper backup (PDF)</small></a><b data-fac>Facilitator</b><a href="slides.html?presenter" style="--d:#FBBF24" data-fac><em>Presenter console</em><small>Notes, clock, next slide</small></a><a href="studio.html#facilitator" style="--d:#FB7185" data-fac><em>Group gallery</em><small>Paste share codes for demos</small></a><a href="kit.html" style="--d:#A78BFA" data-fac aria-current="page"><em>Kit</em><small>Run sheet, concepts, rubric, prep</small></a><a href="guide.html" style="--d:#E2E8F0" data-fac><em>Guide</em><small>How this site works</small></a></nav></div>
 <script>
 (function(){var d=document.getElementById("mvpdock");if(!d)return;var b=d.querySelector(".mvpdock-btn"),m=d.querySelector(".mvpdock-menu");
 function set(o){m.hidden=!o;b.setAttribute("aria-expanded",o?"true":"false")}

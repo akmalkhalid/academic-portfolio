@@ -31,7 +31,7 @@ h1 span{background:linear-gradient(90deg,var(--cyan),var(--violet) 50%,var(--pin
 .qrcard{background:#F7F8FC;color:var(--ink);border-radius:22px;padding:18px;display:flex;flex-direction:column;align-items:center;gap:10px;box-shadow:0 30px 80px rgba(139,92,246,.30)}
 .qrcard .qr{width:100%;aspect-ratio:1}.qrcard .qr svg{width:100%;height:100%;display:block}
 .qrcard b{font-size:18px}.qrcard small{font-family:var(--mono);font-size:11.5px;color:#4A5568;text-align:center;overflow-wrap:anywhere}
-.doors{display:grid;grid-template-columns:1.25fr 1fr 1fr;grid-template-rows:auto auto;gap:16px;padding-bottom:28px}
+.doors{display:grid;grid-template-columns:1.5fr 1fr;grid-template-rows:auto auto;gap:16px;padding-bottom:28px}
 .door{position:relative;display:flex;flex-direction:column;gap:10px;text-decoration:none;color:var(--fg);background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:24px;min-height:200px;overflow:hidden;transition:transform .2s,border-color .2s}
 .door:hover{transform:translateY(-3px);border-color:var(--c,var(--cyan));color:var(--fg)}
 .door h2{font-size:32px}
@@ -40,7 +40,15 @@ h1 span{background:linear-gradient(90deg,var(--cyan),var(--violet) 50%,var(--pin
 .door .who{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--c,var(--cyan))}
 .door.studio{grid-row:span 2;--c:var(--pink);background:linear-gradient(160deg,rgba(244,114,182,.22),rgba(139,92,246,.16) 45%,var(--panel) 80%)}
 .door.studio h2{font-size:clamp(38px,4.4vw,54px)}
-.door.slides{--c:var(--cyan)}.door.kit{--c:var(--violet)}.door.pres{--c:var(--amber)}.door.sheets{--c:var(--lime)}
+.door.slides{--c:var(--cyan)}.door.kit{--c:var(--violet)}.door.pres{--c:var(--amber)}.door.paper{--c:var(--lime)}
+.six{list-style:none;margin:6px 0 0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.six li{display:flex;flex-direction:column;gap:2px;border-radius:12px;padding:10px 12px;border:1px solid var(--line);background:#0A1022;min-width:0}
+.six li.now{border-color:var(--pink);background:rgba(244,114,182,.12)}
+.six b{font-family:var(--mono);font-size:13px;color:var(--pink)}.six li.later b{color:var(--dim)}
+.six span{font-size:15px;font-weight:600;line-height:1.25}.six li.later span{color:var(--muted)}
+.sixkey{font-family:var(--mono);font-size:12px;color:var(--dim);display:flex;align-items:center;gap:6px}
+.sixkey i{display:inline-block;width:12px;height:12px;border-radius:4px;background:rgba(244,114,182,.35);border:1px solid var(--pink)}.sixkey i.l{background:#0A1022;border-color:var(--line)}
+@media (max-width:600px){.six{grid-template-columns:1fr 1fr}}
 .mini{height:84px;border-radius:12px;background:#0A1022;border:1px solid var(--line);position:relative;overflow:hidden}
 .mini svg{position:absolute;inset:0;width:100%;height:100%}
 .flow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;padding-block:8px 36px}
@@ -63,6 +71,7 @@ h1 span{background:linear-gradient(90deg,var(--cyan),var(--violet) 50%,var(--pin
 footer{padding-block:20px 48px;color:var(--dim);font-size:14px;border-top:1px solid var(--line)}
 .note{font-size:14px;color:var(--dim)}
 @media (max-width:900px){.hero{grid-template-columns:1fr}.qrcard{max-width:280px}.doors{grid-template-columns:1fr 1fr}.door.studio{grid-row:auto;grid-column:1/-1}}
+.door{min-height:0}
 @media (max-width:600px){.doors,.flow,.dl{grid-template-columns:1fr}}
 @media (prefers-reduced-motion:reduce){.door{transition:none}}
 
@@ -96,49 +105,43 @@ footer{padding-block:20px 48px;color:var(--dim);font-size:14px;border-top:1px so
 .mvpdock-menu p{margin:4px 0 0;padding:8px 12px 4px;border-top:1px solid #25304F;font-size:10.5px;color:#7F8BA8;line-height:1.45}
 @media (prefers-reduced-motion:reduce){.mvpdock-menu{animation:none}.mvpdock{transition:none}}
 @media print{.mvpdock{display:none}}
+
+html:not(.fac) [data-fac]{display:none!important}
 </style>
+<script>(function(){try{var q=location.search+location.hash,p=location.pathname;if(/[?&]student\b/.test(q))localStorage.removeItem("mvp:fac");else if(/[?&](facilitator|presenter)\b|#facilitator/.test(q)||/(guide|kit)\.html$/.test(p))localStorage.setItem("mvp:fac","1");if(localStorage.getItem("mvp:fac")==="1")document.documentElement.classList.add("fac")}catch(e){}})();</script>
 </head>
 <body>
 <canvas id="bg" aria-hidden="true"></canvas><div class="veil" aria-hidden="true"></div>
 <div class="gbar" aria-hidden="true"></div>
-<div class="sitebar"><div class="in"><a class="home" href="index.html"><i></i>MVP SPRINT</a><a class="l on" href="index.html">Hub</a><a class="l" href="slides.html">Slides</a><a class="l" href="kit.html">Kit</a><a class="l" href="studio.html">Studio</a><a class="l" href="index.html#sheets">Sheets</a><a class="l" href="guide.html">Guide</a></div></div>
+<div class="sitebar"><div class="in"><a class="home" href="index.html"><i></i>MVP SPRINT</a><a class="l on" href="index.html">Hub</a><a class="l" href="studio.html">Studio</a><a class="l" href="slides.html">Slides</a><a class="l" href="index.html#sheets">Sheets</a><a class="l" href="kit.html" data-fac>Kit</a><a class="l" href="guide.html" data-fac>Guide</a></div></div>
 <main>
 <header class="wrap hero">
   <div>
     <div class="logos"><img src="assets/ukm.png" alt="Universiti Kebangsaan Malaysia"><img src="assets/ftsm.png" alt="Fakulti Teknologi dan Sains Maklumat (FTSM)"></div>
     <p class="eyebrow">FTSM Technopreneurship Bootcamp 2026 · Day 2 · Build</p>
     <h1>AI-Powered <span>Prototyping</span></h1>
-    <p class="lede">One link for the whole session. Groups work in MVP Studio; the slides, kit and printable sheets are all here too. Sat 31 Oct 2026, 10.30–12.30, Tasik Chini.</p>
+    <p class="lede">Everything today happens in <b style="color:var(--fg)">MVP Studio</b>. One laptop per group, the same browser all session. Sat 31 Oct 2026, 10.30–12.30, Tasik Chini.</p>
   </div>
   <div class="qrcard"><div class="qr" id="qr" role="img" aria-label="QR code for this page"></div><b>Scan to join</b><small id="here"></small></div>
 </header>
 
 <section class="wrap doors" aria-label="Open">
   <a class="door studio" href="studio.html">
-    <span class="who">For groups · start here</span>
+    <span class="who">Start here · one laptop per group</span>
     <h2>MVP Studio</h2>
-    <p>Pick a problem area or a quick-start idea, fill the Thinking Canvas with hints when you need them, and get a ready-to-paste build prompt. Then iterate, run the peer test, reflect and send your share code.</p>
-    <div class="mini" aria-hidden="true"><svg viewBox="0 0 400 84"><rect x="12" y="14" width="88" height="56" rx="10" fill="none" stroke="#22D3EE" stroke-width="2"/><rect x="112" y="14" width="88" height="56" rx="10" fill="none" stroke="#A78BFA" stroke-width="2"/><rect x="212" y="14" width="88" height="56" rx="10" fill="#F472B6" fill-opacity=".25" stroke="#F472B6" stroke-width="2"/><rect x="312" y="14" width="76" height="56" rx="10" fill="none" stroke="#FBBF24" stroke-width="2"/><circle r="6" fill="#FDE7F3"><animateMotion dur="5s" repeatCount="indefinite" path="M56 42 H156 H256 H350"/></circle></svg></div>
+    <p>Six steps, one at a time. Steps 1–3 before 11.12: join, fill the Thinking Canvas by picking options, copy your build prompt. Steps 4–6 after 11.12: iterate, peer test, submit.</p>
+    <ol class="six" aria-label="The six steps in MVP Studio"><li class="now"><b>1</b><span>Join</span></li><li class="now"><b>2</b><span>Thinking Canvas</span></li><li class="now"><b>3</b><span>Build prompt</span></li><li class="later"><b>4</b><span>Iterate</span></li><li class="later"><b>5</b><span>Peer test</span></li><li class="later"><b>6</b><span>Reflect &amp; submit</span></li></ol>
+    <p class="sixkey"><i></i>before 11.12 &nbsp; <i class="l"></i>after 11.12</p>
     <span class="go">Open MVP Studio →</span>
   </a>
   <a class="door slides" href="slides.html">
-    <span class="who">Follow along</span><h2>Slides</h2>
-    <p>The animated deck. Browse at your own pace; the facilitator presents the same slides.</p>
+    <span class="who">Missed something?</span><h2>Slides</h2>
+    <p>The same slides as the projector. You don't need to follow along here.</p>
     <span class="go">Open slides →</span>
   </a>
-  <a class="door kit" href="kit.html">
-    <span class="who">Concepts &amp; plan</span><h2>Workshop kit</h2>
-    <p>Run sheet, the four thinking lenses as live visuals, prompt builder, rubric and prep list.</p>
-    <span class="go">Open the kit →</span>
-  </a>
-  <a class="door pres" href="slides.html?presenter">
-    <span class="who">Facilitator</span><h2>Presenter console</h2>
-    <p>Notes, next slide and clock. Open the slides on the projector too; the two windows stay in step.</p>
-    <span class="go">Open console →</span>
-  </a>
-  <a class="door sheets" href="#sheets">
-    <span class="who">Print or offline</span><h2>Sheets</h2>
-    <p>Canvas, idea and option banks, prompt cards, peer-test sheet, hint and mentor cards.</p>
+  <a class="door paper" href="#sheets">
+    <span class="who">No laptop or Wi-Fi?</span><h2>Paper backup</h2>
+    <p>The same canvas and prompt cards as PDFs. Use them only if Studio won't work.</p>
     <span class="go">See the PDFs ↓</span>
   </a>
 </section>
@@ -149,20 +152,20 @@ footer{padding-block:20px 48px;color:var(--dim);font-size:14px;border-top:1px so
   <div class="seg"><i style="background:var(--pink)"></i><b>Show · 20 min</b><span>12.10 – 12.30 · demos, reflect</span></div>
 </section>
 
-<section class="wrap" aria-label="Facilitator guide" style="padding-bottom:40px">
-  <a class="guide" href="guide.html"><span class="who">Facilitator</span><b>How this site works</b><span class="sub">Your screens, the participants' path and who opens what, minute by minute.</span><span class="go">Open the guide →</span></a>
+<section class="wrap" aria-label="Facilitator" data-fac style="padding-bottom:40px">
+  <a class="guide" href="guide.html"><span class="who">Facilitator</span><b>Guide, console, gallery, kit</b><span class="sub">Shown only on your devices. Students don't see this row or the facilitator links.</span><span class="go">Open the guide →</span></a>
 </section>
 
 <section class="wrap sheets" id="sheets" aria-labelledby="shH">
-  <p class="eyebrow" style="color:var(--lime)">Printable sheets</p>
+  <p class="eyebrow" style="color:var(--lime)">Paper backup</p>
   <h2 id="shH">Same steps on paper</h2>
-  <p>Print the Thinking Canvas on A3 landscape and the rest on A4. Use them if the Wi-Fi drops.</p>
+  <p>Only if Studio won't work for your group. Canvas on A3 landscape, the rest on A4. Hint and mentor cards are for mentors.</p>
   <div class="dl"><a class="all" href="sheets/00-all-sheets.pdf" download><b>All sheets</b><small>one PDF · A3 + A4 · PDF</small></a><a class="" href="sheets/01-thinking-canvas-A3.pdf" download><b>Thinking Canvas</b><small>A3 landscape · PDF</small></a><a class="" href="sheets/02-idea-bank.pdf" download><b>Idea bank</b><small>A4 · PDF</small></a><a class="" href="sheets/03-option-bank.pdf" download><b>Option bank</b><small>A4 · PDF</small></a><a class="" href="sheets/04-hint-cards.pdf" download><b>Hint cards</b><small>A4 · mentors · PDF</small></a><a class="" href="sheets/05-prompt-card-A.pdf" download><b>Prompt Card A</b><small>A4 · PDF</small></a><a class="" href="sheets/06-prompt-card-B.pdf" download><b>Prompt Card B</b><small>A4 · PDF</small></a><a class="" href="sheets/07-peer-test-sheet.pdf" download><b>Peer-test sheet</b><small>A4 · PDF</small></a><a class="" href="sheets/08-mentor-card.pdf" download><b>Mentor card</b><small>A4 · mentors · PDF</small></a></div>
 </section>
 </main>
 <footer class="wrap">
   <p>Ts. Dr. Mohd Nor Akmal Khalid · CAIT, FTSM, Universiti Kebangsaan Malaysia · akmal@ukm.edu.my</p>
-  <p class="note" style="margin-top:6px">Work in MVP Studio is saved only in each group's own browser. Nothing is sent to a server.</p>
+  <p class="note" style="margin-top:6px">Work in MVP Studio is saved only in each group's own browser. Nothing is sent to a server. <a href="guide.html" style="color:var(--dim)">Facilitator</a></p>
 </footer>
 <script src="assets/qrcode.js"></script>
 <script>
@@ -177,7 +180,7 @@ function draw(){x.clearRect(0,0,W,H);var L=150*d;for(var i=0;i<N.length;i++){var
 size();addEventListener("resize",function(){size();if(RM)draw()});document.addEventListener("visibilitychange",function(){var w=run;run=!document.hidden;if(run&&!w)draw()});draw();
 })();
 </script>
-<div class="mvpdock" id="mvpdock"><button type="button" class="mvpdock-btn" aria-expanded="false" aria-controls="mvpdockMenu"><i aria-hidden="true"></i>MENU</button><nav class="mvpdock-menu" id="mvpdockMenu" aria-label="All pages" hidden><b>Everyone</b><a href="index.html" style="--d:#22D3EE" aria-current="page"><em>Hub</em><small>Start page · QR · every link</small></a><a href="slides.html" style="--d:#38BDF8"><em>Slides</em><small>The deck, at your own pace</small></a><a href="kit.html" style="--d:#A78BFA"><em>Kit</em><small>Plan, concepts, prompts, rubric</small></a><a href="studio.html" style="--d:#F472B6"><em>Studio</em><small>Groups build their MVP here</small></a><a href="index.html#sheets" style="--d:#A3E635"><em>Sheets</em><small>Printable PDFs</small></a><b>Facilitator</b><a href="slides.html?presenter" style="--d:#FBBF24"><em>Presenter console</em><small>Notes, clock, next slide</small></a><a href="studio.html#facilitator" style="--d:#FB7185"><em>Group gallery</em><small>Paste share codes for demos</small></a><a href="guide.html" style="--d:#E2E8F0"><em>Guide</em><small>How this site works</small></a></nav></div>
+<div class="mvpdock" id="mvpdock"><button type="button" class="mvpdock-btn" aria-expanded="false" aria-controls="mvpdockMenu"><i aria-hidden="true"></i>MENU</button><nav class="mvpdock-menu" id="mvpdockMenu" aria-label="All pages" hidden><b>Pages</b><a href="index.html" style="--d:#22D3EE" aria-current="page"><em>Hub</em><small>Start page</small></a><a href="studio.html" style="--d:#F472B6"><em>Studio</em><small>Your group works here</small></a><a href="slides.html" style="--d:#38BDF8"><em>Slides</em><small>Look back at a slide</small></a><a href="index.html#sheets" style="--d:#A3E635"><em>Sheets</em><small>Paper backup (PDF)</small></a><b data-fac>Facilitator</b><a href="slides.html?presenter" style="--d:#FBBF24" data-fac><em>Presenter console</em><small>Notes, clock, next slide</small></a><a href="studio.html#facilitator" style="--d:#FB7185" data-fac><em>Group gallery</em><small>Paste share codes for demos</small></a><a href="kit.html" style="--d:#A78BFA" data-fac><em>Kit</em><small>Run sheet, concepts, rubric, prep</small></a><a href="guide.html" style="--d:#E2E8F0" data-fac><em>Guide</em><small>How this site works</small></a></nav></div>
 <script>
 (function(){var d=document.getElementById("mvpdock");if(!d)return;var b=d.querySelector(".mvpdock-btn"),m=d.querySelector(".mvpdock-menu");
 function set(o){m.hidden=!o;b.setAttribute("aria-expanded",o?"true":"false")}
