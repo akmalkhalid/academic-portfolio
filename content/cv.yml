@@ -157,12 +157,18 @@ training:
     - { date: "2026-09-27", when: "27 Sep 2026", kind: "talk",     sector: "health",   days: 0.25, title: "AI in Health Science Research & AI Tools in Healthcare (2 sessions)", client: "Malaysian Society of Radiographers (MSR)", audience: "Radiographers" }
     - { date: "2026-09-28", when: "28–29 Sep 2026", kind: "workshop", sector: "academia", days: 1.5, title: "AI-Assisted Academic Writing for Journal Publication: From Manuscript to Submission", client: "STEM Enculturation Research Centre, Faculty of Education, UKM", audience: "Academics" }
     - { date: "2026-10-01", when: "1 Oct 2026",  kind: "keynote",  sector: "academia", days: 0.1, title: "Keynote — Learning to Learn with AI: Meta-Learning Skills for the Aspirational University", client: "kNovasi 2026 (UKM teaching-innovation congress)", audience: "Higher-education educators" }
-    # --- confirmed upcoming (printed under "Scheduled" until their date passes) ---
-    - { date: "2026-10-06", when: "6 Oct 2026",  kind: "workshop", sector: "health",   days: 1,   title: "AI-Guided Office Productivity Transformation, Series 2", client: "Hospital Canselor Tuanku Muhriz (HCTM) UKM", audience: "Hospital staff" }
+    - { date: "2026-10-15", when: "15 Oct 2026", kind: "talk",     sector: "academia", days: 0.25, title: "The Evolution of AI: From Expert Systems to Agentic AI (Evolusi AI: Dari Sistem Pakar ke Agentic AI)", client: "Minggu Digital UKM 2026, Digital Technology Centre (DigitalUKM)", audience: "Public servants, academics, students & technical staff" }
+    - { date: "2026-10-19", when: "19 Oct 2026", kind: "workshop", sector: "academia", days: 0.5, title: "CAIT Strategic Grant Preparatory Workshop — Winning the Sumitomo Foundation Research Grant (AI-assisted grant kit)", client: "Center for AI Technology (CAIT), FTSM, UKM", audience: "FTSM lecturers" }
     - { date: "2026-10-20", when: "20 Oct 2026", kind: "workshop", sector: "academia", days: 0.5, title: "AI for Literature Review Writing", client: "FSSK Research Secretariat & UKM Library", audience: "Researchers & postgraduates" }
+    - { date: "2026-10-21", when: "21 Oct 2026", kind: "talk",     sector: "health",   days: 0.1, title: "Scientific Communication Using AI (NNND6673 Research Communication Skill)", client: "Master of Clinical Nutrition, Faculty of Health Sciences, UKM", audience: "Clinical-nutrition postgraduates" }
     - { date: "2026-10-22", when: "22 Oct 2026", kind: "talk",     sector: "health",   days: 0.1, title: "Application of AI in Clinical Research: Dos and Don'ts", client: "Dept. of Obstetrics & Gynaecology, Faculty of Medicine / HCTM", audience: "Clinicians & researchers" }
-    - { date: "2026-10-27", when: "27–29 Oct 2026", kind: "course", sector: "government", days: 2.5, title: "LLM Engineering: From Setup to Production Systems (Series 1)", client: "Malaysian Armed Forces", audience: "Technical officers" }
+    - { date: "2026-10-31", when: "31 Oct 2026", kind: "workshop", sector: "academia", days: 0.25, title: "AI-Powered Prototyping: Supercharge Your MVP (FTSM Technopreneurship Bootcamp 2026, Tasik Chini)", client: "Faculty of Information Science & Technology, UKM", audience: "Student innovators & startup teams" }
+    # --- confirmed upcoming (printed under "Scheduled" until their date passes) ---
     - { date: "2026-11-03", when: "3–5 Nov 2026", kind: "workshop", sector: "international", days: 0.5, title: "Workshop Speaker — MCAIT 2026", client: "Taibah University, Madinah (with UKM)", audience: "Conference delegates" }
+    - { date: "2026-11-10", when: "10–12 Nov 2026", kind: "course", sector: "government", days: 2.5, title: "LLM Engineering: From Setup to Production Systems (Series 1)", client: "Malaysian Armed Forces", audience: "Technical officers" }
+    - { date: "2026-11-16", when: "16–18 Nov 2026", kind: "workshop", sector: "government", days: 3, title: "AI Research Workshop: Applying AI in Social-Science Research", client: "Management Division, Federal Territory of Kuala Lumpur & Putrajaya Health Department", audience: "Government officers" }
+    - { date: "2026-11-19", when: "19–20 Nov 2026", kind: "workshop", sector: "academia", days: 2, title: "Boosting Your Research with AI: Tools, Techniques & Best Practices", client: "UKM Library (PTSL)", audience: "Academics, researchers & postgraduates" }
+    - { date: "2026-11-25", when: "25 Nov 2026", kind: "workshop", sector: "health",   days: 1,   title: "AI-Guided Office Productivity Transformation, Series 2", client: "Hospital Canselor Tuanku Muhriz (HCTM) UKM", audience: "Hospital staff" }
 
   # Short "what I teach" cards for the trainer-first profile.
   expertise:
@@ -179,9 +185,13 @@ training:
   # Courses / certifications Akmal COMPLETED (2025 onward). Source: Google Drive
   # › [PENSIJILAN] › 2025 / 2026 / CLAUDE CERTIFICATION.
   development:
+    - { year: "2026", title: "Public Service Reform Agenda (Agenda Reformasi Perkhidmatan Awam, ARPA)", provider: "INTAN — National Institute of Public Administration", note: "26 Oct 2026 · 2 h" }
+    - { year: "2026", title: "I'm AI Ready assessment — Level 6 “AI Visionary” archetype (score 96/100)", provider: "imaiready.asia (NAIO-aligned, Ministry of Digital Malaysia)", note: "Oct 2026" }
+    - { year: "2026", title: "Generative AI for Academic and Scientific Writing Mastery", provider: "Udemy (instructor: Mike X Cohen)", note: "28 Jul 2026 · 3.5 h" }
     - { year: "2026", title: "Claude 101 · Claude Code 101 · Claude Platform 101 · Introduction to Claude Work", provider: "Anthropic Academy", note: "Jul 2026 · 4 verified certificates" }
     - { year: "2026", title: "From Model to MCU: Pruning, Projection & Quantization for Edge AI", provider: "TechSource Systems (MathWorks)", note: "9 Jun 2026" }
     - { year: "2026", title: "Smarter Teaching Starts Here: Gemini Pro for Lecturers", provider: "Online webinar", note: "25 May 2026" }
+    - { year: "2026", title: "Promotion Clinic to Associate Professor (webinar)", provider: "UKM Academic Staff Association (PKAUKM)", note: "13 May 2026" }
     - { year: "2026", title: "Course-Note Development for UKM Trainers (Agentic AI)", provider: "BAKAT-UKM & DigitalUKM", note: "9 Apr 2026" }
     - { year: "2026", title: "Thesis to Book", provider: "IIESM, Universiti Teknologi MARA", note: "26–27 Feb 2026" }
     - { year: "2025", title: "Empowering Leadership Conference 2.0 — Artificial Intelligence: The New Era of Leadership", provider: "Universiti Malaysia Sabah / AKEPT", note: "24–25 Sep 2025" }
@@ -196,6 +206,7 @@ training:
   appointments:
     - "AI Champion, Ministry of Higher Education Malaysia (appointed Apr 2026) — runs the UKM AI Champion webinar series"
     - "Module lecturer, UKM–PDRM Professional Certificate in AI- & Cybersecurity-Driven Policing (2026)"
+    - "Academic mentor, FTSM Technopreneurship Bootcamp 2026 (“From Innovation to Startup”)"
     - "Consultancy & training via UKM Pakarunding Sdn. Bhd."
 
 # ----------------------------------------------------------------------------
@@ -359,6 +370,9 @@ supervision:
     - { role: "PhD·Co", name: "Nur Izzati Abd Kader", year: "2025", topic: "HMM with RNN for the impact of climate change on depression in Malaysia.", now: "Now Senior Lecturer, UNITEN." }
 
 awards:
+  - "International Teaching Award (AI Champion) — Academia Month Celebration, UKM (2026)"
+  - "Blended Learning Award, UKMFolio course with the highest participation (TTTK1153 Computer Organization & Architecture, Sem. 1 2025/26) — Academia Month Celebration, UKM (2026)"
+  - "Gold Medal — kNovasi 2026, UKM, for “AI-Powered PdP to Support Metacognition”"
   - "Excellent Service Award (Anugerah Perkhidmatan Cemerlang) — UKM (2026)"
   - "Teaching Performance Excellence (SPPP 3.5–5.0) — FTSM, UKM, Sem. 2 2025/26"
   - "Outstanding Individual Award (Innovation), Science & Technology — MyRA@UKM Excellence Awards (2025)"
@@ -395,10 +409,12 @@ service:
   - "Guest Editor — Entertainment Computing (Elsevier), Information (MDPI), PeerJ Computer Science"
   - "Program Committee — IFIP-ICEC, AGENTICS/IJCCI 2025, AWIST"
   - "General Chair — ASEAN Workshop on Information Science & Technology; AI & Entertainment Science Workshop, JAIST"
+  - "Session Chair (Genetic Algorithms) — ECTA 2026, 18th Int. Conf. on Evolutionary Computation Theory & Applications (IJCCI 2026), Angers, France"
   - "Organising Committee & Reviewer — ICEEI 2025"
   - "Reviewer — IEEE Transactions on Affective Computing (2025); IEEE ICCSCE 2026"
   - "Referee — Elsevier, IEEE and other reputable journals"
   - "Academic Collaboration Advisor — JAIST (2024–2026)"
+  - "Media — Panelist, RTM Selamat Pagi Malaysia, “Budget 2027: AI for the Rakyat” (Oct 2026); guest, Tuisyen Rakyat Studio podcast, Nuvia Alliance (Oct 2026)"
   - "Invited Speaker & Trainer — 40+ talks and workshops on AI, entertainment science, gamification & scientific publishing"
 
 references:
