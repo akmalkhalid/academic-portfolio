@@ -366,8 +366,8 @@ supervision:
     - { role: "PhD·Co", name: "Wirawati Dewi Ahmad", year: "2023", topic: "Hyperbolic sand-cat swarm algorithm for multi-objective flexible job scheduling." }
     - { role: "PhD·Co", name: "Omar Hammad Jasim", year: "2023", topic: "Deep learning for misinformation detection on big data in Arabic." }
   graduated:
-    - { role: "PhD·Co", name: "Haziqah Shamsudin", year: "2023", topic: "AE-XGBoost with boosted ε-greedy deep Q-learning for highly imbalanced classification.", now: "Now Senior Lecturer, Taylor's University." }
-    - { role: "PhD·Co", name: "Nur Izzati Abd Kader", year: "2025", topic: "HMM with RNN for the impact of climate change on depression in Malaysia.", now: "Now Senior Lecturer, UNITEN." }
+    - { role: "PhD·Co", name: "Haziqah Shamsudin", year: "2023", topic: "AE-XGBoost with boosted ε-greedy deep Q-learning for highly imbalanced classification.", now: "Now Senior Lecturer, School of Computer Science, Taylor's University." }
+    - { role: "PhD·Co", name: "Nur Izzati Abd Kader", year: "2025", topic: "HMM with RNN for the impact of climate change on depression in Malaysia.", now: "Now Senior Lecturer, College of Computing & Informatics, UNITEN." }
 
 awards:
   - "International Teaching Award (AI Champion) — Academia Month Celebration, UKM (2026)"

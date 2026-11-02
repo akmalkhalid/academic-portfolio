@@ -134,7 +134,7 @@
   startYear: 2019
   completionYear: 2023
   role: "Co-Supervisor"
-  currentPosition: "Senior Lecturer, Taylors University"
+  currentPosition: "Senior Lecturer, School of Computer Science, Faculty of Innovation & Technology, Taylor's University"
   researchTags: ["optimization", "evolutionary-computing"]
   showPublicly: true
 
@@ -145,6 +145,6 @@
   startYear: 2019
   completionYear: 2025
   role: "Co-Supervisor"
-  currentPosition: "Senior Lecturer, Universiti Tenaga Nasional (UNITEN)"
+  currentPosition: "Senior Lecturer, College of Computing & Informatics (CCI), Universiti Tenaga Nasional (UNITEN)"
   researchTags: ["optimization", "evolutionary-computing"]
   showPublicly: true
