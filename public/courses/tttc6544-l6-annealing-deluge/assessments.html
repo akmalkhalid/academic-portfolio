@@ -1,0 +1,921 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>L6 Class Assessments</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<script>try{var l=localStorage.getItem('ad6544:lang');document.documentElement.dataset.lang=l?JSON.parse(l):'en';}catch(e){document.documentElement.dataset.lang='en';}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap">
+<style>
+/* Layout: sticky top bar · Deck view (16:9 stage scaled to the viewport) · Guide view (sticky TOC + 68ch reading column)
+   Concept "Forge & Flood": ember = Simulated Annealing, tide = Great Deluge, steel neutrals bias slightly blue. */
+:root {
+  --bg: #F3F5F6;
+  --fg: #141A20;
+  --muted-fg: #4A5661;
+  --card: #FFFFFF;
+  --card-2: #E9EEF1;
+  --border: #CFD8DE;
+  --ember: #B4410E;
+  --ember-soft: #FBE7DB;
+  --tide: #0A6A85;
+  --tide-soft: #DCEFF4;
+  --ink: #111A22;
+  --on-ink: #F1F4F6;
+  --gold: #F2A541;
+  --tide-on-ink: #6CCDE4;
+  --ok: #1E7A49;
+  --ok-soft: #DDF2E5;
+  --bad: #B3261E;
+  --bad-soft: #F9E0DE;
+  --code-bg: #0F161D;
+  --code-fg: #E4EAEE;
+  --focus: #0A6A85;
+  --f-display: 'Big Shoulders Display', 'Arial Narrow', Impact, sans-serif;
+  --f-body: 'IBM Plex Sans', 'Segoe UI', Roboto, Arial, sans-serif;
+  --f-mono: 'IBM Plex Mono', ui-monospace, Consolas, monospace;
+  --ease: cubic-bezier(.16, 1, .3, 1);
+  --topbar-h: 56px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0D1217; --fg: #E5EBEF; --muted-fg: #9DAAB5; --card: #151C23; --card-2: #1B242D; --border: #2A3641;
+    --ember: #F28B4E; --ember-soft: #3A2116; --tide: #4FC3DD; --tide-soft: #10303A;
+    --ink: #070B0F; --on-ink: #EEF2F5; --gold: #F5B35C; --tide-on-ink: #72D3E8;
+    --ok: #5BD08C; --ok-soft: #12301F; --bad: #FF8A80; --bad-soft: #3A1715;
+    --code-bg: #0A0F14; --code-fg: #E4EAEE; --focus: #72D3E8; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0D1217; --fg: #E5EBEF; --muted-fg: #9DAAB5; --card: #151C23; --card-2: #1B242D; --border: #2A3641;
+  --ember: #F28B4E; --ember-soft: #3A2116; --tide: #4FC3DD; --tide-soft: #10303A;
+  --ink: #070B0F; --on-ink: #EEF2F5; --gold: #F5B35C; --tide-on-ink: #72D3E8;
+  --ok: #5BD08C; --ok-soft: #12301F; --bad: #FF8A80; --bad-soft: #3A1715;
+  --code-bg: #0A0F14; --code-fg: #E4EAEE; --focus: #72D3E8; color-scheme: dark;
+}
+
+/* ---------- language switch ---------- */
+:root[data-lang="en"] .ms, :root[data-lang="ms"] .en { display: none !important; }
+
+* { box-sizing: border-box; }
+html { scroll-padding-top: calc(var(--topbar-h) + 16px); }
+body { background: var(--bg); color: var(--fg); font-family: var(--f-body); font-size: 16px; line-height: 1.6; margin: 0; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 60; background: var(--ink); }
+a { color: var(--tide); text-underline-offset: 3px; }
+a:hover { text-decoration-thickness: 2px; }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; border-radius: 4px; }
+button, select, input { font: inherit; color: inherit; }
+button { cursor: pointer; }
+h1, h2, h3, h4 { text-wrap: balance; }
+code, kbd, pre, .mono { font-family: var(--f-mono); }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* ---------- top bar ---------- */
+.topbar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 50; background: var(--ink); color: var(--on-ink);
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 8px;
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap; min-height: var(--topbar-h); }
+.brand { display: flex; align-items: baseline; gap: 10px; margin-right: auto; min-width: 0; }
+.brand b { font-family: var(--f-display); font-size: 24px; letter-spacing: .02em; font-weight: 800; text-transform: uppercase; white-space: nowrap; }
+.brand b .amp { color: var(--gold); }
+.brand small { font-family: var(--f-mono); font-size: 12px; opacity: .75; white-space: nowrap; }
+.seg { display: inline-flex; border: 1px solid rgba(255,255,255,.25); border-radius: 999px; overflow: hidden; }
+.seg button { background: transparent; border: 0; color: var(--on-ink); padding: 6px 12px; font-size: 13px; font-weight: 600; letter-spacing: .02em; min-height: 34px; }
+.seg button[aria-pressed="true"] { background: var(--on-ink); color: var(--ink); }
+.seg button:focus-visible { outline-offset: -3px; }
+@media (max-width: 640px) { .brand small { display: none; } .brand b { font-size: 20px; } }
+
+/* ---------- views ---------- */
+.view[hidden] { display: none !important; }
+
+/* ================= DECK ================= */
+#deckView { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 16px; }
+.deck-wrap { position: relative; margin: 0 auto; width: min(100%, calc((100vh - var(--topbar-h) - 120px) * 16 / 9)); min-width: 0; }
+.stage-box { position: relative; width: 100%; aspect-ratio: 16 / 9; overflow: hidden; border-radius: 14px; border: 1px solid var(--border); background: var(--bg); max-width: 100%; }
+.stage { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; background: var(--bg); color: var(--fg); overflow: hidden; }
+.deck-controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; margin-top: 12px; }
+.deck-controls .grp { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.btn { border: 1px solid var(--border); background: var(--card); color: var(--fg); border-radius: 10px; padding: 8px 14px; font-weight: 600; font-size: 14px; min-height: 40px; display: inline-flex; align-items: center; gap: 8px; }
+.btn:hover { border-color: var(--tide); }
+.btn.primary { background: var(--tide); border-color: var(--tide); color: var(--bg); }
+.btn.ember { background: var(--ember); border-color: var(--ember); color: var(--bg); }
+.btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.hint { font-size: 13px; color: var(--muted-fg); }
+.hint kbd { border: 1px solid var(--border); border-radius: 4px; padding: 0 5px; font-size: 12px; background: var(--card); }
+#notesPanel { margin-top: 12px; background: var(--card); border: 1px solid var(--border); border-left: 4px solid var(--gold); border-radius: 10px; padding: 14px 18px; font-size: 15px; max-width: 100%; }
+#notesPanel h4 { margin: 0 0 6px; font-family: var(--f-mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted-fg); }
+.stage-box:fullscreen { border: 0; border-radius: 0; background: var(--bg); width: 100vw; height: 100vh; aspect-ratio: auto; }
+
+.slide { position: absolute; inset: 0; padding: 110px 150px 120px; display: flex; flex-direction: column; justify-content: center; gap: 40px;
+  opacity: 0; visibility: hidden; transition: opacity 450ms var(--ease), visibility 0s linear 450ms; }
+.slide.active { opacity: 1; visibility: visible; transition: opacity 450ms var(--ease); }
+.slide.dark { background: var(--ink); color: var(--on-ink); }
+.slide.center { align-items: center; text-align: center; }
+.slide h1, .slide h2, .slide h3 { font-family: var(--f-display); line-height: 1.02; margin: 0; letter-spacing: .005em; }
+.slide h1 { font-size: 150px; font-weight: 800; text-transform: uppercase; }
+.slide h2 { font-size: 92px; font-weight: 800; }
+.slide h3 { font-size: 50px; font-weight: 700; }
+.slide p, .slide li { font-size: 38px; line-height: 1.35; margin: 0; }
+.slide .kicker { font-family: var(--f-mono); font-size: 28px; letter-spacing: .14em; text-transform: uppercase; color: var(--ember); font-weight: 600; }
+.slide .kicker.tide { color: var(--tide); }
+.slide.dark .kicker { color: var(--gold); }
+.slide.dark .kicker.tide { color: var(--tide-on-ink); }
+.slide .muted { color: var(--muted-fg); }
+.slide.dark .muted { color: color-mix(in srgb, var(--on-ink) 72%, transparent); }
+.slide .em { color: var(--ember); } .slide .td { color: var(--tide); }
+.slide.dark .em { color: var(--gold); } .slide.dark .td { color: var(--tide-on-ink); }
+.slide .big { font-family: var(--f-display); font-size: 300px; font-weight: 800; line-height: .9; color: var(--ember); font-variant-numeric: tabular-nums; }
+.slide.dark .big { color: var(--gold); }
+.slide .formula { font-family: var(--f-mono); font-size: 84px; font-weight: 600; letter-spacing: -.01em; }
+.slide .formula sup { font-size: .55em; }
+.s-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+.s-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 36px; }
+.s-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px; }
+.s-split { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+.s-card { background: var(--card); border: 2px solid var(--border); border-radius: 22px; padding: 40px; display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.s-card.e { border-top: 10px solid var(--ember); } .s-card.t { border-top: 10px solid var(--tide); } .s-card.g { border-top: 10px solid var(--gold); }
+.slide.dark .s-card { background: color-mix(in srgb, var(--on-ink) 7%, transparent); border-color: color-mix(in srgb, var(--on-ink) 18%, transparent); }
+.s-card p { font-size: 32px; }
+.s-card .tag { font-family: var(--f-mono); font-size: 24px; color: var(--muted-fg); letter-spacing: .06em; }
+.slide.dark .s-card .tag { color: color-mix(in srgb, var(--on-ink) 70%, transparent); }
+.ico { width: 76px; height: 76px; stroke: var(--ember); stroke-width: 1.7; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.ico.t { stroke: var(--tide); }
+.slide.dark .ico { stroke: var(--gold); } .slide.dark .ico.t { stroke: var(--tide-on-ink); }
+.s-timeline { display: flex; position: relative; gap: 24px; }
+.s-timeline::before { content: ''; position: absolute; top: 30px; left: 30px; right: 30px; height: 4px; background: var(--border); }
+.slide.dark .s-timeline::before { background: color-mix(in srgb, var(--on-ink) 25%, transparent); }
+.s-step { position: relative; flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 12px; }
+.s-step .dot { width: 64px; height: 64px; border-radius: 50%; background: var(--ember); color: #fff; display: grid; place-items: center; font-family: var(--f-mono); font-size: 28px; font-weight: 700; }
+.s-step.t .dot { background: var(--tide); }
+.s-step.g .dot { background: var(--gold); color: #1a1a1a; }
+.s-step h3 { font-size: 44px; } .s-step p { font-size: 30px; }
+.slide .quote { font-family: var(--f-display); font-size: 104px; line-height: 1.04; font-weight: 700; max-width: 1500px; }
+.slide svg.art { width: 100%; height: auto; max-height: 640px; }
+.art .stroke-fg { stroke: var(--fg); } .slide.dark .art .stroke-fg { stroke: var(--on-ink); }
+.art .fill-fg { fill: var(--fg); } .slide.dark .art .fill-fg { fill: var(--on-ink); }
+.art .stroke-em { stroke: var(--ember); } .slide.dark .art .stroke-em { stroke: var(--gold); }
+.art .fill-em { fill: var(--ember); } .slide.dark .art .fill-em { fill: var(--gold); }
+.art .stroke-td { stroke: var(--tide); } .slide.dark .art .stroke-td { stroke: var(--tide-on-ink); }
+.art .fill-td { fill: var(--tide); } .slide.dark .art .fill-td { fill: var(--tide-on-ink); }
+.art .fill-tds { fill: var(--tide); opacity: .22; } .slide.dark .art .fill-tds { fill: var(--tide-on-ink); }
+.art .fill-mut { fill: var(--muted-fg); } .slide.dark .art .fill-mut { fill: color-mix(in srgb, var(--on-ink) 70%, transparent); }
+.art text { font-family: var(--f-mono); font-size: 30px; }
+.quad { display: grid; grid-template-columns: 220px 1fr 1fr; grid-template-rows: auto 1fr 1fr; gap: 16px; }
+.quad .h { font-family: var(--f-mono); font-size: 28px; color: var(--muted-fg); display: flex; align-items: center; justify-content: center; text-align: center; }
+.quad .c { border-radius: 18px; padding: 28px; font-size: 34px; display: flex; flex-direction: column; justify-content: center; gap: 6px; }
+.quad .c b { font-family: var(--f-display); font-size: 58px; }
+.quad .hi { background: var(--ember-soft); } .quad .lo { background: var(--tide-soft); }
+.vs { display: grid; grid-template-columns: 1fr 120px 1fr; align-items: stretch; gap: 0; }
+.vs .mid { display: grid; place-items: center; font-family: var(--f-display); font-size: 64px; color: var(--muted-fg); }
+.pill { display: inline-block; font-family: var(--f-mono); font-size: 26px; padding: 6px 18px; border-radius: 999px; border: 2px solid currentColor; }
+.slide-foot { position: absolute; left: 150px; bottom: 44px; font-family: var(--f-mono); font-size: 24px; color: var(--muted-fg); letter-spacing: .06em; }
+.slide.dark .slide-foot { color: color-mix(in srgb, var(--on-ink) 60%, transparent); }
+.s-progress { position: absolute; left: 0; bottom: 0; height: 8px; background: linear-gradient(90deg, var(--ember), var(--gold), var(--tide)); transition: width 400ms var(--ease); z-index: 5; }
+.s-counter { position: absolute; right: 56px; bottom: 40px; font-family: var(--f-mono); font-size: 24px; color: var(--muted-fg); z-index: 5; font-variant-numeric: tabular-nums; }
+.stage.on-dark .s-counter { color: var(--on-ink); opacity: .7; }
+.notes { display: none; }
+
+.slide.active .a-up { animation: up 600ms var(--ease) both; }
+.slide.active .a-scale { animation: scl 700ms var(--ease) both; }
+.slide.active .a-stag > * { animation: up 600ms var(--ease) both; }
+.slide.active .a-stag > *:nth-child(2) { animation-delay: 90ms; } .slide.active .a-stag > *:nth-child(3) { animation-delay: 180ms; }
+.slide.active .a-stag > *:nth-child(4) { animation-delay: 270ms; } .slide.active .a-stag > *:nth-child(5) { animation-delay: 360ms; }
+.slide.active .a-stag > *:nth-child(6) { animation-delay: 450ms; }
+.d1 { animation-delay: 140ms !important; } .d2 { animation-delay: 280ms !important; } .d3 { animation-delay: 420ms !important; }
+@keyframes up { from { opacity: 0; transform: translateY(36px); } to { opacity: 1; transform: none; } }
+@keyframes scl { from { opacity: 0; transform: scale(.9); } to { opacity: 1; transform: none; } }
+.frag { opacity: 0; transform: translateY(22px); transition: opacity 420ms var(--ease), transform 420ms var(--ease); }
+.frag.shown { opacity: 1; transform: none; }
+/* animated art: rising water + cooling ember */
+.slide.active .rise { animation: rise 6s ease-in-out infinite alternate; }
+@keyframes rise { from { transform: translateY(120px); } to { transform: translateY(0); } }
+.slide.active .glow { animation: glow 4s ease-in-out infinite alternate; }
+@keyframes glow { from { opacity: 1; } to { opacity: .35; } }
+.slide.active .walker { animation: walk 7s ease-in-out infinite; }
+@keyframes walk { 0% { transform: translate(0,0); } 30% { transform: translate(260px,-120px); } 55% { transform: translate(470px, 40px); } 100% { transform: translate(900px,-250px); } }
+.slide.active .stuck { animation: bob 1.6s ease-in-out infinite alternate; }
+@keyframes bob { from { transform: translateY(0); } to { transform: translateY(-10px); } }
+
+/* ================= GUIDE ================= */
+#guideView { display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: 40px; max-width: 1280px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 24px 80px; }
+.toc { position: sticky; top: calc(env(safe-area-inset-top, 0px) + var(--topbar-h) + 16px); align-self: start; max-height: calc(100vh - var(--topbar-h) - 32px); overflow: auto; font-size: 14px; padding-right: 4px; }
+.toc h2 { font-family: var(--f-mono); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted-fg); margin: 0 0 8px; }
+.toc ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+.toc a { display: flex; gap: 8px; align-items: baseline; text-decoration: none; color: var(--fg); padding: 6px 8px; border-radius: 8px; }
+.toc a:hover, .toc a.on { background: var(--card-2); }
+.toc a .n { font-family: var(--f-mono); font-size: 12px; color: var(--muted-fg); min-width: 22px; }
+.toc a .ck { margin-left: auto; width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--border); flex: none; align-self: center; }
+.toc a.done .ck { background: var(--ok); border-color: var(--ok); }
+.toc .meter { margin: 14px 0 6px; height: 8px; border-radius: 999px; background: var(--card-2); overflow: hidden; }
+.toc .meter i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--ember), var(--tide)); transition: width 400ms var(--ease); }
+.toc .meter-l { font-size: 12px; color: var(--muted-fg); font-family: var(--f-mono); }
+.toc-toggle { display: none; }
+@media (max-width: 960px) {
+  #guideView { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  .toc { position: static; max-height: none; border: 1px solid var(--border); border-radius: 12px; padding: 12px; background: var(--card); }
+  .toc-toggle { display: inline-flex; }
+  .toc.collapsed ol, .toc.collapsed .meter, .toc.collapsed .meter-l { display: none; }
+}
+.guide { min-width: 0; }
+.guide > section { padding-block: 24px 40px; border-bottom: 1px solid var(--border); }
+.guide .eyebrow { font-family: var(--f-mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--ember); font-weight: 600; }
+.guide .eyebrow.t { color: var(--tide); }
+.guide h1 { font-family: var(--f-display); font-size: clamp(44px, 7vw, 84px); line-height: .95; margin: 6px 0 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .005em; }
+.guide h2 { font-family: var(--f-display); font-size: clamp(34px, 4.6vw, 52px); line-height: 1; margin: 6px 0 14px; font-weight: 800; }
+.guide h3 { font-size: 21px; margin: 32px 0 8px; line-height: 1.3; }
+.guide h4 { font-size: 16px; margin: 20px 0 6px; }
+.guide p, .guide li { max-width: 72ch; }
+.guide .lede { font-size: 19px; color: var(--muted-fg); max-width: 64ch; }
+.guide ul, .guide ol { padding-left: 22px; }
+.guide li { margin: 4px 0; }
+.meta-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 18px; }
+.chip { font-family: var(--f-mono); font-size: 12px; padding: 4px 10px; border-radius: 999px; background: var(--card-2); color: var(--fg); border: 1px solid var(--border); white-space: nowrap; }
+.chip.e { background: var(--ember-soft); border-color: transparent; } .chip.t { background: var(--tide-soft); border-color: transparent; }
+.box { border: 1px solid var(--border); border-radius: 14px; padding: 18px 20px; margin: 18px 0; background: var(--card); min-width: 0; }
+.box > :first-child { margin-top: 0; } .box > :last-child { margin-bottom: 0; }
+.box .bh { display: flex; gap: 10px; align-items: center; font-family: var(--f-mono); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; font-weight: 600; margin-bottom: 8px; }
+.box .bh svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.box.now { border-color: var(--tide); background: var(--tide-soft); } .box.now .bh { color: var(--tide); }
+.box.fact { border-color: var(--gold); } .box.fact .bh { color: var(--ember); }
+.box.ethic { border-color: var(--ok); background: var(--ok-soft); } .box.ethic .bh { color: var(--ok); }
+.box.task { border-color: var(--ember); } .box.task .bh { color: var(--ember); }
+.box.warn { border-color: var(--bad); background: var(--bad-soft); } .box.warn .bh { color: var(--bad); }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+.grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; }
+.mini { border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; background: var(--card); min-width: 0; }
+.mini h4 { margin: 0 0 4px; }
+.mini p { margin: 0; font-size: 14.5px; color: var(--muted-fg); }
+.tbl-wrap { overflow-x: auto; margin: 16px 0; border: 1px solid var(--border); border-radius: 12px; }
+table { border-collapse: collapse; width: 100%; font-size: 14.5px; background: var(--card); }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+th { background: var(--card-2); font-weight: 600; font-size: 13px; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; font-family: var(--f-mono); }
+tr:last-child td { border-bottom: 0; }
+.math { font-family: var(--f-mono); background: var(--card-2); padding: 12px 16px; border-radius: 10px; overflow-x: auto; font-size: 15px; white-space: pre; }
+.k { font-family: var(--f-mono); font-size: .92em; background: var(--card-2); padding: 1px 6px; border-radius: 5px; }
+
+/* code / prompt blocks */
+.code { border-radius: 12px; overflow: hidden; margin: 14px 0; border: 1px solid var(--border); background: var(--code-bg); color: var(--code-fg); min-width: 0; }
+.code .bar { display: flex; align-items: center; gap: 8px; padding: 8px 10px 8px 14px; background: color-mix(in srgb, var(--code-bg) 80%, #ffffff 8%); font-family: var(--f-mono); font-size: 12px; letter-spacing: .06em; }
+.code .bar .ttl { margin-right: auto; opacity: .85; text-transform: uppercase; }
+.code .bar button { background: transparent; border: 1px solid rgba(255,255,255,.28); color: var(--code-fg); border-radius: 7px; padding: 4px 10px; font-size: 12px; min-height: 30px; }
+.code .bar button:hover { border-color: #fff; }
+.code pre { margin: 0; padding: 14px 16px; overflow-x: auto; font-size: 13.5px; line-height: 1.55; counter-reset: ln; }
+.code pre .l { display: block; position: relative; padding-left: 38px; border-radius: 4px; }
+.code pre .l::before { counter-increment: ln; content: counter(ln); position: absolute; left: 0; width: 26px; text-align: right; opacity: .45; }
+.code pre .l.hl { background: rgba(242,165,65,.18); }
+.code .explain { border-top: 1px solid rgba(255,255,255,.12); padding: 12px 16px; font-size: 13.5px; font-family: var(--f-body); }
+.code .explain ol { margin: 0; padding-left: 0; list-style: none; display: flex; flex-direction: column; gap: 4px; }
+.code .explain li { display: grid; grid-template-columns: 54px 1fr; gap: 8px; cursor: default; max-width: none; padding: 2px 4px; border-radius: 4px; }
+.code .explain li:hover { background: rgba(255,255,255,.06); }
+.code .explain li b { font-family: var(--f-mono); color: var(--gold); font-weight: 600; }
+.code details summary { cursor: pointer; padding: 10px 16px; font-size: 13px; border-top: 1px solid rgba(255,255,255,.12); font-family: var(--f-mono); letter-spacing: .04em; }
+.code .out { padding: 0 16px 14px; }
+.code .out pre { background: rgba(255,255,255,.05); border-radius: 8px; padding: 12px; }
+.tabs { display: flex; gap: 6px; flex-wrap: wrap; margin: 14px 0 0; }
+.tabs button { border: 1px solid var(--border); background: var(--card); border-radius: 999px; padding: 6px 14px; font-size: 13px; font-weight: 600; min-height: 34px; }
+.tabs button[aria-selected="true"] { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+.tabpanel[hidden] { display: none; }
+
+/* labs */
+.lab { border: 1px solid var(--border); border-radius: 16px; background: var(--card); padding: 16px; margin: 20px 0; min-width: 0; }
+.lab-head { display: flex; flex-wrap: wrap; gap: 10px; align-items: baseline; justify-content: space-between; margin-bottom: 10px; }
+.lab-head h4 { margin: 0; font-family: var(--f-display); font-size: 28px; font-weight: 800; text-transform: uppercase; letter-spacing: .01em; }
+.controls { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px 14px; margin: 10px 0; }
+.ctl { display: flex; flex-direction: column; gap: 4px; font-size: 13px; min-width: 0; }
+.ctl label { font-weight: 600; display: block; }
+.ctl output { float: right; margin-left: 6px; font-family: var(--f-mono); color: var(--ember); font-variant-numeric: tabular-nums; }
+.ctl select, .ctl input[type="number"] { border: 1px solid var(--border); background: var(--bg); border-radius: 8px; padding: 6px 8px; min-height: 36px; width: 100%; }
+.ctl input[type="range"] { width: 100%; accent-color: var(--ember); }
+.canvas-box { position: relative; width: 100%; border-radius: 10px; overflow: hidden; background: var(--bg); border: 1px solid var(--border); }
+.canvas-box canvas { display: block; width: 100%; height: auto; }
+.lab-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; margin-top: 10px; }
+.stat { border: 1px solid var(--border); border-radius: 10px; padding: 8px 10px; background: var(--bg); }
+.stat span { display: block; font-size: 11.5px; color: var(--muted-fg); font-family: var(--f-mono); letter-spacing: .04em; text-transform: uppercase; }
+.stat b { font-family: var(--f-mono); font-size: 18px; font-variant-numeric: tabular-nums; }
+.stat.e b { color: var(--ember); } .stat.t b { color: var(--tide); }
+.legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 12.5px; color: var(--muted-fg); margin-top: 8px; }
+.legend i { display: inline-block; width: 18px; height: 4px; border-radius: 2px; vertical-align: middle; margin-right: 6px; }
+.verdict { margin-top: 10px; padding: 10px 14px; border-radius: 10px; background: var(--card-2); font-size: 14.5px; }
+.tt-grid { display: grid; grid-template-columns: repeat(6, minmax(92px, 1fr)); gap: 6px; overflow-x: auto; }
+.tt-slot { border: 1px dashed var(--border); border-radius: 10px; padding: 6px; min-height: 120px; background: var(--bg); display: flex; flex-direction: column; gap: 4px; }
+.tt-slot .sh { font-family: var(--f-mono); font-size: 11px; color: var(--muted-fg); }
+.tt-chip { font-family: var(--f-mono); font-size: 11.5px; border-radius: 6px; padding: 3px 6px; background: var(--tide-soft); }
+.tt-chip.clash { background: var(--bad-soft); color: var(--bad); font-weight: 700; }
+
+/* step-through worked example */
+.trace td.hid, .trace tr.hid td { color: transparent; text-shadow: none; }
+.trace tr.hid td { background: repeating-linear-gradient(135deg, var(--card-2) 0 6px, var(--card) 6px 12px); }
+.trace tr.cur td { background: var(--ember-soft); }
+.yes { color: var(--ok); font-weight: 700; } .no { color: var(--bad); font-weight: 700; }
+
+/* quiz */
+.quiz { border: 1px solid var(--border); border-radius: 16px; padding: 16px; background: var(--card); margin: 20px 0; }
+.quiz-head { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+.quiz-head h4 { margin: 0; font-family: var(--f-display); font-size: 26px; font-weight: 800; text-transform: uppercase; }
+.qscore { font-family: var(--f-mono); font-size: 13px; color: var(--muted-fg); }
+.q { border-top: 1px solid var(--border); padding: 14px 0 6px; }
+.q:first-of-type { border-top: 0; }
+.q .qt { font-weight: 600; margin: 0 0 8px; }
+.q .qn { font-family: var(--f-mono); color: var(--ember); margin-right: 6px; }
+.opts { display: flex; flex-direction: column; gap: 6px; }
+.opt { text-align: left; border: 1px solid var(--border); background: var(--bg); border-radius: 10px; padding: 9px 12px; font-size: 14.5px; display: flex; gap: 10px; align-items: flex-start; min-height: 42px; }
+.opt .lt { font-family: var(--f-mono); font-weight: 700; color: var(--muted-fg); }
+.opt:hover:not([disabled]) { border-color: var(--tide); }
+.opt.right { border-color: var(--ok); background: var(--ok-soft); }
+.opt.wrong { border-color: var(--bad); background: var(--bad-soft); }
+.opt[disabled] { cursor: default; }
+.fb { margin-top: 8px; padding: 10px 12px; border-radius: 10px; font-size: 14px; display: none; }
+.fb.show { display: block; }
+.fb.ok { background: var(--ok-soft); } .fb.ko { background: var(--bad-soft); }
+.fb b { display: block; margin-bottom: 2px; }
+.numq { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.numq input { border: 1px solid var(--border); background: var(--bg); border-radius: 8px; padding: 8px 10px; width: 140px; font-family: var(--f-mono); min-height: 40px; }
+.hintbtn { font-size: 12.5px; background: none; border: 0; color: var(--tide); text-decoration: underline; padding: 4px 0; min-height: 30px; }
+.hinttxt { font-size: 13.5px; color: var(--muted-fg); margin: 4px 0 0; }
+
+.scenario { border: 1px solid var(--border); border-radius: 14px; padding: 16px; background: var(--card); margin: 16px 0; }
+.scenario .opts { margin-top: 8px; }
+.reveal-btn { margin-top: 6px; }
+.callout-quote { font-family: var(--f-display); font-size: clamp(30px, 4vw, 44px); line-height: 1.05; font-weight: 700; margin: 24px 0; color: var(--ember); max-width: 30ch; }
+.ref-list { font-size: 14px; padding-left: 0; list-style: none; counter-reset: r; }
+.ref-list li { counter-increment: r; padding: 8px 0 8px 38px; position: relative; border-bottom: 1px solid var(--border); max-width: none; }
+.ref-list li::before { content: "[" counter(r) "]"; position: absolute; left: 0; font-family: var(--f-mono); color: var(--muted-fg); font-size: 12.5px; top: 10px; }
+.ref-list a { word-break: break-all; }
+a.cite { font-family: var(--f-mono); font-size: .82em; text-decoration: none; background: var(--card-2); padding: 1px 6px; border-radius: 5px; white-space: nowrap; }
+.check-done { display: flex; gap: 10px; align-items: center; margin-top: 18px; font-weight: 600; font-size: 14px; }
+.check-done input { width: 20px; height: 20px; accent-color: var(--ok); }
+.timeplan td:first-child { font-family: var(--f-mono); white-space: nowrap; }
+.glossary { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 8px; }
+.glossary div { border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px; font-size: 14px; background: var(--card); }
+.glossary b { display: block; }
+.toast { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%) translateY(20px); background: var(--fg); color: var(--bg); padding: 8px 16px; border-radius: 999px; font-size: 14px; opacity: 0; pointer-events: none; transition: all 250ms var(--ease); z-index: 80; }
+.toast.on { opacity: 1; transform: translateX(-50%) translateY(0); }
+.hero-guide { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 24px; align-items: center; }
+@media (max-width: 760px) { .hero-guide { grid-template-columns: minmax(0, 1fr); } }
+.hero-guide canvas { width: 100%; height: auto; border-radius: 14px; border: 1px solid var(--border); }
+.path-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin: 16px 0; }
+.path-cards .mini b { font-family: var(--f-display); font-size: 30px; display: block; line-height: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .frag { transform: none; }
+}
+
+/* ================= PROCESS FLOWS, TREE, MAP ================= */
+.flow svg, .tree svg, .appmap svg { display: block; width: 100%; height: auto; max-width: 100%; }
+.flow svg text, .tree svg text, .appmap svg text { font-family: var(--f-body); font-size: 21px; fill: var(--fg); }
+.flow svg text.b, .tree svg text.b { font-weight: 700; }
+.fn .shape { fill: var(--card); stroke: var(--border); stroke-width: 2.5; transition: stroke 250ms, stroke-width 250ms, fill 250ms; }
+.fn.good .shape { fill: var(--ok-soft); stroke: var(--ok); }
+.fn.bad .shape { fill: var(--bad-soft); stroke: var(--bad); }
+.fn.diff-e .shape { fill: var(--ember-soft); stroke: var(--ember); stroke-width: 3.5; }
+.fn.diff-t .shape { fill: var(--tide-soft); stroke: var(--tide); stroke-width: 3.5; }
+.fe path { fill: none; stroke: var(--muted-fg); stroke-width: 2.5; transition: stroke 250ms, stroke-width 250ms; }
+.fe text.lab, .tree text.lab { font-family: var(--f-mono); font-size: 16px; fill: var(--muted-fg); }
+.ahead { fill: var(--muted-fg); }
+.fn.hot .shape { stroke: var(--gold); stroke-width: 6; }
+.fe.hot path { stroke: var(--gold); stroke-width: 5; }
+.fe.hot text.lab { fill: var(--fg); font-weight: 700; }
+.slide.dark .fn .shape { fill: color-mix(in srgb, var(--on-ink) 8%, transparent); }
+.tree .fn.q .shape { fill: var(--card-2); }
+.tree .fn.leaf-e .shape { fill: var(--ember-soft); stroke: var(--ember); stroke-width: 3.5; }
+.tree .fn.leaf-t .shape { fill: var(--tide-soft); stroke: var(--tide); stroke-width: 3.5; }
+.tree .fn.leaf-g .shape { fill: var(--card); stroke: var(--gold); stroke-width: 3.5; }
+.tree text.sub { font-family: var(--f-mono); font-size: 15px; fill: var(--muted-fg); }
+.appmap .zone-sa { fill: var(--ember-soft); } .appmap .zone-gd { fill: var(--tide-soft); }
+.appmap .zl { font-family: var(--f-mono); font-size: 17px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
+.appmap .zl.em { fill: var(--ember); } .appmap .zl.td { fill: var(--tide); }
+.appmap .axis { stroke: var(--muted-fg); stroke-width: 2.5; }
+.appmap .axl { font-family: var(--f-mono); font-size: 17px; fill: var(--muted-fg); }
+.appmap .ap circle { stroke: var(--bg); stroke-width: 3; }
+.appmap .ap.em circle { fill: var(--ember); } .appmap .ap.td circle { fill: var(--tide); } .appmap .ap.gold circle { fill: var(--gold); }
+.appmap .ap text { font-size: 18px; font-weight: 600; }
+.appmap .ap { transition: opacity 300ms; } .appmap .ap.dim { opacity: .2; }
+/* slide layouts for flows */
+.s-flowsplit { display: grid; grid-template-columns: 0.62fr 1fr; gap: 40px; align-items: center; height: 100%; }
+.s-flowsplit .flow { width: 100%; }
+.s-flowsplit .flow svg { height: 920px; width: 100%; }
+.slide .flow svg text { font-size: 23px; }
+.s-flowtext { display: flex; flex-direction: column; gap: 32px; }
+.slide[data-layout="flow"] { padding-top: 40px; padding-bottom: 70px; padding-right: 90px; }
+.slide[data-layout="flow-compare"] { padding-top: 70px; padding-bottom: 90px; gap: 20px; }
+.s-flowpair { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; }
+.s-flowpair > div { display: flex; flex-direction: column; align-items: center; gap: 8px; min-width: 0; }
+.s-flowpair .flow { width: 100%; }
+.s-flowpair .flow svg { height: 700px; width: 100%; }
+.slide .pill.em { color: var(--ember); } .slide .pill.td { color: var(--tide); }
+.slide .tree svg { max-height: 760px; } .slide .appmap svg { max-height: 800px; }
+.slide .tree svg text { font-size: 24px; } .slide .tree text.lab { font-size: 20px; }
+.slide[data-layout="decision-tree"], .slide[data-layout="app-map"] { padding-top: 70px; padding-bottom: 90px; gap: 24px; }
+/* dual strip */
+.dstrip { display: flex; gap: 8px; overflow-x: auto; padding: 4px 2px 8px; }
+.drowlab, .dcol { display: flex; flex-direction: column; gap: 6px; align-items: center; flex: 0 0 auto; }
+.drowlab span { height: 18px; } .drowlab b { height: 46px; display: flex; align-items: center; font-family: var(--f-mono); }
+.drowlab b.em { color: var(--ember); } .drowlab b.td { color: var(--tide); }
+.dk { font-family: var(--f-mono); font-size: 12px; color: var(--muted-fg); height: 18px; }
+.dchip { width: 46px; height: 46px; border-radius: 12px; display: inline-flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 700; border: 2px solid var(--border); background: var(--card); line-height: 1; font-size: 18px; }
+.dchip small { font-family: var(--f-mono); font-size: 11px; font-weight: 400; margin-top: 3px; color: var(--muted-fg); }
+.dchip.ok { background: var(--ok-soft); border-color: var(--ok); color: var(--ok); }
+.dchip.ko { background: var(--bad-soft); border-color: var(--bad); color: var(--bad); }
+.dchip.worse { border-style: dashed; border-width: 3px; }
+.dcol { padding: 4px; border-radius: 12px; }
+.dcol.split { background: color-mix(in srgb, var(--gold) 28%, transparent); }
+.dcol.pending .dchip { opacity: .35; }
+.dleg { font-size: 13px; color: var(--muted-fg); display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.dleg .dchip { width: 26px; height: 26px; font-size: 13px; border-radius: 7px; }
+.dual-strip-slide .dstrip { justify-content: center; gap: 18px; }
+.dual-strip-slide .dk { font-size: 26px; height: 34px; }
+.dual-strip-slide .drowlab span { height: 34px; } .dual-strip-slide .drowlab b { height: 120px; font-size: 40px; }
+.dual-strip-slide .dchip { width: 120px; height: 120px; font-size: 52px; border-radius: 24px; border-width: 3px; }
+.dual-strip-slide .dchip small { font-size: 26px; margin-top: 6px; }
+.dual-strip-slide .dcol { padding: 10px; border-radius: 26px; gap: 14px; }
+.dual-strip-slide .dleg { font-size: 26px; justify-content: center; gap: 14px; }
+.dual-strip-slide .dleg .dchip { width: 50px; height: 50px; font-size: 26px; border-radius: 12px; }
+.dstate { font-family: var(--f-mono); font-size: 12.5px; background: var(--card-2); border-radius: 10px; padding: 8px 10px; min-height: 52px; margin-top: 6px; }
+.dual-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+.dual-cols > div { min-width: 0; }
+.dual-cols h5 { margin: 0 0 6px; font-family: var(--f-display); font-size: 24px; font-weight: 800; }
+.chq { display: flex; gap: 10px; align-items: flex-start; padding: 8px 10px; border: 1px solid var(--border); border-radius: 10px; background: var(--bg); cursor: pointer; font-size: 14.5px; }
+.chq input { width: 18px; height: 18px; margin-top: 2px; accent-color: var(--tide); flex: none; }
+#ch-qs { display: grid; gap: 8px; }
+.chbars { display: grid; grid-template-columns: 40px 1fr 30px; gap: 6px 10px; align-items: center; margin: 14px 0 6px; font-family: var(--f-mono); font-size: 13px; }
+.chbar { height: 14px; border-radius: 999px; background: var(--card-2); overflow: hidden; }
+.chbar i { display: block; height: 100%; width: 0; transition: width 400ms var(--ease); }
+#ch-bar-sa { background: var(--ember); } #ch-bar-gd { background: var(--tide); }
+.flowpair-guide { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+.flowpair-guide figure { margin: 0; min-width: 0; } .flowpair-guide figcaption { font-size: 13px; color: var(--muted-fg); margin-top: 4px; }
+
+/* ================= ARENA ================= */
+.ar-probs { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px; margin: 6px 0 12px; }
+.ar-prob { text-align: left; border: 2px solid var(--border); background: var(--bg); border-radius: 14px; padding: 12px 14px; display: grid; grid-template-columns: 34px 1fr; gap: 2px 10px; align-items: center; }
+.ar-prob svg { grid-row: span 2; width: 30px; height: 30px; stroke: var(--muted-fg); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.ar-prob b { font-size: 15px; } .ar-prob small { font-size: 12.5px; color: var(--muted-fg); }
+.ar-prob[aria-checked="true"] { border-color: var(--ember); background: var(--ember-soft); }
+.ar-prob[aria-checked="true"] svg { stroke: var(--ember); }
+.ar-presets { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-bottom: 6px; }
+.ar-presets .btn { min-height: 34px; padding: 5px 11px; font-size: 13px; }
+.ar-tog { display: flex; flex-direction: column; gap: 4px; font-weight: 400; }
+.ar-tog label { font-weight: 400 !important; display: flex !important; gap: 6px; align-items: center; }
+.ar-prog { width: 160px; height: 8px; border-radius: 999px; background: var(--card-2); overflow: hidden; } .ar-prog i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--ember), var(--tide)); }
+.ar-ct { font-size: 12.5px; color: var(--muted-fg); margin: 0 0 4px; font-family: var(--f-mono); }
+.ar-diag { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; margin-top: 12px; }
+.ar-dcol { border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; background: var(--bg); min-width: 0; }
+.ar-dcol.e { border-top: 5px solid var(--ember); } .ar-dcol.t { border-top: 5px solid var(--tide); }
+.ar-dcol h5 { margin: 0 0 6px; font-family: var(--f-display); font-size: 22px; font-weight: 800; }
+.ar-dcol ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 8px; font-size: 14px; }
+.ar-dcol li.good { color: var(--ok); list-style: '✓  '; }
+.ar-dcol li .btn { min-height: 30px; padding: 3px 10px; font-size: 12.5px; margin-top: 4px; }
+
+/* ================= COMPARISON DECK ================= */
+.cchart svg { width: 100%; height: auto; max-height: 640px; display: block; }
+.cchart text { font-family: var(--f-body); fill: var(--fg); }
+.cchart .ct { font-size: 30px; font-weight: 700; }
+.cchart .vl { font-size: 28px; font-weight: 700; font-family: var(--f-mono); }
+.cchart .lb { font-size: 28px; }
+.cchart .tk { font-size: 24px; fill: var(--muted-fg); font-family: var(--f-mono); }
+.cchart .ax { stroke: var(--muted-fg); stroke-width: 2.5; }
+.cchart .wh { stroke: var(--fg); stroke-width: 3; }
+.cchart .bk { stroke: var(--gold); stroke-width: 3; stroke-dasharray: 8 8; }
+.cchart .ln { fill: none; stroke-width: 5; }
+.cchart .db { stroke-width: 8; opacity: .45; }
+.cchart .before { fill: var(--bg); stroke: var(--muted-fg); stroke-width: 4; }
+.h2h { display: grid; grid-template-columns: 1.1fr 1fr 1fr; gap: 0; border: 2px solid var(--border); border-radius: 22px; overflow: hidden; }
+.h2h-h { padding: 22px 32px; font-family: var(--f-display); font-size: 60px; font-weight: 800; background: var(--card-2); }
+.h2h-h.em { color: var(--ember); } .h2h-h.td { color: var(--tide); }
+.h2h-r { display: contents; }
+.h2h-r > span { padding: 24px 32px; font-size: 40px; border-top: 2px solid var(--border); background: var(--card); }
+.h2h-r > span:first-child { color: var(--muted-fg); font-family: var(--f-mono); font-size: 32px; }
+.h2h-r.frag > span { opacity: 0; transition: opacity 420ms var(--ease); }
+.h2h-r.frag.shown > span { opacity: 1; }
+.slide.dark .s-card .big.td { color: var(--tide-on-ink); }
+
+.cchart .trk { fill: var(--card-2); }
+
+/* ================= HISTORY ================= */
+.htl { list-style: none; margin: 12px 0 18px; padding: 0 0 0 4px; position: relative; }
+.htl::before { content: ""; position: absolute; left: 52px; top: 6px; bottom: 6px; width: 3px; background: var(--border); border-radius: 2px; }
+.htl li { display: grid; grid-template-columns: 48px 1fr; gap: 0 26px; padding: 6px 0 10px; position: relative; max-width: none; }
+.htl li::before { content: ""; position: absolute; left: 44px; top: 12px; width: 13px; height: 13px; border-radius: 50%; background: var(--card); border: 3px solid var(--muted-fg); }
+.htl.e li.key::before { background: var(--ember); border-color: var(--ember); } .htl.t li.key::before { background: var(--tide); border-color: var(--tide); }
+.htl .hy { font-family: var(--f-mono); font-weight: 600; font-size: 14px; color: var(--muted-fg); padding-top: 4px; }
+.htl.e li.key .hy { color: var(--ember); } .htl.t li.key .hy { color: var(--tide); }
+.htl b { font-size: 15.5px; } .htl p { margin: 2px 0 0; font-size: 14.5px; color: var(--muted-fg); max-width: 70ch; }
+.htl p.hr { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
+.hs { display: grid; grid-template-columns: repeat(5, 1fr); gap: 24px; position: relative; margin-top: 30px; }
+.hs::before { content: ""; position: absolute; left: 0; right: 0; top: 118px; height: 6px; border-radius: 3px; background: linear-gradient(90deg, var(--border), var(--ember)); }
+.hs.t::before { background: linear-gradient(90deg, var(--border), var(--tide)); }
+.hs-i { display: flex; flex-direction: column; gap: 18px; position: relative; }
+.hs-y { font-family: var(--f-display); font-weight: 800; font-size: 92px; line-height: 1; color: var(--ember); }
+.hs.t .hs-y { color: var(--tide); }
+.hs-d { width: 34px; height: 34px; border-radius: 50%; background: var(--bg); border: 7px solid var(--ember); margin-top: -4px; }
+.hs.t .hs-d { border-color: var(--tide); }
+.hs-t { font-size: 36px; line-height: 1.2; font-weight: 600; }
+.histaxis svg { width: 100%; height: auto; display: block; }
+.histaxis text { font-family: var(--f-body); fill: var(--fg); }
+.histaxis .hax { stroke: var(--muted-fg); stroke-width: 3; }
+.histaxis .htk { font-family: var(--f-mono); font-size: 22px; fill: var(--muted-fg); }
+.histaxis .hst { stroke-width: 2.5; } .histaxis .hst.e { stroke: var(--ember); } .histaxis .hst.t { stroke: var(--tide); }
+.histaxis .hdot.e { fill: var(--ember); } .histaxis .hdot.t { fill: var(--tide); }
+.histaxis .hyr { font-family: var(--f-display); font-weight: 800; font-size: 40px; } .histaxis .hyr.e { fill: var(--ember); } .histaxis .hyr.t { fill: var(--tide); }
+.histaxis .hlb { font-size: 22px; font-weight: 600; }
+.histaxis .hlg { font-family: var(--f-display); font-weight: 800; font-size: 44px; } .histaxis .hlg.e { fill: var(--ember); } .histaxis .hlg.t { fill: var(--tide); }
+.histaxis .hyr, .histaxis .hlb { paint-order: stroke; stroke: var(--bg); stroke-width: 8px; stroke-linejoin: round; }
+.hub-axis .hyr, .hub-axis .hlb { stroke: var(--card); }
+.slide-links { display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; }
+.slide:not(.center) .slide-links { justify-content: flex-start; }
+.slide-links a { font-family: var(--f-body); font-size: 34px; font-weight: 700; text-decoration: none; padding: 18px 40px; border-radius: 999px; background: var(--gold); color: #1a1a1a; border: 3px solid var(--gold); }
+.slide-links a + a { background: transparent; color: inherit; border-color: currentColor; }
+.slide-links a:focus-visible { outline: 4px solid var(--tide-on-ink); outline-offset: 4px; }
+.hcard.g { border-top: 8px solid var(--gold); }
+.runsheet td.lk a.as { border-color: var(--gold); }
+
+.hub { max-width: 1040px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 24px 80px; display: flex; flex-direction: column; gap: 36px; }
+.hub h1 { font-family: var(--f-display); font-size: clamp(40px, 6vw, 72px); line-height: .95; text-transform: uppercase; margin: 8px 0 14px; font-weight: 800; }
+.hub .eyebrow { font-family: var(--f-mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--ember); font-weight: 600; margin: 0; }
+.hub .eyebrow.t { color: var(--tide); }
+.hub .lede { font-size: 17px; color: var(--muted-fg); max-width: 66ch; margin: 0 0 12px; }
+.hh { font-family: var(--f-display); font-size: clamp(30px, 4.2vw, 44px); margin: 2px 0 8px; font-weight: 800; }
+.hub h3 { margin: 22px 0 8px; font-size: 19px; }
+.as-nav { position: sticky; top: calc(env(safe-area-inset-top, 0px) + var(--topbar-h)); z-index: 40; background: var(--bg); border-bottom: 1px solid var(--border); display: flex; gap: 6px; overflow-x: auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 8px; }
+.as-nav a { text-decoration: none; border: 1px solid var(--border); border-radius: 999px; padding: 6px 14px; font-size: 13.5px; font-weight: 600; white-space: nowrap; color: var(--fg); background: var(--card); }
+.as-nav a:hover { border-color: var(--tide); }
+html { scroll-padding-top: calc(var(--topbar-h) + 64px); }
+.as-when { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; margin: 6px 0 14px; }
+.as-id { max-width: 420px; } .as-id input, .as-ws input[type="text"], .as-ws textarea, .as-ws select, .as-tbl input { border: 1px solid var(--border); background: var(--bg); border-radius: 8px; padding: 8px 10px; min-height: 38px; width: 100%; font: inherit; color: inherit; }
+.as-ws textarea { resize: vertical; }
+.as-ws .ctl { margin: 10px 0; }
+.as-tbl input { min-width: 80px; font-family: var(--f-mono); }
+.as-tbl td:first-child input { min-width: 120px; font-family: var(--f-body); }
+.as-lbl { font-weight: 600; font-size: 13px; margin: 14px 0 0; }
+.as-cphead { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; align-items: flex-end; }
+.as-timer { display: flex; gap: 8px; align-items: center; background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 8px 10px; }
+.as-timer .tm { font-family: var(--f-mono); font-size: 26px; min-width: 86px; text-align: center; font-variant-numeric: tabular-nums; }
+.as-timer.big { display: inline-flex; margin: 6px 0 14px; } .as-timer.big .tm { font-size: 40px; min-width: 130px; }
+.as-timer.low .tm { color: var(--ember); } .as-timer.done .tm { color: var(--bad); }
+.as-briefs { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+.as-brief { border-top: 6px solid var(--gold); } .as-brief p { margin: 6px 0 0; }
+.as-brief .tw { color: var(--fg); font-size: 14px; background: var(--card-2); padding: 8px 10px; border-radius: 8px; }
+.as-key summary { cursor: pointer; }
+.opt[disabled] { opacity: 1; }
+.opt.picked { border-color: var(--tide); background: var(--tide-soft); }
+.fb.pend { background: var(--card-2); }
+.as-lock { border-left: 6px solid var(--gold); } .as-lock.open { border-left-color: var(--ok); }
+.as-lockmsg { display: flex; gap: 12px; align-items: flex-start; margin: 0 0 10px; }
+.as-lockmsg svg { width: 26px; height: 26px; flex: none; stroke: var(--ember); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.as-lock.open .as-lockmsg svg { stroke: var(--ok); }
+.as-pw { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.as-pw input { border: 1px solid var(--border); background: var(--bg); border-radius: 8px; padding: 8px 10px; min-height: 40px; width: min(320px, 100%); font: inherit; color: inherit; }
+</style>
+<header class="topbar">
+  <div class="brand"><b>L6 <span class="amp">·</span> <span class="en">Assess</span><span class="ms">Nilai</span></b><small>TTTC6544 · <span class="en">In-class assessments</span><span class="ms">Penilaian dalam kelas</span></small></div>
+  <div class="seg" role="group" aria-label="Language / Bahasa"><button type="button" data-setlang="ms" aria-pressed="false" lang="ms">BM</button><button type="button" data-setlang="en" aria-pressed="true" lang="en">EN</button></div>
+  <div class="seg" role="group" aria-label="Theme"><button type="button" data-settheme="system" aria-pressed="true">Auto</button><button type="button" data-settheme="light" aria-pressed="false" aria-label="Light mode"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4V2M12 22v-2M4 12H2M22 12h-2M5.6 5.6 4.2 4.2M19.8 19.8l-1.4-1.4M5.6 18.4l-1.4 1.4M19.8 4.2l-1.4 1.4M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z"/></svg></button><button type="button" data-settheme="dark" aria-pressed="false" aria-label="Dark mode"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button></div>
+</header>
+<nav class="as-nav" aria-label="Sections">
+  <a href="#cpA">A · SA</a><a href="#cpB">B · GD</a><a href="#group"><span class="en">Group activity</span><span class="ms">Aktiviti kumpulan</span></a><a href="#rubric"><span class="en">Rubric</span><span class="ms">Rubrik</span></a><a href="module.html#s18" target="_blank" rel="noopener"><span class="en">Slides ↗</span><span class="ms">Slaid ↗</span></a><a href="module.html#m4-arena" target="_blank" rel="noopener">Arena ↗</a><a href="#key"><span class="en">Facilitator</span><span class="ms">Fasilitator</span></a>
+</nav>
+<main class="hub as">
+  <section>
+    <p class="eyebrow">TTTC6544 · L6 · <span class="en">Formative, in class</span><span class="ms">Formatif, dalam kelas</span></p>
+    <h1><span class="en">Checkpoints &amp; Group Challenge</span><span class="ms">Titik Semak &amp; Cabaran Kumpulan</span></h1>
+    <p class="lede"><span class="en">Two 12-minute individual checkpoints, one in the middle of each algorithm, and a 30-minute group consultancy challenge at the end of class. Answers lock when you save them; feedback stays hidden until your lecturer releases the password after class. Nothing is sent anywhere: copy your answers when your lecturer asks for them.</span><span class="ms">Dua titik semak individu 12 minit, satu di tengah setiap algoritma, dan cabaran perundingan berkumpulan 30 minit di akhir kelas. Jawapan dikunci apabila disimpan; maklum balas tersembunyi sehingga pensyarah berkongsi kata laluan selepas kelas. Tiada apa dihantar ke mana-mana: salin jawapan anda apabila pensyarah meminta.</span></p>
+    <div class="as-when">
+      <div class="mini"><h4>A · SA</h4><p><span class="en">After slide 17 (quick check), before Lab 1 · 12 min · 8 items</span><span class="ms">Selepas slaid 17 (semakan pantas), sebelum Makmal 1 · 12 min · 8 item</span></p></div>
+      <div class="mini"><h4>B · GD</h4><p><span class="en">After the dual-trace slide, before Lab 2 · 12 min · 8 items</span><span class="ms">Selepas slaid surih dwi, sebelum Makmal 2 · 12 min · 8 item</span></p></div>
+      <div class="mini"><h4><span class="en">Group challenge</span><span class="ms">Cabaran kumpulan</span></h4><p><span class="en">Last 30 minutes · 3–4 per group · uses the Arena</span><span class="ms">30 minit terakhir · 3–4 seorang setiap kumpulan · menggunakan Arena</span></p></div>
+    </div>
+    <div class="ctl as-id"><label for="as-who"><span class="en">Your initials or group code (no matric numbers)</span><span class="ms">Inisial atau kod kumpulan anda (tiada nombor matrik)</span></label><input id="as-who" type="text" maxlength="24" placeholder="e.g. AK-G3"></div>
+  </section>
+
+  <section class="lab as-lock" data-lock="feedback" id="reveal">
+    <p class="as-lockmsg"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><span><span class="en"><b>Feedback is locked.</b> Answer every item: your answers are saved on this device. After class your lecturer will share a password that reveals your score, the correct answers and the explanations.</span><span class="ms"><b>Maklum balas dikunci.</b> Jawab setiap item: jawapan anda disimpan pada peranti ini. Selepas kelas pensyarah akan berkongsi kata laluan yang mendedahkan skor, jawapan betul dan penerangan.</span></span></p>
+    <form class="as-pw"><label class="sr-only" for="pw-feedback">Feedback password</label><input id="pw-feedback" type="password" autocomplete="off" placeholder="password"><button class="btn primary" type="submit"><span class="en">Reveal feedback</span><span class="ms">Dedahkan maklum balas</span></button><span class="hint as-pwmsg" aria-live="polite"></span></form>
+  </section>
+
+  <section id="cpA" class="as-cp" data-cp="cpA">
+    <div class="as-cphead">
+      <div><p class="eyebrow">Checkpoint A</p><h2 class="hh"><span class="en">Simulated Annealing</span><span class="ms">Penyepuhlindapan Simulasi</span></h2><p class="hint">CLO1 · CLO2 · <span class="en">calculator allowed</span><span class="ms">kalkulator dibenarkan</span></p></div>
+      <div class="as-timer" data-mins="12"><b class="tm">12:00</b><button class="btn" type="button" data-t="go"><span class="en">Start</span><span class="ms">Mula</span></button><button class="btn" type="button" data-t="reset"><span class="en">Reset</span><span class="ms">Set semula</span></button></div>
+    </div>
+    <div class="quiz as-quiz" data-aq="cpA"></div>
+  </section>
+
+  <section id="cpB" class="as-cp" data-cp="cpB">
+    <div class="as-cphead">
+      <div><p class="eyebrow t">Checkpoint B</p><h2 class="hh"><span class="en">Great Deluge</span><span class="ms">Banjir Besar</span></h2><p class="hint">CLO1 · CLO2 · CLO4 · <span class="en">calculator allowed</span><span class="ms">kalkulator dibenarkan</span></p></div>
+      <div class="as-timer" data-mins="12"><b class="tm">12:00</b><button class="btn" type="button" data-t="go"><span class="en">Start</span><span class="ms">Mula</span></button><button class="btn" type="button" data-t="reset"><span class="en">Reset</span><span class="ms">Set semula</span></button></div>
+    </div>
+    <div class="quiz as-quiz" data-aq="cpB"></div>
+  </section>
+
+  <section class="as-result">
+    <div class="deck-controls" style="justify-content:flex-start">
+      <button class="btn ember needs-dl" id="as-dl" type="button" hidden><span class="en">Download my answers (.txt)</span><span class="ms">Muat turun jawapan saya (.txt)</span></button>
+      <button class="btn" id="as-copy" type="button"><span class="en">Copy my answers</span><span class="ms">Salin jawapan saya</span></button>
+      <span class="hint" id="as-sum"></span>
+    </div>
+    <p class="hint"><span class="en">Submit before the feedback password is released: download your answers and upload the .txt file to the class submission space (or paste the copied line if downloads are not available). The file records whether feedback was already revealed.</span><span class="ms">Hantar sebelum kata laluan maklum balas dikeluarkan: muat turun jawapan anda dan muat naik fail .txt ke ruang penghantaran kelas (atau tampal baris yang disalin jika muat turun tidak tersedia). Fail mencatat sama ada maklum balas telah didedahkan.</span></p>
+    <div hidden>
+    </div>
+  </section>
+
+  <section id="group">
+    <p class="eyebrow">CLO1–CLO4 · 30 min</p>
+    <h2 class="hh"><span class="en">Group challenge: the optimisation consultancy</span><span class="ms">Cabaran kumpulan: perundingan pengoptimuman</span></h2>
+    <p class="lede"><span class="en">Your group is a consultancy. A client brings one problem. In 30 minutes you must recommend an algorithm, prove it with Arena evidence, expose one weakness and its fix, address data and fairness, and pitch it in two minutes.</span><span class="ms">Kumpulan anda ialah firma perunding. Seorang klien membawa satu masalah. Dalam 30 minit anda mesti mencadangkan algoritma, membuktikannya dengan bukti Arena, mendedahkan satu kelemahan dan pembaikannya, menangani data dan keadilan, dan membentangkannya dalam dua minit.</span></p>
+
+    <div class="as-timer big" data-mins="30"><b class="tm">30:00</b><button class="btn ember" type="button" data-t="go"><span class="en">Start 30-minute clock</span><span class="ms">Mula jam 30 minit</span></button><button class="btn" type="button" data-t="reset"><span class="en">Reset</span><span class="ms">Set semula</span></button></div>
+
+    <div class="tbl-wrap"><table class="runsheet">
+      <thead><tr><th><span class="en">Minute</span><span class="ms">Minit</span></th><th><span class="en">Step</span><span class="ms">Langkah</span></th></tr></thead>
+      <tbody>
+        <tr><td>0–3</td><td><span class="en">Read your brief, assign roles.</span><span class="ms">Baca taklimat, agihkan peranan.</span></td></tr>
+        <tr><td>3–8</td><td><span class="en">Decide with the decision tree; write a testable hypothesis.</span><span class="ms">Putuskan dengan pokok keputusan; tulis hipotesis yang boleh diuji.</span></td></tr>
+        <tr><td>8–20</td><td><span class="en">Arena (set Seeds to 5): out of the box → one challenge → one fix. Fill the table.</span><span class="ms">Arena (tetapkan Benih kepada 5): tetapan asal → satu cabaran → satu pembaikan. Isi jadual.</span></td></tr>
+        <tr><td>20–25</td><td><span class="en">Answer the client's twist question, write the recommendation and ethics note.</span><span class="ms">Jawab soalan kejutan klien, tulis cadangan dan nota etika.</span></td></tr>
+        <tr><td>25–30</td><td><span class="en">Two-minute pitch; another group's Skeptic asks one question.</span><span class="ms">Pembentangan dua minit; Skeptik kumpulan lain bertanya satu soalan.</span></td></tr>
+      </tbody>
+    </table></div>
+
+    <h3><span class="en">Roles</span><span class="ms">Peranan</span></h3>
+    <div class="grid2 as-roles">
+      <div class="mini"><h4><span class="en">Driver</span><span class="ms">Pemandu</span></h4><p><span class="en">Runs the Arena and reads numbers aloud.</span><span class="ms">Menjalankan Arena dan membacakan angka.</span></p></div>
+      <div class="mini"><h4><span class="en">Analyst</span><span class="ms">Penganalisis</span></h4><p><span class="en">Fills the worksheet; checks equal budgets and seeds.</span><span class="ms">Mengisi lembaran kerja; menyemak bajet dan benih sama.</span></p></div>
+      <div class="mini"><h4><span class="en">Skeptic</span><span class="ms">Skeptik</span></h4><p><span class="en">Challenges every claim: "Is that luck? Did HC do just as well?"</span><span class="ms">Mencabar setiap dakwaan: "Adakah itu nasib? Adakah HC sama baik?"</span></p></div>
+      <div class="mini"><h4><span class="en">Presenter</span><span class="ms">Pembentang</span></h4><p><span class="en">Delivers the 2-minute pitch to the client.</span><span class="ms">Menyampaikan pembentangan 2 minit kepada klien.</span></p></div>
+    </div>
+
+    <h3><span class="en">Client briefs (group number decides: 1 & 4 → A, 2 & 5 → B, 3 & 6 → C)</span><span class="ms">Taklimat klien (nombor kumpulan menentukan: 1 & 4 → A, 2 & 5 → B, 3 & 6 → C)</span></h3>
+    <div class="as-briefs">
+      <article class="mini as-brief" data-b="A"><h4>A · <span class="en">Lembah Klang MedVan</span><span class="ms">MedVan Lembah Klang</span></h4>
+        <p><span class="en">A mobile health-screening van leaves UKM Bangi and visits 20 towns each day. The planner re-optimises every morning on an old laptop. Arena problem: <b>Delivery route</b>.</span><span class="ms">Van saringan kesihatan bergerak bertolak dari UKM Bangi dan melawat 20 bandar setiap hari. Perancang mengoptimumkan semula setiap pagi pada komputer riba lama. Masalah Arena: <b>Laluan penghantaran</b>.</span></p>
+        <p class="tw"><b><span class="en">Twist:</span><span class="ms">Kejutan:</span></b> <span class="en">On flood days roads close at 7 a.m. and the plan must be redone within 2,000 evaluations. Does your recommendation still hold? Test it with the Tiny budget challenge.</span><span class="ms">Pada hari banjir jalan ditutup pada 7 pagi dan pelan mesti dibuat semula dalam 2,000 penilaian. Adakah cadangan anda masih sah? Uji dengan cabaran Bajet kecil.</span></p></article>
+      <article class="mini as-brief" data-b="B"><h4>B · <span class="en">FTSM Exam Unit</span><span class="ms">Unit Peperiksaan FTSM</span></h4>
+        <p><span class="en">40 papers, 12 slots, 30 cohorts. The timetable runs overnight once a semester. Staff know last semester's penalty but are not optimisation experts. Arena problem: <b>Exam timetable</b>.</span><span class="ms">40 kertas, 12 slot, 30 kohort. Jadual dijalankan semalaman sekali setiap semester. Kakitangan tahu penalti semester lalu tetapi bukan pakar pengoptimuman. Masalah Arena: <b>Jadual peperiksaan</b>.</span></p>
+        <p class="tw"><b><span class="en">Twist:</span><span class="ms">Kejutan:</span></b> <span class="en">Out of the box, both metaheuristics lose to hill climbing. Explain why to the dean in two sentences, and show which fix changes the ranking.</span><span class="ms">Dengan tetapan asal, kedua-dua metaheuristik kalah kepada pendakian bukit. Terangkan sebabnya kepada dekan dalam dua ayat, dan tunjukkan pembaikan yang mengubah kedudukan.</span></p></article>
+      <article class="mini as-brief" data-b="C"><h4>C · <span class="en">Sensor Calibration Lab</span><span class="ms">Makmal Penentukuran Sensor</span></h4>
+        <p><span class="en">An instrument has six continuous knobs. Nobody knows what a good error value looks like, but the lab can afford tuning time. Arena problem: <b>Continuous tuning</b>.</span><span class="ms">Sebuah instrumen mempunyai enam tombol selanjar. Tiada siapa tahu nilai ralat yang baik, tetapi makmal mampu memberi masa menala. Masalah Arena: <b>Penalaan selanjar</b>.</span></p>
+        <p class="tw"><b><span class="en">Twist:</span><span class="ms">Kejutan:</span></b> <span class="en">Apply both fixes. One algorithm improves and the other gets worse. Which, and why might a "fix" hurt on a rugged landscape?</span><span class="ms">Guna kedua-dua pembaikan. Satu algoritma bertambah baik dan satu lagi menjadi lebih buruk. Yang mana, dan mengapa "pembaikan" boleh merugikan pada landskap kasar?</span></p></article>
+    </div>
+    <div class="deck-controls" style="justify-content:flex-start;margin:14px 0">
+      <a class="btn primary" id="as-arena" href="module.html#m4-arena" target="_blank" rel="noopener"><span class="en">Open the Arena</span><span class="ms">Buka Arena</span></a>
+      <a class="btn" id="as-tree" href="module.html#chooser-h" target="_blank" rel="noopener"><span class="en">Decision tree</span><span class="ms">Pokok keputusan</span></a>
+    </div>
+
+    <h3><span class="en">Group worksheet</span><span class="ms">Lembaran kerja kumpulan</span></h3>
+    <form class="lab as-ws" id="ws" autocomplete="off">
+      <div class="controls">
+        <div class="ctl"><label for="ws-group"><span class="en">Group code</span><span class="ms">Kod kumpulan</span></label><input id="ws-group" type="text" maxlength="20"></div>
+        <div class="ctl"><label for="ws-brief"><span class="en">Brief</span><span class="ms">Taklimat</span></label><select id="ws-brief"><option value="">—</option><option value="A">A · MedVan</option><option value="B">B · Exam Unit</option><option value="C">C · Sensor Lab</option></select></div>
+        <div class="ctl"><label for="ws-pick"><span class="en">Recommended algorithm</span><span class="ms">Algoritma dicadangkan</span></label><select id="ws-pick"><option value="">—</option><option>SA</option><option>GD</option><option>HC</option><option value="SA+GD">SA + GD (test both)</option></select></div>
+      </div>
+      <div class="ctl"><label for="ws-why"><span class="en">1 · Why (use the decision tree)</span><span class="ms">1 · Mengapa (guna pokok keputusan)</span></label><textarea id="ws-why" rows="2"></textarea></div>
+      <div class="ctl"><label for="ws-hyp"><span class="en">2 · Hypothesis you will test</span><span class="ms">2 · Hipotesis yang akan diuji</span></label><textarea id="ws-hyp" rows="2" placeholder="e.g. With the Arena's default settings, SA's mean will beat GD's by at least 2%"></textarea></div>
+      <p class="as-lbl"><span class="en">3 · Evidence (5 seeds each, same budget)</span><span class="ms">3 · Bukti (5 benih setiap satu, bajet sama)</span></p>
+      <div class="tbl-wrap"><table class="as-tbl">
+        <thead><tr><th><span class="en">Run</span><span class="ms">Larian</span></th><th class="num">HC mean</th><th class="num">SA mean</th><th class="num">GD mean</th><th class="num"><span class="en">SA wins / GD wins</span><span class="ms">SA menang / GD menang</span></th></tr></thead>
+        <tbody>
+          <tr><td><span class="en">Out of the box</span><span class="ms">Tetapan asal</span></td><td><input type="number" step="any" id="ws-r1h" aria-label="HC out of box"></td><td><input type="number" step="any" id="ws-r1s" aria-label="SA out of box"></td><td><input type="number" step="any" id="ws-r1g" aria-label="GD out of box"></td><td><input type="text" id="ws-r1w" maxlength="7" aria-label="wins out of box"></td></tr>
+          <tr><td><input type="text" id="ws-r2n" placeholder="Challenge" aria-label="Challenge name"></td><td><input type="number" step="any" id="ws-r2h" aria-label="HC challenge"></td><td><input type="number" step="any" id="ws-r2s" aria-label="SA challenge"></td><td><input type="number" step="any" id="ws-r2g" aria-label="GD challenge"></td><td><input type="text" id="ws-r2w" maxlength="7" aria-label="wins challenge"></td></tr>
+          <tr><td><input type="text" id="ws-r3n" placeholder="Fix" aria-label="Fix name"></td><td><input type="number" step="any" id="ws-r3h" aria-label="HC fix"></td><td><input type="number" step="any" id="ws-r3s" aria-label="SA fix"></td><td><input type="number" step="any" id="ws-r3g" aria-label="GD fix"></td><td><input type="text" id="ws-r3w" maxlength="7" aria-label="wins fix"></td></tr>
+        </tbody>
+      </table></div>
+      <p class="verdict" id="ws-calc"></p>
+      <div class="ctl"><label for="ws-weak"><span class="en">4 · Weakness observed (name it, cite a number)</span><span class="ms">4 · Kelemahan diperhatikan (namakan, petik satu angka)</span></label><textarea id="ws-weak" rows="2"></textarea></div>
+      <div class="ctl"><label for="ws-twist"><span class="en">5 · Answer to the client's twist</span><span class="ms">5 · Jawapan kepada kejutan klien</span></label><textarea id="ws-twist" rows="2"></textarea></div>
+      <div class="ctl"><label for="ws-eth"><span class="en">6 · Data &amp; fairness note (PDPA / AIGE)</span><span class="ms">6 · Nota data &amp; keadilan (PDPA / AIGE)</span></label><textarea id="ws-eth" rows="2"></textarea></div>
+      <div class="ctl"><label for="ws-rec"><span class="en">7 · Recommendation to the client (≤ 60 words)</span><span class="ms">7 · Cadangan kepada klien (≤ 60 patah perkataan)</span> <output id="ws-wc">0</output></label><textarea id="ws-rec" rows="3"></textarea></div>
+      <div class="ctl"><label for="ws-peer"><span class="en">8 · Question received from the other group's Skeptic, and your answer</span><span class="ms">8 · Soalan daripada Skeptik kumpulan lain, dan jawapan anda</span></label><textarea id="ws-peer" rows="2"></textarea></div>
+      <div class="toc"><div class="meter"><i id="ws-meter"></i></div><div class="meter-l" id="ws-meter-l"></div></div>
+      <div class="deck-controls" style="justify-content:flex-start;margin-top:10px">
+        <button class="btn ember needs-dl" type="button" id="ws-dl" hidden><span class="en">Download group report (.md)</span><span class="ms">Muat turun laporan kumpulan (.md)</span></button>
+        <button class="btn" type="button" id="ws-copy"><span class="en">Copy group report</span><span class="ms">Salin laporan kumpulan</span></button>
+        <button class="btn" type="button" id="ws-clear"><span class="en">Clear worksheet</span><span class="ms">Kosongkan lembaran kerja</span></button>
+        <span class="hint" id="ws-confirm" hidden></span>
+      </div>
+      <p class="hint"><span class="en">Saved in this browser as you type. Download the report (or copy it) and upload it to the class submission space.</span><span class="ms">Disimpan dalam pelayar ini semasa menaip. Muat turun laporan (atau salin) dan muat naik ke ruang penghantaran kelas.</span></p>
+    </form>
+
+    <div class="box task"><div class="bh"><span class="en">Stretch task for fast groups</span><span class="ms">Tugasan lanjutan untuk kumpulan pantas</span></div>
+      <p class="en">Design a hybrid: GD's level as the outer gate, SA's probabilistic rule for moves within 2% above the level. Sketch its flowchart (which box changes?), predict which Arena problem it would help most, and name one risk.</p>
+      <p class="ms">Reka bentuk hibrid: paras GD sebagai pintu luar, peraturan kebarangkalian SA bagi langkah dalam lingkungan 2% di atas paras. Lakarkan carta alirnya (kotak mana berubah?), ramalkan masalah Arena yang paling dibantu, dan namakan satu risiko.</p>
+    </div>
+  </section>
+
+  <section id="rubric">
+    <h2 class="hh"><span class="en">Rubric · group challenge (16 marks)</span><span class="ms">Rubrik · cabaran kumpulan (16 markah)</span></h2>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th><span class="en">Criterion</span><span class="ms">Kriteria</span></th><th>4</th><th>2–3</th><th>0–1</th><th>CLO</th></tr></thead>
+      <tbody>
+        <tr><td><b><span class="en">Decision &amp; modelling</span><span class="ms">Keputusan &amp; pemodelan</span></b></td><td><span class="en">Choice follows from the brief's deadline, target and tuning capacity; hypothesis is testable</span><span class="ms">Pilihan berpunca daripada tarikh akhir, sasaran dan keupayaan menala dalam taklimat; hipotesis boleh diuji</span></td><td><span class="en">Sensible choice, partly justified</span><span class="ms">Pilihan munasabah, sebahagiannya diwajarkan</span></td><td><span class="en">No link to the brief</span><span class="ms">Tiada kaitan dengan taklimat</span></td><td>1, 2</td></tr>
+        <tr><td><b><span class="en">Evidence &amp; rigour</span><span class="ms">Bukti &amp; ketelitian</span></b></td><td><span class="en">Three runs, equal budgets, HC baseline, paired wins reported, no cherry-picking</span><span class="ms">Tiga larian, bajet sama, garis dasar HC, kemenangan berpasangan dilaporkan, tiada pilihan memihak</span></td><td><span class="en">Some runs or missing baseline</span><span class="ms">Sebahagian larian atau tiada garis dasar</span></td><td><span class="en">Single run or no numbers</span><span class="ms">Satu larian atau tiada angka</span></td><td>3</td></tr>
+        <tr><td><b><span class="en">Diagnosis &amp; improvement</span><span class="ms">Diagnosis &amp; penambahbaikan</span></b></td><td><span class="en">Weakness named with a mechanism (e.g. drowning, cost scale) and a fix whose effect is quantified; twist answered with evidence</span><span class="ms">Kelemahan dinamakan dengan mekanisme (cth. tenggelam, skala kos) dan pembaikan yang kesannya diukur; kejutan dijawab dengan bukti</span></td><td><span class="en">Weakness named, effect vague</span><span class="ms">Kelemahan dinamakan, kesan kabur</span></td><td><span class="en">Not addressed</span><span class="ms">Tidak ditangani</span></td><td>1, 3</td></tr>
+        <tr><td><b><span class="en">Ethics &amp; communication</span><span class="ms">Etika &amp; komunikasi</span></b></td><td><span class="en">Concrete data-protection and fairness measures; ≤ 60-word recommendation a client can act on; Skeptic's question answered with data</span><span class="ms">Langkah perlindungan data dan keadilan yang konkrit; cadangan ≤ 60 patah perkataan yang boleh dilaksanakan klien; soalan Skeptik dijawab dengan data</span></td><td><span class="en">Generic ethics, clear pitch</span><span class="ms">Etika umum, pembentangan jelas</span></td><td><span class="en">Missing</span><span class="ms">Tiada</span></td><td>4</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section id="key">
+    <h2 class="hh"><span class="en">Facilitator notes</span><span class="ms">Nota fasilitator</span></h2>
+    <div class="lab as-lock" data-lock="facil">
+      <p class="as-lockmsg"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg><span><span class="en">Encrypted. Enter the facilitator password to open the answer key, the expected Arena findings and the result grader.</span><span class="ms">Disulitkan. Masukkan kata laluan fasilitator untuk membuka kunci jawapan, dapatan Arena dijangka dan penggred keputusan.</span></span></p>
+      <form class="as-pw"><label class="sr-only" for="pw-facil">Facilitator password</label><input id="pw-facil" type="password" autocomplete="off" placeholder="password"><button class="btn ember" type="submit"><span class="en">Unlock</span><span class="ms">Buka</span></button><span class="hint as-pwmsg" aria-live="polite"></span></form>
+    </div>
+    <div id="facilBody" hidden></div>
+  </section>
+</main>
+
+<script>
+window.ASSESS_PUB = {"cpA": {"title": ["Checkpoint A · Simulated Annealing", "Titik Semak A · Penyepuhlindapan Simulasi"], "mins": 12, "qs": [{"q": ["Minimising. f(s) = 820, f(s′) = 835, T = 25. What is the probability of accepting s′? (4 decimals)", "Peminimuman. f(s) = 820, f(s′) = 835, T = 25. Berapakah kebarangkalian menerima s′? (4 perpuluhan)"], "num": true}, {"q": ["Same move with r = 0.57. Then the faculty reports all costs ×10 (8,200 vs 8,350) but T stays 25. Which pair is correct?", "Langkah sama dengan r = 0.57. Kemudian fakulti melaporkan semua kos ×10 (8,200 lwn 8,350) tetapi T kekal 25. Pasangan manakah betul?"], "o": [["Rejected; P becomes 0.0025", "Ditolak; P menjadi 0.0025"], ["Accepted; P stays 0.5488", "Diterima; P kekal 0.5488"], ["Rejected; P stays 0.5488", "Ditolak; P kekal 0.5488"], ["Accepted; P becomes 0.0025", "Diterima; P menjadi 0.0025"]]}, {"q": ["Five random worsening moves cost 12, 30, 18, 24 and 16. You want 60% of worse moves accepted at the start. What T₀ does the acceptance-ratio rule give? (2 decimals)", "Lima langkah rawak yang memburukkan berkos 12, 30, 18, 24 dan 16. Anda mahu 60% langkah buruk diterima pada awal. Apakah T₀ daripada peraturan nisbah penerimaan? (2 perpuluhan)"], "num": true, "hint": ["T₀ = −Δ̄ / ln χ₀.", "T₀ = −Δ̄ / ln χ₀."]}, {"q": ["Geometric cooling from T₀ = 200 with α = 0.95 per level. After how many cooling levels does a worse move with Δ = 10 first have P(accept) below 1%?", "Penyejukan geometri dari T₀ = 200 dengan α = 0.95 setiap aras. Selepas berapa aras penyejukan barulah langkah buruk dengan Δ = 10 mempunyai P(terima) di bawah 1%?"], "num": true, "hint": ["First find the temperature where e^(−10/T) = 0.01.", "Mula-mula cari suhu di mana e^(−10/T) = 0.01."]}, {"q": ["T₀ = 50, T_min = 0.5, α = 0.9, and L = 200 moves at each temperature. Roughly how many evaluations does the run use? (nearest 100)", "T₀ = 50, T_min = 0.5, α = 0.9, dan L = 200 langkah pada setiap suhu. Kira-kira berapa penilaian digunakan larian? (100 terdekat)"], "num": true}, {"q": ["In the Arena, SA still accepts 65% of worse moves in the final 2% of the budget, and its mean is worse than hill climbing. Which change should you try first?", "Dalam Arena, SA masih menerima 65% langkah buruk pada 2% terakhir bajet, dan puratanya lebih buruk daripada pendakian bukit. Perubahan manakah patut dicuba dahulu?"], "o": [["Raise T₀", "Naikkan T₀"], ["Cool to a lower T_end (and check T₀ is not far too hot)", "Sejukkan ke T_end lebih rendah (dan semak T₀ tidak terlalu panas)"], ["Turn on reheating", "Hidupkan pemanasan semula"], ["Run more seeds", "Jalankan lebih banyak benih"]]}, {"q": ["A student writes: \"I use logarithmic cooling, so my 50,000-evaluation run is guaranteed to find the global optimum.\" What is the main flaw?", "Seorang pelajar menulis: \"Saya guna penyejukan logaritma, jadi larian 50,000 penilaian saya dijamin menemui optimum sejagat.\" Apakah kelemahan utamanya?"], "o": [["Logarithmic cooling only works for continuous problems", "Penyejukan logaritma hanya untuk masalah selanjar"], ["The guarantee is asymptotic: it holds as time goes to infinity (with c large enough), not for a finite budget", "Jaminan itu asimptotik: ia berlaku apabila masa menghampiri infiniti (dengan c cukup besar), bukan untuk bajet terhad"], ["SA has no convergence theory", "SA tiada teori penumpuan"], ["The guarantee needs reheating", "Jaminan itu perlukan pemanasan semula"]]}, {"q": ["Exam timetable: a clash costs 1000 per student, back-to-back 10 per student. Automatic calibration on random timetables gives T₀ ≈ 230,000. What happens, and what is the best remedy?", "Jadual peperiksaan: pertindihan berkos 1000 setiap pelajar, berturutan 10 setiap pelajar. Penentukuran automatik pada jadual rawak memberi T₀ ≈ 230,000. Apa yang berlaku, dan apakah penyelesaian terbaik?"], "o": [["Nothing; T₀ only affects the first iteration", "Tiada; T₀ hanya menjejaskan lelaran pertama"], ["SA accepts almost anything for most of the run; calibrate on moves near a hill-climbed timetable, or rescale the penalties", "SA menerima hampir apa sahaja untuk kebanyakan larian; tentukur pada langkah hampir jadual yang telah didaki, atau skala semula penalti"], ["SA freezes immediately; raise T₀ further", "SA beku serta-merta; naikkan T₀ lagi"], ["Switch to linear cooling", "Tukar kepada penyejukan linear"]]}]}, "cpB": {"title": ["Checkpoint B · Great Deluge", "Titik Semak B · Banjir Besar"], "mins": 12, "qs": [{"q": ["Minimising. f₀ = 5,000, target f* = 3,800, budget N = 40,000 evaluations, linear decay. What is ΔB per evaluation?", "Peminimuman. f₀ = 5,000, sasaran f* = 3,800, bajet N = 40,000 penilaian, susutan linear. Berapakah ΔB setiap penilaian?"], "num": true}, {"q": ["Suppose the best cost actually reachable is about 4,100. At which evaluation k does the level fall below it?", "Katakan kos terbaik yang benar-benar boleh dicapai ialah kira-kira 4,100. Pada penilaian k ke berapa paras jatuh di bawahnya?"], "num": true}, {"q": ["Following from the previous question: what happens in the rest of the run, and what is the best remedy?", "Susulan soalan sebelum: apa yang berlaku pada baki larian, dan apakah penyelesaian terbaik?"], "o": [["25% of the budget is plain hill climbing; raise f* (e.g. towards 4,000) or let the level rise again when stuck", "25% bajet ialah pendakian bukit biasa; naikkan f* (cth. ke arah 4,000) atau benarkan paras naik semula apabila tersekat"], ["The run stops early at k = 30,000", "Larian berhenti awal pada k = 30,000"], ["GD starts accepting every move", "GD mula menerima setiap langkah"], ["Nothing changes; the level is only a guide", "Tiada perubahan; paras hanya panduan"]]}, {"q": ["B = 4,500, f(s) = 4,420, f(s′) = 4,480. Compare GD with SA at T = 30 on this move.", "B = 4,500, f(s) = 4,420, f(s′) = 4,480. Bandingkan GD dengan SA pada T = 30 bagi langkah ini."], "o": [["Both reject", "Kedua-duanya tolak"], ["GD accepts with certainty; SA accepts with probability ≈ 0.135", "GD menerima dengan pasti; SA menerima dengan kebarangkalian ≈ 0.135"], ["GD rejects; SA accepts with probability ≈ 0.135", "GD tolak; SA menerima dengan kebarangkalian ≈ 0.135"], ["Both accept with certainty", "Kedua-duanya menerima dengan pasti"]]}, {"q": ["Non-linear (geometric) decay: B_k = f* + (B₀ − f*)·q^k, with B₀ = 5,000, f* = 3,800 and q chosen so the gap is 1% of the original at k = 40,000. What is the level at k = 20,000?", "Susutan tak linear (geometri): B_k = f* + (B₀ − f*)·q^k, dengan B₀ = 5,000, f* = 3,800 dan q dipilih supaya jurang ialah 1% daripada asal pada k = 40,000. Berapakah paras pada k = 20,000?"], "num": true, "hint": ["Halfway, q^k = (0.01)^(1/2).", "Pada separuh jalan, q^k = (0.01)^(1/2)."]}, {"q": ["Best cost so far 100, Record-to-Record deviation D = 4. Current cost 103, GD level B = 106. Candidate cost 105. Who accepts?", "Kos terbaik setakat ini 100, sisihan Rekod-ke-Rekod D = 4. Kos semasa 103, paras GD B = 106. Kos calon 105. Siapa menerima?"], "o": [["Both", "Kedua-duanya"], ["GD only", "GD sahaja"], ["RRT only", "RRT sahaja"], ["Neither", "Tiada"]]}, {"q": ["Which situation most clearly favours the Great Deluge?", "Situasi manakah paling jelas memihak kepada Banjir Besar?"], "o": [["Sampling many low-energy states of a physical model", "Mensampel banyak keadaan bertenaga rendah bagi model fizikal"], ["A research benchmark where you can spend days tuning for the best final result", "Penanda aras penyelidikan di mana anda boleh menghabiskan beberapa hari menala untuk keputusan akhir terbaik"], ["An exam unit reruns its timetable overnight each semester, knows last semester's penalty, and has no optimisation specialist", "Unit peperiksaan menjalankan semula jadualnya semalaman setiap semester, mengetahui penalti semester lalu, dan tiada pakar pengoptimuman"], ["A continuous problem with an unknown cost scale", "Masalah selanjar dengan skala kos tidak diketahui"]]}, {"q": ["Arena evidence on the route: worst/best setting ratio GD 1.06× vs SA 1.40×; tuned means SA 234.6 km vs GD 235.7 km. The best conclusion is…", "Bukti Arena pada laluan: nisbah tetapan terburuk/terbaik GD 1.06× lwn SA 1.40×; purata ditala SA 234.6 km lwn GD 235.7 km. Kesimpulan terbaik ialah…"], "o": [["GD is better", "GD lebih baik"], ["SA is better", "SA lebih baik"], ["SA has the higher ceiling, GD the safer floor; choose by how much tuning effort is available", "SA mempunyai siling lebih tinggi, GD lantai lebih selamat; pilih mengikut usaha penalaan yang tersedia"], ["The difference is noise, so the choice does not matter", "Perbezaan ialah hingar, jadi pilihan tidak penting"]]}]}};
+window.ASSESS_ENC = { feedback: {"v": 1, "iter": 600000, "salt": "QhBYt5q6j0x1OBGM/R6l8g==", "iv": "ceBPMNMhDewT2Za0", "ct": "SBxzcVmzZewAStxyIQbe1XJhZp52KqV5lIZ6XwNlFsXQ9ladu/wzUY7mNUNKti8PMyIbqya/W7L8A5rXEWgBXybZVdSGdrdP4zIH2avoueXHg+cCm+rkcrBvqSx1B9wp0KSB9CWkAJ0wy+uJPJGG0RMzk2r66eKQUetXVdD9IgM9vFMAa5vDDsHdj3hmrg0bV4N8ty+tYHJ04PpKL0oPe36iKE402eyqj/uU4gHMweJk/YF8pTwzdSh4OSzeNdgd4AHD5wL6e+De7oPA3+YBq+3wA+zTVVX/GEJjygeF8SBpBHIn470rUpyjSO+iVdDELkFAv5a3lXg4b4oRV9uLYUxsWsBsY4wZAjQoFowc0ISTuNDqLpxXuNST7VFy94rXpmZcvbj6wFE0o9snb5Dy0m+mEfzPoTus85Fp9ik76YZikGTowP64OtL7tZZB+JUeDdRftJhw9Y3Ow37F7aqAbfc00RBKLfD/q+q3aZ2MkWzSxkWqXL75TyOfRIFJ8dx5abjvKQyl5yhy1ClIf5chTH0mK9mkOfXwfzECDilZ351JDNBuI40dWbpoDDROhOQowd/SqEXvmXIxBhW1t6pCwWzXKkD8njN724aDqADCIDsM6R04hCDJfOS7OI3BmxOXO1qGr4u44pGlFckwaNF8bBLzYhh4sl/9KrXHNvAGiK/tZaTcm0A1uUvZLFa3LR/D/4kPPJs/SsL0mGThmVNKb2KdqnCC650FrGworXzTPmB+LKWNbDaq06Rfxn5gjliCg8nZB84tfV0L0Tg7Kd56xLD87LgOl3a95D2BHwTAapptpazP4BNrWI5b8I5YZM3qlf9WaPEh9KkQuHeieJEUDKM2GFQTPD3GyQ/DG/uFGJUrOL798+xBtG5IkOGs2eCDj2BB2VntXvUNbd3dWGUU+mdLI7wVdLVd4FM/qHuDnVCAxdbSdFwl64nY5Bomkzn+Kl26VqVTXcnDpbjjyy6033UDmnMKwU0iNYAat/xjAX4ueT6UjwsVdtmfhak58OQUNk88wXPt1aLQAk0QNeAibQAbk+yxdew1IIUCN/dHm97aFrBPA0Q4CqFfmC+puii5O59EEjglcRsOeLDzRxQNzhVj2eeBHIDoZ+KUnCpVnL6pJ45rPLv9VKw+0CZuAzhuMjyYEBqu2RAizafjg0PCV4HGxfQvc0ltEkZwZmcQuhR3/20XcfeTBVoyIgyifYKcisaT4nd94g6bbkJgJkdcfs4NvjSqJGbDs1LEpCcLn/OsPLkb0SVHLtfG8EC70cYgaHuqLBC0UazVmPOWKVwPNj8kHyf8Mop7ZryYcpxctN6R4luoEJ1lJhCmoux3KQvO0p2ha/OgCxes2/tBcHQRiHBxXYbR4RvNB67NjcmVp5tMAjUeFhLa8n9H4Qu1tT6VpSU2a6Q0rwHq0L1y9U5nakClUWBJFGkQsxkbmYzbjoh3bNMVG5PwalKnr3aOniBgxixaXBduPeWEvK2mOFzle9gaf9EvP7fO9wCwwEwji85I7eybKZ96VFLOBzx3/MS9TsuL49q/LGFpwZ6XAPp8N2soWBIEgNJT7iJHO0f6rXZzevSLGgIVDpBbjd9+8u8WGLhHJE5+gV4nGkNZXvuJdW633g0IGEO00nnm3taYtuMUCjdsSBFQ0NTyizpVbZ3zvK54+//t+hwV676V5IkyISlgFF4wP30LDCM88Xyd5nVzfjGtixWLh7MsnDfQcGV7ii+eh8eTE3yRu2VTUwDAOvYVNVt/cMrD2I4KBO8/slteHFje6HI9U8P5v56/moU3eEbouMyRvfr+htkwbTtmJk4OK7rw9JIDbBixYeryvi+Z3RhoZBGd1EXIxPq4NEhGIbiSKCWcu5AJLl++5eozh82DW+SpGzKOsnvHehLFFl7rhraYfjBDZps9Mk87bKOa9d+VG+moF8jneKj9pc85gRUSLbxX+OJ3+W3UGPK0T5kI26+QA5UnNhEBO5G3IstLpOHzjaU9L2XkmkfHu24OP4JNkUMKXp8OEfsQTEPzPGUbgVcf7YzmRv785BDXzZdXYKRaTtGx/Ad48DUbny6w3pIlnAjReXumxyIEh9IQiBgBmbkLWognbFGSHWTQ9gD3yb/Dp86c1pEGzZ4pV4J69KPItBlILuK6Yc6z69AzzpxOspJEBWDfjVWMZHBgPxi7eiaMeLnDYK/Jot4ADQYoaFIq57NPVUALQYgFMtmeSLnxy9yVc0jJaG++mM5v4x/Q7szF7UudmHeT7tZ2LUcsfvTB8E+0brqc/qz6vQ0A6sn0MFPhY9E6bIGOaNzv0KfzQj85Ppr/NZOAI75sxQ5YTBZcC7K5F1xxfesHHJnOEpaMCV7uxKb4MlGYtBbG+wGXneiusAoK8F54yAfg8cWW3cb1IeteaT2rdcfd6oJ5K8E0QNepZOwROGkQ8pvtzrXuuI+v8LbIGhW+tzCYpV3gbmjmS/+jACan8o1JX+dcft0v2DOTSJNapzmgHAXCw5NfVwfQfSztaPxzMEWZlxb8CZMkOfEqv3S/EMbBoHwsZ5/xjRKlUaafwpAREFganZlYgsHVpo85VPoByvF2H+Q762MefRwa/XVWoo0KrnbPYzAWDSAeKq2XdHbAs9t7akJTbEcbHFvL6Mz08dk0APTVRKRzfr3sQnOLk7yTcg0XBetk3l9J/1wC94VNiacj850L5JuK6I11iNb8Fgr8j6SsCfPKqVcE1kgPzIfEUl9tboCAVR1i4vn0XlfKdD/KrWjzWufx1ERIIsy3Sakuik2PvcwJsN+4C+3bMq4M4Z/XoiXoIwE++9u2Hqf1UJyqDldeSJyAbZev8YcXoEPBf077Y4vVjFsBg4G+RmjFTwzu7fHaUBFkfjIYDx6aOF3ayyYf1DDhQgVAV0E/dCSax2YB3NQI55sJ/7huFE+QWf/VKo6pG3+a2JsTIJnJtx9kPtLl8G+G8hNK8UiGcDQW76gKv7XcvnvCXT/JPkJo7UOY0EoPgKRt+ftunCR59mbjHj/EZ98gxtcduZwQrZjAVDYYTf/FkAtmVxSZNxrPeT4l8qzVZwh1vnqdyf1bbyfbkm3/vx1GPFyGRkTLXvUXQ7ko4MZiysiy9uOBE8vOiiFYDvyWOw2dTKLJ7jfLn154rZFrA5zrKTebVQBJ3Bdg0dg2QwVXwqDQd0liZvIPM51wog6NXBJhjYn8Ncfmv0JHaS+s1k8hJ3c909QyZHKjH3S+Ku4QQ5FYrqfmH1Ss4Io4CXtSCOjdrvIIUMluxGGeNL4UNMXQUtlVpEVrm+KV0sz7rQ3pWGFyOUevjS7YzzcllVaoda48CnWIceLxsuCXPD790NbeYXXcwEnfC8Wojg/PZ+l8hQ11JsUxThsE7gVa3asuMT+yen/mEsns5dbOcJr8ZTSH6RzgWnRumf9o4rwoSKLQf4AMmPkE1Rh0qWIsSlZw6dRJQ0LFVm45C44xwqJEi45bRNJfYu2HFuYfV76y+YKb8gq86tcunTwASQNEk8sCfH+jz6rD5jV4Z5K/yNWIgf78XrIZtu+QBsVPOwkFVWIVZAvZc1py1+fOxkOyCJ5xDlypjTItLqp0viN66z+b91zrh+0cr1eaZ7mRl1upCxu7cbQDeusmZnd4j93jwLghZXQicHo6Lgd5o21PVzRvY8dAC85X5/mivEtoGFf8DoqEsmQ7L1fD+kVGpwEsx2FcdWN95A8Hod1FycL+5/Wo4+w77NSuKn6W73FgogtdKletz3x3IseIi09S9JBoNFz73L0mkuckrk+ESNwWPwaJMO7c4TDl4dLlkZTdm6yc0dcdrJBWtIUfi8OetpSthBPPwRcJ8jXmbIurFvL0AU3LZxGfE+BDRDn29g9nNwWzJD/IqyxGl681ug8YywgM0bkpCmJaPXHwSV2zIO8xeVXK1CbhKJgrpNGH6z98xkVoXBexsxVFrevnk1j7eDKdO5jUCGWK7JI8PxAoz6TtfSV1KX6QV4AuOBjp2Zgtvdx6qwtaXMYL8V9gM/sUvup7yzKA1YmQxdbeO4M9kj93G6HK2JUWmxjuFOX8aX+AAkJ6tmISH98CebRnTnxq8voxzdv3TjquU0WNlSp6MQJorrJf9HQY9y70lWjw1zmQ7SYLcRlBUoEH10pCYOBlE/NinzUd4meDqz9eIt5JyCADnzpvI11JlHPvYrfg35w1soGET5ibqqJTzK+2RHGJNARNIKqHOJGZCbYsBPIZcEkteWMVNv/9ZW3qRY3m/o+iTKPjAKKTROwPKaqmh3YnW2BTlNeYw4ZvX8IMNVDEBIq2jJX+dE9N3yq+rUgrQzTs8f/w2cZ54BBIHUPKtJOu0AC/XmBRAmKuenjKO+ohcWAFLhwb3gUPHSE8j1lpBOQHh9QvSQ7FgpHUL7NTBHd48BrCZSl9zDVEE65S12zzjiAzmPnTUzYHHTlUIFgt+YiJlqzLm5skMDiwU8UjjqLUhrh5pWKTYj+pEUSegCZKU+qGtJ+k05NAYM0xBilnH4hLEIx6EbK396UfdvnwmmsqAU/dG503EH47bEsccQJQziTm/3xePv9N/Lg1yR2qehExJ5C/aEtOQjR/xOF0cVvNADItpKhvvQ7TPVoPzkTBlM1tLcinI1ovKqirgZponcrws3F0/oKrCe2clkua5BuLhOKAbAYFxvlYtuc6bKcBspuwOtClSB9IQv9USMKsKBZ52PS4TG/gIi9OgMHmwHNRqSsLnmdTpi75rXYqlyYeKwD9mOgfV9jSi75BtByqEWW0qqXBiYDnz1H6ReK4JLxU5H3012d25iqLl84h9laHeeslCleFXnGpt/olDqa/vu4JrfExmUTsJuY3UwCrklom3DH25N1RIsEVoQwJlTo1Pld6DUu/nWpL2VTEim3MTaMl3dVbGp8h0/cm2q9NCYkuEaF/v5P2GyXlpNFm/Dm2ZqkLLr1Fm/ehx25RaNsV5kxJ5xPVRlBFOFSTkhm9PXPjq/fLlpl0f/76cE3Wl+p+1fUMFQEIrjOI+q2LQkMitso4Yvr1nkD6yqfsiVZWEdHDy96t5m5wS4ZslocYiWaH3hVR/5fEhzaFkU1ZKA0/9VlRaTeEjv4jcFrmbDjL0qujOw6jdi7w91g7S67kGH/Qf7SeyzxQWQ7K/CD2QdmqwL87asZ2JKjEhYdaeeginfvljHmeqB1J5Ro3xNKknmbWpRz50X9ST/qKxXoCGrxpaff7HZX2dJGy6jpxuOm2lnmt+hEDysQovGAHLpBSvWkOdWXbM4wP2Vl79gEbABBGYes0PEzPri/uzC1vwZvBb4oDzt8DS0uG/I1y+ZIZq2oEyXdK8cMAnv6vht1iWW8fdk5L5DBccHsNs+UutKnznBZkCUlIZ3rU+LmDZ0J3guMqynyp0fEvGoyYWZvXG+UVknakgbyVqKBMRas8zN7JyLwIqYhy/i3IQL8cjmPboq21pmfUREGsCMtF1b9s1g56ztS/9YljT7wQKM+6ZZy+vHeGJsqS4+RMPKgt4A9MPK7duGKo5pdhKSGv6RknfCHjatFHXAWj46UbvHGKL6//W1A9eKLgJ5t2b/zU0hp5J9zpcAcNzayjfMAavVVwPpRfxin2zP2iIv36e7lOTVc5XHAFrI+9k1dGnv1qZSisK1cSVICAxRkKtAJQoGpUvnr6MbfbJ7mLKzOMVhEUeOxbHVYZE2eg1n9tuq9tfHzXNVPjAh4SRHYhGjyJMb62lSrv2YqwN752rivAM7r1IW2JCv3EeJCkmywn3a4p9tzn1oCObJ5bTwaVA8VlbDFAkA3+L6cMDNsUTNkGeco3gf3+m5M0qzaMGonIZVa5c+tyPmh9TJzWaNNLTj/q/cl4n6jHcVe3ls1H3QeCarKwNmzx"}, facil: {"v": 1, "iter": 600000, "salt": "BPbjLgnGsWok6utciVyr/A==", "iv": "LeiPdaG4x4gqgDaJ", "ct": "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"} };
+</script>
+<script>
+(() => {
+  const root = document.documentElement, $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const get = (k, d) => { try { const v = localStorage.getItem('ad6544:' + k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } };
+  const set = (k, v) => { try { localStorage.setItem('ad6544:' + k, JSON.stringify(v)); } catch (e) { /* storage unavailable */ } };
+  const L = (en, ms) => root.dataset.lang === 'ms' ? ms : en;
+  const toastEl = document.createElement('div'); toastEl.className = 'toast'; toastEl.setAttribute('role', 'status'); document.body.append(toastEl);
+  let tt; const toast = m => { toastEl.textContent = m; toastEl.classList.add('on'); clearTimeout(tt); tt = setTimeout(() => toastEl.classList.remove('on'), 1800); };
+  const copy = async (txt, okMsg) => { try { await navigator.clipboard.writeText(txt); toast(okMsg); } catch (e) { const ta = document.createElement('textarea'); ta.value = txt; ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.append(ta); ta.select(); toast(L('Selected: press Ctrl+C to copy', 'Dipilih: tekan Ctrl+C untuk salin')); setTimeout(() => ta.remove(), 4000); } };
+  const listeners = []; const rerender = () => listeners.forEach(f => f());
+  const setLang = l => { root.dataset.lang = l; root.lang = l; set('lang', l); $$('[data-setlang]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.setlang === l))); rerender(); };
+  const setTheme = t => { if (t === 'system') delete root.dataset.theme; else root.dataset.theme = t; set('theme', t); $$('[data-settheme]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.settheme === t))); };
+  $$('[data-setlang]').forEach(b => b.addEventListener('click', () => setLang(b.dataset.setlang)));
+  $$('[data-settheme]').forEach(b => b.addEventListener('click', () => setTheme(b.dataset.settheme)));
+
+  /* ---------- timers ---------- */
+  $$('.as-timer').forEach(el => {
+    const total = +el.dataset.mins * 60; let left = total, id = null; const tm = $('.tm', el), go = $('[data-t="go"]', el);
+    const show = () => { const m = Math.floor(left / 60), s = left % 60; tm.textContent = `${m}:${String(s).padStart(2, '0')}`; el.classList.toggle('low', left <= 60 && left > 0); el.classList.toggle('done', left === 0); };
+    const stop = () => { clearInterval(id); id = null; go.querySelector('.en').textContent = 'Resume'; go.querySelector('.ms').textContent = 'Sambung'; };
+    go.addEventListener('click', () => { if (id) { stop(); return; } if (left === 0) left = total; id = setInterval(() => { left = Math.max(0, left - 1); show(); if (left === 0) { stop(); toast(L('Time is up', 'Masa tamat')); } }, 1000); go.querySelector('.en').textContent = 'Pause'; go.querySelector('.ms').textContent = 'Jeda'; });
+    $('[data-t="reset"]', el).addEventListener('click', () => { clearInterval(id); id = null; left = total; show(); go.querySelector('.en').textContent = 'Start'; go.querySelector('.ms').textContent = 'Mula'; });
+    show();
+  });
+
+  /* ---------- checkpoints: answers saved locally; feedback encrypted until a password is entered ---------- */
+  const D = window.ASSESS_PUB, ENC = window.ASSESS_ENC, st = get('assess', {});
+  let SECRET = null, ROLE = null;
+  const b64 = s => Uint8Array.from(atob(s), ch => ch.charCodeAt(0));
+  async function decrypt(bundle, pw) {
+    const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(pw), 'PBKDF2', false, ['deriveKey']);
+    const key = await crypto.subtle.deriveKey({ name: 'PBKDF2', salt: b64(bundle.salt), iterations: bundle.iter, hash: 'SHA-256' }, base, { name: 'AES-GCM', length: 256 }, false, ['decrypt']);
+    const pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: b64(bundle.iv) }, key, b64(bundle.ct));
+    return JSON.parse(new TextDecoder().decode(pt));
+  }
+  const isOk = (id, qi, ans) => { const k = SECRET[id][qi]; return k.num !== undefined ? Math.abs(ans.v - k.num) <= k.tol + 1e-9 : ans.pick === k.a; };
+  function render(el) {
+    const id = el.dataset.aq, data = D[id], S = st[id] || (st[id] = {});
+    el.innerHTML = '';
+    const head = document.createElement('div'); head.className = 'quiz-head'; head.innerHTML = `<h4>${L(data.title[0], data.title[1])}</h4><span class="qscore"></span>`; el.append(head);
+    const sc = $('.qscore', head);
+    const upd = () => { const n = data.qs.length, a = Object.keys(S).length;
+      sc.textContent = SECRET ? `${L('Score', 'Skor')}: ${Object.keys(S).filter(qi => isOk(id, +qi, S[qi])).length}/${n}` + (a < n ? ` · ${a}/${n} ${L('answered', 'dijawab')}` : '') : `${a}/${n} ${L('answered', 'dijawab')} · ${L('feedback locked', 'maklum balas dikunci')}`; summary(); };
+    data.qs.forEach((q, qi) => {
+      const w = document.createElement('div'); w.className = 'q';
+      w.innerHTML = `<p class="qt"><span class="qn">${id === 'cpA' ? 'A' : 'B'}${qi + 1}</span>${L(q.q[0], q.q[1])}</p>`;
+      const fb = document.createElement('div'); fb.className = 'fb'; fb.setAttribute('aria-live', 'polite');
+      const showFb = () => { const ans = S[qi]; if (!ans) return; if (!SECRET) { fb.className = 'fb show pend'; fb.innerHTML = `<b>${L('Answer saved.', 'Jawapan disimpan.')}</b>${L('Feedback opens after class.', 'Maklum balas dibuka selepas kelas.')}`; return; }
+        const ok = isOk(id, qi, ans), k = SECRET[id][qi]; fb.className = 'fb show ' + (ok ? 'ok' : 'ko');
+        fb.innerHTML = `<b>${ok ? L('Correct.', 'Betul.') : L('Not this time.', 'Belum tepat.')}</b>${k.num !== undefined && !ok ? `${L('Expected', 'Dijangka')} ${k.num}${k.tol ? ' (± ' + k.tol + ')' : ''}. ` : ''}${L(k.why[0], k.why[1])}`; };
+      if (q.num) {
+        const row = document.createElement('div'); row.className = 'numq'; const inId = `${id}-n${qi}`;
+        row.innerHTML = `<label class="sr-only" for="${inId}">${L('Answer', 'Jawapan')}</label><input id="${inId}" type="number" step="any" inputmode="decimal"><button class="btn" type="button">${L('Save answer', 'Simpan jawapan')}</button>`;
+        const inp = $('input', row), bt = $('button', row); const lock = () => { inp.disabled = true; bt.disabled = true; };
+        if (S[qi]) { inp.value = S[qi].v; lock(); }
+        bt.addEventListener('click', () => { const v = parseFloat(inp.value); if (!Number.isFinite(v)) { toast(L('Enter a number first', 'Masukkan nombor dahulu')); return; } S[qi] = { v }; set('assess', st); lock(); showFb(); upd(); });
+        w.append(row);
+      } else {
+        const opts = document.createElement('div'); opts.className = 'opts';
+        q.o.forEach((o, oi) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'opt'; b.innerHTML = `<span class="lt">${'ABCD'[oi]}</span><span>${L(o[0], o[1])}</span>`;
+          b.addEventListener('click', () => { if (S[qi]) return; S[qi] = { pick: oi }; set('assess', st); paint(); showFb(); upd(); }); opts.append(b); });
+        const paint = () => { const s = S[qi]; $$('.opt', opts).forEach((b, oi) => { b.classList.remove('right', 'wrong', 'picked'); if (!s) return; b.disabled = true;
+          if (!SECRET) { if (oi === s.pick) b.classList.add('picked'); return; } const k = SECRET[id][qi].a; if (oi === k) b.classList.add('right'); else if (oi === s.pick) b.classList.add('wrong'); }); };
+        w.append(opts); paint();
+      }
+      if (q.hint) { const hb = document.createElement('button'); hb.type = 'button'; hb.className = 'hintbtn'; hb.textContent = L('Hint', 'Petunjuk'); const ht = document.createElement('p'); ht.className = 'hinttxt'; ht.hidden = true; ht.textContent = L(q.hint[0], q.hint[1]); hb.addEventListener('click', () => { ht.hidden = !ht.hidden; }); w.append(hb, ht); }
+      w.append(fb); el.append(w); showFb();
+    });
+    if (SECRET) { const rs = document.createElement('button'); rs.type = 'button'; rs.className = 'btn'; rs.style.marginTop = '10px';
+      const lab = L('Clear my answers to practise again', 'Kosongkan jawapan untuk berlatih semula'); rs.textContent = lab;
+      let armed = false; rs.addEventListener('click', () => { if (!armed) { armed = true; rs.textContent = L('Click again to confirm', 'Klik sekali lagi untuk sahkan'); setTimeout(() => { armed = false; rs.textContent = lab; }, 3000); return; } st[id] = {}; set('assess', st); render(el); });
+      el.append(rs); }
+    upd();
+  }
+  function summary() {
+    const part = id => { const S = st[id] || {}, n = D[id].qs.length, a = Object.keys(S).length; return SECRET ? `${Object.keys(S).filter(qi => isOk(id, +qi, S[qi])).length}/${n}` : `${a}/${n} ${L('answered', 'dijawab')}`; };
+    $('#as-sum').textContent = `A ${part('cpA')} · B ${part('cpB')}`;
+  }
+  const renderAll = () => $$('[data-aq]').forEach(render);
+  listeners.push(renderAll);
+  const who = $('#as-who'); who.value = get('who', ''); who.addEventListener('input', () => set('who', who.value));
+  const encodeAns = id => D[id].qs.map((q, i) => { const a = (st[id] || {})[i]; return !a ? '-' : a.pick !== undefined ? 'ABCD'[a.pick] : String(a.v); }).join(',');
+  const subLine = () => `TTTC6544-L6 | ${(who.value || 'no-code').replace(/\|/g, '/')} | A: ${encodeAns('cpA')} | B: ${encodeAns('cpB')} | ${SECRET ? 'revealed' : 'locked'} | ${new Date().toISOString().slice(0, 16)}Z`;
+  $('#as-copy').addEventListener('click', () => copy(subLine(), L('Answers copied', 'Jawapan disalin')));
+  /* ---------- file downloads (viewer confirms each save) ---------- */
+  let DL = null;
+  (async () => { try { DL = window.claude && window.claude.use ? await window.claude.use('downloads') : null; } catch (e) { DL = null; } $$('.needs-dl').forEach(b => { b.hidden = !DL; }); })();
+  async function saveFile(filename, data) {
+    if (!DL) { toast(L('Downloads are not available here: use the copy button', 'Muat turun tidak tersedia di sini: guna butang salin')); return; }
+    try { await DL.save({ filename, data }); toast(L('Saved', 'Disimpan')); }
+    catch (e) { const c = e && e.code; toast(c === 'declined' ? L('Download cancelled', 'Muat turun dibatalkan') : c === 'rate_limited' ? L('Please wait a moment and try again', 'Sila tunggu sebentar dan cuba lagi') : L('Download is not available here: use the copy button', 'Muat turun tidak tersedia di sini: guna butang salin')); if (c === 'unavailable' || c === 'not_granted' || c === 'capability_disabled' || c === 'capability_removed') $$('.needs-dl').forEach(b => { b.hidden = true; }); }
+  }
+  const safe = t => (t || 'no-code').replace(/[^A-Za-z0-9_-]+/g, '-').slice(0, 30);
+  $('#as-dl').addEventListener('click', () => {
+    const rows = id => D[id].qs.map((q, i) => { const a = (st[id] || {})[i]; const ans = !a ? '(no answer)' : a.pick !== undefined ? 'ABCD'[a.pick] + ' — ' + q.o[a.pick][0] : String(a.v); let mark = ''; if (SECRET && a) mark = isOk(id, i, a) ? '   [correct]' : '   [incorrect]'; return `${id === 'cpA' ? 'A' : 'B'}${i + 1}  ${ans}${mark}`; }).join('\n');
+    const txt = `TTTC6544 Advanced Artificial Intelligence · L6 in-class checkpoints\nStudent/group code: ${who.value || '(not given)'}\nExported: ${new Date().toLocaleString()}\nFeedback status at export: ${SECRET ? 'revealed' : 'locked'}\n\nCheckpoint A · Simulated Annealing\n${rows('cpA')}\n\nCheckpoint B · Great Deluge\n${rows('cpB')}\n\nSUBMISSION LINE (do not edit; your lecturer grades from this line)\n${subLine()}\n`;
+    saveFile(`TTTC6544-L6_${safe(who.value)}_checkpoints.txt`, txt);
+  });
+
+  /* ---------- unlocking ---------- */
+  function applyUnlock(res) {
+    SECRET = res.secret; ROLE = ROLE === 'facilitator' ? ROLE : res.role;
+    const fbLock = $('[data-lock="feedback"]'); fbLock.classList.add('open');
+    $('.as-lockmsg span', fbLock).innerHTML = `<span class="en"><b>Feedback revealed.</b> Your answers are now marked with explanations.</span><span class="ms"><b>Maklum balas didedahkan.</b> Jawapan anda kini ditanda dengan penerangan.</span>`;
+    $('form', fbLock).hidden = true;
+    if (res.role === 'facilitator') { ROLE = 'facilitator'; const fb = $('#facilBody'); fb.innerHTML = res.html + graderHtml(); fb.hidden = false; $('[data-lock="facil"]').hidden = true; wireGrader(); }
+    renderAll();
+  }
+  $$('.as-pw').forEach(f => f.addEventListener('submit', async e => {
+    e.preventDefault(); const role = f.closest('[data-lock]').dataset.lock, inp = $('input', f), msg = $('.as-pwmsg', f), pw = inp.value.trim(); if (!pw) return;
+    msg.textContent = L('Checking…', 'Menyemak…');
+    try { const res = await decrypt(role === 'facil' ? ENC.facil : ENC.feedback, pw); set('pw-' + role, pw); inp.value = ''; msg.textContent = ''; applyUnlock(res); toast(L('Unlocked', 'Dibuka')); }
+    catch (err) { msg.textContent = L('That password did not work.', 'Kata laluan itu tidak berjaya.'); }
+  }));
+  (async () => { for (const role of ['facil', 'feedback']) { const pw = get('pw-' + role, null); if (!pw) continue; try { applyUnlock(await decrypt(role === 'facil' ? ENC.facil : ENC.feedback, pw)); break; } catch (e) { /* stale password */ } } })();
+
+  /* ---------- facilitator grader ---------- */
+  function graderHtml() {
+    return `<h3>${L('Grade pasted answers', 'Gred jawapan yang ditampal')}</h3><p class="hint">${L('Paste the lines students copied with "Copy my answers", one per line.', 'Tampal baris yang disalin pelajar dengan "Salin jawapan saya", satu baris setiap pelajar.')}</p>
+      <textarea id="gr-in" rows="6" style="width:100%;font-family:var(--f-mono);font-size:13px;border:1px solid var(--border);border-radius:8px;padding:8px;background:var(--bg);color:inherit"></textarea>
+      <div class="deck-controls" style="justify-content:flex-start;margin:8px 0"><label class="btn" for="gr-files">${L('Add submitted .txt files', 'Tambah fail .txt yang dihantar')}</label><input id="gr-files" type="file" accept=".txt,text/plain" multiple class="sr-only"><button class="btn ember" type="button" id="gr-go">${L('Grade', 'Gred')}</button><button class="btn" type="button" id="gr-csv">${L('Copy as CSV', 'Salin sebagai CSV')}</button><button class="btn needs-dl" type="button" id="gr-dl" ${DL ? '' : 'hidden'}>${L('Download CSV', 'Muat turun CSV')}</button></div>
+      <div class="tbl-wrap"><table id="gr-out"><thead></thead><tbody></tbody></table></div><p class="verdict" id="gr-items"></p>`;
+  }
+  let lastCsv = '';
+  function wireGrader() {
+    $('#gr-go').addEventListener('click', () => {
+      const rows = $('#gr-in').value.split('\n').map(l => l.trim()).filter(l => l.startsWith('TTTC6544-L6'));
+      const mark = (id, list) => list.split(',').map((x, i) => { const k = SECRET[id][i]; if (!k || x === '-' || x === undefined) return 0; if (k.num !== undefined) return Math.abs(parseFloat(x) - k.num) <= k.tol + 1e-9 ? 1 : 0; return 'ABCD'.indexOf(x.trim()) === k.a ? 1 : 0; });
+      const items = { cpA: Array(D.cpA.qs.length).fill(0), cpB: Array(D.cpB.qs.length).fill(0) };
+      const res = rows.map(l => { const p = l.split('|').map(s => s.trim()); const a = mark('cpA', (p[2] || '').replace(/^A:\s*/, '')), b = mark('cpB', (p[3] || '').replace(/^B:\s*/, ''));
+        a.forEach((v, i) => items.cpA[i] += v); b.forEach((v, i) => items.cpB[i] += v); return { who: p[1], a, b, status: p[4] || '', time: p[5] || '' }; });
+      $('#gr-out thead').innerHTML = `<tr><th>${L('Student / group', 'Pelajar / kumpulan')}</th><th class="num">A</th><th class="num">B</th><th class="num">${L('Total', 'Jumlah')}</th><th>${L('Item marks', 'Markah item')}</th><th>${L('Exported', 'Dieksport')}</th></tr>`;
+      $('#gr-out tbody').innerHTML = res.map(r => { const A = r.a.reduce((x, y) => x + y, 0), B = r.b.reduce((x, y) => x + y, 0); return `<tr><td>${r.who.replace(/</g, '&lt;')}</td><td class="num">${A}/8</td><td class="num">${B}/8</td><td class="num"><b>${A + B}/16</b></td><td class="mono">${r.a.join('')} · ${r.b.join('')}</td><td class="mono" ${r.status === 'revealed' ? 'style="color:var(--bad)" title="exported after feedback was revealed"' : ''}>${(r.time || '').replace('T', ' ')}${r.status === 'revealed' ? ' · revealed' : ''}</td></tr>`; }).join('');
+      const n = Math.max(res.length, 1), pct = (id, i) => Math.round(items[id][i] / n * 100);
+      $('#gr-items').textContent = res.length ? L('Correct per item: ', 'Betul bagi setiap item: ') + ['cpA', 'cpB'].map(id => D[id].qs.map((_, i) => `${id === 'cpA' ? 'A' : 'B'}${i + 1} ${pct(id, i)}%`).join(' · ')).join(' | ') : L('No lines starting with TTTC6544-L6 were found.', 'Tiada baris bermula dengan TTTC6544-L6 ditemui.');
+      lastCsv = 'who,status,exported_utc,A,B,total,' + D.cpA.qs.map((_, i) => 'A' + (i + 1)).join(',') + ',' + D.cpB.qs.map((_, i) => 'B' + (i + 1)).join(',') + '\n' + res.map(r => { const A = r.a.reduce((x, y) => x + y, 0), B = r.b.reduce((x, y) => x + y, 0); return `"${r.who.replace(/"/g, "'")}",${r.status},${r.time},${A},${B},${A + B},${r.a.join(',')},${r.b.join(',')}`; }).join('\n');
+    });
+    $('#gr-csv').addEventListener('click', () => { if (!lastCsv) { toast(L('Grade first', 'Gred dahulu')); return; } copy(lastCsv, L('CSV copied', 'CSV disalin')); });
+    $('#gr-dl').addEventListener('click', () => { if (!lastCsv) { toast(L('Grade first', 'Gred dahulu')); return; } saveFile(`TTTC6544-L6_checkpoint-marks_${new Date().toISOString().slice(0, 10)}.csv`, lastCsv); });
+    $('#gr-files').addEventListener('change', async e => { const files = [...e.target.files]; let n = 0; const ta = $('#gr-in');
+      for (const f of files) { const t = await f.text(); const lines = t.split('\n').map(l => l.trim()).filter(l => l.startsWith('TTTC6544-L6')); if (lines.length) { ta.value += (ta.value && !ta.value.endsWith('\n') ? '\n' : '') + lines.join('\n') + '\n'; n += lines.length; } }
+      e.target.value = ''; toast(L(`${n} submission line(s) added`, `${n} baris penghantaran ditambah`)); });
+  }
+
+  /* ---------- worksheet ---------- */
+  const ws = get('ws', {}); const fields = $$('#ws input, #ws select, #ws textarea');
+  fields.forEach(f => { if (ws[f.id] !== undefined) f.value = ws[f.id]; f.addEventListener('input', () => { ws[f.id] = f.value; set('ws', ws); calc(); }); f.addEventListener('change', () => { ws[f.id] = f.value; set('ws', ws); calc(); }); });
+  const num = id => { const v = parseFloat($('#' + id).value); return Number.isFinite(v) ? v : null; };
+  function calc() {
+    const out = [];
+    const r1s = num('ws-r1s'), r3s = num('ws-r3s'), r1g = num('ws-r1g'), r3g = num('ws-r3g'), r1h = num('ws-r1h');
+    if (r1s !== null && r3s !== null) out.push(L(`SA change with fix: ${((r3s - r1s) / r1s * 100).toFixed(1)}%`, `Perubahan SA dengan pembaikan: ${((r3s - r1s) / r1s * 100).toFixed(1)}%`));
+    if (r1g !== null && r3g !== null) out.push(L(`GD change with fix: ${((r3g - r1g) / r1g * 100).toFixed(1)}%`, `Perubahan GD dengan pembaikan: ${((r3g - r1g) / r1g * 100).toFixed(1)}%`));
+    if (r1h !== null && r1s !== null && r1g !== null) { const best = Math.min(r1h, r1s, r1g); out.push(L(`Out of the box, lowest mean: ${best === r1h ? 'HC' : best === r1s ? 'SA' : 'GD'}`, `Tetapan asal, purata terendah: ${best === r1h ? 'HC' : best === r1s ? 'SA' : 'GD'}`)); }
+    $('#ws-calc').textContent = out.join(' · ') || L('Enter means to see the changes computed here.', 'Masukkan purata untuk melihat perubahan dikira di sini.');
+    const wc = ($('#ws-rec').value.trim().match(/\S+/g) || []).length; const o = $('#ws-wc'); o.textContent = wc + ' / 60'; o.style.color = wc > 60 ? 'var(--bad)' : '';
+    const req = ['ws-group', 'ws-brief', 'ws-pick', 'ws-why', 'ws-hyp', 'ws-r1s', 'ws-r1g', 'ws-r1h', 'ws-r3s', 'ws-r3g', 'ws-weak', 'ws-twist', 'ws-eth', 'ws-rec'];
+    const done = req.filter(i => $('#' + i).value.trim()).length;
+    $('#ws-meter').style.width = (done / req.length * 100) + '%'; $('#ws-meter-l').textContent = `${done}/${req.length} ${L('required fields', 'medan wajib')}`;
+  }
+  $('#ws-copy').addEventListener('click', () => {
+    const v = id => ($('#' + id).value || '').trim() || '—';
+    const md = `# TTTC6544 L6 · Group ${v('ws-group')} · Brief ${v('ws-brief')}\n\n**Recommendation:** ${v('ws-pick')}\n\n1. Why: ${v('ws-why')}\n2. Hypothesis: ${v('ws-hyp')}\n3. Evidence (5 seeds, equal budget)\n\n| Run | HC | SA | GD | SA/GD wins |\n|---|---|---|---|---|\n| Out of the box | ${v('ws-r1h')} | ${v('ws-r1s')} | ${v('ws-r1g')} | ${v('ws-r1w')} |\n| ${v('ws-r2n')} | ${v('ws-r2h')} | ${v('ws-r2s')} | ${v('ws-r2g')} | ${v('ws-r2w')} |\n| ${v('ws-r3n')} | ${v('ws-r3h')} | ${v('ws-r3s')} | ${v('ws-r3g')} | ${v('ws-r3w')} |\n\n${$('#ws-calc').textContent}\n\n4. Weakness: ${v('ws-weak')}\n5. Twist: ${v('ws-twist')}\n6. Data & fairness: ${v('ws-eth')}\n7. Recommendation: ${v('ws-rec')}\n8. Peer question & answer: ${v('ws-peer')}\n`;
+    if ($('#ws-copy').dataset.dl === '1') { delete $('#ws-copy').dataset.dl; saveFile(`TTTC6544-L6_group-${safe($('#ws-group').value)}_report.md`, md); return; }
+    copy(md, L('Group report copied', 'Laporan kumpulan disalin'));
+  });
+  $('#ws-dl').addEventListener('click', () => { $('#ws-copy').dataset.dl = '1'; $('#ws-copy').click(); });
+  let armed = false; $('#ws-clear').addEventListener('click', () => { const c = $('#ws-confirm');
+    if (!armed) { armed = true; c.hidden = false; c.textContent = L('Click Clear again within 3 s to erase the worksheet.', 'Klik Kosongkan sekali lagi dalam 3 s untuk memadam lembaran kerja.'); setTimeout(() => { armed = false; c.hidden = true; }, 3000); return; }
+    fields.forEach(f => { f.value = ''; }); Object.keys(ws).forEach(k => delete ws[k]); set('ws', ws); armed = false; c.hidden = true; calc(); toast(L('Worksheet cleared', 'Lembaran kerja dikosongkan')); });
+  listeners.push(calc);
+  $('#ws').addEventListener('submit', e => e.preventDefault());
+
+  setLang(get('lang', 'en')); setTheme(get('theme', 'system'));
+  const go = () => { const h = location.hash.slice(1); if (h) document.getElementById(h)?.scrollIntoView({ block: 'start' }); };
+  addEventListener('hashchange', go); setTimeout(go, 50);
+})();
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,788 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>L6 Session Hub</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<script>try{var l=localStorage.getItem('ad6544:lang');document.documentElement.dataset.lang=l?JSON.parse(l):'en';}catch(e){document.documentElement.dataset.lang='en';}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap">
+<style>
+/* Layout: sticky top bar · Deck view (16:9 stage scaled to the viewport) · Guide view (sticky TOC + 68ch reading column)
+   Concept "Forge & Flood": ember = Simulated Annealing, tide = Great Deluge, steel neutrals bias slightly blue. */
+:root {
+  --bg: #F3F5F6;
+  --fg: #141A20;
+  --muted-fg: #4A5661;
+  --card: #FFFFFF;
+  --card-2: #E9EEF1;
+  --border: #CFD8DE;
+  --ember: #B4410E;
+  --ember-soft: #FBE7DB;
+  --tide: #0A6A85;
+  --tide-soft: #DCEFF4;
+  --ink: #111A22;
+  --on-ink: #F1F4F6;
+  --gold: #F2A541;
+  --tide-on-ink: #6CCDE4;
+  --ok: #1E7A49;
+  --ok-soft: #DDF2E5;
+  --bad: #B3261E;
+  --bad-soft: #F9E0DE;
+  --code-bg: #0F161D;
+  --code-fg: #E4EAEE;
+  --focus: #0A6A85;
+  --f-display: 'Big Shoulders Display', 'Arial Narrow', Impact, sans-serif;
+  --f-body: 'IBM Plex Sans', 'Segoe UI', Roboto, Arial, sans-serif;
+  --f-mono: 'IBM Plex Mono', ui-monospace, Consolas, monospace;
+  --ease: cubic-bezier(.16, 1, .3, 1);
+  --topbar-h: 56px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0D1217; --fg: #E5EBEF; --muted-fg: #9DAAB5; --card: #151C23; --card-2: #1B242D; --border: #2A3641;
+    --ember: #F28B4E; --ember-soft: #3A2116; --tide: #4FC3DD; --tide-soft: #10303A;
+    --ink: #070B0F; --on-ink: #EEF2F5; --gold: #F5B35C; --tide-on-ink: #72D3E8;
+    --ok: #5BD08C; --ok-soft: #12301F; --bad: #FF8A80; --bad-soft: #3A1715;
+    --code-bg: #0A0F14; --code-fg: #E4EAEE; --focus: #72D3E8; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0D1217; --fg: #E5EBEF; --muted-fg: #9DAAB5; --card: #151C23; --card-2: #1B242D; --border: #2A3641;
+  --ember: #F28B4E; --ember-soft: #3A2116; --tide: #4FC3DD; --tide-soft: #10303A;
+  --ink: #070B0F; --on-ink: #EEF2F5; --gold: #F5B35C; --tide-on-ink: #72D3E8;
+  --ok: #5BD08C; --ok-soft: #12301F; --bad: #FF8A80; --bad-soft: #3A1715;
+  --code-bg: #0A0F14; --code-fg: #E4EAEE; --focus: #72D3E8; color-scheme: dark;
+}
+
+/* ---------- language switch ---------- */
+:root[data-lang="en"] .ms, :root[data-lang="ms"] .en { display: none !important; }
+
+* { box-sizing: border-box; }
+html { scroll-padding-top: calc(var(--topbar-h) + 16px); }
+body { background: var(--bg); color: var(--fg); font-family: var(--f-body); font-size: 16px; line-height: 1.6; margin: 0; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 60; background: var(--ink); }
+a { color: var(--tide); text-underline-offset: 3px; }
+a:hover { text-decoration-thickness: 2px; }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; border-radius: 4px; }
+button, select, input { font: inherit; color: inherit; }
+button { cursor: pointer; }
+h1, h2, h3, h4 { text-wrap: balance; }
+code, kbd, pre, .mono { font-family: var(--f-mono); }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* ---------- top bar ---------- */
+.topbar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 50; background: var(--ink); color: var(--on-ink);
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 8px;
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap; min-height: var(--topbar-h); }
+.brand { display: flex; align-items: baseline; gap: 10px; margin-right: auto; min-width: 0; }
+.brand b { font-family: var(--f-display); font-size: 24px; letter-spacing: .02em; font-weight: 800; text-transform: uppercase; white-space: nowrap; }
+.brand b .amp { color: var(--gold); }
+.brand small { font-family: var(--f-mono); font-size: 12px; opacity: .75; white-space: nowrap; }
+.seg { display: inline-flex; border: 1px solid rgba(255,255,255,.25); border-radius: 999px; overflow: hidden; }
+.seg button { background: transparent; border: 0; color: var(--on-ink); padding: 6px 12px; font-size: 13px; font-weight: 600; letter-spacing: .02em; min-height: 34px; }
+.seg button[aria-pressed="true"] { background: var(--on-ink); color: var(--ink); }
+.seg button:focus-visible { outline-offset: -3px; }
+@media (max-width: 640px) { .brand small { display: none; } .brand b { font-size: 20px; } }
+
+/* ---------- views ---------- */
+.view[hidden] { display: none !important; }
+
+/* ================= DECK ================= */
+#deckView { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 16px; }
+.deck-wrap { position: relative; margin: 0 auto; width: min(100%, calc((100vh - var(--topbar-h) - 120px) * 16 / 9)); min-width: 0; }
+.stage-box { position: relative; width: 100%; aspect-ratio: 16 / 9; overflow: hidden; border-radius: 14px; border: 1px solid var(--border); background: var(--bg); max-width: 100%; }
+.stage { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; background: var(--bg); color: var(--fg); overflow: hidden; }
+.deck-controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; margin-top: 12px; }
+.deck-controls .grp { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.btn { border: 1px solid var(--border); background: var(--card); color: var(--fg); border-radius: 10px; padding: 8px 14px; font-weight: 600; font-size: 14px; min-height: 40px; display: inline-flex; align-items: center; gap: 8px; }
+.btn:hover { border-color: var(--tide); }
+.btn.primary { background: var(--tide); border-color: var(--tide); color: var(--bg); }
+.btn.ember { background: var(--ember); border-color: var(--ember); color: var(--bg); }
+.btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.hint { font-size: 13px; color: var(--muted-fg); }
+.hint kbd { border: 1px solid var(--border); border-radius: 4px; padding: 0 5px; font-size: 12px; background: var(--card); }
+#notesPanel { margin-top: 12px; background: var(--card); border: 1px solid var(--border); border-left: 4px solid var(--gold); border-radius: 10px; padding: 14px 18px; font-size: 15px; max-width: 100%; }
+#notesPanel h4 { margin: 0 0 6px; font-family: var(--f-mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted-fg); }
+.stage-box:fullscreen { border: 0; border-radius: 0; background: var(--bg); width: 100vw; height: 100vh; aspect-ratio: auto; }
+
+.slide { position: absolute; inset: 0; padding: 110px 150px 120px; display: flex; flex-direction: column; justify-content: center; gap: 40px;
+  opacity: 0; visibility: hidden; transition: opacity 450ms var(--ease), visibility 0s linear 450ms; }
+.slide.active { opacity: 1; visibility: visible; transition: opacity 450ms var(--ease); }
+.slide.dark { background: var(--ink); color: var(--on-ink); }
+.slide.center { align-items: center; text-align: center; }
+.slide h1, .slide h2, .slide h3 { font-family: var(--f-display); line-height: 1.02; margin: 0; letter-spacing: .005em; }
+.slide h1 { font-size: 150px; font-weight: 800; text-transform: uppercase; }
+.slide h2 { font-size: 92px; font-weight: 800; }
+.slide h3 { font-size: 50px; font-weight: 700; }
+.slide p, .slide li { font-size: 38px; line-height: 1.35; margin: 0; }
+.slide .kicker { font-family: var(--f-mono); font-size: 28px; letter-spacing: .14em; text-transform: uppercase; color: var(--ember); font-weight: 600; }
+.slide .kicker.tide { color: var(--tide); }
+.slide.dark .kicker { color: var(--gold); }
+.slide.dark .kicker.tide { color: var(--tide-on-ink); }
+.slide .muted { color: var(--muted-fg); }
+.slide.dark .muted { color: color-mix(in srgb, var(--on-ink) 72%, transparent); }
+.slide .em { color: var(--ember); } .slide .td { color: var(--tide); }
+.slide.dark .em { color: var(--gold); } .slide.dark .td { color: var(--tide-on-ink); }
+.slide .big { font-family: var(--f-display); font-size: 300px; font-weight: 800; line-height: .9; color: var(--ember); font-variant-numeric: tabular-nums; }
+.slide.dark .big { color: var(--gold); }
+.slide .formula { font-family: var(--f-mono); font-size: 84px; font-weight: 600; letter-spacing: -.01em; }
+.slide .formula sup { font-size: .55em; }
+.s-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+.s-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 36px; }
+.s-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px; }
+.s-split { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+.s-card { background: var(--card); border: 2px solid var(--border); border-radius: 22px; padding: 40px; display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.s-card.e { border-top: 10px solid var(--ember); } .s-card.t { border-top: 10px solid var(--tide); } .s-card.g { border-top: 10px solid var(--gold); }
+.slide.dark .s-card { background: color-mix(in srgb, var(--on-ink) 7%, transparent); border-color: color-mix(in srgb, var(--on-ink) 18%, transparent); }
+.s-card p { font-size: 32px; }
+.s-card .tag { font-family: var(--f-mono); font-size: 24px; color: var(--muted-fg); letter-spacing: .06em; }
+.slide.dark .s-card .tag { color: color-mix(in srgb, var(--on-ink) 70%, transparent); }
+.ico { width: 76px; height: 76px; stroke: var(--ember); stroke-width: 1.7; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.ico.t { stroke: var(--tide); }
+.slide.dark .ico { stroke: var(--gold); } .slide.dark .ico.t { stroke: var(--tide-on-ink); }
+.s-timeline { display: flex; position: relative; gap: 24px; }
+.s-timeline::before { content: ''; position: absolute; top: 30px; left: 30px; right: 30px; height: 4px; background: var(--border); }
+.slide.dark .s-timeline::before { background: color-mix(in srgb, var(--on-ink) 25%, transparent); }
+.s-step { position: relative; flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 12px; }
+.s-step .dot { width: 64px; height: 64px; border-radius: 50%; background: var(--ember); color: #fff; display: grid; place-items: center; font-family: var(--f-mono); font-size: 28px; font-weight: 700; }
+.s-step.t .dot { background: var(--tide); }
+.s-step.g .dot { background: var(--gold); color: #1a1a1a; }
+.s-step h3 { font-size: 44px; } .s-step p { font-size: 30px; }
+.slide .quote { font-family: var(--f-display); font-size: 104px; line-height: 1.04; font-weight: 700; max-width: 1500px; }
+.slide svg.art { width: 100%; height: auto; max-height: 640px; }
+.art .stroke-fg { stroke: var(--fg); } .slide.dark .art .stroke-fg { stroke: var(--on-ink); }
+.art .fill-fg { fill: var(--fg); } .slide.dark .art .fill-fg { fill: var(--on-ink); }
+.art .stroke-em { stroke: var(--ember); } .slide.dark .art .stroke-em { stroke: var(--gold); }
+.art .fill-em { fill: var(--ember); } .slide.dark .art .fill-em { fill: var(--gold); }
+.art .stroke-td { stroke: var(--tide); } .slide.dark .art .stroke-td { stroke: var(--tide-on-ink); }
+.art .fill-td { fill: var(--tide); } .slide.dark .art .fill-td { fill: var(--tide-on-ink); }
+.art .fill-tds { fill: var(--tide); opacity: .22; } .slide.dark .art .fill-tds { fill: var(--tide-on-ink); }
+.art .fill-mut { fill: var(--muted-fg); } .slide.dark .art .fill-mut { fill: color-mix(in srgb, var(--on-ink) 70%, transparent); }
+.art text { font-family: var(--f-mono); font-size: 30px; }
+.quad { display: grid; grid-template-columns: 220px 1fr 1fr; grid-template-rows: auto 1fr 1fr; gap: 16px; }
+.quad .h { font-family: var(--f-mono); font-size: 28px; color: var(--muted-fg); display: flex; align-items: center; justify-content: center; text-align: center; }
+.quad .c { border-radius: 18px; padding: 28px; font-size: 34px; display: flex; flex-direction: column; justify-content: center; gap: 6px; }
+.quad .c b { font-family: var(--f-display); font-size: 58px; }
+.quad .hi { background: var(--ember-soft); } .quad .lo { background: var(--tide-soft); }
+.vs { display: grid; grid-template-columns: 1fr 120px 1fr; align-items: stretch; gap: 0; }
+.vs .mid { display: grid; place-items: center; font-family: var(--f-display); font-size: 64px; color: var(--muted-fg); }
+.pill { display: inline-block; font-family: var(--f-mono); font-size: 26px; padding: 6px 18px; border-radius: 999px; border: 2px solid currentColor; }
+.slide-foot { position: absolute; left: 150px; bottom: 44px; font-family: var(--f-mono); font-size: 24px; color: var(--muted-fg); letter-spacing: .06em; }
+.slide.dark .slide-foot { color: color-mix(in srgb, var(--on-ink) 60%, transparent); }
+.s-progress { position: absolute; left: 0; bottom: 0; height: 8px; background: linear-gradient(90deg, var(--ember), var(--gold), var(--tide)); transition: width 400ms var(--ease); z-index: 5; }
+.s-counter { position: absolute; right: 56px; bottom: 40px; font-family: var(--f-mono); font-size: 24px; color: var(--muted-fg); z-index: 5; font-variant-numeric: tabular-nums; }
+.stage.on-dark .s-counter { color: var(--on-ink); opacity: .7; }
+.notes { display: none; }
+
+.slide.active .a-up { animation: up 600ms var(--ease) both; }
+.slide.active .a-scale { animation: scl 700ms var(--ease) both; }
+.slide.active .a-stag > * { animation: up 600ms var(--ease) both; }
+.slide.active .a-stag > *:nth-child(2) { animation-delay: 90ms; } .slide.active .a-stag > *:nth-child(3) { animation-delay: 180ms; }
+.slide.active .a-stag > *:nth-child(4) { animation-delay: 270ms; } .slide.active .a-stag > *:nth-child(5) { animation-delay: 360ms; }
+.slide.active .a-stag > *:nth-child(6) { animation-delay: 450ms; }
+.d1 { animation-delay: 140ms !important; } .d2 { animation-delay: 280ms !important; } .d3 { animation-delay: 420ms !important; }
+@keyframes up { from { opacity: 0; transform: translateY(36px); } to { opacity: 1; transform: none; } }
+@keyframes scl { from { opacity: 0; transform: scale(.9); } to { opacity: 1; transform: none; } }
+.frag { opacity: 0; transform: translateY(22px); transition: opacity 420ms var(--ease), transform 420ms var(--ease); }
+.frag.shown { opacity: 1; transform: none; }
+/* animated art: rising water + cooling ember */
+.slide.active .rise { animation: rise 6s ease-in-out infinite alternate; }
+@keyframes rise { from { transform: translateY(120px); } to { transform: translateY(0); } }
+.slide.active .glow { animation: glow 4s ease-in-out infinite alternate; }
+@keyframes glow { from { opacity: 1; } to { opacity: .35; } }
+.slide.active .walker { animation: walk 7s ease-in-out infinite; }
+@keyframes walk { 0% { transform: translate(0,0); } 30% { transform: translate(260px,-120px); } 55% { transform: translate(470px, 40px); } 100% { transform: translate(900px,-250px); } }
+.slide.active .stuck { animation: bob 1.6s ease-in-out infinite alternate; }
+@keyframes bob { from { transform: translateY(0); } to { transform: translateY(-10px); } }
+
+/* ================= GUIDE ================= */
+#guideView { display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: 40px; max-width: 1280px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 24px 80px; }
+.toc { position: sticky; top: calc(env(safe-area-inset-top, 0px) + var(--topbar-h) + 16px); align-self: start; max-height: calc(100vh - var(--topbar-h) - 32px); overflow: auto; font-size: 14px; padding-right: 4px; }
+.toc h2 { font-family: var(--f-mono); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted-fg); margin: 0 0 8px; }
+.toc ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+.toc a { display: flex; gap: 8px; align-items: baseline; text-decoration: none; color: var(--fg); padding: 6px 8px; border-radius: 8px; }
+.toc a:hover, .toc a.on { background: var(--card-2); }
+.toc a .n { font-family: var(--f-mono); font-size: 12px; color: var(--muted-fg); min-width: 22px; }
+.toc a .ck { margin-left: auto; width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--border); flex: none; align-self: center; }
+.toc a.done .ck { background: var(--ok); border-color: var(--ok); }
+.toc .meter { margin: 14px 0 6px; height: 8px; border-radius: 999px; background: var(--card-2); overflow: hidden; }
+.toc .meter i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--ember), var(--tide)); transition: width 400ms var(--ease); }
+.toc .meter-l { font-size: 12px; color: var(--muted-fg); font-family: var(--f-mono); }
+.toc-toggle { display: none; }
+@media (max-width: 960px) {
+  #guideView { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  .toc { position: static; max-height: none; border: 1px solid var(--border); border-radius: 12px; padding: 12px; background: var(--card); }
+  .toc-toggle { display: inline-flex; }
+  .toc.collapsed ol, .toc.collapsed .meter, .toc.collapsed .meter-l { display: none; }
+}
+.guide { min-width: 0; }
+.guide > section { padding-block: 24px 40px; border-bottom: 1px solid var(--border); }
+.guide .eyebrow { font-family: var(--f-mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--ember); font-weight: 600; }
+.guide .eyebrow.t { color: var(--tide); }
+.guide h1 { font-family: var(--f-display); font-size: clamp(44px, 7vw, 84px); line-height: .95; margin: 6px 0 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .005em; }
+.guide h2 { font-family: var(--f-display); font-size: clamp(34px, 4.6vw, 52px); line-height: 1; margin: 6px 0 14px; font-weight: 800; }
+.guide h3 { font-size: 21px; margin: 32px 0 8px; line-height: 1.3; }
+.guide h4 { font-size: 16px; margin: 20px 0 6px; }
+.guide p, .guide li { max-width: 72ch; }
+.guide .lede { font-size: 19px; color: var(--muted-fg); max-width: 64ch; }
+.guide ul, .guide ol { padding-left: 22px; }
+.guide li { margin: 4px 0; }
+.meta-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 18px; }
+.chip { font-family: var(--f-mono); font-size: 12px; padding: 4px 10px; border-radius: 999px; background: var(--card-2); color: var(--fg); border: 1px solid var(--border); white-space: nowrap; }
+.chip.e { background: var(--ember-soft); border-color: transparent; } .chip.t { background: var(--tide-soft); border-color: transparent; }
+.box { border: 1px solid var(--border); border-radius: 14px; padding: 18px 20px; margin: 18px 0; background: var(--card); min-width: 0; }
+.box > :first-child { margin-top: 0; } .box > :last-child { margin-bottom: 0; }
+.box .bh { display: flex; gap: 10px; align-items: center; font-family: var(--f-mono); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; font-weight: 600; margin-bottom: 8px; }
+.box .bh svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.box.now { border-color: var(--tide); background: var(--tide-soft); } .box.now .bh { color: var(--tide); }
+.box.fact { border-color: var(--gold); } .box.fact .bh { color: var(--ember); }
+.box.ethic { border-color: var(--ok); background: var(--ok-soft); } .box.ethic .bh { color: var(--ok); }
+.box.task { border-color: var(--ember); } .box.task .bh { color: var(--ember); }
+.box.warn { border-color: var(--bad); background: var(--bad-soft); } .box.warn .bh { color: var(--bad); }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+.grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; }
+.mini { border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; background: var(--card); min-width: 0; }
+.mini h4 { margin: 0 0 4px; }
+.mini p { margin: 0; font-size: 14.5px; color: var(--muted-fg); }
+.tbl-wrap { overflow-x: auto; margin: 16px 0; border: 1px solid var(--border); border-radius: 12px; }
+table { border-collapse: collapse; width: 100%; font-size: 14.5px; background: var(--card); }
+th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+th { background: var(--card-2); font-weight: 600; font-size: 13px; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; font-family: var(--f-mono); }
+tr:last-child td { border-bottom: 0; }
+.math { font-family: var(--f-mono); background: var(--card-2); padding: 12px 16px; border-radius: 10px; overflow-x: auto; font-size: 15px; white-space: pre; }
+.k { font-family: var(--f-mono); font-size: .92em; background: var(--card-2); padding: 1px 6px; border-radius: 5px; }
+
+/* code / prompt blocks */
+.code { border-radius: 12px; overflow: hidden; margin: 14px 0; border: 1px solid var(--border); background: var(--code-bg); color: var(--code-fg); min-width: 0; }
+.code .bar { display: flex; align-items: center; gap: 8px; padding: 8px 10px 8px 14px; background: color-mix(in srgb, var(--code-bg) 80%, #ffffff 8%); font-family: var(--f-mono); font-size: 12px; letter-spacing: .06em; }
+.code .bar .ttl { margin-right: auto; opacity: .85; text-transform: uppercase; }
+.code .bar button { background: transparent; border: 1px solid rgba(255,255,255,.28); color: var(--code-fg); border-radius: 7px; padding: 4px 10px; font-size: 12px; min-height: 30px; }
+.code .bar button:hover { border-color: #fff; }
+.code pre { margin: 0; padding: 14px 16px; overflow-x: auto; font-size: 13.5px; line-height: 1.55; counter-reset: ln; }
+.code pre .l { display: block; position: relative; padding-left: 38px; border-radius: 4px; }
+.code pre .l::before { counter-increment: ln; content: counter(ln); position: absolute; left: 0; width: 26px; text-align: right; opacity: .45; }
+.code pre .l.hl { background: rgba(242,165,65,.18); }
+.code .explain { border-top: 1px solid rgba(255,255,255,.12); padding: 12px 16px; font-size: 13.5px; font-family: var(--f-body); }
+.code .explain ol { margin: 0; padding-left: 0; list-style: none; display: flex; flex-direction: column; gap: 4px; }
+.code .explain li { display: grid; grid-template-columns: 54px 1fr; gap: 8px; cursor: default; max-width: none; padding: 2px 4px; border-radius: 4px; }
+.code .explain li:hover { background: rgba(255,255,255,.06); }
+.code .explain li b { font-family: var(--f-mono); color: var(--gold); font-weight: 600; }
+.code details summary { cursor: pointer; padding: 10px 16px; font-size: 13px; border-top: 1px solid rgba(255,255,255,.12); font-family: var(--f-mono); letter-spacing: .04em; }
+.code .out { padding: 0 16px 14px; }
+.code .out pre { background: rgba(255,255,255,.05); border-radius: 8px; padding: 12px; }
+.tabs { display: flex; gap: 6px; flex-wrap: wrap; margin: 14px 0 0; }
+.tabs button { border: 1px solid var(--border); background: var(--card); border-radius: 999px; padding: 6px 14px; font-size: 13px; font-weight: 600; min-height: 34px; }
+.tabs button[aria-selected="true"] { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+.tabpanel[hidden] { display: none; }
+
+/* labs */
+.lab { border: 1px solid var(--border); border-radius: 16px; background: var(--card); padding: 16px; margin: 20px 0; min-width: 0; }
+.lab-head { display: flex; flex-wrap: wrap; gap: 10px; align-items: baseline; justify-content: space-between; margin-bottom: 10px; }
+.lab-head h4 { margin: 0; font-family: var(--f-display); font-size: 28px; font-weight: 800; text-transform: uppercase; letter-spacing: .01em; }
+.controls { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px 14px; margin: 10px 0; }
+.ctl { display: flex; flex-direction: column; gap: 4px; font-size: 13px; min-width: 0; }
+.ctl label { font-weight: 600; display: block; }
+.ctl output { float: right; margin-left: 6px; font-family: var(--f-mono); color: var(--ember); font-variant-numeric: tabular-nums; }
+.ctl select, .ctl input[type="number"] { border: 1px solid var(--border); background: var(--bg); border-radius: 8px; padding: 6px 8px; min-height: 36px; width: 100%; }
+.ctl input[type="range"] { width: 100%; accent-color: var(--ember); }
+.canvas-box { position: relative; width: 100%; border-radius: 10px; overflow: hidden; background: var(--bg); border: 1px solid var(--border); }
+.canvas-box canvas { display: block; width: 100%; height: auto; }
+.lab-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; margin-top: 10px; }
+.stat { border: 1px solid var(--border); border-radius: 10px; padding: 8px 10px; background: var(--bg); }
+.stat span { display: block; font-size: 11.5px; color: var(--muted-fg); font-family: var(--f-mono); letter-spacing: .04em; text-transform: uppercase; }
+.stat b { font-family: var(--f-mono); font-size: 18px; font-variant-numeric: tabular-nums; }
+.stat.e b { color: var(--ember); } .stat.t b { color: var(--tide); }
+.legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 12.5px; color: var(--muted-fg); margin-top: 8px; }
+.legend i { display: inline-block; width: 18px; height: 4px; border-radius: 2px; vertical-align: middle; margin-right: 6px; }
+.verdict { margin-top: 10px; padding: 10px 14px; border-radius: 10px; background: var(--card-2); font-size: 14.5px; }
+.tt-grid { display: grid; grid-template-columns: repeat(6, minmax(92px, 1fr)); gap: 6px; overflow-x: auto; }
+.tt-slot { border: 1px dashed var(--border); border-radius: 10px; padding: 6px; min-height: 120px; background: var(--bg); display: flex; flex-direction: column; gap: 4px; }
+.tt-slot .sh { font-family: var(--f-mono); font-size: 11px; color: var(--muted-fg); }
+.tt-chip { font-family: var(--f-mono); font-size: 11.5px; border-radius: 6px; padding: 3px 6px; background: var(--tide-soft); }
+.tt-chip.clash { background: var(--bad-soft); color: var(--bad); font-weight: 700; }
+
+/* step-through worked example */
+.trace td.hid, .trace tr.hid td { color: transparent; text-shadow: none; }
+.trace tr.hid td { background: repeating-linear-gradient(135deg, var(--card-2) 0 6px, var(--card) 6px 12px); }
+.trace tr.cur td { background: var(--ember-soft); }
+.yes { color: var(--ok); font-weight: 700; } .no { color: var(--bad); font-weight: 700; }
+
+/* quiz */
+.quiz { border: 1px solid var(--border); border-radius: 16px; padding: 16px; background: var(--card); margin: 20px 0; }
+.quiz-head { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; flex-wrap: wrap; }
+.quiz-head h4 { margin: 0; font-family: var(--f-display); font-size: 26px; font-weight: 800; text-transform: uppercase; }
+.qscore { font-family: var(--f-mono); font-size: 13px; color: var(--muted-fg); }
+.q { border-top: 1px solid var(--border); padding: 14px 0 6px; }
+.q:first-of-type { border-top: 0; }
+.q .qt { font-weight: 600; margin: 0 0 8px; }
+.q .qn { font-family: var(--f-mono); color: var(--ember); margin-right: 6px; }
+.opts { display: flex; flex-direction: column; gap: 6px; }
+.opt { text-align: left; border: 1px solid var(--border); background: var(--bg); border-radius: 10px; padding: 9px 12px; font-size: 14.5px; display: flex; gap: 10px; align-items: flex-start; min-height: 42px; }
+.opt .lt { font-family: var(--f-mono); font-weight: 700; color: var(--muted-fg); }
+.opt:hover:not([disabled]) { border-color: var(--tide); }
+.opt.right { border-color: var(--ok); background: var(--ok-soft); }
+.opt.wrong { border-color: var(--bad); background: var(--bad-soft); }
+.opt[disabled] { cursor: default; }
+.fb { margin-top: 8px; padding: 10px 12px; border-radius: 10px; font-size: 14px; display: none; }
+.fb.show { display: block; }
+.fb.ok { background: var(--ok-soft); } .fb.ko { background: var(--bad-soft); }
+.fb b { display: block; margin-bottom: 2px; }
+.numq { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.numq input { border: 1px solid var(--border); background: var(--bg); border-radius: 8px; padding: 8px 10px; width: 140px; font-family: var(--f-mono); min-height: 40px; }
+.hintbtn { font-size: 12.5px; background: none; border: 0; color: var(--tide); text-decoration: underline; padding: 4px 0; min-height: 30px; }
+.hinttxt { font-size: 13.5px; color: var(--muted-fg); margin: 4px 0 0; }
+
+.scenario { border: 1px solid var(--border); border-radius: 14px; padding: 16px; background: var(--card); margin: 16px 0; }
+.scenario .opts { margin-top: 8px; }
+.reveal-btn { margin-top: 6px; }
+.callout-quote { font-family: var(--f-display); font-size: clamp(30px, 4vw, 44px); line-height: 1.05; font-weight: 700; margin: 24px 0; color: var(--ember); max-width: 30ch; }
+.ref-list { font-size: 14px; padding-left: 0; list-style: none; counter-reset: r; }
+.ref-list li { counter-increment: r; padding: 8px 0 8px 38px; position: relative; border-bottom: 1px solid var(--border); max-width: none; }
+.ref-list li::before { content: "[" counter(r) "]"; position: absolute; left: 0; font-family: var(--f-mono); color: var(--muted-fg); font-size: 12.5px; top: 10px; }
+.ref-list a { word-break: break-all; }
+a.cite { font-family: var(--f-mono); font-size: .82em; text-decoration: none; background: var(--card-2); padding: 1px 6px; border-radius: 5px; white-space: nowrap; }
+.check-done { display: flex; gap: 10px; align-items: center; margin-top: 18px; font-weight: 600; font-size: 14px; }
+.check-done input { width: 20px; height: 20px; accent-color: var(--ok); }
+.timeplan td:first-child { font-family: var(--f-mono); white-space: nowrap; }
+.glossary { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 8px; }
+.glossary div { border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px; font-size: 14px; background: var(--card); }
+.glossary b { display: block; }
+.toast { position: fixed; left: 50%; bottom: calc(20px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%) translateY(20px); background: var(--fg); color: var(--bg); padding: 8px 16px; border-radius: 999px; font-size: 14px; opacity: 0; pointer-events: none; transition: all 250ms var(--ease); z-index: 80; }
+.toast.on { opacity: 1; transform: translateX(-50%) translateY(0); }
+.hero-guide { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 24px; align-items: center; }
+@media (max-width: 760px) { .hero-guide { grid-template-columns: minmax(0, 1fr); } }
+.hero-guide canvas { width: 100%; height: auto; border-radius: 14px; border: 1px solid var(--border); }
+.path-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin: 16px 0; }
+.path-cards .mini b { font-family: var(--f-display); font-size: 30px; display: block; line-height: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .frag { transform: none; }
+}
+
+/* ================= PROCESS FLOWS, TREE, MAP ================= */
+.flow svg, .tree svg, .appmap svg { display: block; width: 100%; height: auto; max-width: 100%; }
+.flow svg text, .tree svg text, .appmap svg text { font-family: var(--f-body); font-size: 21px; fill: var(--fg); }
+.flow svg text.b, .tree svg text.b { font-weight: 700; }
+.fn .shape { fill: var(--card); stroke: var(--border); stroke-width: 2.5; transition: stroke 250ms, stroke-width 250ms, fill 250ms; }
+.fn.good .shape { fill: var(--ok-soft); stroke: var(--ok); }
+.fn.bad .shape { fill: var(--bad-soft); stroke: var(--bad); }
+.fn.diff-e .shape { fill: var(--ember-soft); stroke: var(--ember); stroke-width: 3.5; }
+.fn.diff-t .shape { fill: var(--tide-soft); stroke: var(--tide); stroke-width: 3.5; }
+.fe path { fill: none; stroke: var(--muted-fg); stroke-width: 2.5; transition: stroke 250ms, stroke-width 250ms; }
+.fe text.lab, .tree text.lab { font-family: var(--f-mono); font-size: 16px; fill: var(--muted-fg); }
+.ahead { fill: var(--muted-fg); }
+.fn.hot .shape { stroke: var(--gold); stroke-width: 6; }
+.fe.hot path { stroke: var(--gold); stroke-width: 5; }
+.fe.hot text.lab { fill: var(--fg); font-weight: 700; }
+.slide.dark .fn .shape { fill: color-mix(in srgb, var(--on-ink) 8%, transparent); }
+.tree .fn.q .shape { fill: var(--card-2); }
+.tree .fn.leaf-e .shape { fill: var(--ember-soft); stroke: var(--ember); stroke-width: 3.5; }
+.tree .fn.leaf-t .shape { fill: var(--tide-soft); stroke: var(--tide); stroke-width: 3.5; }
+.tree .fn.leaf-g .shape { fill: var(--card); stroke: var(--gold); stroke-width: 3.5; }
+.tree text.sub { font-family: var(--f-mono); font-size: 15px; fill: var(--muted-fg); }
+.appmap .zone-sa { fill: var(--ember-soft); } .appmap .zone-gd { fill: var(--tide-soft); }
+.appmap .zl { font-family: var(--f-mono); font-size: 17px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
+.appmap .zl.em { fill: var(--ember); } .appmap .zl.td { fill: var(--tide); }
+.appmap .axis { stroke: var(--muted-fg); stroke-width: 2.5; }
+.appmap .axl { font-family: var(--f-mono); font-size: 17px; fill: var(--muted-fg); }
+.appmap .ap circle { stroke: var(--bg); stroke-width: 3; }
+.appmap .ap.em circle { fill: var(--ember); } .appmap .ap.td circle { fill: var(--tide); } .appmap .ap.gold circle { fill: var(--gold); }
+.appmap .ap text { font-size: 18px; font-weight: 600; }
+.appmap .ap { transition: opacity 300ms; } .appmap .ap.dim { opacity: .2; }
+/* slide layouts for flows */
+.s-flowsplit { display: grid; grid-template-columns: 0.62fr 1fr; gap: 40px; align-items: center; height: 100%; }
+.s-flowsplit .flow { width: 100%; }
+.s-flowsplit .flow svg { height: 920px; width: 100%; }
+.slide .flow svg text { font-size: 23px; }
+.s-flowtext { display: flex; flex-direction: column; gap: 32px; }
+.slide[data-layout="flow"] { padding-top: 40px; padding-bottom: 70px; padding-right: 90px; }
+.slide[data-layout="flow-compare"] { padding-top: 70px; padding-bottom: 90px; gap: 20px; }
+.s-flowpair { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; }
+.s-flowpair > div { display: flex; flex-direction: column; align-items: center; gap: 8px; min-width: 0; }
+.s-flowpair .flow { width: 100%; }
+.s-flowpair .flow svg { height: 700px; width: 100%; }
+.slide .pill.em { color: var(--ember); } .slide .pill.td { color: var(--tide); }
+.slide .tree svg { max-height: 760px; } .slide .appmap svg { max-height: 800px; }
+.slide .tree svg text { font-size: 24px; } .slide .tree text.lab { font-size: 20px; }
+.slide[data-layout="decision-tree"], .slide[data-layout="app-map"] { padding-top: 70px; padding-bottom: 90px; gap: 24px; }
+/* dual strip */
+.dstrip { display: flex; gap: 8px; overflow-x: auto; padding: 4px 2px 8px; }
+.drowlab, .dcol { display: flex; flex-direction: column; gap: 6px; align-items: center; flex: 0 0 auto; }
+.drowlab span { height: 18px; } .drowlab b { height: 46px; display: flex; align-items: center; font-family: var(--f-mono); }
+.drowlab b.em { color: var(--ember); } .drowlab b.td { color: var(--tide); }
+.dk { font-family: var(--f-mono); font-size: 12px; color: var(--muted-fg); height: 18px; }
+.dchip { width: 46px; height: 46px; border-radius: 12px; display: inline-flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 700; border: 2px solid var(--border); background: var(--card); line-height: 1; font-size: 18px; }
+.dchip small { font-family: var(--f-mono); font-size: 11px; font-weight: 400; margin-top: 3px; color: var(--muted-fg); }
+.dchip.ok { background: var(--ok-soft); border-color: var(--ok); color: var(--ok); }
+.dchip.ko { background: var(--bad-soft); border-color: var(--bad); color: var(--bad); }
+.dchip.worse { border-style: dashed; border-width: 3px; }
+.dcol { padding: 4px; border-radius: 12px; }
+.dcol.split { background: color-mix(in srgb, var(--gold) 28%, transparent); }
+.dcol.pending .dchip { opacity: .35; }
+.dleg { font-size: 13px; color: var(--muted-fg); display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.dleg .dchip { width: 26px; height: 26px; font-size: 13px; border-radius: 7px; }
+.dual-strip-slide .dstrip { justify-content: center; gap: 18px; }
+.dual-strip-slide .dk { font-size: 26px; height: 34px; }
+.dual-strip-slide .drowlab span { height: 34px; } .dual-strip-slide .drowlab b { height: 120px; font-size: 40px; }
+.dual-strip-slide .dchip { width: 120px; height: 120px; font-size: 52px; border-radius: 24px; border-width: 3px; }
+.dual-strip-slide .dchip small { font-size: 26px; margin-top: 6px; }
+.dual-strip-slide .dcol { padding: 10px; border-radius: 26px; gap: 14px; }
+.dual-strip-slide .dleg { font-size: 26px; justify-content: center; gap: 14px; }
+.dual-strip-slide .dleg .dchip { width: 50px; height: 50px; font-size: 26px; border-radius: 12px; }
+.dstate { font-family: var(--f-mono); font-size: 12.5px; background: var(--card-2); border-radius: 10px; padding: 8px 10px; min-height: 52px; margin-top: 6px; }
+.dual-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+.dual-cols > div { min-width: 0; }
+.dual-cols h5 { margin: 0 0 6px; font-family: var(--f-display); font-size: 24px; font-weight: 800; }
+.chq { display: flex; gap: 10px; align-items: flex-start; padding: 8px 10px; border: 1px solid var(--border); border-radius: 10px; background: var(--bg); cursor: pointer; font-size: 14.5px; }
+.chq input { width: 18px; height: 18px; margin-top: 2px; accent-color: var(--tide); flex: none; }
+#ch-qs { display: grid; gap: 8px; }
+.chbars { display: grid; grid-template-columns: 40px 1fr 30px; gap: 6px 10px; align-items: center; margin: 14px 0 6px; font-family: var(--f-mono); font-size: 13px; }
+.chbar { height: 14px; border-radius: 999px; background: var(--card-2); overflow: hidden; }
+.chbar i { display: block; height: 100%; width: 0; transition: width 400ms var(--ease); }
+#ch-bar-sa { background: var(--ember); } #ch-bar-gd { background: var(--tide); }
+.flowpair-guide { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+.flowpair-guide figure { margin: 0; min-width: 0; } .flowpair-guide figcaption { font-size: 13px; color: var(--muted-fg); margin-top: 4px; }
+
+/* ================= ARENA ================= */
+.ar-probs { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 10px; margin: 6px 0 12px; }
+.ar-prob { text-align: left; border: 2px solid var(--border); background: var(--bg); border-radius: 14px; padding: 12px 14px; display: grid; grid-template-columns: 34px 1fr; gap: 2px 10px; align-items: center; }
+.ar-prob svg { grid-row: span 2; width: 30px; height: 30px; stroke: var(--muted-fg); fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.ar-prob b { font-size: 15px; } .ar-prob small { font-size: 12.5px; color: var(--muted-fg); }
+.ar-prob[aria-checked="true"] { border-color: var(--ember); background: var(--ember-soft); }
+.ar-prob[aria-checked="true"] svg { stroke: var(--ember); }
+.ar-presets { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-bottom: 6px; }
+.ar-presets .btn { min-height: 34px; padding: 5px 11px; font-size: 13px; }
+.ar-tog { display: flex; flex-direction: column; gap: 4px; font-weight: 400; }
+.ar-tog label { font-weight: 400 !important; display: flex !important; gap: 6px; align-items: center; }
+.ar-prog { width: 160px; height: 8px; border-radius: 999px; background: var(--card-2); overflow: hidden; } .ar-prog i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--ember), var(--tide)); }
+.ar-ct { font-size: 12.5px; color: var(--muted-fg); margin: 0 0 4px; font-family: var(--f-mono); }
+.ar-diag { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; margin-top: 12px; }
+.ar-dcol { border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; background: var(--bg); min-width: 0; }
+.ar-dcol.e { border-top: 5px solid var(--ember); } .ar-dcol.t { border-top: 5px solid var(--tide); }
+.ar-dcol h5 { margin: 0 0 6px; font-family: var(--f-display); font-size: 22px; font-weight: 800; }
+.ar-dcol ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 8px; font-size: 14px; }
+.ar-dcol li.good { color: var(--ok); list-style: '✓  '; }
+.ar-dcol li .btn { min-height: 30px; padding: 3px 10px; font-size: 12.5px; margin-top: 4px; }
+
+/* ================= COMPARISON DECK ================= */
+.cchart svg { width: 100%; height: auto; max-height: 640px; display: block; }
+.cchart text { font-family: var(--f-body); fill: var(--fg); }
+.cchart .ct { font-size: 30px; font-weight: 700; }
+.cchart .vl { font-size: 28px; font-weight: 700; font-family: var(--f-mono); }
+.cchart .lb { font-size: 28px; }
+.cchart .tk { font-size: 24px; fill: var(--muted-fg); font-family: var(--f-mono); }
+.cchart .ax { stroke: var(--muted-fg); stroke-width: 2.5; }
+.cchart .wh { stroke: var(--fg); stroke-width: 3; }
+.cchart .bk { stroke: var(--gold); stroke-width: 3; stroke-dasharray: 8 8; }
+.cchart .ln { fill: none; stroke-width: 5; }
+.cchart .db { stroke-width: 8; opacity: .45; }
+.cchart .before { fill: var(--bg); stroke: var(--muted-fg); stroke-width: 4; }
+.h2h { display: grid; grid-template-columns: 1.1fr 1fr 1fr; gap: 0; border: 2px solid var(--border); border-radius: 22px; overflow: hidden; }
+.h2h-h { padding: 22px 32px; font-family: var(--f-display); font-size: 60px; font-weight: 800; background: var(--card-2); }
+.h2h-h.em { color: var(--ember); } .h2h-h.td { color: var(--tide); }
+.h2h-r { display: contents; }
+.h2h-r > span { padding: 24px 32px; font-size: 40px; border-top: 2px solid var(--border); background: var(--card); }
+.h2h-r > span:first-child { color: var(--muted-fg); font-family: var(--f-mono); font-size: 32px; }
+.h2h-r.frag > span { opacity: 0; transition: opacity 420ms var(--ease); }
+.h2h-r.frag.shown > span { opacity: 1; }
+.slide.dark .s-card .big.td { color: var(--tide-on-ink); }
+
+.cchart .trk { fill: var(--card-2); }
+
+/* ================= HISTORY ================= */
+.htl { list-style: none; margin: 12px 0 18px; padding: 0 0 0 4px; position: relative; }
+.htl::before { content: ""; position: absolute; left: 52px; top: 6px; bottom: 6px; width: 3px; background: var(--border); border-radius: 2px; }
+.htl li { display: grid; grid-template-columns: 48px 1fr; gap: 0 26px; padding: 6px 0 10px; position: relative; max-width: none; }
+.htl li::before { content: ""; position: absolute; left: 44px; top: 12px; width: 13px; height: 13px; border-radius: 50%; background: var(--card); border: 3px solid var(--muted-fg); }
+.htl.e li.key::before { background: var(--ember); border-color: var(--ember); } .htl.t li.key::before { background: var(--tide); border-color: var(--tide); }
+.htl .hy { font-family: var(--f-mono); font-weight: 600; font-size: 14px; color: var(--muted-fg); padding-top: 4px; }
+.htl.e li.key .hy { color: var(--ember); } .htl.t li.key .hy { color: var(--tide); }
+.htl b { font-size: 15.5px; } .htl p { margin: 2px 0 0; font-size: 14.5px; color: var(--muted-fg); max-width: 70ch; }
+.htl p.hr { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
+.hs { display: grid; grid-template-columns: repeat(5, 1fr); gap: 24px; position: relative; margin-top: 30px; }
+.hs::before { content: ""; position: absolute; left: 0; right: 0; top: 118px; height: 6px; border-radius: 3px; background: linear-gradient(90deg, var(--border), var(--ember)); }
+.hs.t::before { background: linear-gradient(90deg, var(--border), var(--tide)); }
+.hs-i { display: flex; flex-direction: column; gap: 18px; position: relative; }
+.hs-y { font-family: var(--f-display); font-weight: 800; font-size: 92px; line-height: 1; color: var(--ember); }
+.hs.t .hs-y { color: var(--tide); }
+.hs-d { width: 34px; height: 34px; border-radius: 50%; background: var(--bg); border: 7px solid var(--ember); margin-top: -4px; }
+.hs.t .hs-d { border-color: var(--tide); }
+.hs-t { font-size: 36px; line-height: 1.2; font-weight: 600; }
+.histaxis svg { width: 100%; height: auto; display: block; }
+.histaxis text { font-family: var(--f-body); fill: var(--fg); }
+.histaxis .hax { stroke: var(--muted-fg); stroke-width: 3; }
+.histaxis .htk { font-family: var(--f-mono); font-size: 22px; fill: var(--muted-fg); }
+.histaxis .hst { stroke-width: 2.5; } .histaxis .hst.e { stroke: var(--ember); } .histaxis .hst.t { stroke: var(--tide); }
+.histaxis .hdot.e { fill: var(--ember); } .histaxis .hdot.t { fill: var(--tide); }
+.histaxis .hyr { font-family: var(--f-display); font-weight: 800; font-size: 40px; } .histaxis .hyr.e { fill: var(--ember); } .histaxis .hyr.t { fill: var(--tide); }
+.histaxis .hlb { font-size: 22px; font-weight: 600; }
+.histaxis .hlg { font-family: var(--f-display); font-weight: 800; font-size: 44px; } .histaxis .hlg.e { fill: var(--ember); } .histaxis .hlg.t { fill: var(--tide); }
+.histaxis .hyr, .histaxis .hlb { paint-order: stroke; stroke: var(--bg); stroke-width: 8px; stroke-linejoin: round; }
+.hub-axis .hyr, .hub-axis .hlb { stroke: var(--card); }
+.slide-links { display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; }
+.slide:not(.center) .slide-links { justify-content: flex-start; }
+.slide-links a { font-family: var(--f-body); font-size: 34px; font-weight: 700; text-decoration: none; padding: 18px 40px; border-radius: 999px; background: var(--gold); color: #1a1a1a; border: 3px solid var(--gold); }
+.slide-links a + a { background: transparent; color: inherit; border-color: currentColor; }
+.slide-links a:focus-visible { outline: 4px solid var(--tide-on-ink); outline-offset: 4px; }
+.hcard.g { border-top: 8px solid var(--gold); }
+.runsheet td.lk a.as { border-color: var(--gold); }
+
+.hub { max-width: 1180px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 28px 80px; display: flex; flex-direction: column; gap: 40px; }
+.hub h1 { font-family: var(--f-display); font-size: clamp(42px, 6.4vw, 78px); line-height: .95; text-transform: uppercase; margin: 8px 0 14px; font-weight: 800; }
+.hub .eyebrow { font-family: var(--f-mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--ember); font-weight: 600; margin: 0; }
+.hub .lede { font-size: 18px; color: var(--muted-fg); max-width: 60ch; margin: 0; }
+.hub-hero { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 28px; align-items: center; }
+.hub-hero canvas { width: 100%; border-radius: 16px; border: 1px solid var(--border); display: block; }
+@media (max-width: 800px) { .hub-hero { grid-template-columns: minmax(0, 1fr); } }
+.hub-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px; }
+.hcard { background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 22px 24px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.hcard.e { border-top: 8px solid var(--ember); } .hcard.t { border-top: 8px solid var(--tide); }
+.hcard h2 { font-family: var(--f-display); font-size: 40px; margin: 0; font-weight: 800; line-height: 1; }
+.hcard p { margin: 0; color: var(--muted-fg); }
+.hcard .hk { font-family: var(--f-mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; }
+.hbtns { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+.hbtns a { text-decoration: none; }
+.hh { font-family: var(--f-display); font-size: clamp(32px, 4.4vw, 46px); margin: 0 0 12px; font-weight: 800; }
+.hsteps { margin: 14px 0 0; padding-left: 22px; display: flex; flex-direction: column; gap: 8px; }
+.hsteps li { max-width: 80ch; }
+.runsheet td:first-child { font-family: var(--f-mono); white-space: nowrap; }
+.runsheet td.lk { display: flex; flex-wrap: wrap; gap: 6px; }
+.runsheet td.lk a { font-size: 13px; text-decoration: none; border: 1px solid var(--border); border-radius: 999px; padding: 4px 10px; white-space: nowrap; background: var(--bg); }
+.runsheet td.lk a:hover { border-color: var(--tide); }
+.runsheet tr.brk td { background: var(--card-2); color: var(--muted-fg); }
+.hub-axis { border: 1px solid var(--border); border-radius: 16px; background: var(--card); padding: 10px; overflow-x: auto; }
+.hub-axis svg { min-width: 760px; }
+.hub-hist { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; margin-top: 18px; }
+.hub-hist h3 { font-family: var(--f-display); font-size: 30px; margin: 0; font-weight: 800; }
+.hub-hist h3.em { color: var(--ember); } .hub-hist h3.td { color: var(--tide); }
+.hub-hist > div { min-width: 0; }
+.hub-check { display: grid; gap: 8px; }
+.hub-check label { display: flex; gap: 10px; align-items: center; padding: 10px 12px; border: 1px solid var(--border); border-radius: 10px; background: var(--card); }
+.hub-check input { width: 18px; height: 18px; accent-color: var(--ok); }
+</style>
+<header class="topbar">
+  <div class="brand"><b>L6 <span class="amp">·</span> Hub</b><small>TTTC6544 · <span class="en">Advanced Local Search</span><span class="ms">Carian Setempat Lanjutan</span></small></div>
+  <div class="seg" role="group" aria-label="Language / Bahasa"><button type="button" data-setlang="ms" aria-pressed="false" lang="ms">BM</button><button type="button" data-setlang="en" aria-pressed="true" lang="en">EN</button></div>
+  <div class="seg" role="group" aria-label="Theme"><button type="button" data-settheme="system" aria-pressed="true">Auto</button><button type="button" data-settheme="light" aria-pressed="false" aria-label="Light mode"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4V2M12 22v-2M4 12H2M22 12h-2M5.6 5.6 4.2 4.2M19.8 19.8l-1.4-1.4M5.6 18.4l-1.4 1.4M19.8 4.2l-1.4 1.4M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z"/></svg></button><button type="button" data-settheme="dark" aria-pressed="false" aria-label="Dark mode"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button></div>
+</header>
+
+<main class="hub">
+  <section class="hub-hero">
+    <div>
+      <p class="eyebrow">TTTC6544 · L6 · <span class="en">Week 6 · 2 November 2026 · 4 hours</span><span class="ms">Minggu 6 · 2 November 2026 · 4 jam</span></p>
+      <h1><span class="en">Simulated Annealing &amp; Great Deluge</span><span class="ms">Penyepuhlindapan Simulasi &amp; Banjir Besar</span></h1>
+      <p class="lede"><span class="en">Everything for the session in one place: the teaching module, the comparison deck with its Emulation Arena, a minute-by-minute run-sheet with direct links, and the history of both algorithms.</span><span class="ms">Semua bahan sesi di satu tempat: modul pengajaran, dek perbandingan dengan Arena Emulasi, jadual pelaksanaan minit demi minit dengan pautan terus, dan sejarah kedua-dua algoritma.</span></p>
+    </div>
+    <canvas id="hubCv" role="img" aria-label="Animated landscape with cooling particles and a rising water level"></canvas>
+  </section>
+
+  <section class="hub-cards">
+    <article class="hcard e">
+      <p class="hk"><span class="en">Resource 1 · 48 slides + guide</span><span class="ms">Sumber 1 · 48 slaid + panduan</span></p>
+      <h2><span class="en">Teaching module</span><span class="ms">Modul pengajaran</span></h2>
+      <p><span class="en">Slides, a self-instructional guide with four labs (landscape, routes, timetable, Emulation Arena), flowcharts, quizzes, AI prompts, ethics and references.</span><span class="ms">Slaid, panduan arahan kendiri dengan empat makmal (landskap, laluan, jadual, Arena Emulasi), carta alir, kuiz, prom AI, etika dan rujukan.</span></p>
+      <div class="hbtns">
+        <a class="btn ember" href="module.html#s1" target="_blank" rel="noopener"><span class="en">Open slides</span><span class="ms">Buka slaid</span></a>
+        <a class="btn" href="module.html#start" target="_blank" rel="noopener"><span class="en">Open guide</span><span class="ms">Buka panduan</span></a>
+        <a class="btn" href="module.html#m4-arena" target="_blank" rel="noopener">Arena</a>
+      </div>
+    </article>
+    <article class="hcard t">
+      <p class="hk"><span class="en">Resource 2 · 20 slides + Arena</span><span class="ms">Sumber 2 · 20 slaid + Arena</span></p>
+      <h2><span class="en">Comparison deck</span><span class="ms">Dek perbandingan</span></h2>
+      <p><span class="en">SA versus GD with evidence from three problems, their weaknesses and fixes, and when each is the best choice. Includes the Arena as a second tab.</span><span class="ms">SA berbanding GD dengan bukti daripada tiga masalah, kelemahan dan pembaikan, serta bila setiap satu pilihan terbaik. Termasuk Arena sebagai tab kedua.</span></p>
+      <div class="hbtns">
+        <a class="btn primary" href="compare.html#s1" target="_blank" rel="noopener"><span class="en">Open deck</span><span class="ms">Buka dek</span></a>
+        <a class="btn" href="compare.html#arena-top" target="_blank" rel="noopener"><span class="en">Open Arena</span><span class="ms">Buka Arena</span></a>
+      </div>
+    </article>
+    <article class="hcard g">
+      <p class="hk"><span class="en">Resource 3 · in class</span><span class="ms">Sumber 3 · dalam kelas</span></p>
+      <h2><span class="en">Assessments</span><span class="ms">Penilaian</span></h2>
+      <p><span class="en">Checkpoint A (SA) and B (GD), 12 minutes each with instant feedback, plus the 30-minute group consultancy challenge with worksheet, rubric and facilitator key.</span><span class="ms">Titik Semak A (SA) dan B (GD), 12 minit setiap satu dengan maklum balas segera, serta cabaran perundingan kumpulan 30 minit dengan lembaran kerja, rubrik dan kunci fasilitator.</span></p>
+      <div class="hbtns">
+        <a class="btn" style="background:var(--gold);border-color:var(--gold);color:#1a1a1a" href="assessments.html#cpA" target="_blank" rel="noopener">Checkpoint A</a>
+        <a class="btn" href="assessments.html#cpB" target="_blank" rel="noopener">Checkpoint B</a>
+        <a class="btn" href="assessments.html#group" target="_blank" rel="noopener"><span class="en">Group challenge</span><span class="ms">Cabaran kumpulan</span></a>
+      </div>
+    </article>
+  </section>
+
+  <section>
+    <h2 class="hh"><span class="en">Start here</span><span class="ms">Mula di sini</span></h2>
+    <div class="tabset">
+      <div class="tabs" role="tablist"><button type="button"><span class="en">Facilitator</span><span class="ms">Fasilitator</span></button><button type="button"><span class="en">Participant in class</span><span class="ms">Peserta di kelas</span></button><button type="button"><span class="en">Self-study</span><span class="ms">Belajar kendiri</span></button></div>
+      <div class="tabpanel"><ol class="hsteps">
+        <li class="en"><b>Share four links before class:</b> this hub, the module, the comparison deck and the assessments. Each page is private until you share it from its own Share menu.</li><li class="ms"><b>Kongsi empat pautan sebelum kelas:</b> hab ini, modul, dek perbandingan dan penilaian. Setiap halaman adalah peribadi sehingga anda berkongsi melalui menu Kongsi masing-masing.</li>
+        <li class="en"><b>Choose the language</b> with BM/EN on each page; the choice is remembered per browser.</li><li class="ms"><b>Pilih bahasa</b> dengan BM/EN pada setiap halaman; pilihan diingat bagi setiap pelayar.</li>
+        <li class="en"><b>Present</b> from the module's slides: <kbd>F</kbd> full screen, <kbd>N</kbd> speaker notes, <kbd>G</kbd> jumps to the matching guide section.</li><li class="ms"><b>Bentang</b> daripada slaid modul: <kbd>F</kbd> skrin penuh, <kbd>N</kbd> nota penyampai, <kbd>G</kbd> melompat ke seksyen panduan yang sepadan.</li>
+        <li class="en"><b>Follow the run-sheet below</b>; every row links straight to the slide or lab.</li><li class="ms"><b>Ikut jadual pelaksanaan di bawah</b>; setiap baris dipautkan terus ke slaid atau makmal.</li>
+        <li class="en"><b>Checkpoints:</b> feedback is encrypted. In class, collect the answers students copy and grade them in the assessment page's facilitator section (facilitator password). After class, give students the feedback password to reveal their marks and explanations. Both passwords are kept outside these pages.</li><li class="ms"><b>Titik semak:</b> maklum balas disulitkan. Di kelas, kumpul jawapan yang disalin pelajar dan gred dalam bahagian fasilitator halaman penilaian (kata laluan fasilitator). Selepas kelas, beri pelajar kata laluan maklum balas untuk mendedahkan markah dan penerangan. Kedua-dua kata laluan disimpan di luar halaman ini.</li>
+        <li class="en"><b>For the Arena,</b> assign one problem per group and ask each to report one weakness and one fix with numbers.</li><li class="ms"><b>Untuk Arena,</b> tetapkan satu masalah bagi setiap kumpulan dan minta setiap kumpulan melaporkan satu kelemahan dan satu pembaikan dengan angka.</li>
+      </ol></div>
+      <div class="tabpanel"><ol class="hsteps">
+        <li class="en">Open the <b>module guide</b> on your laptop; keep this hub in another tab.</li><li class="ms">Buka <b>panduan modul</b> pada komputer riba; simpan hab ini dalam tab lain.</li>
+        <li class="en">Do each lab when the slides show a dark <b>Lab</b> slide. Record your numbers.</li><li class="ms">Lakukan setiap makmal apabila slaid menunjukkan slaid gelap <b>Makmal</b>. Rekod angka anda.</li>
+        <li class="en">On a phone, set the Arena to 3–5 seeds so runs finish quickly.</li><li class="ms">Pada telefon, tetapkan Arena kepada 3–5 benih supaya larian cepat selesai.</li>
+        <li class="en">Finish with the <b>Final Challenge</b> (12 questions, instant feedback) and the 3-2-1 exit ticket.</li><li class="ms">Akhiri dengan <b>Cabaran Akhir</b> (12 soalan, maklum balas segera) dan tiket keluar 3-2-1.</li>
+      </ol></div>
+      <div class="tabpanel"><ol class="hsteps">
+        <li class="en">Pick a path in the guide: <b>2-hour core</b>, <b>4-hour full</b> or <b>research</b>.</li><li class="ms">Pilih laluan dalam panduan: <b>teras 2 jam</b>, <b>penuh 4 jam</b> atau <b>penyelidikan</b>.</li>
+        <li class="en">Tick "Section done" as you go; progress is saved in your browser.</li><li class="ms">Tandakan "Seksyen selesai" semasa belajar; kemajuan disimpan dalam pelayar anda.</li>
+        <li class="en">After §3, watch the comparison deck, then try every Arena challenge.</li><li class="ms">Selepas §3, tonton dek perbandingan, kemudian cuba setiap cabaran Arena.</li>
+        <li class="en">Read the two short source papers suggested in §7 with an AI notebook tool, following the data-safety checklist in §4.3.</li><li class="ms">Baca dua kertas sumber pendek yang dicadangkan dalam §7 dengan alat buku nota AI, mengikut senarai semak keselamatan data dalam §4.3.</li>
+      </ol></div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="hh"><span class="en">Run-sheet · 4 hours</span><span class="ms">Jadual pelaksanaan · 4 jam</span></h2>
+    <div class="tbl-wrap"><table class="runsheet">
+      <thead><tr><th><span class="en">Time</span><span class="ms">Masa</span></th><th><span class="en">Block</span><span class="ms">Blok</span></th><th><span class="en">Open</span><span class="ms">Buka</span></th></tr></thead>
+      <tbody>
+        <tr><td>0:00–0:25</td><td><b><span class="en">Empathise &amp; define</span><span class="ms">Empati &amp; takrif</span></b><br><span class="en">PBL trigger, empathy map, three ingredients, Quiz 1</span><span class="ms">Pencetus PBL, peta empati, tiga ramuan, Kuiz 1</span></td><td class="lk"><a href="module.html#s1" target="_blank" rel="noopener"><span class="en">Slides</span><span class="ms">Slaid</span> 1–8</a><a href="module.html#m1" target="_blank" rel="noopener"><span class="en">Guide</span><span class="ms">Panduan</span> §1</a></td></tr>
+        <tr><td>0:25–1:25</td><td><b>Simulated Annealing</b><br><span class="en">History, Metropolis rule, flowchart, cooling, hand trace, Checkpoint A, Lab 1</span><span class="ms">Sejarah, peraturan Metropolis, carta alir, penyejukan, surih tangan, Titik Semak A, Makmal 1</span></td><td class="lk"><a href="module.html#s9" target="_blank" rel="noopener"><span class="en">Slides</span><span class="ms">Slaid</span> 9–22</a><a href="module.html#m2" target="_blank" rel="noopener"><span class="en">§2</span><span class="ms">§2</span></a><a class="as" href="assessments.html#cpA" target="_blank" rel="noopener"><span class="en">Checkpoint A</span><span class="ms">Titik Semak A</span></a><a href="module.html#m2-lab" target="_blank" rel="noopener"><span class="en">Lab 1</span><span class="ms">Makmal 1</span></a></td></tr>
+        <tr class="brk"><td>1:25–1:35</td><td colspan="2"><span class="en">Break</span><span class="ms">Rehat</span></td></tr>
+        <tr><td>1:35–2:35</td><td><b>Great Deluge</b><br><span class="en">History, level rule, flows side by side, dual trace, Checkpoint B, Lab 2</span><span class="ms">Sejarah, peraturan paras, aliran bersebelahan, surih dwi, Titik Semak B, Makmal 2</span></td><td class="lk"><a href="module.html#s23" target="_blank" rel="noopener"><span class="en">Slides</span><span class="ms">Slaid</span> 23–35</a><a href="module.html#m3" target="_blank" rel="noopener"><span class="en">§3</span><span class="ms">§3</span></a><a class="as" href="assessments.html#cpB" target="_blank" rel="noopener"><span class="en">Checkpoint B</span><span class="ms">Titik Semak B</span></a><a href="module.html#m3-lab" target="_blank" rel="noopener"><span class="en">Lab 2</span><span class="ms">Makmal 2</span></a></td></tr>
+        <tr><td>2:35–3:00</td><td><b><span class="en">Prototype &amp; test</span><span class="ms">Prototaip &amp; uji</span></b><br><span class="en">Exam timetable lab, Emulation Arena</span><span class="ms">Makmal jadual peperiksaan, Arena Emulasi</span></td><td class="lk"><a href="module.html#s36" target="_blank" rel="noopener"><span class="en">Slides</span><span class="ms">Slaid</span> 36–39</a><a href="module.html#m4" target="_blank" rel="noopener"><span class="en">Lab 3</span><span class="ms">Makmal 3</span></a><a href="module.html#m4-arena" target="_blank" rel="noopener"><span class="en">Lab 4 · Arena</span><span class="ms">Makmal 4 · Arena</span></a></td></tr>
+        <tr><td>3:00–3:15</td><td><b><span class="en">Compare &amp; choose</span><span class="ms">Banding &amp; pilih</span></b><br><span class="en">Histories, evidence, weaknesses and fixes, when to choose which</span><span class="ms">Sejarah, bukti, kelemahan dan pembaikan, bila memilih yang mana</span></td><td class="lk"><a href="compare.html#s1" target="_blank" rel="noopener"><span class="en">Comparison deck</span><span class="ms">Dek perbandingan</span></a></td></tr>
+        <tr><td>3:15–3:25</td><td><b><span class="en">Tools, safety &amp; ethics</span><span class="ms">Alat, keselamatan &amp; etika</span></b><br><span class="en">Low-code toolkit, PDPA and AIGE, fairness, frontier</span><span class="ms">Kit kod rendah, PDPA dan AIGE, keadilan, barisan hadapan</span></td><td class="lk"><a href="module.html#s40" target="_blank" rel="noopener"><span class="en">Slides</span><span class="ms">Slaid</span> 40–45</a><a href="module.html#m4-tools" target="_blank" rel="noopener"><span class="en">§4.2</span><span class="ms">§4.2</span></a><a href="module.html#m4-ethics" target="_blank" rel="noopener"><span class="en">§4.3</span><span class="ms">§4.3</span></a></td></tr>
+        <tr><td>3:25–3:55</td><td><b><span class="en">Group challenge</span><span class="ms">Cabaran kumpulan</span></b><br><span class="en">Consultancy briefs A–C, Arena evidence, 2-minute pitches</span><span class="ms">Taklimat perundingan A–C, bukti Arena, pembentangan 2 minit</span></td><td class="lk"><a href="module.html#s46" target="_blank" rel="noopener"><span class="en">Slide</span><span class="ms">Slaid</span> 46</a><a class="as" href="assessments.html#group" target="_blank" rel="noopener"><span class="en">Brief &amp; worksheet</span><span class="ms">Taklimat &amp; lembaran kerja</span></a><a class="as" href="assessments.html#rubric" target="_blank" rel="noopener"><span class="en">Rubric</span><span class="ms">Rubrik</span></a></td></tr>
+        <tr><td>3:55–4:00</td><td><b><span class="en">Reflect</span><span class="ms">Renung</span></b><br><span class="en">3-2-1 exit ticket; Final Challenge after class</span><span class="ms">Tiket keluar 3-2-1; Cabaran Akhir selepas kelas</span></td><td class="lk"><a href="module.html#s47" target="_blank" rel="noopener"><span class="en">Slides</span><span class="ms">Slaid</span> 47–48</a><a href="module.html#m6" target="_blank" rel="noopener"><span class="en">§6</span><span class="ms">§6</span></a></td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section>
+    <h2 class="hh"><span class="en">Seventy years in one picture</span><span class="ms">Tujuh puluh tahun dalam satu gambar</span></h2>
+    <div class="histaxis hub-axis" data-histaxis="1"></div>
+    <div class="hub-hist">
+      <div><h3 class="em">Simulated Annealing</h3><div data-hist="SA"></div></div>
+      <div><h3 class="td">Great Deluge</h3><div data-hist="GD"></div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="hh"><span class="en">Before the session</span><span class="ms">Sebelum sesi</span></h2>
+    <div class="hub-check">
+      <label><input type="checkbox" id="hc1"> <span class="en">Links shared with the class (hub, module, deck, assessments)</span><span class="ms">Pautan dikongsi dengan kelas (hab, modul, dek, penilaian)</span></label>
+      <label><input type="checkbox" id="hc2"> <span class="en">Projector tested with full screen (F) and notes (N)</span><span class="ms">Projektor diuji dengan skrin penuh (F) dan nota (N)</span></label>
+      <label><input type="checkbox" id="hc3"> <span class="en">Groups formed for the Arena (one problem each)</span><span class="ms">Kumpulan dibentuk untuk Arena (satu masalah setiap satu)</span></label>
+      <label><input type="checkbox" id="hc4"> <span class="en">Participants told: no personal data in AI tools (§4.3)</span><span class="ms">Peserta dimaklumkan: tiada data peribadi dalam alat AI (§4.3)</span></label>
+      <label><input type="checkbox" id="hc6"> <span class="en">Feedback and facilitator passwords at hand (not on any slide)</span><span class="ms">Kata laluan maklum balas dan fasilitator tersedia (bukan pada mana-mana slaid)</span></label>
+      <label><input type="checkbox" id="hc5"> <span class="en">PBL deliverable and rubric announced (§6)</span><span class="ms">Hasil PBL dan rubrik diumumkan (§6)</span></label>
+    </div>
+    <p class="hint"><span class="en">Ticks are saved in this browser only.</span><span class="ms">Tanda disimpan dalam pelayar ini sahaja.</span></p>
+  </section>
+</main>
+
+<script>
+window.HIST_REFS = {"metropolis53": ["Metropolis et al. 1953", "https://doi.org/10.1063/1.1699114"], "kgv83": ["Kirkpatrick et al. 1983", "https://doi.org/10.1126/science.220.4598.671"], "cerny85": ["\u010cern\u00fd 1985", "https://doi.org/10.1007/BF00940812"], "geman84": ["Geman & Geman 1984", "https://doi.org/10.1109/TPAMI.1984.4767596"], "hajek88": ["Hajek 1988", "https://doi.org/10.1287/moor.13.2.311"], "lundy86": ["Lundy & Mees 1986", "https://doi.org/10.1007/BF01582166"], "johnson89": ["Johnson et al. 1989", "https://doi.org/10.1287/opre.37.6.865"], "dueck90": ["Dueck & Scheuer 1990", "https://doi.org/10.1016/0021-9991(90)90201-B"], "dueck93": ["Dueck 1993", "https://doi.org/10.1006/jcph.1993.1010"], "burke04": ["Burke et al. 2004", "https://doi.org/10.1080/07408170490438410"], "burke17": ["Burke & Bykov 2017", "https://doi.org/10.1016/j.ejor.2016.07.012"], "landa08": ["Landa-Silva & Obit 2008", "https://doi.org/10.1109/IS.2008.4670447"], "mcmullan07": ["McMullan 2007", "https://doi.org/10.1007/978-3-540-72584-8_71"], "turabieh11": ["Turabieh & Abdullah 2011", "https://doi.org/10.1016/j.omega.2010.12.005"], "abdullah10": ["Abdullah et al. 2010", "https://doi.org/10.1007/978-3-642-12139-5_1"], "shaker09": ["Shaker & Abdullah 2009", "https://doi.org/10.1109/DMO.2009.5341894"], "muller09": ["M\u00fcller 2009", "https://doi.org/10.1007/s10479-009-0644-y"], "mccollum10": ["McCollum et al. 2010", "https://doi.org/10.1287/ijoc.1090.0320"], "wolpert97": ["Wolpert & Macready 1997", "https://doi.org/10.1109/4235.585893"], "sechen85": ["Sechen & Sangiovanni-Vincentelli 1985", "https://doi.org/10.1109/JSSC.1985.1052337"], "franzin19": ["Franzin & St\u00fctzle 2019", "https://doi.org/10.1016/j.cor.2018.12.015"], "tsallis96": ["Tsallis & Stariolo 1996", "https://doi.org/10.1016/S0378-4371(96)00271-3"], "xiang97": ["Xiang et al. 1997", "https://doi.org/10.1016/S0375-9601(97)00474-X"], "swendsen86": ["Swendsen & Wang 1986", "https://doi.org/10.1103/PhysRevLett.57.2607"], "earl05": ["Earl & Deem 2005", "https://doi.org/10.1039/b509983h"], "delahaye19": ["Delahaye et al. 2019", "https://doi.org/10.1007/978-3-319-91086-4_1"], "correia23": ["Correia et al. 2023", "https://proceedings.mlr.press/v206/correia23a.html"], "qiu25": ["Qiu & Liang 2025", "https://aamas.csc.liv.ac.uk/Proceedings/aamas2025/pdfs/p1718.pdf"], "kadowaki98": ["Kadowaki & Nishimori 1998", "https://doi.org/10.1103/PhysRevE.58.5355"], "king23": ["King et al. 2023", "https://doi.org/10.1038/s41586-023-05867-2"], "king25": ["King et al. 2025", "https://doi.org/10.1126/science.ado6285"], "munoz25": ["Munoz-Bauza & Lidar 2025", "https://doi.org/10.1103/physrevlett.134.160601"], "aramon19": ["Aramon et al. 2019", "https://doi.org/10.3389/fphy.2019.00048"], "goto19": ["Goto et al. 2019", "https://doi.org/10.1126/sciadv.aav2372"], "borders19": ["Borders et al. 2019", "https://doi.org/10.1038/s41586-019-1557-9"], "nikhar24": ["Nikhar et al. 2024", "https://doi.org/10.1038/s41467-024-53270-w"], "cheng23": ["Cheng et al. 2023", "https://doi.org/10.1145/3569052.3578926"], "hutama24": ["Hutama & Muklason 2024", "https://doi.org/10.47839/ijc.23.2.3549"], "baykasoglu26": ["Baykaso\u011flu et al. 2026", "https://doi.org/10.1016/j.cor.2025.107302"], "romera24": ["Romera-Paredes et al. 2024", "https://doi.org/10.1038/s41586-023-06924-6"], "liu24": ["Liu et al. 2024", "https://arxiv.org/abs/2401.02051"], "ye24": ["Ye et al. 2024", "https://arxiv.org/abs/2402.01145"], "yang24": ["Yang et al. 2024", "https://arxiv.org/abs/2309.03409"], "vanstein25": ["van Stein & B\u00e4ck 2025", "https://doi.org/10.1109/TEVC.2024.3497793"], "novikov25": ["Novikov et al. 2025", "https://arxiv.org/abs/2506.13131"], "hyperheurist26": ["Ahir et al. 2026", "https://arxiv.org/abs/2604.15642"], "burkekendall14": ["Burke & Kendall 2014", "https://doi.org/10.1007/978-1-4614-6940-7"], "talbi09": ["Talbi 2009", "https://doi.org/10.1002/9780470496916"], "aima22": ["Russell & Norvig 2022", "https://aima.cs.berkeley.edu/"], "pdpa24": ["PDPA amendment 2024", "https://hhq.com.my/posts/full-implementation-of-the-personal-data-protection-amendment-act-2024-final-roundup/"], "aige24": ["MOSTI 2024", "https://www.malaysia.gov.my/en/my-initiative/whole-government-digital-services/tadbir-urus/national-guidelines-on-artificial-intelligence-governance-and-ethics-aige"], "naio24": ["NAIO 2024", "https://ai.gov.my/media/news-details/20241212_Press_Release_Launch_of_NAIO.pdf"], "aibill26": ["The Star 2026", "https://www.thestar.com.my/news/nation/2026/09/11/ai-governance-bill-expected-by-early-2027-says-gobind"], "euaiact": ["EU 2024/1689", "https://eur-lex.europa.eu/eli/reg/2024/1689/oj"], "omnibus26": ["EU 2026/1744", "https://eur-lex.europa.eu/eli/reg/2026/1744/oj"], "unesco21": ["UNESCO 2021", "https://www.unesco.org/en/artificial-intelligence/recommendation-ethics"], "apsnews22": ["APS News 2022", "https://www.aps.org/apsnews/2022/03/rosenbluth-metropolis-monte-carlo-algorithm"], "hastings70": ["Hastings 1970", "https://doi.org/10.1093/biomet/57.1.97"], "ingber89": ["Ingber 1989", "https://doi.org/10.1016/0895-7177(89)90202-1"], "dwave11": ["HPCwire 2011", "https://www.hpcwire.com/2011/05/26/d-wave_sells_first_quantum_computer/"], "sintflut": ["Dueck 2004", "https://openlibrary.org/works/OL9074734W"]};
+/* Shared history timelines for SA and GD. Renders into [data-hist="SA|GD"], [data-histslide="SA|GD"], [data-histaxis]. */
+(function () {
+'use strict';
+const H = {
+  SA: [
+    { y: 1953, k: 1, s: ['Metropolis rule', 'Peraturan Metropolis'], t: ['The Metropolis rule', 'Peraturan Metropolis'], d: ['Five scientists at Los Alamos simulate molecules on MANIAC, a 1,024-vacuum-tube computer. Arianna Rosenbluth wrote all the code; she and Marshall Rosenbluth did most of the technical work behind the acceptance rule e^(−Δ/T).', 'Lima saintis di Los Alamos menyimulasikan molekul pada MANIAC, komputer 1,024 tiub vakum. Arianna Rosenbluth menulis semua kod; beliau dan Marshall Rosenbluth melakukan kebanyakan kerja teknikal di sebalik peraturan penerimaan e^(−Δ/T).'], r: ['metropolis53', 'apsnews22'] },
+    { y: 1970, t: ['Metropolis–Hastings', 'Metropolis–Hastings'], d: ['Hastings generalises the rule, laying a foundation of Markov chain Monte Carlo used across statistics and Bayesian machine learning.', 'Hastings mengitlakkan peraturan itu, membina asas Monte Carlo rantai Markov yang digunakan dalam statistik dan pembelajaran mesin Bayes.'], r: ['hastings70'] },
+    { y: 1983, k: 1, s: ['SA as optimiser', 'SA sebagai pengoptimum'], t: ['Annealing becomes optimisation', 'Penyepuhlindapan menjadi pengoptimuman'], d: ['Kirkpatrick, Gelatt and Vecchi at IBM apply the rule with a falling temperature to chip placement and the travelling salesman problem, publishing in Science.', 'Kirkpatrick, Gelatt dan Vecchi di IBM menggunakan peraturan itu dengan suhu menurun pada penempatan cip dan masalah jurujual kembara, diterbitkan dalam Science.'], r: ['kgv83'] },
+    { y: 1985, t: ['Independent discovery, first tools', 'Penemuan berasingan, alat pertama'], d: ['Černý reaches the same idea independently for the TSP; Geman and Geman use annealing to restore images (1984); TimberWolf brings SA into commercial chip layout.', 'Černý mencapai idea sama secara berasingan untuk TSP; Geman dan Geman menggunakan penyepuhlindapan untuk memulihkan imej (1984); TimberWolf membawa SA ke dalam susun atur cip komersial.'], r: ['cerny85', 'geman84', 'sechen85'] },
+    { y: 1988, t: ['Convergence theory', 'Teori penumpuan'], d: ['Lundy and Mees (1986) and Hajek (1988) prove when annealing converges to the global optimum, and why the required logarithmic cooling is impractically slow.', 'Lundy dan Mees (1986) serta Hajek (1988) membuktikan bila penyepuhlindapan menumpu kepada optimum sejagat, dan mengapa penyejukan logaritma yang diperlukan terlalu perlahan.'], r: ['lundy86', 'hajek88'] },
+    { y: 1989, t: ['Fast annealing for continuous problems', 'Penyepuhlindapan pantas untuk masalah selanjar'], d: ['Ingber\'s Very Fast Simulated Re-annealing adds re-annealing for continuous variables; Johnson and colleagues publish a landmark experimental evaluation.', 'Very Fast Simulated Re-annealing oleh Ingber menambah penyepuhlindapan semula untuk pemboleh ubah selanjar; Johnson dan rakan menerbitkan penilaian eksperimen penting.'], r: ['ingber89', 'johnson89'] },
+    { y: 1997, t: ['Generalised SA', 'SA teritlak'], d: ['Tsallis–Stariolo and Xiang et al. introduce heavy-tailed visiting distributions, the basis of SciPy\'s dual_annealing.', 'Tsallis–Stariolo dan Xiang et al. memperkenalkan taburan lawatan berekor berat, asas dual_annealing dalam SciPy.'], r: ['tsallis96', 'xiang97'] },
+    { y: 1998, k: 1, s: ['Quantum annealing', 'Penyepuhlindapan kuantum'], t: ['Quantum annealing proposed', 'Penyepuhlindapan kuantum dicadangkan'], d: ['Kadowaki and Nishimori replace thermal jumps with quantum tunnelling.', 'Kadowaki dan Nishimori menggantikan lompatan terma dengan penerowongan kuantum.'], r: ['kadowaki98'] },
+    { y: 2011, t: ['Annealing as a product', 'Penyepuhlindapan sebagai produk'], d: ['D-Wave sells the first commercial quantum annealer, the 128-qubit D-Wave One, to Lockheed Martin.', 'D-Wave menjual penyepuhlindap kuantum komersial pertama, D-Wave One 128 qubit, kepada Lockheed Martin.'], r: ['dwave11'] },
+    { y: 2019, t: ['Annealing in silicon', 'Penyepuhlindapan dalam silikon'], d: ['Fujitsu\'s Digital Annealer, Toshiba\'s simulated bifurcation and probabilistic-bit Ising machines run annealing-like dynamics in custom hardware.', 'Digital Annealer Fujitsu, bifurkasi simulasi Toshiba dan mesin Ising bit kebarangkalian menjalankan dinamik seperti penyepuhlindapan dalam perkakasan khas.'], r: ['aramon19', 'goto19', 'borders19'] },
+    { y: 2023, k: 1, s: ['Learned SA', 'SA dipelajari'], t: ['Learning meets annealing', 'Pembelajaran bertemu penyepuhlindapan'], d: ['Neural SA learns its proposals with reinforcement learning (Pembelajaran Pengukuhan); a tuned classic SA rivals a reinforcement-learning chip placer; D-Wave simulates a 5,000-qubit spin glass.', 'Neural SA mempelajari cadangannya dengan Pembelajaran Pengukuhan; SA klasik yang ditala menyaingi penempat cip pembelajaran pengukuhan; D-Wave menyimulasikan kaca spin 5,000 qubit.'], r: ['correia23', 'cheng23', 'king23'] },
+    { y: 2025, t: ['Advantage claims and RL-based SA', 'Dakwaan kelebihan dan SA berasaskan RL'], d: ['Reports of beyond-classical quantum simulation and a scaling advantage for approximate optimisation; RL-based SA outperforms Neural SA on benchmarks.', 'Laporan simulasi kuantum melangkaui klasik dan kelebihan penskalaan bagi pengoptimuman anggaran; SA berasaskan RL mengatasi Neural SA pada penanda aras.'], r: ['king25', 'munoz25', 'qiu25'] },
+    { y: 2026, k: 1, s: ['SA + LLM code', 'SA + kod LLM'], t: ['SA steers LLM code', 'SA mengemudi kod LLM'], d: ['A preprint uses an annealing loop to steer LLM-generated hardware code towards valid, efficient designs.', 'Sebuah pracetak menggunakan gelung penyepuhlindapan untuk mengemudi kod perkakasan yang dijana LLM ke arah reka bentuk sah dan cekap.'], r: ['hyperheurist26'] }
+  ],
+  GD: [
+    { y: 1990, k: 1, s: ['Threshold Accepting', 'Penerimaan Ambang'], t: ['Threshold Accepting', 'Penerimaan Ambang'], d: ['Dueck and Scheuer replace SA\'s coin flip with a deterministic threshold, reporting results "appearing superior to simulated annealing".', 'Dueck dan Scheuer menggantikan lambungan syiling SA dengan ambang berketentuan, melaporkan keputusan yang "kelihatan lebih baik daripada penyepuhlindapan simulasi".'], r: ['dueck90'] },
+    { y: 1993, k: 1, s: ['Great Deluge', 'Banjir Besar'], t: ['The Great Deluge is born', 'Banjir Besar dilahirkan'], d: ['Gunter Dueck publishes the Great Deluge and Record-to-Record Travel: a rising water level and a walker who keeps their feet dry. One parameter, no randomness in the decision.', 'Gunter Dueck menerbitkan Banjir Besar dan Perjalanan Rekod-ke-Rekod: paras air yang naik dan pejalan yang mengekalkan kaki kering. Satu parameter, tiada unsur rawak dalam keputusan.'], r: ['dueck93'] },
+    { y: 2004, t: ['A novel about a flood', 'Novel tentang banjir'], d: ['Dueck, a mathematician who became a senior manager at IBM Germany, tells the algorithm\'s story in a mathematics novel, Das Sintflutprinzip ("The Deluge Principle").', 'Dueck, ahli matematik yang menjadi pengurus kanan di IBM Jerman, menceritakan kisah algoritma itu dalam novel matematik, Das Sintflutprinzip ("Prinsip Banjir").'], r: ['sintflut'] },
+    { y: 2004, k: 1, s: ['Time-predefined GD', 'GD masa pratakrif'], t: ['Time-predefined search', 'Carian masa pratakrif'], d: ['Burke, Bykov, Newall and Petrovic turn GD into a tool for exam timetabling: the user sets the run time and the level plans its own descent.', 'Burke, Bykov, Newall dan Petrovic menjadikan GD alat untuk penjadualan peperiksaan: pengguna menetapkan masa larian dan paras merancang penurunannya sendiri.'], r: ['burke04'] },
+    { y: 2007, t: ['Reheating the level', 'Memanaskan semula paras'], d: ['McMullan\'s Extended GD lets the level rise again when the search stalls. In the 2007 International Timetabling Competition, Müller\'s winning solver used great deluge in its local search.', 'GD Lanjutan McMullan membenarkan paras naik semula apabila carian terbantut. Dalam Pertandingan Penjadualan Antarabangsa 2007, penyelesai pemenang Müller menggunakan banjir besar dalam carian setempatnya.'], r: ['mcmullan07', 'muller09', 'mccollum10'] },
+    { y: 2008, t: ['Curved decay and late acceptance', 'Susutan melengkung dan penerimaan lewat'], d: ['Landa-Silva and Obit introduce non-linear decay; Burke and Bykov first present Late Acceptance Hill Climbing (journal version 2017).', 'Landa-Silva dan Obit memperkenalkan susutan tak linear; Burke dan Bykov pertama kali membentangkan Pendakian Bukit Penerimaan Lewat (versi jurnal 2017).'], r: ['landa08', 'burke17'] },
+    { y: 2009, k: 1, s: ['UKM research', 'Penyelidikan UKM'], t: ['Research at UKM', 'Penyelidikan di UKM'], d: ['FTSM researchers combine GD with a Kempe-chain neighbourhood (2009, presented in Kajang) and integrate GD into a hybrid for examination timetabling (Omega, 2011).', 'Penyelidik FTSM menggabungkan GD dengan kejiranan rantai Kempe (2009, dibentangkan di Kajang) dan mengintegrasikan GD ke dalam hibrid untuk penjadualan peperiksaan (Omega, 2011).'], r: ['shaker09', 'turabieh11'] },
+    { y: 2024, t: ['GD inside hyper-heuristics', 'GD dalam hiper-heuristik'], d: ['An adaptive-learning modified GD hyper-heuristic beats standard GD and hill climbing on the ITC 2021 sports-timetabling benchmark.', 'Hiper-heuristik GD terubah suai pembelajaran adaptif mengatasi GD standard dan pendakian bukit pada penanda aras penjadualan sukan ITC 2021.'], r: ['hutama24'] },
+    { y: 2026, k: 1, s: ['GD + exact solvers', 'GD + penyelesai tepat'], t: ['GD meets exact solvers', 'GD bertemu penyelesai tepat'], d: ['A GD-based metaheuristic combined with integer nonlinear programming solves large dynamic machine-layout instances that exact solvers alone could not.', 'Metaheuristik berasaskan GD digabungkan dengan pengaturcaraan integer tak linear menyelesaikan kejadian susun atur mesin dinamik besar yang tidak dapat diselesaikan oleh penyelesai tepat sahaja.'], r: ['baykasoglu26'] }
+  ]
+};
+const R = window.HIST_REFS || {};
+const lang = () => document.documentElement.dataset.lang === 'ms' ? 1 : 0;
+const esc = s => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+function list(host) {
+  const alg = host.dataset.hist, li = lang();
+  host.innerHTML = `<ol class="htl ${alg === 'SA' ? 'e' : 't'}">` + H[alg].map(e => `<li${e.k ? ' class="key"' : ''}><span class="hy">${e.y}</span><div><b>${esc(e.t[li])}</b><p>${esc(e.d[li])}</p><p class="hr">${(e.r || []).filter(k => R[k]).map(k => `<a class="cite" href="${R[k][1]}" target="_blank" rel="noopener">${esc(R[k][0])}</a>`).join(' ')}</p></div></li>`).join('') + '</ol>';
+}
+function slide(host) {
+  const alg = host.dataset.histslide, li = lang(), ev = H[alg].filter(e => e.k);
+  host.innerHTML = `<div class="hs ${alg === 'SA' ? 'e' : 't'}">` + ev.map(e => `<div class="hs-i frag"><span class="hs-y">${e.y}</span><span class="hs-d"></span><span class="hs-t">${esc(e.t[li])}</span></div>`).join('') + '</div>';
+}
+function axis(host) {
+  const li = lang(), y0 = 1948, y1 = 2030, W = 1640, x = y => 70 + (y - y0) / (y1 - y0) * (W - 140), noFrag = !host.closest('.slide');
+  let s = `<svg viewBox="0 0 ${W} 600" role="img" aria-label="${li ? 'Garis masa SA dan GD' : 'SA and GD timelines'}">`;
+  s += `<line x1="60" x2="${W - 40}" y1="300" y2="300" class="hax"/>`;
+  for (let y = 1950; y <= 2020; y += 10) s += `<line x1="${x(y)}" x2="${x(y)}" y1="292" y2="308" class="hax"/><text x="${x(y)}" y="338" text-anchor="middle" class="htk">${y}</text>`;
+  const place = (alg, up) => { const ev = H[alg].filter(e => e.k), ends = [-1e9, -1e9, -1e9];
+    return ev.map(e => { const X = x(e.y), lab = esc((e.s || e.t)[li]), wlab = Math.max(110, lab.length * 12.5);
+      const anchor = X > W - 230 ? 'end' : X < 200 ? 'start' : 'middle', left = anchor === 'end' ? X - wlab : anchor === 'start' ? X : X - wlab / 2;
+      let lvl = ends.findIndex(r => r < left - 20); if (lvl < 0) lvl = 2; ends[lvl] = left + wlab;
+      const Y = up ? 240 - lvl * 78 : 400 + lvl * 78, c = alg === 'SA' ? 'e' : 't';
+      return `<g class="${noFrag ? '' : 'frag'}"><line x1="${X}" x2="${X}" y1="300" y2="${up ? Y + 12 : Y - 34}" class="hst ${c}"/><circle cx="${X}" cy="300" r="10" class="hdot ${c}"/><text x="${X}" y="${up ? Y - 20 : Y}" text-anchor="${anchor}" class="hyr ${c}">${e.y}</text><text x="${X}" y="${up ? Y + 6 : Y + 26}" text-anchor="${anchor}" class="hlb">${lab}</text></g>`; }).join(''); };
+  s += `<text x="20" y="40" class="hlg e">SA</text><text x="20" y="590" class="hlg t">GD</text>` + place('SA', true) + place('GD', false) + '</svg>';
+  host.innerHTML = s;
+}
+function renderAll() { document.querySelectorAll('[data-hist]').forEach(list); document.querySelectorAll('[data-histslide]').forEach(slide); document.querySelectorAll('[data-histaxis]').forEach(axis); }
+window.HISTORY = { data: H, renderAll };
+renderAll();
+new MutationObserver(renderAll).observe(document.documentElement, { attributes: true, attributeFilter: ['data-lang'] });
+})();
+
+</script>
+<script>
+(() => {
+  const root = document.documentElement, $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const get = (k, d) => { try { const v = localStorage.getItem('ad6544:' + k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } };
+  const set = (k, v) => { try { localStorage.setItem('ad6544:' + k, JSON.stringify(v)); } catch (e) { /* unavailable */ } };
+  const setLang = l => { root.dataset.lang = l; root.lang = l; set('lang', l); $$('[data-setlang]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.setlang === l))); };
+  const setTheme = t => { if (t === 'system') delete root.dataset.theme; else root.dataset.theme = t; set('theme', t); $$('[data-settheme]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.settheme === t))); };
+  $$('[data-setlang]').forEach(b => b.addEventListener('click', () => setLang(b.dataset.setlang)));
+  $$('[data-settheme]').forEach(b => b.addEventListener('click', () => setTheme(b.dataset.settheme)));
+  setLang(get('lang', 'en')); setTheme(get('theme', 'system'));
+  $$('.tabset').forEach(ts => { const bs = $$(':scope > .tabs button', ts), ps = $$(':scope > .tabpanel', ts); const pick = k => { bs.forEach((b, j) => b.setAttribute('aria-selected', String(j === k))); ps.forEach((p, j) => { p.hidden = j !== k; }); }; bs.forEach((b, k) => { b.setAttribute('role', 'tab'); b.addEventListener('click', () => pick(k)); }); pick(0); });
+  const ck = get('hubcheck', {}); $$('.hub-check input').forEach(i => { i.checked = !!ck[i.id]; i.addEventListener('change', () => { ck[i.id] = i.checked; set('hubcheck', ck); }); });
+  /* hero animation: particles cool while the water rises */
+  const cv = document.getElementById('hubCv'); if (!cv) return;
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches; let t = 0;
+  const g = (x, m, s) => Math.exp(-(((x - m) / s) ** 2)), f = x => 0.5 * g(x, .2, .08) + 0.62 * g(x, .45, .07) + 1.0 * g(x, .78, .07) + .05;
+  const tok = n => getComputedStyle(root).getPropertyValue(n).trim();
+  function frame() {
+    const w = cv.parentElement.clientWidth ? cv.clientWidth || 400 : 400, h = 220, dpr = Math.min(devicePixelRatio || 1, 2);
+    cv.width = w * dpr; cv.height = h * dpr; cv.style.height = h + 'px'; const c = cv.getContext('2d'); c.setTransform(dpr, 0, 0, dpr, 0, 0);
+    c.fillStyle = tok('--card'); c.fillRect(0, 0, w, h);
+    const lvl = 0.08 + 0.55 * (0.5 - 0.5 * Math.cos(t / 160)), sy = y => h - 14 - y / 1.1 * (h - 30), temp = 0.5 + 0.5 * Math.cos(t / 160);
+    c.fillStyle = tok('--tide'); c.globalAlpha = .18; c.fillRect(0, sy(lvl), w, h); c.globalAlpha = 1;
+    c.strokeStyle = tok('--tide'); c.setLineDash([6, 4]); c.beginPath(); c.moveTo(0, sy(lvl)); c.lineTo(w, sy(lvl)); c.stroke(); c.setLineDash([]);
+    c.strokeStyle = tok('--fg'); c.lineWidth = 2.2; c.beginPath(); for (let px = 0; px <= w; px += 2) { const Y = sy(f(px / w)); px ? c.lineTo(px, Y) : c.moveTo(px, Y); } c.stroke();
+    for (let k = 0; k < 18; k++) { const x = Math.sin(k * 12.9898 + t * 0.002 * (1 + k % 5)) * 0.5 + 0.5; const j = temp * 18 * Math.sin(t / 9 + k); c.fillStyle = tok('--ember'); c.globalAlpha = .25 + .6 * temp; c.beginPath(); c.arc(x * w, sy(f(x)) - 6 - Math.abs(j), 3, 0, 7); c.fill(); }
+    c.globalAlpha = 1; t++; if (!reduce) requestAnimationFrame(frame);
+  }
+  frame();
+})();
+
+</script>
+
+</body>
+</html>
