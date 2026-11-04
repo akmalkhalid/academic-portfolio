@@ -15,4 +15,8 @@ labs:
     href: "/courses/prolog-intro/"
     emoji: "🦉"
     blurb: "Facts, rules and queries on a Malaysian family knowledge base — then unification, recursion and lists, with the demo .pl ready to consult."
+  - title: "Lab 2 · PROLOG//LAB Guided Exercises"
+    href: "/courses/prolog-lab/"
+    emoji: "🧩"
+    blurb: "Five hands-on modules in the browser — unification, resolution, conjunction and disjunction, cut and lists, then a small expert system."
 ---
