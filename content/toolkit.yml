@@ -17,7 +17,8 @@
 #   Elicit (Rewardful), Scite (Rewardful / ShareASale), Consensus (PartnerStack),
 #   SciSpace (influencer programme), Lovable (Impact).
 #
-# Within each section, list free and open options first.
+# Within each section, list free and open options first, except where a
+# tool is deliberately pinned to the top (SciSpace in "search", Nov 2026).
 #
 # price: one of  Free | Free tier | Open source | Paid | Institutional
 # usedIn: keys from `sessions` below.
@@ -67,6 +68,12 @@ sections:
     title: "Search and read the literature"
     lede: "Start with the databases your library pays for, then use AI search to widen and question what you found."
     tools:
+      - name: "SciSpace"
+        url: "https://scispace.com"
+        partnerLink: "https://scispace.com/?via=mohd-nor-akmal"
+        price: "Free tier"
+        why: "Search, read with an AI copilot that explains methods and terms, and extract findings across papers into a table, all in one place."
+        usedIn: [litrev, airp, bkla]
       - name: "Google Scholar"
         url: "https://scholar.google.com"
         price: "Free"
@@ -105,12 +112,6 @@ sections:
         price: "Paid"
         why: "Shows whether later papers support or contradict a claim you plan to cite."
         usedIn: [litrev, fep, airp]
-      - name: "SciSpace"
-        url: "https://scispace.com"
-        partnerLink: "https://scispace.com/?via=mohd-nor-akmal"
-        price: "Free tier"
-        why: "Reads a paper alongside you and explains methods and terms in plain language."
-        usedIn: [airp, bkla]
       - name: "Perplexity"
         url: "https://www.perplexity.ai"
         price: "Free tier"

@@ -49,7 +49,7 @@ export default function ToolkitPage() {
             <strong style={s('color:#1c1917;font-weight:600')}>How this list is made.</strong>{' '}
             Every tool here is one I demonstrate or recommend in a session; nothing is listed because it pays.
             {anyPartner
-              ? ' Links tagged “partner link” are affiliate links: if you later buy a paid plan through them, I may earn a commission at no extra cost to you. Free options are always listed first.'
+              ? ' Links tagged “partner link” are affiliate links: if you later buy a paid plan through them, I may earn a commission at no extra cost to you. Every section also lists free options.'
               : ' None of the links on this page are paid or affiliate links.'}
           </p>
         </div>
