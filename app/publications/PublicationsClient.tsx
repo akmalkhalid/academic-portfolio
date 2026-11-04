@@ -90,7 +90,7 @@ export default function PublicationsClient({
       <PageBanner
         eyebrow={`/ publications · ${minYearBound} — ${maxYearBound}`}
         title="A body of work, mapped."
-        lede={`${pubs.length} peer-reviewed papers in a 3D space of six research fields. Orbit and zoom through the constellation, follow the citation bridges between papers, or scan the full chronological list.`}
+        lede={`${pubs.length} peer-reviewed papers in a 3D space of six research fields. Orbit and zoom through the constellation, follow the citation streams between papers, or scan the full chronological list.`}
       />
 
       {/* QUARTILE STAT STRIP */}
@@ -109,7 +109,7 @@ export default function PublicationsClient({
           <div style={s('display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:22px')}>
             <div>
               <p style={s("font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#6f6a82;margin:0 0 9px")}>/ the body of work · alive</p>
-              <h2 style={s(`font-family:${stack};font-weight:600;font-size:clamp(24px,3vw,34px);letter-spacing:-.02em;margin:0;color:#ECEAF3`)}>Every paper in its field, every citation a bridge.</h2>
+              <h2 style={s(`font-family:${stack};font-weight:600;font-size:clamp(24px,3vw,34px);letter-spacing:-.02em;margin:0;color:#ECEAF3`)}>Every paper in its field, every citation a living link.</h2>
             </div>
             <div style={s('display:flex;gap:6px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:9px;padding:4px;flex-shrink:0')}>
               <button type="button" onClick={() => setMode('graph')} style={s(mode === 'graph' ? tabOn : tabOff)}>Constellation</button>
@@ -169,7 +169,7 @@ export default function PublicationsClient({
               })}
             </div>
           </div>
-          <p style={s("font-family:'JetBrains Mono',monospace;font-size:11px;color:#56516a;margin:14px 0 0;letter-spacing:.04em")}>{linkCounts.cite} citation bridges (one paper citing another{citeUpdated ? `, OpenAlex · ${citeUpdated}` : ', refreshed at each deploy'}) · {linkCounts.coauthor} shared co-author lines · {linkCounts.similar} dotted similar-topic threads · ringed spheres span two fields · size ≈ quartile</p>
+          <p style={s("font-family:'JetBrains Mono',monospace;font-size:11px;color:#56516a;margin:14px 0 0;letter-spacing:.04em")}>{linkCounts.cite} citation streams (particles flow from citing to cited paper{citeUpdated ? `, OpenAlex · ${citeUpdated}` : ', refreshed at each deploy'}) · {linkCounts.coauthor} shared co-author lines · {linkCounts.similar} dotted similar-topic threads · ringed spheres span two fields · size ≈ quartile</p>
         </div>
       </section>
 

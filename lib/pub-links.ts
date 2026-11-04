@@ -2,7 +2,8 @@
 // constellation on /publications. Three kinds, strongest first:
 //
 //   cite      one paper cites another (OpenAlex, content/citations.auto.json)
-//             → drawn as a solid bridge; weight = citations in either direction
+//             → drawn as a particle stream (a = citing, b = cited); weight = citations
+//             in either direction
 //   coauthor  the papers share a co-author other than me (chained by year)
 //   similar   their titles + abstracts are close in TF-IDF space (top-2 each)
 //

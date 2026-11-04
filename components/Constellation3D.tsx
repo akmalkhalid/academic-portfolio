@@ -6,8 +6,10 @@
 // vertices of an octahedron (related fields adjacent, unrelated ones opposite),
 // each wrapped in a particle cloud; a paper is pulled toward the fields it is
 // tagged with, so cross-field papers float between clouds. Relationships:
-//   citation between my papers → a solid concrete bridge (wider = more citations)
-//   shared co-author           → a thin line
+//   citation between my papers → a curved stream of particles flowing from the
+//                                citing paper to the cited one (more citations =
+//                                more, larger, brighter particles)
+//   shared co-author           → a thin curved line
 //   similar topic (TF-IDF)     → a faint dotted thread
 //
 // Plain canvas 2D with a hand-rolled perspective camera: no 3D library, so the
@@ -132,39 +134,60 @@ export default function Constellation3D({
     }
 
     // ----- drawing helpers -----
-    function bridge(a: ReturnType<typeof proj>, b: ReturnType<typeof proj>, w: number, warm: boolean, alpha: number) {
-      const dx = b.x - a.x, dy = b.y - a.y, len = Math.hypot(dx, dy) || 1
-      const nx = -dy / len, ny = dx / len
-      const ww = 6 + 3 * (Math.min(w, 4) - 1)
-      const ha = (ww * a.k) / 2, hb = (ww * b.k) / 2
-      const ta = ha * 0.6, tb = hb * 0.6
-      ctx.globalAlpha = alpha
-      // piers at 1/3 and 2/3: short columns dropping into the void
-      for (const t of [0.33, 0.67]) {
-        const px = a.x + dx * t, py = a.y + dy * t, ph = (ha + (hb - ha) * t)
-        const g = ctx.createLinearGradient(px, py, px, py + ph * 7)
-        g.addColorStop(0, warm ? 'rgba(214,190,160,.55)' : 'rgba(170,165,156,.45)'); g.addColorStop(1, 'rgba(170,165,156,0)')
-        ctx.fillStyle = g; ctx.fillRect(px - ph * 0.45, py, ph * 0.9, ph * 7)
+    // Each link bows gently out of the straight line (a fixed, per-link 3D
+    // control point) and sways slowly over time, so connections look grown
+    // rather than drawn. Citations carry particles flowing citing → cited.
+    const curve = links.map((l, i) => {
+      const r = rng(1000 + i)
+      const A = P[l.a], B = P[l.b]
+      const d = { x: B.x - A.x, y: B.y - A.y, z: B.z - A.z }
+      const len = Math.hypot(d.x, d.y, d.z) || 1
+      // any vector not parallel to d, crossed with d, gives a perpendicular
+      const u = Math.abs(d.y) < len * 0.9 ? { x: 0, y: 1, z: 0 } : { x: 1, y: 0, z: 0 }
+      let n = { x: d.y * u.z - d.z * u.y, y: d.z * u.x - d.x * u.z, z: d.x * u.y - d.y * u.x }
+      const nl = Math.hypot(n.x, n.y, n.z) || 1
+      const ang = r() * Math.PI * 2
+      // rotate the perpendicular around d by a random angle (Rodrigues, simplified)
+      const m = { x: d.y * n.z - d.z * n.y, y: d.z * n.x - d.x * n.z, z: d.x * n.y - d.y * n.x }
+      const ml = Math.hypot(m.x, m.y, m.z) || 1
+      n = { x: (n.x / nl) * Math.cos(ang) + (m.x / ml) * Math.sin(ang), y: (n.y / nl) * Math.cos(ang) + (m.y / ml) * Math.sin(ang), z: (n.z / nl) * Math.cos(ang) + (m.z / ml) * Math.sin(ang) }
+      return { n, bow: len * (0.12 + r() * 0.12), phase: r(), sway: r() * Math.PI * 2 }
+    })
+    let clock = 0
+    const ctrl = (li: number) => {
+      const l = links[li], c = curve[li], A = P[l.a], B = P[l.b]
+      const bow = c.bow * (1 + 0.18 * Math.sin(clock * 0.012 + c.sway))
+      return proj({ x: (A.x + B.x) / 2 + c.n.x * bow, y: (A.y + B.y) / 2 + c.n.y * bow, z: (A.z + B.z) / 2 + c.n.z * bow })
+    }
+    const qb = (a: number, c: number, b: number, s: number) => (1 - s) * (1 - s) * a + 2 * (1 - s) * s * c + s * s * b
+
+    function stream(li: number, a: ReturnType<typeof proj>, b: ReturnType<typeof proj>, w: number, hot: boolean, alpha: number) {
+      const c = ctrl(li)
+      if (!c.k) return
+      const ww = Math.min(w, 5)
+      const k = (a.k + b.k) / 2
+      ctx.globalCompositeOperation = 'lighter'
+      // faint filament carrying the particles
+      ctx.globalAlpha = alpha * (0.10 + 0.05 * ww) * (hot ? 2 : 1)
+      ctx.strokeStyle = hot ? '#ffd9a8' : '#f2e6d4'
+      ctx.lineWidth = Math.max(0.6, (0.8 + 0.35 * ww) * k)
+      ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.quadraticCurveTo(c.x, c.y, b.x, b.y); ctx.stroke()
+      // particles: count, size and brightness grow with citation weight
+      const N = Math.round(7 + 6 * ww)
+      const speed = (reduce ? 0 : 0.0026) * (hot ? 1.8 : 1)
+      const base = curve[li].phase
+      for (let i = 0; i < N; i++) {
+        const s = (base + i / N + clock * speed) % 1
+        const x = qb(a.x, c.x, b.x, s), y = qb(a.y, c.y, b.y, s)
+        // swell in the middle of the journey, fade at both ends
+        const env = Math.sin(Math.PI * s)
+        const rad = Math.max(0.5, (0.9 + 0.45 * ww) * k * (0.55 + 0.6 * env))
+        ctx.globalAlpha = alpha * (0.35 + 0.12 * ww) * (0.35 + 0.65 * env) * (hot ? 1.4 : 1)
+        const g = ctx.createRadialGradient(x, y, 0, x, y, rad * 2.6)
+        g.addColorStop(0, hot ? '#fff3e0' : '#fff8ee'); g.addColorStop(0.35, hot ? 'rgba(255,190,120,.7)' : 'rgba(240,226,206,.55)'); g.addColorStop(1, 'rgba(240,226,206,0)')
+        ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, rad * 2.6, 0, Math.PI * 2); ctx.fill()
       }
-      // side face
-      ctx.beginPath()
-      ctx.moveTo(a.x - nx * ha, a.y - ny * ha); ctx.lineTo(b.x - nx * hb, b.y - ny * hb)
-      ctx.lineTo(b.x - nx * hb, b.y - ny * hb + tb); ctx.lineTo(a.x - nx * ha, a.y - ny * ha + ta); ctx.closePath()
-      ctx.fillStyle = warm ? '#7d6a55' : '#5d5952'; ctx.fill()
-      // deck
-      ctx.beginPath()
-      ctx.moveTo(a.x + nx * ha, a.y + ny * ha); ctx.lineTo(b.x + nx * hb, b.y + ny * hb)
-      ctx.lineTo(b.x - nx * hb, b.y - ny * hb); ctx.lineTo(a.x - nx * ha, a.y - ny * ha); ctx.closePath()
-      const g = ctx.createLinearGradient(a.x + nx * ha, a.y + ny * ha, a.x - nx * ha, a.y - ny * ha)
-      g.addColorStop(0, warm ? '#f2e2cc' : '#dcd8cf'); g.addColorStop(1, warm ? '#b9987a' : '#9c978d')
-      ctx.fillStyle = g; ctx.fill()
-      ctx.strokeStyle = 'rgba(20,18,24,.45)'; ctx.lineWidth = 0.7; ctx.stroke()
-      // lane markings
-      if (ha > 2.2) {
-        ctx.setLineDash([Math.max(2, ha), Math.max(2, ha)]); ctx.strokeStyle = 'rgba(60,56,50,.55)'; ctx.lineWidth = Math.max(0.6, ha * 0.18)
-        ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke(); ctx.setLineDash([])
-      }
-      ctx.globalAlpha = 1
+      ctx.globalCompositeOperation = 'source-over'; ctx.globalAlpha = 1
     }
 
     function sphere(p: ReturnType<typeof proj>, n: CNode, alpha: number, ring: boolean) {
@@ -184,7 +207,7 @@ export default function Constellation3D({
       if (!visible || !live.current.active || !W) return
       const sel = live.current.selected, M = live.current.matched
       // camera easing
-      cam.idle++
+      cam.idle++; clock++
       if (!reduce && sel == null && cam.idle > 240) cam.yaw += 0.0016
       const goal = sel != null ? P[sel] : { x: 0, y: 0, z: 0 }
       cam.tx += (goal.x - cam.tx) * 0.08; cam.ty += (goal.y - cam.ty) * 0.08; cam.tz += (goal.z - cam.tz) * 0.08
@@ -206,15 +229,15 @@ export default function Constellation3D({
       // everything else depth-sorted, far → near
       const items: { d: number; draw: () => void }[] = []
       const PP = P.map(proj)
-      for (const l of links) {
+      links.forEach((l, li) => {
         const a = PP[l.a], b = PP[l.b]
-        if (!a.k || !b.k) continue
+        if (!a.k || !b.k) return
         const on = M[l.a] && M[l.b]
         const touch = sel != null && (l.a === sel || l.b === sel)
         const dim = sel != null && !touch
         const d = (a.depth + b.depth) / 2
         if (l.kind === 'cite') {
-          items.push({ d, draw: () => bridge(a, b, l.w, touch, on ? (dim ? 0.25 : 1) : 0.12) })
+          items.push({ d, draw: () => stream(li, a, b, l.w, touch, on ? (dim ? 0.22 : 1) : 0.08) })
         } else {
           items.push({ d, draw: () => {
             const base = l.kind === 'coauthor' ? 0.22 : 0.14
@@ -222,11 +245,12 @@ export default function Constellation3D({
             ctx.strokeStyle = touch ? '#ECEAF3' : '#b9b4c8'
             ctx.lineWidth = l.kind === 'coauthor' ? Math.max(0.6, 1.1 * ((a.k + b.k) / 2)) : 0.8
             if (l.kind === 'similar') ctx.setLineDash([2, 4])
-            ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke()
+            const c = ctrl(li)
+            ctx.beginPath(); ctx.moveTo(a.x, a.y); if (c.k) ctx.quadraticCurveTo(c.x, c.y, b.x, b.y); else ctx.lineTo(b.x, b.y); ctx.stroke()
             ctx.setLineDash([]); ctx.globalAlpha = 1
           } })
         }
-      }
+      })
       nodes.forEach((n, i) => {
         const p = PP[i]; if (!p.k) return
         const dim = sel != null && sel !== i && !links.some((l) => (l.a === sel && l.b === i) || (l.b === sel && l.a === i))
@@ -327,7 +351,7 @@ export default function Constellation3D({
 
   return (
     <div ref={wrapRef} style={{ position: 'relative' }}>
-      <canvas ref={cvRef} aria-label="3D map of publications grouped by research field; citation links shown as bridges" role="img"
+      <canvas ref={cvRef} aria-label="3D map of publications grouped by research field; citations shown as particle streams" role="img"
         style={{ display: 'block', width: '100%', height: `min(${height}px, 72vh)`, cursor: 'grab', touchAction: 'none' }} />
       <div style={{ position: 'absolute', top: 12, right: 12, display: 'flex', flexDirection: 'column', gap: 6 }}>
         <button type="button" style={btn} onClick={() => zoom(0.75)} aria-label="Zoom in">+</button>

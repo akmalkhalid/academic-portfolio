@@ -5,7 +5,7 @@
 //  content/citations.auto.json = { source, updated, edges: [{ from, to }] }
 //  (slugs without the md_files_ prefix; `from` cites `to`).
 //
-//  The 3D publication constellation draws each edge as a solid bridge.
+//  The 3D publication constellation draws each edge as a stream of particles.
 //
 //  Runs automatically before every `npm run build` (package.json "prebuild"),
 //  so the GitHub Pages deploy refreshes it. Degrades gracefully: offline,
