@@ -12,6 +12,8 @@ const PB: Record<string, { bg: string; fg: string }> = {
   blue: { bg: '#e6f1fb', fg: '#0c447c' }, coral: { bg: '#faece7', fg: '#712b13' }, green: { bg: '#eaf3de', fg: '#27500a' },
 }
 const chip = (label: string, c: string) => ({ label, style: `font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;padding:3px 9px;border-radius:6px;background:${PB[c].bg};color:${PB[c].fg}` })
+// Each pillar's role in the generate → evaluate → search loop (/generative-optimization).
+const STAGE: Record<string, string> = { 'generative-ai': 'GENERATE', games: 'EVALUATE', evolutionary: 'SEARCH' }
 const motif = [{ delay: '0s' }, { delay: '.3s' }, { delay: '.6s' }, { delay: '.9s' }]
 
 type Stat = { num: number; prefix: string; display: string; label: string; hint: string; dot: string }
@@ -98,12 +100,12 @@ export default function ResearchClient({
     <div ref={wrapRef} data-screen-label="Research" style={s('min-height:100vh;overflow-x:hidden')}>
       <PageBanner
         eyebrow="/ research · projects · funding"
-        title="Three interconnected pillars at the convergence of AI, optimization and play."
-        lede={<>Each pillar carries its own signature colour and a looping preview of its demo — click any preview for the full interactive version — followed by the <a href="#projects" className="banner-link">funded projects</a> where the methods meet real-world delivery. The research doesn&apos;t just describe; it runs.</>}
+        title="Three pillars, one generative-optimization loop."
+        lede={<>Generative AI <em>generates</em>, engagement models <em>evaluate</em>, metaheuristics <em>search</em>. Each pillar below is one stage of that loop (<a href="/generative-optimization" className="banner-link">read the programme</a>), followed by the <a href="#projects" className="banner-link">funded projects</a> where the methods meet real-world delivery.</>}
       >
-        <a href="#evolutionary" className="banner-jump">01 · Optimization</a>
-        <a href="#games" className="banner-jump">02 · Games &amp; Simulation</a>
-        <a href="#generative-ai" className="banner-jump">03 · Generative AI</a>
+        <a href="#evolutionary" className="banner-jump">Search · Optimization</a>
+        <a href="#games" className="banner-jump">Evaluate · Games</a>
+        <a href="#generative-ai" className="banner-jump">Generate · Generative AI</a>
         <a href="#projects" className="banner-jump">↓ Funded projects</a>
       </PageBanner>
 
@@ -113,7 +115,7 @@ export default function ResearchClient({
           {pillars.slice().sort((a, b) => a.n.localeCompare(b.n)).map((p) => (
             <div key={p.id} id={p.id} className="pillar-card" style={s(`border-top:3px solid ${p.accent};scroll-margin-top:90px`)}>
               <div style={s('display:flex;align-items:center;gap:10px;margin-bottom:14px')}>
-                <span style={s(`font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:${p.accent};letter-spacing:.08em`)}>PILLAR {p.n}</span>
+                <span style={s(`font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;color:${p.accent};letter-spacing:.08em`)}>PILLAR {p.n} · {STAGE[p.id]}</span>
                 <span style={s(`flex:1;height:1px;background:linear-gradient(90deg,${p.accent}55,transparent)`)} />
                 <div style={s('display:flex;gap:4px')}>
                   {motif.slice(0, 3).map((m, i) => (<span key={i} style={s(`width:6px;height:6px;border-radius:50%;background:${p.accent};animation:computePulse 2.4s ease-in-out infinite;animation-delay:${m.delay}`)} />))}
@@ -245,7 +247,7 @@ export default function ResearchClient({
       <section style={s('max-width:1120px;margin:30px auto 0;padding:30px 28px 70px')}>
         <div style={s('background:#16142e;border-radius:18px;padding:48px 44px')}>
           <h2 style={s(`font-family:${stack};font-weight:600;font-size:clamp(24px,3vw,34px);letter-spacing:-.02em;color:#fff;margin:0 0 12px`)}>Want to work on one of these?</h2>
-          <p style={s('font-size:16px;line-height:1.6;color:#bdb8d6;margin:0 0 24px;max-width:560px')}>Postgraduate supervision and research collaboration across all three pillars. Funded and scholarship-eligible positions open. Prospective students — start with the postgraduate guide.</p>
+          <p style={s('font-size:16px;line-height:1.6;color:#bdb8d6;margin:0 0 24px;max-width:560px')}>Postgraduate supervision and research collaboration at every stage of the loop. Funded and scholarship-eligible positions open. Prospective students — start with the postgraduate guide.</p>
           <div style={s('display:flex;flex-wrap:wrap;gap:12px;align-items:center')}>
             <a href="/contact" style={s('display:inline-block;font-size:14.5px;font-weight:500;text-decoration:none;color:#16142e;background:#fff;padding:13px 24px;border-radius:9px')}>Get in touch →</a>
             <a href="/postgraduate-guide" style={s('display:inline-block;font-size:14.5px;font-weight:500;text-decoration:none;color:#fff;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);padding:13px 24px;border-radius:9px')}>Postgraduate guide →</a>

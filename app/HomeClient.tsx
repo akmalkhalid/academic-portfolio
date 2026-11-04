@@ -290,23 +290,28 @@ export default function HomeClient({
         </div>
       </section>
 
-      {/* RESEARCH PILLARS */}
+      {/* RESEARCH PROGRAMME — the three pillars as one generate → evaluate → search loop */}
       <section id="research" style={s('max-width:1120px;margin:0 auto;padding:66px 28px 64px')}>
-        <p style={s("font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#a39a8f;margin:0 0 10px")}>/ research program</p>
-        <h2 style={s(`font-family:${stack};font-weight:600;font-size:clamp(28px,3.6vw,40px);letter-spacing:-.02em;margin:0 0 32px`)}>Three pillars, one connected agenda.</h2>
+        <p style={s("font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#a39a8f;margin:0 0 10px")}>/ research programme · generative optimization</p>
+        <h2 style={s(`font-family:${stack};font-weight:600;font-size:clamp(28px,3.6vw,40px);letter-spacing:-.02em;margin:0 0 12px`)}>One loop: generate, evaluate, search.</h2>
+        <p style={s('font-size:15.5px;line-height:1.7;color:#57514b;max-width:720px;margin:0 0 32px')}>
+          Generative AI proposes designs, models of human engagement judge them, and metaheuristics steer what gets
+          generated next. Each of my research lines is one stage of that loop.{' '}
+          <a href="/generative-optimization" style={s('color:#1c1917;font-weight:500;text-decoration:none;border-bottom:1px solid #8b7bf0')}>Read the programme →</a>
+        </p>
         <div className="pillar-grid">
           {[
-            { n: '01', accent: PCOL.evo, demoKey: 'swarm-landscape' as PillarKey, labBg: 'radial-gradient(120% 120% at 50% 0%,#142420 0%,#0c1614 72%)', title: 'Computational Intelligence & Optimization', blurb: 'Evolutionary and immune algorithms, swarm intelligence and metaheuristics — the search and optimization methods at the core of my work, applied to scheduling, assembly-line balancing and large-scale combinatorial problems.', tags: ['evo', 'opt'] as Code[] },
-            { n: '02', accent: PCOL.gam, demoKey: 'procedural-dungeon' as PillarKey, labBg: 'radial-gradient(120% 120% at 50% 0%,#241410 0%,#160c0a 72%)', title: 'Games Informatics & Engagement Modelling', blurb: 'Game refinement theory and the “motion in mind” model, agent-based simulation and procedural content — measuring and optimizing what makes play engaging.', tags: ['gam', 'sim'] as Code[] },
-            { n: '03', accent: PCOL.gen, demoKey: 'flow-field' as PillarKey, labBg: 'radial-gradient(120% 120% at 50% 0%,#1b1830 0%,#100e1a 72%)', title: 'Generative & Agentic AI', blurb: 'The emerging frontier — generative models, LLM foundation models and agentic content generation, extending the optimization-of-engagement programme into new domains.', tags: ['gen', 'exp'] as Code[] },
+            { n: '01', stage: 'GENERATE', accent: PCOL.gen, demoKey: 'flow-field' as PillarKey, labBg: 'radial-gradient(120% 120% at 50% 0%,#1b1830 0%,#100e1a 72%)', title: 'Generative & Agentic AI', blurb: 'Generative models, LLMs and agent teams that propose candidate artefacts: levels, quests, puzzles, layouts and even new search operators.', tags: ['gen', 'exp'] as Code[] },
+            { n: '02', stage: 'EVALUATE', accent: PCOL.gam, demoKey: 'procedural-dungeon' as PillarKey, labBg: 'radial-gradient(120% 120% at 50% 0%,#241410 0%,#160c0a 72%)', title: 'Games Informatics & Engagement Modelling', blurb: 'Game refinement theory and the “motion in mind” model turn engagement into a measurable objective, so designs are judged by how people experience them.', tags: ['gam', 'sim'] as Code[] },
+            { n: '03', stage: 'SEARCH', accent: PCOL.evo, demoKey: 'swarm-landscape' as PillarKey, labBg: 'radial-gradient(120% 120% at 50% 0%,#142420 0%,#0c1614 72%)', title: 'Computational Intelligence & Optimization', blurb: 'Evolutionary, immune and swarm algorithms and quality-diversity search, the engine behind my work on scheduling, assembly-line balancing and large-scale combinatorial problems.', tags: ['evo', 'opt'] as Code[] },
           ].map((p) => (
             <div key={p.n} className="pillar-card" style={s(`border-top:3px solid ${p.accent}`)}>
               <div style={s('display:flex;align-items:center;justify-content:space-between;margin-bottom:14px')}>
-                <span style={s(`font-family:'JetBrains Mono',monospace;font-size:12px;color:${p.accent};font-weight:600`)}>PILLAR {p.n}</span>
+                <span style={s(`font-family:'JetBrains Mono',monospace;font-size:12px;color:${p.accent};font-weight:600`)}>STAGE {p.n} · {p.stage}</span>
                 <span style={s(`width:9px;height:9px;border-radius:50%;background:${p.accent}`)} />
               </div>
               <DemoThumb demoKey={p.demoKey} accent={p.accent} height={126} bg={p.labBg} />
-              <a href="/research" style={s('display:block;text-decoration:none;color:#1c1917;margin-top:16px')}>
+              <a href="/generative-optimization#loop" style={s('display:block;text-decoration:none;color:#1c1917;margin-top:16px')}>
                 <h3 style={s(`font-family:${stack};font-weight:600;font-size:19px;line-height:1.18;letter-spacing:-.01em;margin:0 0 10px`)}>{p.title}</h3>
                 <p style={s('font-size:13.5px;line-height:1.6;color:#57514b;margin:0 0 16px')}>{p.blurb}</p>
               </a>
@@ -318,6 +323,21 @@ export default function HomeClient({
             </div>
           ))}
         </div>
+
+        {/* HORIZON — programme roadmap, now → next */}
+        <div className="home-horizon">
+          <a href="/generative-optimization#definition" style={s('display:block;text-decoration:none;color:#1c1917;background:#fff;border:1px solid #e7e3dd;border-radius:14px;padding:20px 22px')}>
+            <span style={s("font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:600;letter-spacing:.08em;color:#27500a;background:#eaf3de;padding:3px 8px;border-radius:5px")}>NOW</span>
+            <div style={s(`font-family:${stack};font-weight:600;font-size:18px;margin:10px 0 6px`)}>Generative Optimization</div>
+            <div style={s('font-size:13px;line-height:1.55;color:#57514b')}>Closing the loop for individual design problems, optimized against human engagement.</div>
+          </a>
+          <div className="gopt-arrow" aria-hidden="true">→</div>
+          <a href="/generative-optimization#horizon" style={s('display:block;text-decoration:none;background:#16142e;border-radius:14px;padding:20px 22px')}>
+            <span style={s("font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:600;letter-spacing:.08em;color:#c9c1ff;background:rgba(139,123,240,.18);padding:3px 8px;border-radius:5px")}>NEXT</span>
+            <div style={s(`font-family:${stack};font-weight:600;font-size:18px;margin:10px 0 6px;color:#fff`)}>Generative Optinformatics</div>
+            <div style={s('font-size:13px;line-height:1.55;color:#bdb8d6')}>A loop that learns from its own search history and transfers it to new design problems.</div>
+          </a>
+        </div>
       </section>
 
       {/* LIVE DEMOS (dark) */}
@@ -325,8 +345,8 @@ export default function HomeClient({
         <div style={s('max-width:1120px;margin:0 auto;padding:0 28px')}>
           <div style={s('margin-bottom:26px')}>
             <p style={s("font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#6f6a82;margin:0 0 10px")}>/ see the research run · live</p>
-            <h2 style={s(`font-family:${stack};font-weight:600;font-size:clamp(26px,3.4vw,38px);letter-spacing:-.02em;margin:0;color:#ECEAF3`)}>Three pillars, running live.</h2>
-            <p style={s('font-size:14.5px;line-height:1.6;color:#9b96aa;max-width:620px;margin:12px 0 0')}>Each pillar demonstrated, not described — a showreel of the simulations rebuilt from the published work, playing one at a time. Open any one for the full, interactive version.</p>
+            <h2 style={s(`font-family:${stack};font-weight:600;font-size:clamp(26px,3.4vw,38px);letter-spacing:-.02em;margin:0;color:#ECEAF3`)}>The loop, running live.</h2>
+            <p style={s('font-size:14.5px;line-height:1.6;color:#9b96aa;max-width:620px;margin:12px 0 0')}>Each stage demonstrated, not described: a showreel of simulations rebuilt from the published work, playing one at a time. Open any one for the full, interactive version.</p>
           </div>
           <ResearchShowreel />
         </div>
@@ -338,7 +358,7 @@ export default function HomeClient({
           <div style={s('margin-bottom:30px')}>
             <p style={s("font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#6f6a82;margin:0 0 10px")}>/ selected work</p>
             <h2 style={s(`font-family:${stack};font-weight:600;font-size:clamp(26px,3.4vw,38px);letter-spacing:-.02em;margin:0;color:#ECEAF3`)}>Selected articles.</h2>
-            <p style={s('font-size:14.5px;line-height:1.6;color:#9b96aa;max-width:600px;margin:12px 0 0')}>A curated slice of the record, grouped by research pillar. The full body of work — {stats.pubs} papers, filterable and mapped — lives on the publications page.</p>
+            <p style={s('font-size:14.5px;line-height:1.6;color:#9b96aa;max-width:600px;margin:12px 0 0')}>A curated slice of the record, grouped by stage of the loop. The full body of work — {stats.pubs} papers, filterable and mapped — lives on the publications page.</p>
           </div>
           {articles.map((group) => (
             <div key={group.title} style={s('margin-bottom:24px')}>

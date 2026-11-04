@@ -33,17 +33,18 @@ export default function Page() {
     }
   })
 
-  // Selected articles for the home page — featured pubs grouped by pillar (CV-style).
+  // Selected articles for the home page — featured pubs grouped by loop stage
+  // (generate → evaluate → search), matching the research section above.
   const gsel = [
-    { title: 'Computational Intelligence & Optimization', accent: PCOL.evo, codes: ['evo', 'opt'] },
-    { title: 'Games Informatics & Engagement Modelling', accent: PCOL.gam, codes: ['gam', 'sim'] },
-    { title: 'Generative & Agentic AI', accent: PCOL.gen, codes: ['gen', 'exp'] },
+    { title: 'Generate · Generative & Agentic AI', accent: PCOL.gen, codes: ['gen', 'exp'] },
+    { title: 'Evaluate · Games Informatics & Engagement Modelling', accent: PCOL.gam, codes: ['gam', 'sim'] },
+    { title: 'Search · Computational Intelligence & Optimization', accent: PCOL.evo, codes: ['evo', 'opt'] },
   ]
   const groupKey = (p: (typeof pubs)[number]) => {
     const c = codesFromTags(p.topicTags)[0]
+    if (c === 'gen' || c === 'exp') return 0
     if (c === 'gam' || c === 'sim') return 1
-    if (c === 'gen' || c === 'exp') return 2
-    return 0
+    return 2
   }
   const featuredPubs = pubs.filter((p) => p.featured)
   const selected = gsel.map((g, gi) => ({

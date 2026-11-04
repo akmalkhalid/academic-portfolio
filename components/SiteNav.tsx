@@ -24,6 +24,7 @@ const NAV = [
 const DARK_TOP = new Set([
   '', '/about', '/research', '/publications', '/playground',
   '/teaching', '/cv', '/contact', '/postgraduate-guide', '/toolkit',
+  '/generative-optimization',
 ])
 
 export default function SiteNav({ shortName }: { shortName: string }) {

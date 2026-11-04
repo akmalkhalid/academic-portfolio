@@ -579,3 +579,18 @@ body {
   .tk-count { grid-column: 2; margin-top: 0 }
 }
 @media (prefers-reduced-motion: reduce) { .tk-chevron, .tk-row, .tk-title { transition: none } }
+
+/* ---- /generative-optimization ---- */
+.gopt-loop { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 40px; align-items: center; }
+.gopt-row { display: grid; grid-template-columns: 1.1fr 1fr 1.3fr; gap: 22px; padding: 18px 22px; align-items: start; }
+.gopt-horizon { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 18px; align-items: stretch; }
+.gopt-arrow { display: flex; align-items: center; font-family: 'JetBrains Mono', monospace; font-size: 26px; color: #a39a8f; }
+@media (max-width: 860px) {
+  .gopt-loop { grid-template-columns: 1fr; gap: 20px; }
+  .gopt-row { grid-template-columns: 1fr; gap: 8px; }
+  .gopt-horizon { grid-template-columns: 1fr; }
+  .gopt-arrow { justify-content: center; transform: rotate(90deg); font-size: 22px; }
+}
+/* Home: loop strip between the three stage cards and the horizon teaser */
+.home-horizon { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 14px; align-items: stretch; margin-top: 26px; }
+@media (max-width: 760px) { .home-horizon { grid-template-columns: 1fr; } .home-horizon .gopt-arrow { justify-content: center; transform: rotate(90deg); } }

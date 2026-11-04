@@ -32,7 +32,8 @@ heroHeadline: "How can we design intelligent systems that adapt, optimize and cr
 # NOTE: the closing "since <year>." is appended at build time from the earliest
 # publication year in /content/publications, so it can never drift. Don't type a
 # year here.
-heroSubheadline: "Metaheuristics, games informatics and generative AI — one question, three ways of answering it,"
+# Previous: "Metaheuristics, games informatics and generative AI — one question, three ways of answering it,"
+heroSubheadline: "My answer is generative optimization: AI that generates, models of engagement that evaluate, and metaheuristics that search, built up"
 
 # Headline metrics shown on the home page (all optional). Publications, grants
 # and supervised-students counts are computed automatically from /content; these
