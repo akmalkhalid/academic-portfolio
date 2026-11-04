@@ -1,3 +1,7 @@
+// NOTE (Nov 2026): the terrain renderer (ProcLandscape) and swarm (HeroSim) were
+// replaced by components/LatentField.tsx. Only `landscape.low` / `landscape.high`
+// are still live (LatentField sets them; PageTransition paints with them). The
+// terrain code below is kept for reference.
 // ---------------------------------------------------------------------------
 // Shared model for the procedural landscape.
 //

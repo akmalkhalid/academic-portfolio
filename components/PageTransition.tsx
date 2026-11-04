@@ -15,9 +15,9 @@ import { landscape } from '@/lib/landscape'
 // are painted, and the last ones to flip glow, which gives the advancing front a
 // visible leading edge.
 //
-// The cells are painted in the LIVE colours of the procedural landscape
-// (lib/landscape), so a page change reads as the terrain itself crumbling into
-// the next page rather than as a generic overlay.
+// The cells are painted in the colours of the latent-space background
+// (LatentField writes them to lib/landscape), so a page change reads as the
+// background itself dissolving into the next page rather than a generic overlay.
 //
 // Cost: ~340ms cover + ~420ms reveal, and the reveal overlaps the incoming
 // page's first paint. prefers-reduced-motion skips the whole thing.

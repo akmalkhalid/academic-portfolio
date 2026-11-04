@@ -87,7 +87,7 @@ body {
 
 /* ===========================================================================
    DARK CINEMATIC BANNERS  (home hero + every sub-page header)
-   The ground the HeroSim canvas runs on. Everything here is scoped to
+   The ground the LatentField canvas runs on. Everything here is scoped to
    .dark-band / .hero-* / .sim-* so the cream body below is untouched.
    ======================================================================== */
 
@@ -98,8 +98,8 @@ body {
   color: #f4f2ff;
   overflow: hidden;
 }
-/* Legibility scrim over the live simulation: strong at the text edge,
-   clear on the far side so the swarm still reads. */
+/* Legibility scrim over the live latent space: strong at the text edge,
+   clear on the far side so the sparks still read. */
 .dark-band::before {
   content: '';
   position: absolute;
@@ -107,7 +107,7 @@ body {
   z-index: 1;
   pointer-events: none;
   background:
-    linear-gradient(100deg, rgba(7,6,15,.96) 0%, rgba(7,6,15,.90) 26%, rgba(7,6,15,.62) 52%, rgba(7,6,15,.34) 100%),
+    linear-gradient(100deg, rgba(7,6,15,.9) 0%, rgba(7,6,15,.78) 26%, rgba(7,6,15,.42) 52%, rgba(7,6,15,.12) 100%),
     radial-gradient(120% 78% at 46% 116%, rgba(7,6,15,.72) 0%, rgba(7,6,15,0) 62%);
 }
 /* Hairline of pillar colour closing the band — the handshake into the cream page */
@@ -125,39 +125,11 @@ body {
 @media (max-width: 860px) {
   .dark-band::before {
     background:
-      linear-gradient(180deg, rgba(7,6,15,.55) 0%, rgba(7,6,15,.86) 34%, rgba(7,6,15,.93) 100%);
+      linear-gradient(180deg, rgba(7,6,15,.35) 0%, rgba(7,6,15,.66) 34%, rgba(7,6,15,.78) 100%);
   }
 }
 
 /* ---- HUD readout on the canvas ---- */
-.sim-hud {
-  position: absolute;
-  right: 28px; top: 20px;
-  z-index: 2;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 10.5px;
-  letter-spacing: .09em;
-  color: rgba(214,208,240,.62);
-  pointer-events: none;
-  white-space: nowrap;
-}
-.sim-hud-sep { color: rgba(214,208,240,.28); }
-.sim-spark { display: block; opacity: .9; }
-.sim-phase {
-  color: #21b3a0;
-  border: 1px solid rgba(33,179,160,.34);
-  border-radius: 999px;
-  padding: 3px 9px;
-  animation: simPhase 2.4s ease-in-out infinite;
-}
-@keyframes simPhase { 0%,100% { opacity: .62 } 50% { opacity: 1 } }
-@media (max-width: 760px) { .sim-hud { right: auto; left: 20px; top: 14px; font-size: 9.5px; gap: 7px; } .sim-spark { display: none } }
-@media (max-width: 520px) { .sim-hud-sep, [data-sim-spread] { display: none } }
-
-/* ---- Home hero ---- */
 .hero-grid {
   max-width: 1120px;
   margin: 0 auto;

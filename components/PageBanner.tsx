@@ -10,7 +10,7 @@
 // set must stay in step with wherever this component is used.
 
 import type { ReactNode } from 'react'
-import ProcLandscape from './ProcLandscape'
+import LatentField from './LatentField'
 
 export default function PageBanner({
   eyebrow,
@@ -32,7 +32,7 @@ export default function PageBanner({
 }) {
   return (
     <section className="dark-band" data-dark-band="1">
-      <ProcLandscape variant="banner" />
+      <LatentField variant="banner" />
       <div className={'band-inner banner-inner' + (aside ? ' banner-split' : '')}>
         <div className="hero-in" style={{ minWidth: 0 }}>
           <p className="banner-eyebrow">{eyebrow}</p>

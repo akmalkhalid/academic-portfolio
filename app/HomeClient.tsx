@@ -8,8 +8,7 @@
 
 import { s } from '@/lib/style'
 import { PCOL } from '@/lib/view'
-import ProcLandscape from '@/components/ProcLandscape'
-import HeroSim from '@/components/HeroSim'
+import LatentField from '@/components/LatentField'
 import PuzzleLoop from '@/components/PuzzleLoop'
 
 type Stats = {
@@ -63,8 +62,7 @@ export default function HomeClient({
     <div data-screen-label="Home" style={s('min-height:100vh;overflow-x:hidden')}>
       {/* HERO — the research question, with the record beside it (study E3) */}
       <section id="top" className="dark-band" data-dark-band="1">
-        <ProcLandscape variant="hero" />
-        <HeroSim variant="hero" />
+        <LatentField variant="hero" />
         <div className="band-inner">
           <div className="hero-grid">
             <div className="hero-in" style={s('min-width:0')}>
@@ -81,8 +79,8 @@ export default function HomeClient({
                 <a href="/cv/" className="btn-ghost">CV <span aria-hidden="true">→</span></a>
               </div>
               <p className="hero-foot">
-                The terrain behind this page is generated live and the swarm crossing it is a real search climbing
-                those ridges. Click anywhere to regenerate the landscape.
+                Behind this page is a live latent space: every point is an embedding, not a word, and each spark is a
+                thought moving through it, attending to its neighbours as it goes. Click anywhere to start one.
               </p>
             </div>
 
