@@ -9,6 +9,7 @@ import AssemblyLineBalancing from '@/components/paper-demos/AssemblyLineBalancin
 import ProductionScheduling from '@/components/paper-demos/ProductionScheduling'
 import GameRefinement from '@/components/paper-demos/GameRefinement'
 import QuestGeneration from '@/components/paper-demos/QuestGeneration'
+import PuzzleLoop from '@/components/PuzzleLoop'
 import DemoDisclaimer from '@/components/DemoDisclaimer'
 
 type Entry = {
@@ -19,6 +20,13 @@ type Entry = {
 }
 
 const REGISTRY: Record<string, Entry> = {
+  'puzzle-loop': {
+    label: 'Generative optimization · puzzle loop',
+    caption:
+      'The signature demo: a generator edits Sudoku puzzles, a simulated player computes each one\'s game-refinement value GR = √G ⁄ T, and a MAP-Elites archive keeps the best puzzle per niche, searching for the comfortable zone 0.07–0.08.',
+    fullHref: '/#demo',
+    render: () => <PuzzleLoop compact />,
+  },
   'crowd-evacuation': {
     label: 'Crowd evacuation · agent-based',
     caption:

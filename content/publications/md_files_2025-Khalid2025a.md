@@ -9,7 +9,7 @@ isFirstAuthor: true
 quartile: "NA"
 doi: "https://doi.org/10.1007/978-3-032-02555-5_35"
 featured: true
-demo: "quest-generation"
+demo: "puzzle-loop"
 topicTags: ["generative-ai", "simulation"]
 ---
 

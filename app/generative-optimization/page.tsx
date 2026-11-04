@@ -8,6 +8,7 @@
 import type { Metadata } from 'next'
 import { s } from '@/lib/style'
 import PageBanner from '@/components/PageBanner'
+import PuzzleLoop from '@/components/PuzzleLoop'
 
 export const metadata: Metadata = {
   title: 'Generative Optimization — Mohd Nor Akmal Khalid',
@@ -136,6 +137,14 @@ export default function Page() {
           people who use them. What sets the programme apart is the middle stage: the objective comes from a theory of
           engagement developed and published over more than a decade, rather than from a generic quality metric.
         </p>
+      </section>
+
+      {/* SEE IT RUN */}
+      <section id="demo" style={s('max-width:1120px;margin:0 auto;padding:30px 28px 10px;scroll-margin-top:90px')}>
+        <div style={s('background:#0f0e14;border-radius:18px;padding:26px')}>
+          <PuzzleLoop />
+        </div>
+        <p style={s('font-size:12.5px;line-height:1.6;color:#8a8279;margin:12px 0 0')}>Illustrative teaching model: random edits stand in for the AI generator, and GR = √G / T is a simplified game-refinement measure.</p>
       </section>
 
       {/* THE LOOP */}

@@ -107,6 +107,7 @@ export default function ResearchClient({
         <a href="#games" className="banner-jump">Evaluate · Games</a>
         <a href="#generative-ai" className="banner-jump">Generate · Generative AI</a>
         <a href="#projects" className="banner-jump">↓ Funded projects</a>
+        <a href="/playground" className="banner-jump">All demos →</a>
       </PageBanner>
 
       {/* PILLARS — three compact cards, side by side */}

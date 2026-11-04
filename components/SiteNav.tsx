@@ -5,16 +5,16 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { s } from '@/lib/style'
 
+// Kept to five links (Nov 2026 simplification): Playground is linked from
+// Research, and Contact is the Collaborate button.
 // Postgraduate is intentionally NOT in the nav — it stays a quiet page reachable
 // from Teaching and the Research CTA. Add a link by appending one entry here.
 const NAV = [
   { href: '/about', label: 'About' },
   { href: '/research', label: 'Research' },
   { href: '/publications', label: 'Publications' },
-  { href: '/playground', label: 'Playground' },
   { href: '/teaching', label: 'Teaching' },
   { href: '/cv', label: 'CV' },
-  { href: '/contact', label: 'Contact' },
 ]
 
 // Routes that open on a dark banner. The nav rides transparent over them until

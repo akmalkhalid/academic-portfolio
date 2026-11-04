@@ -1,4 +1,4 @@
-import { getAllPublications, getAllProjects, getActiveProjects, getStudents, getSiteConfig } from '@/lib/content'
+import { getAllPublications, getAllProjects, getStudents, getSiteConfig } from '@/lib/content'
 import { codesFromTags, catCode, PCOL, isPI } from '@/lib/view'
 import { chicago } from '@/lib/cite'
 import HomeClient from './HomeClient'
@@ -7,31 +7,7 @@ export default function Page() {
   const cfg = getSiteConfig()
   const pubs = getAllPublications()
   const projects = getAllProjects()
-  const active = getActiveProjects()
   const students = getStudents()
-
-  // Publication nodes for the constellation + list (content-driven).
-  const pubNodes = pubs.map((p) => ({
-    t: (p.title || '').replace(/\.\s*$/, ''),
-    y: p.year,
-    pills: codesFromTags(p.topicTags),
-    q: p.quartile || 'NA',
-    cat: catCode(p.category),
-    citation: chicago(p),
-    scholar: 'https://scholar.google.com/scholar?q=' + encodeURIComponent(p.title || ''),
-  }))
-
-  // Up to three active grants for the "Research in flight" cards.
-  const funded = active.slice(0, 3).map((g) => {
-    const codes = codesFromTags(g.researchTags)
-    return {
-      role: isPI(g.role) ? 'Principal Investigator' : 'Co-Investigator',
-      title: g.title,
-      agency: g.fundingAgency,
-      years: `${g.startDate.slice(0, 4)} — ${g.endDate.slice(0, 4)}`,
-      dots: codes.map((c) => PCOL[c]),
-    }
-  })
 
   // Selected articles for the home page — featured pubs grouped by loop stage
   // (generate → evaluate → search), matching the research section above.
@@ -82,8 +58,6 @@ export default function Page() {
   return (
     <HomeClient
       hero={{ headline: cfg.heroHeadline, sub: cfg.heroSubheadline }}
-      pubs={pubNodes}
-      funded={funded}
       stats={stats}
       articles={selected}
     />
