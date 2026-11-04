@@ -1,11 +1,13 @@
 // /toolkit — the AI research tools I recommend in talks and workshops, grouped by
 // workflow stage. Everything is driven by content/toolkit.yml; this file only
-// renders it. Partner (affiliate) links are opt-in per tool, tagged on the card,
+// renders it as collapsible groups (native <details>) of full-width tool rows.
+// Partner (affiliate) links are opt-in per tool, tagged on the row,
 // marked rel="sponsored", and trigger the disclosure note automatically.
 import type { Metadata } from 'next'
 import { s } from '@/lib/style'
 import { getToolkit, type ToolkitTool } from '@/lib/content'
 import PageBanner from '@/components/PageBanner'
+import ToolkitControls from '@/components/ToolkitControls'
 
 export const metadata: Metadata = {
   title: 'Toolkit — Mohd Nor Akmal Khalid',
@@ -24,6 +26,9 @@ const PRICE_STYLE: Record<ToolkitTool['price'], string> = {
   Paid: 'color:#712b13;background:#faece7',
 }
 
+const FREE = new Set<ToolkitTool['price']>(['Free', 'Free tier', 'Open source'])
+const OPEN_BY_DEFAULT = 2
+
 const isPartner = (t: ToolkitTool) => Boolean(t.partnerLink && t.partnerLink.trim())
 
 export default function ToolkitPage() {
@@ -36,7 +41,7 @@ export default function ToolkitPage() {
       <PageBanner
         eyebrow="/ toolkit · what I recommend"
         title="The tools from my workshops."
-        lede={`The ${toolCount} tools that come up again and again in my talks and workshops, in the order you would use them on a real project. Free and open options are listed first in every group.`}
+        lede={`The ${toolCount} tools that come up again and again in my talks and workshops, in the order you would use them on a real project. Tap a group to open or close it.`}
       >
         {sections.map((sec) => (
           <a key={sec.id} href={`#${sec.id}`} className="banner-jump">↓ {sec.title}</a>
@@ -55,79 +60,91 @@ export default function ToolkitPage() {
         </div>
       </section>
 
-      {sections.map((sec, i) => (
-        <section
-          key={sec.id}
-          id={sec.id}
-          style={s(
-            `max-width:1120px;margin:0 auto;padding:${i === 0 ? 36 : 44}px 28px ${i === sections.length - 1 ? 70 : 10}px;scroll-margin-top:80px`,
-          )}
-        >
-          <div style={s('display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:6px')}>
-            <h2 style={s(`font-family:${stack};font-weight:600;font-size:clamp(22px,2.8vw,30px);letter-spacing:-.02em;margin:0`)}>
-              {sec.title}
-            </h2>
-            <span style={mono('font-size:12px;color:#a39a8f')}>{sec.tools.length} {sec.tools.length === 1 ? 'tool' : 'tools'}</span>
-          </div>
-          {sec.lede && (
-            <p style={s('font-size:15px;line-height:1.6;color:#57514b;max-width:660px;margin:0 0 20px')}>{sec.lede}</p>
-          )}
+      <section style={s('max-width:1120px;margin:0 auto;padding:30px 28px 70px')}>
+        <ToolkitControls />
 
-          <div className="pillar-grid">
-            {sec.tools.map((t) => {
-              const partner = isPartner(t)
-              const external = !t.url.startsWith('/')
-              const href = partner ? t.partnerLink! : t.url
-              const rel = partner ? 'sponsored noopener noreferrer' : external ? 'noopener noreferrer' : undefined
-              const accent = t.own ? '#21409A' : '#d9d3ca'
-              return (
-                <div key={t.name} className="pillar-card" style={s(`border-top:3px solid ${accent}`)}>
-                  <div style={s('display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:11px;flex-wrap:wrap')}>
-                    <span style={mono(`font-size:10.5px;font-weight:500;padding:3px 9px;border-radius:5px;${PRICE_STYLE[t.price]}`)}>
-                      {t.price}
-                    </span>
-                    {t.own && (
-                      <span style={mono('font-size:10.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#21409A')}>
-                        Built by me
-                      </span>
-                    )}
-                    {partner && (
-                      <span style={mono('font-size:10.5px;color:#8a8279;border:1px solid #e7e3dd;padding:2px 7px;border-radius:5px')}>
-                        partner link
-                      </span>
-                    )}
-                  </div>
-                  <h3 style={s(`font-family:${stack};font-weight:600;font-size:19px;line-height:1.2;letter-spacing:-.01em;margin:0 0 9px`)}>
-                    {t.name}
-                  </h3>
-                  <p style={s('font-size:13.5px;line-height:1.58;color:#57514b;margin:0 0 14px')}>{t.why}</p>
-                  {t.usedIn && t.usedIn.length > 0 && (
-                    <p style={s('font-size:12.5px;line-height:1.7;color:#8a8279;margin:0 0 16px')}>
-                      <span style={mono('font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#a39a8f')}>Used in </span>
-                      {t.usedIn.map((k, j) => (
-                        <span key={k}>
-                          {j > 0 && ' · '}
-                          <a href={sessions[k].href} style={s('color:#57514b;text-decoration:none;border-bottom:1px solid #e0dad1')}>
-                            {sessions[k].title}
-                          </a>
-                        </span>
-                      ))}
-                    </p>
-                  )}
-                  <a
-                    href={href}
-                    target={external || partner ? '_blank' : undefined}
-                    rel={rel}
-                    style={mono('margin-top:auto;font-size:12.5px;font-weight:600;color:#16142e;text-decoration:none')}
-                  >
-                    {t.own ? 'Open tool →' : 'Visit site ↗'}
-                  </a>
-                </div>
-              )
-            })}
-          </div>
-        </section>
-      ))}
+        {sections.map((sec, i) => {
+          const freeCount = sec.tools.filter((t) => FREE.has(t.price)).length
+          return (
+            <details
+              key={sec.id}
+              id={sec.id}
+              className="tk-section"
+              // The first two groups (assistants, literature search) start open.
+              open={i < OPEN_BY_DEFAULT}
+            >
+              <summary className="tk-summary">
+                <span className="tk-chevron" aria-hidden="true" />
+                <span className="tk-summary-text">
+                  <span className="tk-title" style={s(`font-family:${stack}`)}>{sec.title}</span>
+                  {sec.lede && <span className="tk-lede">{sec.lede}</span>}
+                </span>
+                <span className="tk-count" style={mono('')}>
+                  {sec.tools.length} {sec.tools.length === 1 ? 'tool' : 'tools'}
+                  {freeCount > 0 && <span className="tk-count-free"> · {freeCount} free</span>}
+                </span>
+              </summary>
+
+              <ul className="tk-list">
+                {sec.tools.map((t) => {
+                  const partner = isPartner(t)
+                  const external = !t.url.startsWith('/')
+                  const href = partner ? t.partnerLink! : t.url
+                  const rel = partner ? 'sponsored noopener noreferrer' : external ? 'noopener noreferrer' : undefined
+                  return (
+                    <li key={t.name} className={`tk-row${t.own ? ' tk-own' : ''}`}>
+                      <div className="tk-name">
+                        <h3 style={s(`font-family:${stack}`)}>{t.name}</h3>
+                        <div className="tk-badges">
+                          <span style={mono(`font-size:10.5px;font-weight:500;padding:3px 9px;border-radius:5px;${PRICE_STYLE[t.price]}`)}>
+                            {t.price}
+                          </span>
+                          {t.own && (
+                            <span style={mono('font-size:10.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#21409A')}>
+                              Built by me
+                            </span>
+                          )}
+                          {partner && (
+                            <span style={mono('font-size:10.5px;color:#8a8279;border:1px solid #e7e3dd;padding:2px 7px;border-radius:5px')}>
+                              partner link
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="tk-body">
+                        <p className="tk-why">{t.why}</p>
+                        {t.usedIn && t.usedIn.length > 0 && (
+                          <p className="tk-used">
+                            <span style={mono('font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#a39a8f')}>Used in </span>
+                            {t.usedIn.map((k, j) => (
+                              <span key={k}>
+                                {j > 0 && ' · '}
+                                <a href={sessions[k].href}>{sessions[k].title}</a>
+                              </span>
+                            ))}
+                          </p>
+                        )}
+                      </div>
+
+                      <a
+                        className="tk-cta"
+                        href={href}
+                        target={external || partner ? '_blank' : undefined}
+                        rel={rel}
+                        aria-label={`${t.own ? 'Open' : 'Visit'} ${t.name}${external || partner ? ' (opens in a new tab)' : ''}`}
+                        style={mono('')}
+                      >
+                        {t.own ? 'Open tool →' : 'Visit site ↗'}
+                      </a>
+                    </li>
+                  )
+                })}
+              </ul>
+            </details>
+          )
+        })}
+      </section>
     </div>
   )
 }
