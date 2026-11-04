@@ -107,7 +107,7 @@ sections:
         usedIn: [litrev, fep, airp]
       - name: "SciSpace"
         url: "https://scispace.com"
-        partnerLink: ""
+        partnerLink: "https://scispace.com/?via=mohd-nor-akmal"
         price: "Free tier"
         why: "Reads a paper alongside you and explains methods and terms in plain language."
         usedIn: [airp, bkla]
