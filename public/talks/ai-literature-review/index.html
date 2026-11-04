@@ -740,7 +740,7 @@ const TOOLS=[
  {k:'endnote',n:'EndNote',g:true,best:{en:'Powerful paid manager, common in institutions and large systematic reviews.',ms:'Pengurus berbayar berkuasa, biasa di institusi dan sorotan sistematik besar.'},watch:{en:'Paid — check whether UKM provides a site licence before buying.',ms:'Berbayar — semak sama ada UKM menyediakan lesen institusi sebelum membeli.'}}
 ];
 function chip(k){const tl=TOOLS.find(x=>x.k===k);return tl.u?'<a class="tchip" style="text-decoration:none" href="'+tl.u+'" target="_blank" rel="sponsored noopener noreferrer">'+icon(k)+tl.n+'</a>':'<span class="tchip">'+icon(k)+tl.n+'</span>';}
-function tname(tl){return tl.u?'<a href="'+tl.u+'" target="_blank" rel="sponsored noopener noreferrer" style="color:inherit">'+tl.n+'</a> <span style="font-family:var(--sans,inherit);font-size:11px;font-weight:600;color:#7a7a7a">('+(LANG==='ms'?'pautan afiliasi':'affiliate link')+')</span>':tl.n;}
+function tname(tl){return tl.u?'<a href="'+tl.u+'" target="_blank" rel="sponsored noopener noreferrer" style="color:inherit">'+tl.n+'</a>':tl.n;}
 function chips(keys){return keys.map(chip).join('');}
 
 const FLIPS=[

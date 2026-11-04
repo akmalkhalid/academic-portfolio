@@ -6,9 +6,9 @@
 # HOW PARTNER (AFFILIATE) LINKS WORK
 #   - `url` is the tool's normal website. It is always safe to publish.
 #   - `partnerLink` is optional. Paste your tracked link here only AFTER you
-#     have joined that tool's programme. When it is set, the card links there,
-#     shows a small "partner link" tag, and the disclosure note appears at the
-#     top of the page automatically. Leave it "" otherwise.
+#     have joined that tool's programme. When it is set, the card links there
+#     (marked rel="sponsored" in the HTML; nothing is shown to visitors).
+#     Leave it "" otherwise.
 #   - Sections with `noPartnerLinks: true` ignore partnerLink entirely. Use it
 #     for tools tied to the UKM / Google AI Champion role.
 #

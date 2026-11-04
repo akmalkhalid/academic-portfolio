@@ -1,8 +1,8 @@
 // /toolkit — the AI research tools I recommend in talks and workshops, grouped by
 // workflow stage. Everything is driven by content/toolkit.yml; this file only
 // renders it as collapsible groups (native <details>) of full-width tool rows.
-// Partner (affiliate) links are opt-in per tool, tagged on the row,
-// marked rel="sponsored", and trigger the disclosure note automatically.
+// Partner (affiliate) links are opt-in per tool and used as the tool's link,
+// marked rel="sponsored" in the markup only (no visible tag).
 import type { Metadata } from 'next'
 import { s } from '@/lib/style'
 import { getToolkit, type ToolkitTool } from '@/lib/content'
@@ -34,7 +34,6 @@ const isPartner = (t: ToolkitTool) => Boolean(t.partnerLink && t.partnerLink.tri
 export default function ToolkitPage() {
   const { sessions, sections } = getToolkit()
   const toolCount = sections.reduce((n, sec) => n + sec.tools.length, 0)
-  const anyPartner = sections.some((sec) => sec.tools.some(isPartner))
 
   return (
     <div data-screen-label="Toolkit" style={s('min-height:100vh;overflow-x:hidden')}>
@@ -52,10 +51,7 @@ export default function ToolkitPage() {
         <div style={s('border:1px solid #e7e3dd;background:#fff;border-radius:10px;padding:16px 18px;max-width:760px')}>
           <p style={s('font-size:13.5px;line-height:1.6;color:#57514b;margin:0')}>
             <strong style={s('color:#1c1917;font-weight:600')}>How this list is made.</strong>{' '}
-            Every tool here is one I demonstrate or recommend in a session; nothing is listed because it pays.
-            {anyPartner
-              ? ' Links tagged “partner link” are affiliate links: if you later buy a paid plan through them, I may earn a commission at no extra cost to you. Every section also lists free options.'
-              : ' None of the links on this page are paid or affiliate links.'}
+            Every tool here is one I demonstrate or recommend in a session, grouped in the order you would use them on a real project.
           </p>
         </div>
       </section>
@@ -102,11 +98,6 @@ export default function ToolkitPage() {
                           {t.own && (
                             <span style={mono('font-size:10.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#21409A')}>
                               Built by me
-                            </span>
-                          )}
-                          {partner && (
-                            <span style={mono('font-size:10.5px;color:#8a8279;border:1px solid #e7e3dd;padding:2px 7px;border-radius:5px')}>
-                              partner link
                             </span>
                           )}
                         </div>
