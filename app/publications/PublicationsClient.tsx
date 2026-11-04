@@ -3,15 +3,18 @@
 import { useEffect, useRef, useState } from 'react'
 import { s } from '@/lib/style'
 import PageBanner from '@/components/PageBanner'
+import Constellation3D, { type CLink } from '@/components/Constellation3D'
 import { PCOL, PNAME, QCOL, CATNAME, type Code } from '@/lib/view'
 
 type PubNode = { t: string; y: number; pills: Code[]; q: string; cat: string; v: string; citation: string; scholar: string; slug: string }
 
 export default function PublicationsClient({
-  pubs, quartileStats, minYearBound, maxYearBound,
-}: { pubs: PubNode[]; quartileStats: { num: string; label: string; color: string }[]; minYearBound: number; maxYearBound: number }) {
+  pubs, links, linkCounts, citeUpdated, quartileStats, minYearBound, maxYearBound,
+}: {
+  pubs: PubNode[]; links: CLink[]; linkCounts: Record<CLink['kind'], number>; citeUpdated: string | null
+  quartileStats: { num: string; label: string; color: string }[]; minYearBound: number; maxYearBound: number
+}) {
   const wrapRef = useRef<HTMLDivElement>(null)
-  const graphRef = useRef<HTMLCanvasElement>(null)
 
   const [pillarFilter, setPillarFilter] = useState<string[]>([])
   const [catFilter, setCatFilter] = useState<string[]>([])
@@ -21,16 +24,12 @@ export default function PublicationsClient({
   const [selected, setSelected] = useState<PubNode | null>(null)
   const [copied, setCopied] = useState(false)
 
-  const stateRef = useRef({ pillarFilter, catFilter, quartileFilter, minYear, mode })
-  stateRef.current = { pillarFilter, catFilter, quartileFilter, minYear, mode }
-  const selectRef = useRef(setSelected)
 
   useEffect(() => {
     const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches
     const rafs: number[] = []; const ios: IntersectionObserver[] = []
     const root = () => wrapRef.current || document
-    let trPoll: any = null, onTrScroll: any = null, fitFn: (() => void) | null = null
-    const fit = (cv: HTMLCanvasElement, fh?: number) => { const dpr = Math.min(window.devicePixelRatio || 1, 2); const r = cv.getBoundingClientRect(); const w = r.width || cv.clientWidth, h = r.height || fh || 440; cv.width = w * dpr; cv.height = h * dpr; const ctx = cv.getContext('2d')!; ctx.setTransform(dpr, 0, 0, dpr, 0, 0); return { w, h, ctx } }
+    let trPoll: any = null, onTrScroll: any = null
 
     function setupTextReveal(tries = 0) {
       const r = wrapRef.current
@@ -48,58 +47,11 @@ export default function PublicationsClient({
       trPoll = setInterval(check, 220); check()
     }
 
-    function setupGraph() {
-      const cv = graphRef.current; if (!cv) return
-      if (!cv.getBoundingClientRect().width) { requestAnimationFrame(setupGraph); return }
-      let g = fit(cv, 480)
-      const pillars: Code[] = ['gen', 'exp', 'evo', 'opt', 'gam', 'sim']
-      let anchors: Record<string, { x: number; y: number }> = {}
-      const setA = () => { anchors = {}; const R = Math.min(g.w, g.h) * 0.34; pillars.forEach((p, i) => { const a = (i / pillars.length) * Math.PI * 2 - Math.PI / 2; anchors[p] = { x: g.w / 2 + Math.cos(a) * R, y: g.h / 2 + Math.sin(a) * R } }) }
-      setA()
-      const rsize: Record<string, number> = { Q1: 7.5, Q2: 6.5, Q3: 5.5, Q4: 5, NA: 4 }
-      const nodes = pubs.map((d, i) => ({ ...d, x: g.w / 2 + (Math.random() - .5) * g.w * 0.5, cy: g.h / 2 + (Math.random() - .5) * g.h * 0.5, vx: 0, vy: 0, r: (rsize[d.q] || 4) + (d.pills.length > 1 ? 1 : 0) }))
-      const links: [number, number, string][] = []; const byP: Record<string, number[]> = {}
-      nodes.forEach((n, i) => { n.pills.forEach((p) => { (byP[p] = byP[p] || []).push(i) }) })
-      Object.keys(byP).forEach((p) => { const arr = byP[p]; for (let k = 0; k < arr.length; k++) links.push([arr[k], arr[(k + 1) % arr.length], p]) })
-      let hover: any = null; const mouse = { x: -999, y: -999 }
-      const visible = (n: any) => { const st = stateRef.current; return (st.pillarFilter.length === 0 || n.pills.some((p: string) => st.pillarFilter.includes(p))) && (st.catFilter.length === 0 || st.catFilter.includes(n.cat)) && (st.quartileFilter.length === 0 || st.quartileFilter.includes(n.q)) && n.y >= st.minYear }
-      cv.addEventListener('pointermove', (e) => {
-        const r = cv.getBoundingClientRect(); mouse.x = e.clientX - r.left; mouse.y = e.clientY - r.top
-        let h: any = null, hd = 16; for (const n of nodes) { if (!visible(n)) continue; const d = Math.hypot(n.x - mouse.x, n.cy - mouse.y); if (d < Math.max(hd, n.r + 8)) { hd = d; h = n } }
-        hover = h; cv.style.cursor = h ? 'pointer' : 'default'; const tip = root().querySelector('[data-graph-tip]') as HTMLElement | null
-        if (tip) { if (h) { tip.style.opacity = '1'; tip.style.left = Math.min(e.clientX + 14, window.innerWidth - 320) + 'px'; tip.style.top = (e.clientY + 16) + 'px'; const tt = tip.querySelector('[data-tip-title]') as HTMLElement, tm = tip.querySelector('[data-tip-meta]') as HTMLElement; if (tt) tt.textContent = h.t; if (tm) tm.textContent = h.pills.map((p: Code) => PNAME[p]).join(' + ') + ' · ' + h.y + (h.q !== 'NA' ? ' · ' + h.q : '') } else tip.style.opacity = '0' }
-      })
-      cv.addEventListener('pointerleave', () => { hover = null; const tip = root().querySelector('[data-graph-tip]') as HTMLElement | null; if (tip) tip.style.opacity = '0' })
-      cv.addEventListener('click', () => { if (hover) { setCopied(false); selectRef.current(hover) } })
-      fitFn = () => { g = fit(cv, 480); setA() }
-      const sim = () => {
-        for (const n of nodes) { let ax = 0, ay = 0; for (const p of n.pills) { ax += anchors[p].x; ay += anchors[p].y } ax /= n.pills.length; ay /= n.pills.length; n.vx += (ax - n.x) * 0.008; n.vy += (ay - n.cy) * 0.008; n.vx += (g.w / 2 - n.x) * 0.0005; n.vy += (g.h / 2 - n.cy) * 0.0005 }
-        for (let i = 0; i < nodes.length; i++) for (let j = i + 1; j < nodes.length; j++) { const a = nodes[i], b = nodes[j]; let dx = a.x - b.x, dy = a.cy - b.cy, d2 = dx * dx + dy * dy; if (d2 < 1) d2 = 1; if (d2 < 6500) { const d = Math.sqrt(d2), f = 150 / d2; a.vx += dx / d * f; a.vy += dy / d * f; b.vx -= dx / d * f; b.vy -= dy / d * f } }
-        for (const [i, j] of links) { const a = nodes[i], b = nodes[j], dx = b.x - a.x, dy = b.cy - a.cy, d = Math.hypot(dx, dy) || 1, f = (d - 48) * 0.01; a.vx += dx / d * f; a.vy += dy / d * f; b.vx -= dx / d * f; b.vy -= dy / d * f }
-        for (const n of nodes) { n.vx *= 0.84; n.vy *= 0.84; n.x += n.vx; n.cy += n.vy; n.x = Math.max(12, Math.min(g.w - 12, n.x)); n.cy = Math.max(12, Math.min(g.h - 12, n.cy)) }
-      }
-      const draw = () => {
-        const ctx = g.ctx; const flt = stateRef.current.pillarFilter; ctx.clearRect(0, 0, g.w, g.h)
-        for (const [i, j, lp] of links) { const a = nodes[i], b = nodes[j]; const fOn = flt.length === 0 || flt.includes(lp); const on = visible(a) && visible(b) && fOn; const bridge = a.pills.length > 1 || b.pills.length > 1; ctx.lineWidth = on && bridge ? 1.5 : 1; ctx.strokeStyle = on ? (bridge ? 'rgba(255,255,255,.2)' : 'rgba(255,255,255,.09)') : 'rgba(255,255,255,.02)'; ctx.beginPath(); ctx.moveTo(a.x, a.cy); ctx.lineTo(b.x, b.cy); ctx.stroke() }
-        for (const n of nodes) { const on = visible(n); ctx.globalAlpha = on ? 1 : 0.12
-          if (n.pills.length === 1) { ctx.fillStyle = PCOL[n.pills[0]]; ctx.beginPath(); ctx.arc(n.x, n.cy, n.r, 0, 7); ctx.fill() }
-          else { const seg = Math.PI * 2 / n.pills.length; n.pills.forEach((p, k) => { ctx.fillStyle = PCOL[p]; ctx.beginPath(); ctx.moveTo(n.x, n.cy); ctx.arc(n.x, n.cy, n.r, -Math.PI / 2 + k * seg, -Math.PI / 2 + (k + 1) * seg); ctx.closePath(); ctx.fill() }); ctx.strokeStyle = 'rgba(255,255,255,' + (on ? 0.6 : 0.14) + ')'; ctx.lineWidth = 1.1; ctx.beginPath(); ctx.arc(n.x, n.cy, n.r, 0, 7); ctx.stroke() }
-          if (hover === n) { ctx.globalAlpha = 1; ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(n.x, n.cy, n.r + 1.5, 0, 7); ctx.stroke() } }
-        ctx.globalAlpha = 1
-      }
-      if (reduce) { for (let st = 0; st < 300; st++) sim(); draw(); return }
-      let vis = true; const io = new IntersectionObserver((en) => { en.forEach((x) => (vis = x.isIntersecting)) }, { threshold: .1 }); io.observe(cv); ios.push(io)
-      const loop = () => { if (vis && stateRef.current.mode === 'graph') { sim(); draw() } rafs.push(requestAnimationFrame(loop)) }; loop()
-    }
-
-    const onResize = () => fitFn && fitFn()
-    window.addEventListener('resize', onResize)
-    setupTextReveal(); setupGraph()
+    setupTextReveal()
 
     return () => {
       rafs.forEach((r) => cancelAnimationFrame(r)); ios.forEach((o) => o.disconnect())
       if (trPoll) clearInterval(trPoll); if (onTrScroll) { window.removeEventListener('scroll', onTrScroll); window.removeEventListener('resize', onTrScroll) }
-      window.removeEventListener('resize', onResize)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -110,6 +62,8 @@ export default function PublicationsClient({
 
   const matchD = (d: PubNode) => (pillarFilter.length === 0 || d.pills.some((p) => pillarFilter.includes(p))) && (catFilter.length === 0 || catFilter.includes(d.cat)) && (quartileFilter.length === 0 || quartileFilter.includes(d.q)) && d.y >= minYear
   const filtered = pubs.filter(matchD)
+  const matchedAll = pubs.map(matchD)
+  const selectedIdx = selected ? pubs.indexOf(selected) : null
   const filteredPubs = filtered.slice().sort((a, b) => b.y - a.y)
 
   const pillarDefs = [{ key: 'all', label: 'All', dot: '#cfcad9' } as any].concat((['gen', 'opt', 'evo', 'gam', 'sim', 'exp'] as Code[]).map((k) => ({ key: k, label: PNAME[k], dot: PCOL[k] })))
@@ -136,7 +90,7 @@ export default function PublicationsClient({
       <PageBanner
         eyebrow={`/ publications · ${minYearBound} — ${maxYearBound}`}
         title="A body of work, mapped."
-        lede={`${pubs.length} peer-reviewed papers across six research pillars. Explore the connective tissue as a living constellation, or scan the full chronological list.`}
+        lede={`${pubs.length} peer-reviewed papers in a 3D space of six research fields. Orbit and zoom through the constellation, follow the citation bridges between papers, or scan the full chronological list.`}
       />
 
       {/* QUARTILE STAT STRIP */}
@@ -155,7 +109,7 @@ export default function PublicationsClient({
           <div style={s('display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:22px')}>
             <div>
               <p style={s("font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#6f6a82;margin:0 0 9px")}>/ the body of work · alive</p>
-              <h2 style={s(`font-family:${stack};font-weight:600;font-size:clamp(24px,3vw,34px);letter-spacing:-.02em;margin:0;color:#ECEAF3`)}>Every paper, pulled toward its pillar.</h2>
+              <h2 style={s(`font-family:${stack};font-weight:600;font-size:clamp(24px,3vw,34px);letter-spacing:-.02em;margin:0;color:#ECEAF3`)}>Every paper in its field, every citation a bridge.</h2>
             </div>
             <div style={s('display:flex;gap:6px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:9px;padding:4px;flex-shrink:0')}>
               <button type="button" onClick={() => setMode('graph')} style={s(mode === 'graph' ? tabOn : tabOff)}>Constellation</button>
@@ -187,7 +141,15 @@ export default function PublicationsClient({
 
           <div style={s('position:relative;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.09);background:radial-gradient(130% 130% at 50% 40%,#16151d 0%,#0c0b11 75%)')}>
             <div style={s('display:' + (mode === 'graph' ? 'block' : 'none'))}>
-              <canvas ref={graphRef} style={s('display:block;width:100%;height:480px')} />
+              <Constellation3D
+                nodes={pubs}
+                links={links}
+                matched={matchedAll}
+                selected={selectedIdx}
+                onSelect={(i) => { setCopied(false); setSelected(i == null ? null : pubs[i]) }}
+                active={mode === 'graph'}
+                height={580}
+              />
             </div>
             <div data-pubscroll="1" style={s('display:' + (mode === 'list' ? 'block' : 'none') + ';max-height:520px;overflow-y:auto')}>
               {filteredPubs.map((pub, i) => {
@@ -207,11 +169,7 @@ export default function PublicationsClient({
               })}
             </div>
           </div>
-          <p style={s("font-family:'JetBrains Mono',monospace;font-size:11px;color:#56516a;margin:14px 0 0;letter-spacing:.04em")}>Split-colour nodes span more than one pillar — their links bridge clusters · node size ≈ journal quartile · hover for title</p>
-        </div>
-        <div data-graph-tip="1" style={s('position:fixed;z-index:90;pointer-events:none;opacity:0;transition:opacity .12s;background:#1c1b24;border:1px solid rgba(255,255,255,.14);border-radius:9px;padding:9px 12px;max-width:300px;box-shadow:0 14px 40px -12px rgba(0,0,0,.7)')}>
-          <div data-tip-title="1" style={s('font-size:13px;color:#ECEAF3;line-height:1.35;margin-bottom:4px')} />
-          <div data-tip-meta="1" style={s("font-family:'JetBrains Mono',monospace;font-size:11px;color:#9b96aa")} />
+          <p style={s("font-family:'JetBrains Mono',monospace;font-size:11px;color:#56516a;margin:14px 0 0;letter-spacing:.04em")}>{linkCounts.cite} citation bridges (one paper citing another{citeUpdated ? `, OpenAlex · ${citeUpdated}` : ', refreshed at each deploy'}) · {linkCounts.coauthor} shared co-author lines · {linkCounts.similar} dotted similar-topic threads · ringed spheres span two fields · size ≈ quartile</p>
         </div>
       </section>
 

@@ -1,6 +1,7 @@
 import { getAllPublications } from '@/lib/content'
 import { codesFromTags, catCode, type Code } from '@/lib/view'
 import { chicago } from '@/lib/cite'
+import { buildLinks } from '@/lib/pub-links'
 import PublicationsClient from './PublicationsClient'
 
 export default function Page() {
@@ -17,6 +18,8 @@ export default function Page() {
     citation: chicago(p),
     scholar: 'https://scholar.google.com/scholar?q=' + encodeURIComponent(p.title || ''),
   }))
+
+  const { links, counts, citeSource } = buildLinks(pubs)
 
   const qCount = (q: string) => pubs.filter((p) => (p.quartile || 'NA') === q).length
   const pillarsUsed = new Set<Code>()
@@ -37,6 +40,9 @@ export default function Page() {
   return (
     <PublicationsClient
       pubs={nodes}
+      links={links}
+      linkCounts={counts}
+      citeUpdated={citeSource.updated}
       quartileStats={quartileStats}
       minYearBound={minYearBound}
       maxYearBound={maxYearBound}
