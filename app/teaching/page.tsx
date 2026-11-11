@@ -51,9 +51,9 @@ export default function Page() {
   const training = {
     done: tr.done.map(pick), next: tr.next.map(pick),
     stats: [
-      { num: String(tr.done.length), label: 'Sessions delivered in ' + ((tr.done[0]?.date || '').slice(0, 4)), color: '#21b3a0' },
+      { num: String(tr.done.length), label: 'Sessions delivered, ' + (() => { const a = (tr.done[tr.done.length - 1]?.date || '').slice(0, 4), b = (tr.done[0]?.date || '').slice(0, 4); return a && a !== b ? `${a}–${b}` : b })(), color: '#21b3a0' },
       { num: String(tr.orgCount), label: 'Host organisations', color: '#4d8df0' },
-      { num: String(tr.sectorCount), label: 'Sectors — academia, health, government, industry, international, schools', color: '#e0a03a' },
+      { num: String(tr.sectorCount), label: 'Sectors — academia, health, government, industry, international, schools, community', color: '#e0a03a' },
     ],
   }
 
