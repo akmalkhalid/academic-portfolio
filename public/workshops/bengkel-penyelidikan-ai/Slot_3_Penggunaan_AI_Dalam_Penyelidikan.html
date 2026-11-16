@@ -407,6 +407,7 @@ a.tool.k-src .tk{border-color:#38BDF8}
 @media print{a.tool .ext{display:none}a.tool:after{content:attr(href);font-family:var(--mono);font-size:.7em;color:#555}}
 </style>
 <style id="mobile-fixes">/* Phone fix (Nov 2026): keep every toolbar button on screen. */@media (max-width:480px){#bar{gap:2px;padding:0 6px}}</style>
+<style id="flow-step-fix">/* Fix (16 Nov 2026): flow steps are .reveal (opacity:0) and the nxStep animation has only a "from" frame, so they ended invisible. Give them a visible end state. */.slide.active .flow .step.reveal{opacity:1;transform:none;filter:none}</style>
 </head>
 <body>
 <div id="stage">
