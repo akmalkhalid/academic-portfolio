@@ -27,4 +27,12 @@ labs:
     href: "/courses/coa-tutorial-5/"
     emoji: "🧮"
     blurb: "The ALU and two’s complement, floating point, multiplication and division, IEEE formats, then overflow — guided, with a protected submission file."
+  - title: "Tutorial 6 · Instruction Set Architecture (ISA)"
+    href: "/courses/coa-tutorial-6/"
+    emoji: "📜"
+    blurb: "ISA fundamentals, addressing modes and instruction formats, opcodes and encoding, then data and instruction types — guided, with a protected submission file."
+  - title: "Tutorial 7 · Data Path, Control Design and Pipelining"
+    href: "/courses/coa-tutorial-7/"
+    emoji: "🛤️"
+    blurb: "The data path, control units and pipeline registers, pipeline stages and hazards, then applying pipelining — guided, with a protected submission file."
 ---
