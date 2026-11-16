@@ -23,4 +23,8 @@ labs:
     href: "/courses/coa-tutorial-4/"
     emoji: "🔌"
     blurb: "I/O basics, I/O techniques and interrupts, buses, then channels and interconnects — guided, with a protected submission file."
+  - title: "Tutorial 5 · Computer Arithmetic"
+    href: "/courses/coa-tutorial-5/"
+    emoji: "🧮"
+    blurb: "The ALU and two’s complement, floating point, multiplication and division, IEEE formats, then overflow — guided, with a protected submission file."
 ---
