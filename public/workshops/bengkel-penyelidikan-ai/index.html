@@ -198,5 +198,254 @@ setLang('ms');
   }, {passive: true});
 })();
 </script>
+<style id="progress-map-css">
+/* Progress map (Nov 2026): the 10-85% rail stages open an animated map of done / next. */
+.rail .rs.pm-click{cursor:pointer;border-radius:var(--r-md);transition:background-color var(--base) var(--ease)}
+.rail .rs.pm-click:hover,.rail .rs.pm-click:focus-visible{background:color-mix(in srgb,var(--accent) 7%,transparent);outline:none}
+.rail .rs.pm-click:focus-visible{box-shadow:0 0 0 2px var(--accent)}
+.rail .rs.pm-click .pc{transition:color var(--base) var(--ease)}
+.rail .rs.pm-click:hover .pc,.rail .rs.pm-click:focus-visible .pc{color:var(--accent)}
+.rail .pm-hint{display:inline-flex;align-items:center;gap:4px;margin-top:8px;font-size:14px;font-weight:500;color:var(--accent);
+ text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}
+#pmap{width:min(1040px,calc(100vw - 24px));max-width:none;max-height:calc(100vh - 24px);padding:0;border:0;border-radius:var(--r-xl);
+ background:var(--bg);color:var(--text);box-shadow:var(--ring),0 30px 80px rgba(0,0,0,.45);font-family:var(--font);overflow:auto}
+#pmap::backdrop{background:rgba(5,6,15,.62);backdrop-filter:blur(4px)}
+#pmap[open]{animation:pmIn .35s var(--ease)}
+.pm-wrap{padding:24px 28px 26px}
+.pm-head{display:flex;align-items:flex-start;gap:16px}
+.pm-head .pm-t{flex:1;min-width:0}
+.pm-eye{font-family:var(--mono);font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.pm-h{font-size:26px;font-weight:500;letter-spacing:-.4px;margin:4px 0 0;line-height:1.2}
+.pm-x{flex:none;width:40px;height:40px;border-radius:50%;border:0;background:var(--surface);color:var(--text);box-shadow:var(--ring);
+ font-size:20px;line-height:1;cursor:pointer}
+.pm-x:hover{background:color-mix(in srgb,var(--accent) 14%,var(--surface))}
+.pm-meter{display:flex;align-items:center;gap:18px;margin:18px 0 6px;flex-wrap:wrap}
+.pm-big{font-size:54px;font-weight:500;letter-spacing:-1.5px;font-variant-numeric:tabular-nums;line-height:1;color:var(--accent);min-width:2.6ch}
+.pm-bar{flex:1 1 260px;min-width:200px}
+.pm-track{position:relative;height:12px;border-radius:var(--pill);background:var(--line);overflow:hidden}
+.pm-fill,.pm-goal{position:absolute;left:0;top:0;bottom:0;border-radius:var(--pill)}
+.pm-goal{background:repeating-linear-gradient(-45deg,color-mix(in srgb,var(--accent) 34%,transparent) 0 6px,transparent 6px 12px);
+ transition:width 1s var(--ease) .9s;width:0}
+.pm-fill{background:var(--accent);transition:width 1.1s var(--ease) .15s;width:0}
+.pm-legend{display:flex;justify-content:space-between;gap:12px;margin-top:6px;font-size:13.5px;color:var(--muted)}
+.pm-legend b{color:var(--text);font-weight:500}
+.pm-svg{display:block;width:100%;height:auto;margin:10px 0 4px;overflow:visible}
+.pm-svg.pm-v{max-width:440px;margin:14px auto 4px}
+.pm-svg text{font-family:var(--font)}
+.pm-band{fill:color-mix(in srgb,var(--text) 4%,transparent)}
+.pm-day{fill:var(--muted);font-size:15px;font-weight:500;letter-spacing:.06em}
+.pm-rail{stroke:var(--line);stroke-width:6;stroke-linecap:round;fill:none}
+.pm-prog{stroke:var(--accent);stroke-width:6;stroke-linecap:round;fill:none}
+.pm-next{stroke:var(--accent);stroke-width:4;stroke-linecap:round;fill:none;stroke-dasharray:2 12;opacity:.75}
+.pm-n circle.pm-c{stroke-width:3}
+.pm-n.done circle.pm-c,.pm-n.here circle.pm-c{fill:var(--accent);stroke:var(--accent)}
+.pm-n.done text.pm-num,.pm-n.here text.pm-num{fill:var(--bg)}
+.pm-n.nxt circle.pm-c{fill:var(--bg);stroke:var(--accent);stroke-dasharray:5 4}
+.pm-n.nxt text.pm-num{fill:var(--accent)}
+.pm-n.ahead circle.pm-c{fill:var(--bg);stroke:var(--line)}
+.pm-n.ahead text.pm-num{fill:var(--muted)}
+.pm-num{font-size:18px;font-weight:600;text-anchor:middle;dominant-baseline:central}
+.pm-ring{fill:none;stroke:var(--accent);stroke-width:3}
+.pm-gate{font-size:14px;font-weight:600;text-anchor:middle;fill:var(--muted);font-variant-numeric:tabular-nums}
+.pm-gate.on{fill:var(--accent)}
+.pm-tag rect{fill:var(--accent)}
+.pm-tag text{fill:var(--bg);font-size:13.5px;font-weight:600;text-anchor:middle;dominant-baseline:central}
+.pm-tag.ghost rect{fill:var(--bg);stroke:var(--accent);stroke-width:1.5;stroke-dasharray:4 3}
+.pm-tag.ghost text{fill:var(--accent)}
+.pm-cols{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:14px}
+.pm-col{background:var(--surface);box-shadow:var(--ring);border-radius:var(--r-lg);padding:16px 18px}
+.pm-col h3{margin:0 0 10px;font-size:13px;font-family:var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:500}
+.pm-col.nx{box-shadow:0 0 0 1.5px var(--accent)}
+.pm-col.nx h3{color:var(--accent)}
+.pm-li{display:flex;gap:10px;align-items:flex-start;padding:7px 0;border-top:1px solid var(--line);font-size:15.5px;line-height:1.4}
+.pm-li:first-of-type{border-top:0}
+.pm-li .pm-k{flex:none;min-width:44px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--accent)}
+.pm-li .pm-s{color:var(--muted);font-size:14px}
+.pm-li a{color:var(--text);text-decoration:underline;text-underline-offset:3px}
+.pm-li a:hover{color:var(--accent)}
+.pm-goalbox{margin-top:10px;padding:10px 12px;border-radius:var(--r-md);background:color-mix(in srgb,var(--accent) 9%,transparent);font-size:15px;line-height:1.4}
+.pm-goalbox b{color:var(--accent)}
+.pm-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:18px;flex-wrap:wrap}
+.pm-dots{display:flex;gap:8px}
+.pm-dot{width:34px;height:34px;border-radius:var(--pill);border:0;background:var(--surface);box-shadow:var(--ring);color:var(--muted);
+ font-size:12.5px;font-weight:600;cursor:pointer;font-variant-numeric:tabular-nums;padding:0 6px;width:auto;min-width:46px}
+.pm-dot.on{background:var(--accent);color:var(--bg);box-shadow:none}
+.pm-nav{display:flex;gap:8px}
+.pm-nav button{height:38px;padding:0 14px;border-radius:var(--pill);border:0;background:var(--surface);box-shadow:var(--ring);color:var(--text);
+ font:inherit;font-size:14.5px;cursor:pointer}
+.pm-nav button:disabled{opacity:.35;cursor:default}
+/* motion: everything below only runs once the map gets .go */
+.pm-svg .pm-n,.pm-tag,.pm-li,.pm-goalbox{opacity:0}
+.go .pm-prog{animation:pmDraw 1.1s var(--ease) .15s both}
+.go .pm-n{animation:pmPop .45s var(--ease) both;animation-delay:calc(var(--i) * 85ms + .2s)}
+.go .pm-n{transform-box:fill-box;transform-origin:center}
+.go .pm-next{animation:pmMarch 1s linear infinite}
+.go .pm-ring{transform-box:fill-box;transform-origin:center;animation:pmPulse 1.8s ease-out 1.2s infinite both}
+.go .pm-tag{animation:pmFade .5s var(--ease) both;animation-delay:1.15s}
+.go .pm-tag.ghost{animation-delay:1.45s}
+.go .pm-li,.go .pm-goalbox{animation:pmRise .45s var(--ease) both;animation-delay:calc(var(--i) * 70ms + .5s)}
+@keyframes pmIn{from{opacity:0;transform:translateY(14px) scale(.98)}}
+@keyframes pmDraw{from{stroke-dashoffset:var(--len)}to{stroke-dashoffset:0}}
+@keyframes pmPop{0%{opacity:0;transform:scale(.4)}70%{opacity:1;transform:scale(1.12)}100%{opacity:1;transform:scale(1)}}
+@keyframes pmMarch{to{stroke-dashoffset:-28}}
+@keyframes pmPulse{0%{opacity:.85;transform:scale(1)}100%{opacity:0;transform:scale(1.9)}}
+@keyframes pmFade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@keyframes pmRise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media (max-width:700px){
+ .pm-wrap{padding:18px 16px 20px}.pm-h{font-size:21px}.pm-big{font-size:42px}
+ .pm-cols{grid-template-columns:1fr}
+ .pm-dot{min-width:40px;height:32px}
+}
+@media (prefers-reduced-motion:reduce){
+ #pmap[open]{animation:none}
+ .pm-svg .pm-n,.pm-tag,.pm-li,.pm-goalbox{opacity:1!important;animation:none!important}
+ .go .pm-prog,.go .pm-next,.go .pm-ring{animation:none!important}
+ .pm-ring{display:none}.pm-fill,.pm-goal{transition:none}
+}
+</style>
+<dialog id="pmap" aria-labelledby="pm-h"><div class="pm-wrap" id="pm-body"></div></dialog>
+<script id="progress-map">
+/* Progress map. Reads the six rail stages and the nine slot cards straight from this page,
+   so it stays correct if the page is regenerated. Stages 10-85% open the map; 100% does not. */
+(function(){
+  const rail=document.querySelector('.rail'); const dlg=document.getElementById('pmap'); const body=document.getElementById('pm-body');
+  if(!rail||!dlg||!dlg.showModal) return;
+  const still=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const L=()=> (typeof LANG!=='undefined'&&LANG==='en')?'en':'ms';
+  const T={
+    eye:{ms:'Peta kemajuan',en:'Progress map'},
+    here:{ms:'Anda di sini',en:'You are here'}, next:{ms:'Seterusnya',en:'Next'},
+    done:{ms:'Sudah dicapai',en:'Done so far'}, todo:{ms:'Langkah seterusnya',en:'What to do next'},
+    attend:{ms:'Hadiri',en:'Attend'}, gate:{ms:'Bawa ke gerbang seterusnya',en:'Bring to the next gate'},
+    day:{ms:'Hari',en:'Day'}, prev:{ms:'‹ Tahap sebelum',en:'‹ Previous'}, fwd:{ms:'Tahap berikut ›',en:'Next stage ›'},
+    close:{ms:'Tutup',en:'Close'}, now:{ms:'Kini',en:'Now'}, target:{ms:'Sasaran',en:'Target'},
+    hint:{ms:'Lihat peta kemajuan →',en:'See progress map →'},
+    sub:{ms:'Slot selesai, tahap semasa dan apa yang perlu dibuat untuk ke tahap seterusnya.',en:'Slots done, where you are now, and what to do to reach the next stage.'}
+  };
+  const t=k=>T[k][L()];
+  const A=(el,k)=>el? (el.getAttribute('data-'+L())||el.innerHTML):'';
+  /* ---- data from the page ---- */
+  const gates=[...rail.querySelectorAll('.rs')].map(rs=>{
+    const ss=rs.querySelector('.ss'), nm=rs.querySelector('.nm');
+    const m=(ss&&(ss.getAttribute('data-en')||ss.textContent)||'').match(/Slot\s*(\d+)/);
+    return {rs, pc:parseInt(rs.querySelector('.pc').textContent,10), slot:m?+m[1]:0, nm, ss};
+  });
+  const slots=[...document.querySelectorAll('.scard')].filter(c=>c.querySelector('a[href^="Slot_"]')).map((c,i)=>{
+    const lab=c.querySelector('.slabel'), h=c.querySelector('h3'), a=c.querySelector('a[href^="Slot_"]');
+    const d=((lab&&(lab.getAttribute('data-en')||lab.textContent))||'').match(/Day\s*(\d)|Hari\s*(\d)/);
+    return {n:i+1, h, day:d?+(d[1]||d[2]):Math.floor(i/3)+1, href:a?a.getAttribute('href'):null};
+  });
+  if(gates.length<2||!slots.length) return;
+  const gateText=g=>{const s=A(g.ss); const p=s.split('&middot;'); return (p.length>1?p.slice(1).join('&middot;'):s).trim();};
+  /* ---- make 10-85% clickable ---- */
+  const hints=[];
+  gates.slice(0,-1).forEach((g,k)=>{
+    const rs=g.rs; rs.classList.add('pm-click'); rs.tabIndex=0; rs.setAttribute('role','button');
+    const h=document.createElement('div'); h.className='pm-hint'; rs.appendChild(h); hints.push(h);
+    rs.addEventListener('click',()=>open(k));
+    rs.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open(k);}});
+  });
+  function paintHints(){hints.forEach(h=>h.textContent=t('hint')); gates.slice(0,-1).forEach(g=>g.rs.setAttribute('aria-label',
+    g.pc+'% · '+(g.nm?g.nm.textContent:'')+' · '+t('hint').replace('→','').trim()));}
+  paintHints();
+  /* ---- render ---- */
+  let cur=0;
+  function svgV(k){
+    const W=340, x=30, r=16, rowH=54, hdr=30, here=gates[k].slot, nxt=gates[k+1].slot;
+    let y=8, ys=[], bands=[], last=null;
+    slots.forEach(sl=>{ if(sl.day!==last){ if(bands.length) bands[bands.length-1].b=y-6; bands.push({d:sl.day,a:y}); y+=hdr; last=sl.day; }
+      ys.push(y+rowH/2); y+=rowH; });
+    bands[bands.length-1].b=y; const H=y+10;
+    const trunc=v=>{const d=document.createElement('div'); d.innerHTML=v; const s=d.textContent; return s.length>33?s.slice(0,32).trim()+'…':s;};
+    const esc=v=>v.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+    let s=`<svg class="pm-svg pm-v" viewBox="0 0 ${W} ${H}" role="img" aria-label="${t('eye')}: ${gates[k].pc}%">`;
+    bands.forEach(b=>{ s+=`<rect class="pm-band" x="4" y="${b.a}" width="${W-8}" height="${b.b-b.a}" rx="12"/><text class="pm-day" x="${x+r+12}" y="${b.a+20}" style="font-size:13px">${t('day').toUpperCase()} ${b.d}</text>`; });
+    const y1=ys[0], yh=ys[here-1], yn=ys[nxt-1], yl=ys[ys.length-1], len=Math.max(1,yh-y1);
+    s+=`<line class="pm-rail" x1="${x}" y1="${y1}" x2="${x}" y2="${yl}"/><line class="pm-next" x1="${x}" y1="${yh}" x2="${x}" y2="${yn}"/>`;
+    s+=`<line class="pm-prog" x1="${x}" y1="${y1}" x2="${x}" y2="${yh}" style="--len:${len};stroke-dasharray:${len}"/>`;
+    const tagR=(yy,label,ghost)=>{const w=label.length*7.2+22; return `<g class="pm-tag${ghost?' ghost':''}"><rect x="${W-10-w}" y="${yy-10}" width="${w}" height="20" rx="10"/><text x="${W-10-w/2}" y="${yy}" style="font-size:12px">${label}</text></g>`;};
+    slots.forEach((sl,i)=>{const n=i+1, yy=ys[i], st=n<here?'done':n===here?'here':n<=nxt?'nxt':'ahead';
+      const g=gates.find(G=>G.slot===n), gi=gates.indexOf(g);
+      s+=`<g class="pm-n ${st}" style="--i:${i}">`+(st==='here'?`<circle class="pm-ring" cx="${x}" cy="${yy}" r="${r}"/>`:'')+
+        `<circle class="pm-c" cx="${x}" cy="${yy}" r="${r}"/><text class="pm-num" x="${x}" y="${yy}" style="font-size:15px">${n}</text>`+
+        `<text x="${x+r+12}" y="${yy-9}" style="font-size:14px;font-weight:600;fill:${st==='ahead'?'var(--muted)':'var(--text)'}">Slot ${n}</text>`+
+        `<text x="${x+r+12}" y="${yy+13}" style="font-size:12.5px;fill:var(--muted)">${esc(trunc(A(sl.h)))}</text></g>`;
+      if(n===here) s+=tagR(yy-13,t('here')+' · '+g.pc+'%',false);
+      else if(n===nxt) s+=tagR(yy-13,t('next')+' · '+gates[k+1].pc+'%',true);
+      else if(g) s+=`<text class="pm-gate${gi<=k?' on':''}" x="${W-14}" y="${yy-4}" style="text-anchor:end">${g.pc}%</text>`;
+    });
+    return s+'</svg>';
+  }
+  function svg(k){
+    if(body.clientWidth<560) return svgV(k);
+    const narrow=body.clientWidth<640, W=narrow?640:1000, m=narrow?44:70, H=narrow?250:236;
+    const step=(W-2*m)/(slots.length-1), y=118, X=i=>m+i*step, r=narrow?21:22;
+    const here=gates[k].slot, nxt=gates[k+1].slot;
+    let s=`<svg class="pm-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${t('eye')}: ${gates[k].pc}%">`;
+    // day bands
+    const days=[...new Set(slots.map(x=>x.day))];
+    days.forEach(d=>{const ix=slots.filter(x=>x.day===d).map(x=>x.n-1); const a=X(ix[0])-step/2+6, b=X(ix[ix.length-1])+step/2-6;
+      s+=`<rect class="pm-band" x="${a}" y="14" width="${b-a}" height="${H-28}" rx="14"/><text class="pm-day" x="${(a+b)/2}" y="38" text-anchor="middle">${t('day').toUpperCase()} ${d}</text>`;});
+    const x1=X(0), xh=X(here-1), xn=X(nxt-1), xl=X(slots.length-1);
+    s+=`<line class="pm-rail" x1="${x1}" y1="${y}" x2="${xl}" y2="${y}"/>`;
+    s+=`<line class="pm-next" x1="${xh}" y1="${y}" x2="${xn}" y2="${y}"/>`;
+    const len=Math.max(1,xh-x1);
+    s+=`<line class="pm-prog" x1="${x1}" y1="${y}" x2="${xh}" y2="${y}" style="--len:${len};stroke-dasharray:${len}"/>`;
+    // gate % labels above
+    gates.forEach((g,gi)=>{ if(!g.slot) return; s+=`<text class="pm-gate${gi<=k?' on':''}" x="${X(g.slot-1)}" y="${y-r-14}">${g.pc}%</text>`;});
+    // nodes
+    slots.forEach((sl,i)=>{const n=i+1, st=n<here?'done':n===here?'here':n<=nxt?'nxt':'ahead';
+      s+=`<g class="pm-n ${st}" style="--i:${i}">`+(st==='here'?`<circle class="pm-ring" cx="${X(i)}" cy="${y}" r="${r}"/>`:'')+
+        `<circle class="pm-c" cx="${X(i)}" cy="${y}" r="${r}"/><text class="pm-num" x="${X(i)}" y="${y}">${n}</text></g>`;});
+    // tags
+    const tag=(x,label,ghost)=>{const w=label.length*7.6+26; return `<g class="pm-tag${ghost?' ghost':''}"><rect x="${x-w/2}" y="${y+r+12}" width="${w}" height="28" rx="14"/><text x="${x}" y="${y+r+26}">${label}</text></g>`;};
+    const hereLbl=t('here'), nxLbl=t('next')+' · '+gates[k+1].pc+'%';
+    let xa=xh, xb=xn; const need=(hereLbl.length*7.6+26)/2+(nxLbl.length*7.6+26)/2+8;
+    if(xb-xa<need){const sh=(need-(xb-xa))/2; xa-=sh; xb+=sh;}
+    xa=Math.max(xa,(hereLbl.length*7.6+26)/2+4); xb=Math.min(xb,W-(nxLbl.length*7.6+26)/2-4);
+    if(xb-xa<need) xa=xb-need; if(xb-xa<need) xb=xa+need;
+    s+=tag(xa,hereLbl,false)+tag(xb,nxLbl,true);
+    return s+'</svg>';
+  }
+  function render(k,animate){
+    cur=k; const g=gates[k], gn=gates[k+1], prevPc=k?gates[k-1].pc:0, here=g.slot, nxt=gn.slot;
+    let li=0;
+    const doneItems=gates.slice(0,k+1).map(x=>`<div class="pm-li" style="--i:${li++}"><span class="pm-k">${x.pc}%</span><span>${x.nm?A(x.nm):''}<br><span class="pm-s">${gateText(x)}</span></span></div>`).join('');
+    const nextSlots=slots.filter(s=>s.n>here&&s.n<=nxt);
+    const todo=nextSlots.map(s=>`<div class="pm-li" style="--i:${li++}"><span class="pm-k">S${s.n}</span><span>${s.href?`<a href="${s.href}">${A(s.h)}</a>`:A(s.h)}<br><span class="pm-s">${t('day')} ${s.day}</span></span></div>`).join('');
+    body.innerHTML=
+     `<div class="pm-head"><div class="pm-t"><div class="pm-eye">${t('eye')} · ${g.pc}%</div><h2 class="pm-h" id="pm-h">${g.nm?A(g.nm):''}</h2>
+       <div class="pm-s" style="color:var(--muted);margin-top:6px;font-size:15px">${t('sub')}</div></div>
+       <button class="pm-x" type="button" aria-label="${t('close')}">×</button></div>
+     <div class="pm-meter"><div class="pm-big" aria-live="polite">${still?g.pc:prevPc}%</div>
+       <div class="pm-bar"><div class="pm-track"><div class="pm-goal"></div><div class="pm-fill"></div></div>
+       <div class="pm-legend"><span>${t('now')}: <b>${g.pc}%</b></span><span>${t('target')}: <b>${gn.pc}%</b></span></div></div></div>
+     ${svg(k)}
+     <div class="pm-cols"><div class="pm-col"><h3>✓ ${t('done')}</h3>${doneItems}</div>
+       <div class="pm-col nx"><h3>→ ${t('todo')}</h3><div class="pm-s" style="margin-bottom:4px;color:var(--muted);font-size:14px">${t('attend')}</div>${todo}
+       <div class="pm-goalbox" style="--i:${li++}"><b>${gn.pc}% · ${gn.nm?A(gn.nm):''}</b><br>${t('gate')}: ${gateText(gn)}</div></div></div>
+     <div class="pm-foot"><div class="pm-dots">${gates.slice(0,-1).map((x,i)=>`<button type="button" class="pm-dot${i===k?' on':''}" data-k="${i}" aria-label="${x.pc}%">${x.pc}%</button>`).join('')}</div>
+       <div class="pm-nav"><button type="button" data-d="-1" ${k===0?'disabled':''}>${t('prev')}</button><button type="button" data-d="1" ${k===gates.length-2?'disabled':''}>${t('fwd')}</button></div></div>`;
+    body.querySelector('.pm-x').onclick=()=>dlg.close();
+    body.querySelectorAll('.pm-dot').forEach(b=>b.onclick=()=>render(+b.dataset.k,true));
+    body.querySelectorAll('.pm-nav button').forEach(b=>b.onclick=()=>{const n=cur+ +b.dataset.d; if(n>=0&&n<gates.length-1) render(n,true);});
+    const fill=body.querySelector('.pm-fill'), goal=body.querySelector('.pm-goal'), big=body.querySelector('.pm-big');
+    const go=()=>{fill.style.width=g.pc+'%'; goal.style.width=gn.pc+'%'; body.classList.add('go');
+      if(still||!animate){big.textContent=g.pc+'%';return;}
+      const t0=performance.now(), d=1100; (function tick(n){const p=Math.min(1,(n-t0-150)/d), e=p<0?0:1-Math.pow(1-p,3);
+        big.textContent=Math.round(prevPc+(g.pc-prevPc)*e)+'%'; if(p<1) requestAnimationFrame(tick);})(t0);};
+    body.classList.remove('go');
+    if(animate&&!still){requestAnimationFrame(()=>requestAnimationFrame(go));}
+    else {fill.style.transition=goal.style.transition='none'; go();}
+  }
+  function open(k){ if(!dlg.open) dlg.showModal(); render(k,true); body.querySelector('.pm-x').focus({preventScroll:true}); }
+  dlg.addEventListener('click',e=>{if(e.target===dlg) dlg.close();});
+  dlg.addEventListener('keydown',e=>{ if(e.key==='ArrowRight'&&cur<gates.length-2){e.preventDefault();render(cur+1,true);}
+    if(e.key==='ArrowLeft'&&cur>0){e.preventDefault();render(cur-1,true);} e.stopPropagation(); });
+  addEventListener('resize',()=>{ if(dlg.open) render(cur,false); });
+  /* follow the page's BM/EN switch */
+  if(typeof setLang==='function'){ const base=setLang; setLang=function(l){ base(l); paintHints(); if(dlg.open) render(cur,false); }; }
+})();
+</script>
 </body>
 </html>
