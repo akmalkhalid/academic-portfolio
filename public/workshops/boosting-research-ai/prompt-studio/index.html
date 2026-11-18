@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow,noarchive">
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prompt Studio: Boosting Your Research with AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0d0e10;--panel:#15171b;--panel2:#1b1e23;--line:#2a2e35;--ink:#f3f3f3;--mute:#9aa3ab;--cy:#4FD1FF;--cy2:#1AA3D9;--gray:#646f79;--ok:#3ddc97}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font-family:'Geist','Helvetica Neue',Arial,sans-serif;font-size:15px;line-height:1.5;overflow:hidden}
+body:before{content:"";position:fixed;inset:0;background:
+ radial-gradient(900px 500px at 85% -10%,rgba(79,209,255,.16),transparent 60%),
+ radial-gradient(700px 500px at -10% 110%,rgba(123,140,255,.10),transparent 60%),
+ linear-gradient(rgba(79,209,255,.05) 1px,transparent 1px) 0 0/40px 40px,
+ linear-gradient(90deg,rgba(79,209,255,.05) 1px,transparent 1px) 0 0/40px 40px;pointer-events:none;animation:drift 30s linear infinite}
+@keyframes drift{to{background-position:0 0,0 0,0 40px,40px 0}}
+@media (prefers-reduced-motion:reduce){body:before{animation:none}}
+.app{position:relative;display:grid;grid-template-columns:300px 1fr;height:100vh}
+aside{border-right:1px solid var(--line);background:rgba(13,14,16,.85);backdrop-filter:blur(6px);overflow:auto;padding:20px 14px 30px}
+.brand{padding:4px 8px 16px;border-bottom:1px solid var(--line);margin-bottom:12px}
+.brand b{display:block;font-size:17px;font-weight:600;letter-spacing:-.01em}
+.brand span{font-size:12px;color:var(--mute)}
+.sess{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);margin:16px 8px 6px}
+.item{display:flex;gap:10px;align-items:center;width:100%;text-align:left;background:none;border:1px solid transparent;color:var(--ink);font:inherit;padding:8px 10px;border-radius:8px;cursor:pointer}
+.item:hover{background:var(--panel2)}
+.item.on{background:rgba(79,209,255,.10);border-color:rgba(79,209,255,.45)}
+.item .id{font-family:'Geist Mono',monospace;font-size:12px;color:var(--cy);min-width:30px}
+.item .nm{font-size:13.5px;line-height:1.3}
+main{overflow:auto;padding:28px 36px 60px}
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:24px;flex-wrap:wrap}
+.kick{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--cy)}
+h1{font-size:30px;font-weight:500;letter-spacing:-.02em;margin:6px 0 4px}
+.sub{color:var(--mute);max-width:760px}
+.tool{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--panel);border-radius:64px;padding:6px 14px;font-size:13px;color:var(--mute);white-space:nowrap}
+.chips2{display:flex;flex-direction:column;gap:8px;align-items:flex-end}
+.tool.move b{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--cy);font-weight:600}
+.tool i{width:8px;height:8px;border-radius:50%;background:var(--cy);box-shadow:0 0 10px var(--cy);font-style:normal}
+.variants{display:flex;gap:8px;flex-wrap:wrap;margin:22px 0 18px;align-items:center}
+.variants .lbl{font-size:12px;color:var(--mute);margin-right:4px;letter-spacing:.08em;text-transform:uppercase}
+.chip{border:1px solid var(--line);background:var(--panel);color:var(--ink);font:inherit;font-size:13.5px;padding:7px 14px;border-radius:64px;cursor:pointer;transition:all .2s ease-in-out}
+.chip:hover{border-color:var(--gray)}
+.chip.on{background:var(--cy);color:#04121a;border-color:var(--cy);font-weight:600;box-shadow:0 0 18px rgba(79,209,255,.45)}
+.grid{display:grid;grid-template-columns:minmax(300px,420px) 1fr;gap:22px;align-items:start}
+.card{background:rgba(21,23,27,.92);border:1px solid var(--line);border-radius:20px;padding:20px}
+.card h2{font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);font-weight:600;margin:0 0 14px}
+.note{border-radius:12px;padding:10px 14px;font-size:13.5px;margin-bottom:12px}
+.before{background:rgba(79,209,255,.08);border-left:3px solid var(--cy)}
+.verify{background:rgba(61,220,151,.08);border-left:3px solid var(--ok);margin-top:16px}
+.note b{display:block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:2px}
+.before b{color:var(--cy)}.verify b{color:var(--ok)}
+label{display:block;font-size:12.5px;color:var(--mute);margin:12px 0 5px}
+input,textarea{width:100%;background:#0f1114;border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:9px 11px;font:inherit;font-size:14px;transition:border-color .2s}
+textarea{resize:vertical;min-height:70px;font-family:'Geist Mono',monospace;font-size:12.5px;line-height:1.45}
+input:focus,textarea:focus{outline:none;border-color:var(--cy);box-shadow:0 0 0 3px rgba(79,209,255,.15)}
+.nofields{color:var(--mute);font-size:13.5px}
+.preview{position:relative}
+.bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:10px}
+.btns{display:flex;gap:8px}
+.btn{border:1px solid var(--line);background:var(--panel2);color:var(--ink);font:inherit;font-size:13.5px;padding:8px 16px;border-radius:64px;cursor:pointer;transition:all .2s ease-in-out}
+.btn:hover{border-color:var(--gray)}
+.btn.primary{background:var(--cy);border-color:var(--cy);color:#04121a;font-weight:600}
+.btn.primary:hover{box-shadow:0 0 20px rgba(79,209,255,.5)}
+.btn.done{background:var(--ok);border-color:var(--ok)}
+pre{margin:0;white-space:pre-wrap;word-wrap:break-word;font-family:'Geist Mono',monospace;font-size:13.5px;line-height:1.6;background:#0b0c0e;border:1px solid var(--line);border-radius:12px;padding:18px 20px;min-height:200px}
+mark{background:rgba(79,209,255,.16);color:#bfefff;border-bottom:1px solid var(--cy);border-radius:3px;padding:0 2px;transition:background .3s}
+mark.flash{background:rgba(79,209,255,.45)}
+mark.empty{background:rgba(255,199,44,.14);color:#ffd98a;border-bottom-color:#ffc72c}
+.foot{margin-top:28px;color:var(--mute);font-size:12.5px;max-width:900px}
+.foot a{color:var(--cy)}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ok);color:#04150d;padding:10px 18px;border-radius:64px;font-weight:600;font-size:14px;opacity:0;transition:all .3s ease-in-out;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.menu{display:none}
+@media (max-width:900px){body{overflow:auto}.app{grid-template-columns:1fr;height:auto}aside{display:none}aside.open{display:block}.menu{display:inline-flex}.grid{grid-template-columns:1fr}main{padding:20px}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside id="side">
+ <div class="brand"><b>Prompt Studio</b><span>Boosting Your Research with AI · PTSL UKM, 19 and 20 Nov 2026</span></div>
+ <nav id="nav"></nav>
+</aside>
+<main>
+ <div class="top">
+  <div>
+   <button class="btn menu" id="menu" type="button">Prompts</button>
+   <div class="kick" id="kick"></div>
+   <h1 id="title"></h1>
+   <div class="sub" id="sub"></div>
+  </div>
+  <div class="chips2"><div class="tool" id="tool"><i></i><span></span></div><div class="tool move" id="move"><b>Prompting move</b><span></span></div></div>
+ </div>
+ <div class="variants" id="variants"><span class="lbl">Fill with</span></div>
+ <div class="grid">
+  <div class="card">
+   <h2>Your details</h2>
+   <div class="note before" id="before"><b>Before you paste</b><span></span></div>
+   <form id="form" autocomplete="off"></form>
+  </div>
+  <div class="card preview">
+   <div class="bar"><h2 style="margin:0">Prompt, ready to paste</h2>
+    <div class="btns"><button class="btn" id="reset" type="button">Clear fields</button><button class="btn primary" id="copy" type="button">Copy prompt</button></div></div>
+   <pre id="out"></pre>
+   <div class="note verify" id="verify"><b>Verify</b><span></span></div>
+  </div>
+ </div>
+ <div class="foot">Example values are invented to show how the same prompt adapts to different fields. Replace them with your own before you use the output in a review. Paste only what may leave your computer: no confidential manuscripts, no identifiable data. Workshop materials: <a href="https://tinyurl.com/LRAIBoost2026">tinyurl.com/LRAIBoost2026</a> · <a href="/workshops/boosting-research-ai/">Slides</a> · <a href="/workshops/boosting-research-ai/included_studies_sample.csv" download>Practice file (.csv)</a></div>
+</main>
+</div>
+<div class="toast" id="toast">Copied. Paste it into your AI tool.</div>
+<script>
+const V = {
+ A:{name:"Education",
+  field:"Education (higher education)",
+  question:"How does generative AI use relate to undergraduate academic writing outcomes, 2023 to 2026?",
+  topic:"generative AI and undergraduate academic writing", place:"Malaysia",
+  c1:"generative AI", c2:"undergraduate students", c3:"academic writing outcomes",
+  concepts:"Population: undergraduate*, \"higher education\", \"university student*\"\nExposure: \"generative AI\", ChatGPT, \"large language model*\"\nOutcome: \"academic writing\", \"writing quality\", \"written feedback\"",
+  extradb:"ERIC / MyCite", yfrom:"2023", yto:"2026", sdate:"15 June 2026",
+  data:"S01 | \"Students revised more often after AI feedback\" | p. 7\nS04 | \"Edits were mostly at sentence level\" | p. 12\nS09 | \"Participants were unsure what counted as misuse\" | p. 5",
+  finding:"Most experimental studies reported higher writing scores with AI feedback, but gains were mainly at sentence level.",
+  studies:"S01 (higher scores), S04 (sentence-level edits), S09 (integrity uncertainty)",
+  category:"quantitative non-randomised",
+  section:"results",
+  draft:"Generative AI improved undergraduate writing across the included studies, with students revising more and producing higher-quality texts.",
+  claim1:"AI feedback improved writing quality", src1:"was associated with higher rubric scores in one first-year course", pg1:"7",
+  notes:"Question: generative AI and undergraduate writing, 2023-2026. Sources: Scopus, WoS, ERIC (searched 15 June 2026). 1,284 records, 28 included. Themes: faster feedback; surface edits; unclear integrity boundaries.",
+  words:"250",
+  ex1:"S01 | \"Students revised more often after AI feedback\" | p. 7", code1:"faster feedback cycle", ex2:"S04 | \"Edits were mostly at sentence level\" | p. 12", code2:"surface-level edits", critic:"Reviewer 2: a demanding peer reviewer for a Q1 journal",
+  tools:"Gemini and NotebookLM, November 2026",
+  used:"refining the review question, suggesting search terms, drafting eligibility criteria, extraction with page checks, language editing",
+  notused:"screening decisions, appraisal judgements, generating data, quotations or references",
+  checked:"every reference verified at doi.org, every quotation checked against the PDF, statistics recomputed in Excel",
+  journal:"Education and Information Technologies", title:"Generative AI and undergraduate academic writing: a systematic review",
+  why:"two recent articles on AI-supported feedback in first-year writing", reg:"OSF Registries [ID]", aisec:"Methods, section 2.6",
+  scope:"[paste the journal's aims and scope]", abstract:"[paste your abstract]"},
+ B:{name:"Health",
+  field:"Nursing and public health",
+  question:"What is the effect of telehealth interventions on glycaemic control in adults aged 60 and over with type 2 diabetes?",
+  topic:"telehealth and diabetes self-management in older adults", place:"Southeast Asia",
+  c1:"telehealth", c2:"older adults with type 2 diabetes", c3:"glycaemic control (HbA1c)",
+  concepts:"Population: \"older adult*\", elderly, aged 60+\nIntervention: telehealth, telemedicine, \"mobile health\", mHealth\nOutcome: HbA1c, \"glycaemic control\", \"blood glucose\"",
+  extradb:"PubMed / CINAHL", yfrom:"2015", yto:"2026", sdate:"1 March 2026",
+  data:"T02 | \"HbA1c fell by 0.4% at six months in the intervention arm\" | p. 9\nT05 | \"Participants found video calls tiring\" | p. 14\nT11 | \"No significant difference at 12 months\" | p. 6",
+  finding:"Telehealth was associated with small reductions in HbA1c at six months that were not sustained at twelve months.",
+  studies:"T02 (6-month reduction), T07 (adherence), T11 (no difference at 12 months)",
+  category:"quantitative randomised",
+  section:"discussion",
+  draft:"Telehealth is an effective way to control diabetes in older adults and should be adopted by all clinics.",
+  claim1:"Telehealth controls diabetes in older adults", src1:"HbA1c fell by 0.4% at six months in the intervention arm", pg1:"9",
+  notes:"Question: telehealth and HbA1c in adults 60+ with type 2 diabetes. Sources: PubMed, CINAHL, Scopus (searched 1 March 2026). 942 records, 17 RCTs included. Themes: short-term gains; adherence fatigue; access gaps.",
+  words:"250",
+  ex1:"T02 | \"HbA1c fell by 0.4% at six months in the intervention arm\" | p. 9", code1:"short-term glycaemic gain", ex2:"T05 | \"Participants found video calls tiring\" | p. 14", code2:"digital fatigue", critic:"a biostatistician reviewing for a Q1 journal",
+  tools:"ChatGPT and NotebookLM, November 2026",
+  used:"drafting the search strategy, extraction with page checks, language editing",
+  notused:"screening, risk-of-bias judgements, meta-analysis, references",
+  checked:"every DOI checked, all effect sizes recomputed from the source tables",
+  journal:"Journal of Telemedicine and Telecare", title:"Telehealth for glycaemic control in older adults with type 2 diabetes: a systematic review",
+  why:"two recent trials it published on remote diabetes monitoring", reg:"PROSPERO CRD[number]", aisec:"Acknowledgements",
+  scope:"[paste the journal's aims and scope]", abstract:"[paste your abstract]"},
+ C:{name:"Computing",
+  field:"Computer science (agricultural AI)",
+  question:"How accurate are deep learning models for detecting crop diseases from field images on smallholder farms?",
+  topic:"deep learning for crop disease detection", place:"tropical smallholder farms",
+  c1:"deep learning", c2:"smallholder crops", c3:"disease detection accuracy",
+  concepts:"Population: smallholder*, \"oil palm\", paddy, crop*\nIntervention: \"deep learning\", CNN, \"convolutional neural network*\", \"vision transformer*\"\nOutcome: \"disease detection\", accuracy, F1",
+  extradb:"IEEE Xplore / ACM Digital Library", yfrom:"2018", yto:"2026", sdate:"10 May 2026",
+  data:"D03 | \"Accuracy dropped from 97% in the lab to 71% on field images\" | p. 8\nD06 | \"The dataset was collected on one farm\" | p. 4\nD12 | \"Lightweight models ran on low-cost phones\" | p. 11",
+  finding:"Models reported high accuracy on curated datasets, but accuracy fell sharply on field images.",
+  studies:"D03 (lab-to-field drop), D06 (single-farm data), D12 (on-phone deployment)",
+  category:"quantitative descriptive",
+  section:"abstract",
+  draft:"Deep learning solves crop disease detection, achieving over 95% accuracy in all settings.",
+  claim1:"Deep learning achieves over 95% accuracy in all settings", src1:"accuracy dropped from 97% in the lab to 71% on field images", pg1:"8",
+  notes:"Question: deep learning accuracy for crop disease detection on smallholder farms. Sources: Scopus, WoS, IEEE Xplore (searched 10 May 2026). 2,113 records, 41 included. Themes: lab-to-field gap; small single-site datasets; on-device deployment.",
+  words:"250",
+  ex1:"D03 | \"Accuracy dropped from 97% in the lab to 71% on field images\" | p. 8", code1:"lab-to-field gap", ex2:"D06 | \"The dataset was collected on one farm\" | p. 4", code2:"single-site data", critic:"a research methodologist reviewing for a Q1 journal",
+  tools:"Claude and Elicit, November 2026",
+  used:"search string translation, extraction of reported metrics with page checks, figure captions",
+  notused:"screening decisions, quality appraisal, generating metrics or references",
+  checked:"every metric re-read from the source table, all references opened at doi.org",
+  journal:"Computers and Electronics in Agriculture", title:"Deep learning for crop disease detection on smallholder farms: a systematic review",
+  why:"two recent articles on field validation of plant-disease models", reg:"OSF Registries [ID]", aisec:"Declarations",
+  scope:"[paste the journal's aims and scope]", abstract:"[paste your abstract]"}
+};
+const LBL = {field:"Your field",question:"Your review question",topic:"Topic",place:"Place or context",c1:"Concept 1",c2:"Concept 2",c3:"Concept 3",
+ concepts:"Your concept table",extradb:"Extra database",yfrom:"First year",yto:"Last year",sdate:"Search date",data:"Your extraction table (study | finding | page)",
+ finding:"Your principal finding",studies:"Studies it rests on",category:"MMAT category",section:"Draft section",draft:"Your draft text",
+ claim1:"Claim from your draft",src1:"Source sentence",pg1:"Page",notes:"Your review card notes",words:"Word limit",tools:"Tools and dates",used:"Used for",
+ notused:"NOT used for",checked:"How you checked",journal:"Journal name",title:"Manuscript title",why:"Why this journal",reg:"Registration",aisec:"Where the AI statement sits",
+ scope:"Aims and scope",abstract:"Your abstract",
+ ex1:"Example finding 1 (study | finding | page)",code1:"Your code for it",ex2:"Example finding 2 (study | finding | page)",code2:"Your code for it",critic:"Critic to play (methodologist, statistician, Reviewer 2, practitioner)"};
+const FAM = {chat:"#13a6dc", grnd:"#7c6cf2", data:"#e39a12", db:"#22b57a"};
+const TALL = new Set(["ex1","ex2","concepts","data","draft","notes","scope","abstract","used","notused","checked","question","finding"]);
+const P = [
+ {id:"1.1",fam:"chat",mv:"Reverse: AI asks you",s:1,sn:"Develop Research Questions",t:"Let AI question you",tool:"Chat assistant, web search off",f:["field","question"],
+  before:"Write your draft review question in one sentence, without AI.",
+  verify:"Read your final question to the person beside you. Can they name its P, E or I, and O? If the AI rewrites your question, reply \"stop, only questions\".",
+  tpl:`ROLE: You are a systematic review supervisor who asks sharp questions.
+CONTEXT: My field is {field}. My draft review question is: {question}
+TASK: Help me sharpen it by QUESTIONING me. Ask ONE question at a time and wait for my answer. Cover the population, the exposure or intervention, any comparison, the outcomes, the study designs I will include, and the time frame.
+CONSTRAINTS: Do not write the question for me. Do not suggest studies, authors or numbers. If my answer is vague, ask again more specifically.
+After 5 questions, map my answers to PICO, PEO or PICo using my words only.
+CHECK: List anything I left vague or undecided.`},
+ {id:"2.1",fam:"chat",mv:"Self-check: four checks",s:2,sn:"Extracting Texts and Insights",t:"Catch AI inventing references",tool:"Chat assistant, web search off, no files",f:["topic","place"],
+  before:"Turn web search off and attach no files. The point is to see what the model invents on its own.",
+  verify:"Check at least two references: exact title on Google Scholar, DOI at doi.org opens the same article, authors are real, journal indexed in Scopus or MyCite.",
+  tpl:`List 5 published studies on {topic} in {place}. For each, give the authors, year, title, journal and DOI.`},
+ {id:"2.2",fam:"grnd",mv:"Ground: only these documents",s:2,sn:"Extracting Texts and Insights",t:"Extract from your seed papers",tool:"Source-grounded tool with your PDFs",f:["c1","c2","c3"],
+  before:"Write your own extraction columns first. Upload three seed papers to a source-grounded tool such as NotebookLM.",
+  verify:"Click every citation. Does the page say the same thing, with the same strength and conditions?",
+  tpl:`Using ONLY the documents I uploaded, build an extraction table.
+COLUMNS: Study (author, year) | Country and setting | Aim | Participants (n) | Design | Intervention or tool and how it was used | Outcome measured | Key finding, in the article's own words | Page number
+RULES:
+- Every finding must have a page number.
+- If something is not stated, write "not stated". Do not guess or estimate.
+- Do not add studies I did not upload.
+- Use the article's own words for findings, not your interpretation.
+THEN: List 5 terms these papers use for my key concepts ({c1}, {c2}, {c3}) that I could add to my search.`},
+ {id:"3.1",fam:"chat",mv:"Iterate: one change per round",s:3,sn:"Defining Search Methodology",t:"Build a search someone else can repeat",tool:"Chat assistant, web search off",f:["question","concepts","extradb"],
+  before:"Write a concept table of two or three concepts, with the terms you found in Lab 2.2.",
+  verify:"Run the string in Scopus yourself. Do all your seed papers appear? Record database, date and number of hits.",
+  tpl:`ROLE: You are a research librarian.
+CONTEXT: My review question is: {question}
+My concept table is:
+{concepts}
+I will search Scopus, Web of Science and {extradb}.
+TASK: Improve my search strategy.
+FORMAT:
+1. My concept table with added synonyms, and controlled vocabulary where the database has it.
+2. One Scopus string using TITLE-ABS-KEY, AND, OR, quotation marks and truncation (*).
+3. The same string translated for Web of Science (TS=).
+4. Three terms other disciplines use for my concepts that I might miss.
+CONSTRAINTS: Do not list articles, authors or references. I will run the search myself.`},
+ {id:"3.2",fam:"chat",mv:"Constraints first",s:3,sn:"Defining Search Methodology",t:"Criteria first, then screen",tool:"Chat assistant, web search off",f:["question","field"],
+  before:"Have your frozen review question ready.",
+  verify:"Edit until each criterion is a clear yes or no. Date and freeze them, then screen 20 records yourself with a reason for each.",
+  tpl:`ROLE: You are a systematic review methodologist.
+CONTEXT: My review question is: {question} My field is {field}.
+TASK: Draft eligibility criteria for my review.
+FORMAT:
+Inclusion criteria: 4 to 6 lines.
+Exclusion criteria: 4 to 6 lines, each with a short reason code.
+Each criterion must be decidable YES or NO from the title and abstract alone.
+CONSTRAINTS: Do not suggest articles. Do not suggest how many studies I should find.
+CHECK: For each criterion, describe one study that would PASS and one that would FAIL, without naming real studies.`},
+ {id:"4.1",fam:"data",mv:"Ask for code, not answers",s:4,sn:"Descriptive Analytics",t:"Inspect before you change anything",tool:"A tool that reads files and runs code",f:["yfrom","yto"],
+  before:"Write your analysis plan, one line per table. Upload included_studies_sample.csv (download it from the workshop page) or your own table.",
+  verify:"Fix each problem from the source paper, never by guessing. Log old value, new value and reason.",
+  tpl:`This is the table of studies included in my review (file attached). Year must be between {yfrom} and {yto}. mmat_criteria_met must be between 0 and 5. Each study_id must be unique.
+TASK: Check the data quality. Do NOT change anything yet.
+FORMAT: A table: Problem | Column | study_id | Suggested action. Then state the number of rows now, and after the fixes you propose.
+CHECK: Show the code or formula you used for each check, so I can rerun it myself.`},
+ {id:"4.2",fam:"data",mv:"Run your plan only",s:4,sn:"Descriptive Analytics",t:"Run your plan, nothing else",tool:"Same chat, after cleaning",f:["sdate"],
+  before:"Clean the table first (Prompt 4.1).",
+  verify:"Recompute at least one value yourself in Excel. If it differs, find out why.",
+  tpl:`Use the cleaned table. Run THIS plan only:
+1. Number of studies per year. The search date was {sdate}, so the last year is partial.
+2. Number and percentage of studies per country and per design.
+3. Sample size: number of studies reporting it, median, interquartile range, minimum, maximum. Then the median by design.
+4. A cross-tabulation of design by direction of finding.
+FORMAT: Clean tables, each with one plain-language sentence.
+CONSTRAINTS: Do not run any other analysis. Make no claims about effect.
+CHECK: Show the code you ran.`},
+ {id:"5.1",fam:"chat",mv:"Few-shot: show, then ask",s:5,sn:"Crafting Content and Discussion",t:"Code findings, keep the exact words",tool:"Chat assistant or source-grounded tool",f:["ex1","code1","ex2","code2","data"],
+  before:"Code two findings yourself first. They are the examples the AI copies: its codes will match your style and level of detail.",
+  verify:"Compare every quoted finding with the PDF, word for word. Name the themes yourself, each as a claim.",
+  tpl:`ROLE: You are a qualitative research assistant.
+TASK: Code the findings in my extraction table using thematic synthesis (line-by-line coding of each study's findings).
+EXAMPLES: I coded these two myself. Code the rest the same way, at the same level of detail.
+- {ex1} -> code: "{code1}"
+- {ex2} -> code: "{code2}"
+FORMAT: A table: Study | EXACT finding text, word for word | Page | Initial code (2 to 4 words). One finding may have more than one code.
+Then propose 3 to 5 descriptive themes, listing the codes and study IDs under each. List any finding that fits no theme.
+CONSTRAINTS:
+- Do not paraphrase, correct, translate or tidy the finding text.
+- Do not add studies or findings that are not in my table.
+- Themes are not recommendations. Do not suggest actions.
+DATA:
+{data}`},
+ {id:"5.2",fam:"chat",mv:"Reverse: reviewer asks you",s:5,sn:"Crafting Content and Discussion",t:"Questions for your discussion",tool:"Chat assistant, web search off",f:["field","finding","studies"],
+  before:"Write your principal finding in one or two sentences.",
+  verify:"Write the four moves yourself: principal finding, compare, explain and limit, implications.",
+  tpl:`ROLE: You are a reviewer for a journal in {field}.
+CONTEXT: My principal finding is: {finding} It rests on these studies: {studies}.
+TASK: Ask me 4 questions, ONE at a time, that a reviewer would ask about: how this compares with earlier reviews, why it might be so, what the evidence does not show, and who should act on it. Wait for my answer each time.
+CONSTRAINTS: Do not write the discussion for me. Do not cite references.`},
+ {id:"6.1",fam:"grnd",mv:"Second opinion: you first",s:6,sn:"Critical Analysis and Enhancement",t:"AI as second appraiser",tool:"Source-grounded tool with one paper",f:["category"],
+  before:"Appraise the paper yourself first: Yes, No or Can't tell for each MMAT criterion.",
+  verify:"Log every disagreement and settle it from the paper, not by trusting either rater.",
+  tpl:`Using ONLY the uploaded article, act as a second appraiser with the Mixed Methods Appraisal Tool (MMAT) 2018, category: {category}.
+FORMAT: A table: Criterion | Yes, No or Can't tell | Evidence: a short quotation and its page number.
+CONSTRAINTS:
+- If the article does not report something, answer Can't tell.
+- Do not give an overall score.
+- Do not use information from outside the article.`},
+ {id:"6.2",fam:"chat",mv:"Persona: pick the critic",s:6,sn:"Critical Analysis and Enhancement",t:"Pick your critic, face the review",tool:"New chat, web search off",f:["critic","field","section","draft"],
+  before:"Open a new chat, so earlier conversation does not soften the review. Pick the critic your draft needs: methodologist (search, criteria), statistician (counts), Reviewer 2 (claims) or a practitioner (so what?). One critic per chat.",
+  verify:"Check any guideline it names. Fix the weaknesses yourself.",
+  tpl:`ROLE: You are {critic}, in the field of {field}.
+TASK: Review my draft {section}. List the 5 most serious weaknesses, ranked from most to least serious.
+FORMAT: A table: Weakness | Where in the text | Why a reviewer would object | What evidence would fix it.
+CONSTRAINTS: Do not rewrite my text. Do not cite references. If you invoke a reporting guideline, name it so I can check it myself.
+DRAFT: {draft}`},
+ {id:"6.3",fam:"chat",mv:"Self-check: claim vs source",s:6,sn:"Critical Analysis and Enhancement",t:"Check each claim against its source",tool:"Chat assistant, web search off",f:["claim1","src1","pg1"],
+  before:"Pair each claim in your draft with the source sentence it rests on.",
+  verify:"Fix every STRONGER claim yourself. Watch for causation from association and \"no effect\" from \"no significant difference\".",
+  tpl:`I will give you pairs: a claim from my draft, and the source sentence it rests on, with its page.
+For each pair, answer: SAME strength, STRONGER than the source, or WEAKER than the source. If STRONGER, name the word or phrase that makes it stronger.
+Do not rewrite my claims.
+PAIRS:
+1. Claim: {claim1} | Source (p. {pg1}): {src1}`},
+ {id:"7.1",fam:"chat",mv:"Chain step 1: arrange, add nothing",s:7,sn:"Putting It All Together",t:"Assemble from your card, add nothing new",tool:"Chat assistant, web search off",f:["notes"],
+  before:"Paste your whole review card.",
+  verify:"Walk the number trace. Anything marked [CHECK] or without a source comes out.",
+  tpl:`ROLE: You are a manuscript editor.
+TASK: Arrange my notes into a systematic review draft under the PRISMA 2020 sections: Title, Abstract (leave empty), Introduction, Methods, Results, Discussion, Other information.
+CONSTRAINTS:
+- Use ONLY my notes. Add no statistics, references or examples.
+- Where a section has no material in my notes, write [TO COMPLETE] and say what is needed.
+- Make no causal claims unless my notes make them.
+- Formal academic English, active voice.
+CHECK: After the draft, list every number and every reference you used, and the line of my notes it came from. Mark any sentence my notes do not support with [CHECK].
+NOTES: {notes}`},
+ {id:"7.2",fam:"chat",mv:"Chain step 2: from the draft only",s:7,sn:"Putting It All Together",t:"Write the abstract last",tool:"Same chat as 7.1",f:["words"],
+  before:"Assemble the draft first (Prompt 7.1).",
+  verify:"Every number in the abstract appears in the body, unchanged. Write the conclusion sentence yourself.",
+  tpl:`From this draft ONLY, write a structured abstract of at most {words} words with these headings: Background, Objectives, Methods (sources, dates searched, eligibility, appraisal, synthesis), Results (number of studies and participants, main findings), Conclusions.
+Use only numbers that appear in the draft. After the abstract, list each number with the section it came from.
+Do not add any claim that is not in the draft.
+DRAFT: [paste your assembled draft]`},
+ {id:"8.1",fam:"chat",mv:"Disclose from your log",s:8,sn:"Submission Preparation",t:"An AI-use statement you can sign",tool:"Chat assistant, web search off",f:["tools","used","notused","checked"],
+  before:"Fill in your usage log honestly.",
+  verify:"Could you defend every line to an editor without opening a chat?",
+  tpl:`Write an AI-use statement for my manuscript.
+MY LOG:
+- Tools and dates: {tools}
+- Used for: {used}
+- NOT used for: {notused}
+- How I checked: {checked}
+FORMAT: One paragraph, 80 to 120 words, first person, formal academic English. End by stating that the authors take full responsibility for the content of the manuscript.
+CONSTRAINTS: Do not overstate or understate my use. Use only the information in my log.`},
+ {id:"8.2",fam:"chat",mv:"Constraints: your inputs only",s:8,sn:"Submission Preparation",t:"Draft the cover letter",tool:"Chat assistant, web search off",f:["journal","title","finding","why","reg","aisec"],
+  before:"Have your title, main finding and registration ID ready.",
+  verify:"Every claim in the letter must already be in the manuscript.",
+  tpl:`Draft a cover letter to the editor of {journal}.
+INPUTS:
+- Manuscript title: {title}
+- Main finding in one sentence: {finding}
+- Why this journal: {why}
+- Registration: {reg}
+- Declarations: AI use stated in {aisec}; conflicts of interest: none; funding: [state]
+FORMAT: At most 250 words, formal.
+CONSTRAINTS: Make no claim that is not in my inputs. Do not describe the journal beyond what I wrote.`},
+ {id:"8.3",fam:"chat",mv:"Ground: the journal's own scope",s:8,sn:"Submission Preparation",t:"Check journal fit",tool:"Chat assistant, web search off",f:["scope","abstract"],
+  before:"Copy the journal's aims and scope from its website.",
+  verify:"Confirm indexing in Scopus or Web of Science yourself, and run the journal through Think. Check. Submit.",
+  tpl:`Below are a journal's aims and scope, and my abstract.
+List every mismatch between them: topic, population, methods, article type, or anything the scope excludes.
+Do not recommend whether to submit. Do not suggest other journals.
+AIMS AND SCOPE: {scope}
+MY ABSTRACT: {abstract}`}
+];
+const $ = id => document.getElementById(id);
+const esc = s => s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+let cur = P[0], vals = {}, variant = "A";
+function slug(p){return "p-"+p.id.replace(".","-")}
+function buildNav(){
+ let html="", last=0;
+ P.forEach(p=>{ if(p.s!==last){html+=`<div class="sess">Session ${p.s} · ${p.sn}</div>`; last=p.s;}
+  html+=`<button class="item" type="button" data-id="${p.id}"><span class="id">${p.id}</span><span class="nm">${p.t}</span></button>`;});
+ $("nav").innerHTML=html;
+ $("nav").querySelectorAll(".item").forEach(b=>b.onclick=()=>{location.hash=slug(P.find(x=>x.id===b.dataset.id)); $("side").classList.remove("open");});
+}
+function buildVariants(){
+ const box=$("variants"); box.querySelectorAll(".chip").forEach(c=>c.remove());
+ [["A",V.A.name+" (Aina)"],["B",V.B.name],["C",V.C.name],["X","Blank template"]].forEach(([k,n])=>{
+  const b=document.createElement("button"); b.type="button"; b.className="chip"+(k===variant?" on":""); b.textContent=n;
+  b.onclick=()=>{variant=k; fill(); buildVariants();}; box.appendChild(b);});
+}
+function fill(){ vals={}; cur.f.forEach(k=>{ vals[k]= variant==="X" ? "" : (V[variant][k]||""); }); buildForm(); render(true); }
+function buildForm(){
+ const f=$("form");
+ if(!cur.f.length){f.innerHTML='<p class="nofields">No fields to fill. Paste it as it is.</p>';return;}
+ f.innerHTML=cur.f.map(k=>{const t=TALL.has(k); const v=esc(vals[k]||"");
+  return `<label for="f-${k}">${LBL[k]||k}</label>`+(t?`<textarea id="f-${k}" data-k="${k}" rows="${k==="data"||k==="concepts"||k==="notes"?5:3}" placeholder="[${LBL[k]}]">${v}</textarea>`:`<input id="f-${k}" data-k="${k}" value="${v}" placeholder="[${LBL[k]}]">`);}).join("");
+ f.querySelectorAll("[data-k]").forEach(el=>el.addEventListener("input",()=>{vals[el.dataset.k]=el.value; render(false, el.dataset.k);}));
+}
+function text(){ return cur.tpl.replace(/\{(\w+)\}/g,(m,k)=> (vals[k]&&vals[k].trim()) ? vals[k] : `[${(LBL[k]||k).toLowerCase()}]`); }
+function render(flashAll, key){
+ const html=esc(cur.tpl).replace(/\{(\w+)\}/g,(m,k)=>{const v=vals[k]&&vals[k].trim(); const cls=v?"":" empty"; const fl=(flashAll||k===key)?" flash":"";
+  return `<mark class="${cls}${fl}" data-k="${k}">${v?esc(vals[k]):"["+esc((LBL[k]||k).toLowerCase())+"]"}</mark>`;});
+ $("out").innerHTML=html;
+ setTimeout(()=>$("out").querySelectorAll("mark.flash").forEach(m=>m.classList.remove("flash")),350);
+}
+function show(){
+ const h=location.hash.replace("#",""); cur=P.find(p=>slug(p)===h)||P[0];
+ $("kick").textContent=`Session ${cur.s} · ${cur.sn} · Prompt ${cur.id}`;
+ $("title").textContent=cur.t;
+ $("sub").textContent=`Choose an example field to see the prompt filled in, or type your own details. The highlighted parts change; everything else stays the same.`;
+ $("tool").querySelector("span").textContent=cur.tool;
+ $("tool").querySelector("i").style.background=FAM[cur.fam]; $("tool").querySelector("i").style.boxShadow="0 0 10px "+FAM[cur.fam];
+ $("move").querySelector("span").textContent=cur.mv;
+ $("before").querySelector("span").textContent=cur.before;
+ $("verify").querySelector("span").textContent=cur.verify;
+ $("nav").querySelectorAll(".item").forEach(b=>b.classList.toggle("on",b.dataset.id===cur.id));
+ buildVariants(); fill();
+}
+async function copy(){
+ const t=text(), btn=$("copy"); let ok=false;
+ try{ await navigator.clipboard.writeText(t); ok=true; }catch(e){
+  try{ const ta=document.createElement("textarea"); ta.value=t; ta.style.position="fixed"; ta.style.opacity="0"; document.body.appendChild(ta); ta.select(); ok=document.execCommand("copy"); ta.remove(); }catch(e2){ ok=false; } }
+ if(ok){ btn.textContent="Copied"; btn.classList.add("done"); $("toast").textContent="Copied. Paste it into your AI tool."; }
+ else { const r=document.createRange(); r.selectNodeContents($("out")); const s=getSelection(); s.removeAllRanges(); s.addRange(r); $("toast").textContent="Copy was blocked here. The prompt is selected: press Ctrl+C or Cmd+C."; }
+ $("toast").classList.add("show"); setTimeout(()=>{$("toast").classList.remove("show"); btn.textContent="Copy prompt"; btn.classList.remove("done");},1800);
+}
+$("copy").onclick=copy;
+$("reset").onclick=()=>{variant="X"; fill(); buildVariants();};
+$("menu").onclick=()=>$("side").classList.toggle("open");
+buildNav(); window.addEventListener("hashchange",show); show();
+</script>
+</body>
+</html>

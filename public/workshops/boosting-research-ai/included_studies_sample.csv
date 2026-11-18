@@ -1,0 +1,30 @@
+study_id,year,country,level,design,sample_size,ai_tool,outcome_focus,direction,mmat_criteria_met
+S01,2023,United States,Postgraduate,Quasi-experimental,135,ChatGPT,Motivation,Positive,4
+S02,2023,United States,Undergraduate,Quasi-experimental,77,ChatGPT,Feedback,Positive,4
+S03,2023,China,Undergraduate,Qualitative,18,ChatGPT,Feedback,Positive,5
+S04,2023,Malaysia,Undergraduate,Qualitative,9,ChatGPT,Academic integrity,Positive,5
+S05,2023,United States,Mixed,quasi experimental,45,ChatGPT,Academic integrity,Positive,4
+S06,2023,Saudi Arabia,Undergraduate,RCT,97,Grammarly,Academic integrity,Positive,4
+S07,2024,United Kingdom,Undergraduate,Quasi-experimental,40,Grammarly,Feedback,Null,5
+S08,2024,Indonesia,Undergraduate,Quasi-experimental,127,ChatGPT,Feedback,Mixed,2
+S09,2024,malaysia,Undergraduate,Qualitative,32,ChatGPT,Feedback,Null,3
+S10,2024,United Kingdom,Undergraduate,Survey,350,QuillBot,Academic integrity,Positive,2
+S11,2024,Nigeria,Postgraduate,Qualitative,17,ChatGPT,Feedback,Mixed,4
+S12,2024,China,Undergraduate,Survey,376,Grammarly,Writing quality,Negative,4
+S13,2024,Indonesia,Undergraduate,Qualitative,29,ChatGPT,Motivation,Negative,4
+S14,2024,Türkiye,Mixed,Survey,208,Multiple tools,Writing quality,Null,5
+S15,2024,Malaysia,Undergraduate,Survey,352,Multiple tools,Writing quality,Positive,5
+S16,2025,Australia,Mixed,Quasi-experimental,,Other,Motivation,Positive,5
+S17,2025,Türkiye,Undergraduate,Mixed methods,100,Grammarly,Writing quality,Positive,5
+S17,2025,Türkiye,Undergraduate,Mixed methods,100,Grammarly,Writing quality,Positive,5
+S18,2025,China,Postgraduate,Survey,171,ChatGPT,Writing quality,Mixed,5
+S19,2025,Australia,Undergraduate,Mixed methods,n=91,ChatGPT,Motivation,Null,4
+S20,2025,United States,Mixed,Survey,391,Other,Self-efficacy,Positive,3
+S21,2025,Indonesia,Postgraduate,RCT,168,ChatGPT,Writing quality,Mixed,4
+S22,2031,MY,Undergraduate,Quasi-experimental,148,ChatGPT,Writing quality,Mixed,4
+S23,2025,Spain,Undergraduate,Mixed methods,128,QuillBot,Feedback,Mixed,5
+S24,2025,China,Undergraduate,Quasi-experimental,160,ChatGPT,Writing quality,Mixed,5
+S25,2025,Malaysia,Undergraduate,Mixed methods,108,Multiple tools,Academic integrity,Mixed,7
+S26,2026,Saudi Arabia,Undergraduate,Survey,636,QuillBot,Writing quality,Positive,5
+S27,2026,Saudi Arabia,Undergraduate,Mixed methods,84,Multiple tools,Writing quality,Mixed,4
+S28,2026,Malaysia,Postgraduate,Qualitative,26,ChatGPT,Self-efficacy,Mixed,5
