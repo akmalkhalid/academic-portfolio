@@ -24,6 +24,7 @@ const PRICE_STYLE: Record<ToolkitTool['price'], string> = {
   'Free tier': 'color:#0c447c;background:#e6f1fb',
   Institutional: 'color:#633806;background:#faeeda',
   Paid: 'color:#712b13;background:#faece7',
+  'Coming soon': 'color:#4b3fb3;background:rgba(139,123,240,.14)',
 }
 
 const FREE = new Set<ToolkitTool['price']>(['Free', 'Free tier', 'Open source'])
@@ -123,10 +124,10 @@ export default function ToolkitPage() {
                         href={href}
                         target={external || partner ? '_blank' : undefined}
                         rel={rel}
-                        aria-label={`${t.own ? 'Open' : 'Visit'} ${t.name}${external || partner ? ' (opens in a new tab)' : ''}`}
+                        aria-label={`${t.price === 'Coming soon' ? 'Join the waitlist for' : t.own ? 'Open' : 'Visit'} ${t.name}${external || partner ? ' (opens in a new tab)' : ''}`}
                         style={mono('')}
                       >
-                        {t.own ? 'Open tool →' : 'Visit site ↗'}
+                        {t.price === 'Coming soon' ? 'Join waitlist →' : t.own ? 'Open tool →' : 'Visit site ↗'}
                       </a>
                     </li>
                   )

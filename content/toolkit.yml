@@ -20,7 +20,8 @@
 # Within each section, list free and open options first, except where a
 # tool is deliberately pinned to the top (SciSpace in "search", Nov 2026).
 #
-# price: one of  Free | Free tier | Open source | Paid | Institutional
+# price: one of  Free | Free tier | Open source | Paid | Institutional | Coming soon
+#   (Coming soon is for my own unreleased tools; the button reads "Join waitlist".)
 # usedIn: keys from `sessions` below.
 
 sessions:
@@ -192,13 +193,19 @@ sections:
 
   - id: integrity
     title: "Write in your own voice"
-    lede: "A small tool I built for a problem that keeps coming up in workshops."
+    lede: "Tools I am building for problems that keep coming up in workshops."
     tools:
       - name: "Human Voice check"
         url: "/tools/human-voice-check/"
         own: true
         price: "Free"
         why: "Flags paragraph patterns that read as machine-written and asks what only you can answer. Runs locally."
+        usedIn: []
+      - name: "AutoWriterAI"
+        url: "/autowriter/"
+        own: true
+        price: "Coming soon"
+        why: "A desktop workspace for the whole paper, from research question to cover letter, with a mentor that checks your argument and never invents a reference. Runs on your own computer."
         usedIn: []
 
   - id: local

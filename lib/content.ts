@@ -201,7 +201,7 @@ export type ToolkitTool = {
   url: string
   /** Tracked partner link. Used only when non-empty and the section allows it. */
   partnerLink?: string
-  price: 'Free' | 'Free tier' | 'Open source' | 'Paid' | 'Institutional'
+  price: 'Free' | 'Free tier' | 'Open source' | 'Paid' | 'Institutional' | 'Coming soon'
   why: string
   /** Built by me (lives on this site). */
   own?: boolean

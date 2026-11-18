@@ -2,7 +2,8 @@
 
 // Home — deliberately sparse. Five beats, in order:
 //   hero (the question + the record) → the signature demo (the loop, running)
-//   → the loop in words (three stages + horizon) → selected work → contact.
+//   → the loop in words (three stages + horizon) → selected work
+//   → one in-development card (AutoWriterAI) → contact.
 // Everything else lives one click away: grants on /research, demos on
 // /playground, the full record on /publications.
 
@@ -177,6 +178,19 @@ export default function HomeClient({
           ))}
         </div>
         <a href="/publications" style={s("display:inline-block;margin-top:22px;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;text-decoration:none;color:#1c1917;border-bottom:2px solid #4d8df0;padding-bottom:2px")}>All {stats.pubs} publications →</a>
+      </section>
+
+      {/* IN DEVELOPMENT — one quiet card for a product that has not launched yet */}
+      <section id="building" style={s('max-width:1120px;margin:0 auto;padding:40px 28px 0')}>
+        <p style={eyebrow(false)}>/ in development</p>
+        <a href="/autowriter/" className="home-building" style={s('display:flex;flex-wrap:wrap;align-items:center;gap:18px 28px;background:#fff;border:1px solid #e7e3dd;border-left:3px solid #8b7bf0;border-radius:14px;padding:22px 26px;text-decoration:none;color:#1c1917')}>
+          <div style={s('flex:1 1 420px;min-width:0')}>
+            <span style={s("font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:600;letter-spacing:.08em;color:#4b3fb3;background:rgba(139,123,240,.14);padding:3px 8px;border-radius:5px")}>COMING SOON</span>
+            <div style={s(`font-family:${stack};font-weight:600;font-size:20px;margin:10px 0 6px`)}>AutoWriterAI</div>
+            <div style={s('font-size:14px;line-height:1.6;color:#57514b;max-width:640px')}>A private desktop workspace for scientific writing, from first idea to published paper, with a mentor that checks your argument as you write. In English and Bahasa Melayu.</div>
+          </div>
+          <span style={s("font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;border-bottom:2px solid #8b7bf0;padding-bottom:2px;white-space:nowrap")}>Join the waitlist →</span>
+        </a>
       </section>
 
       {/* CONTACT */}
