@@ -131,6 +131,8 @@ const V = {
   notes:"Question: generative AI and undergraduate writing, 2023-2026. Sources: Scopus, WoS, ERIC (searched 15 June 2026). 1,284 records, 28 included. Themes: faster feedback; surface edits; unclear integrity boundaries.",
   words:"250",
   ex1:"S01 | \"Students revised more often after AI feedback\" | p. 7", code1:"faster feedback cycle", ex2:"S04 | \"Edits were mostly at sentence level\" | p. 12", code2:"surface-level edits", critic:"Reviewer 2: a demanding peer reviewer for a Q1 journal",
+  datafile:"included_studies_sample.csv (cleaned)", columns:"study_id, design, sample_size, outcome_focus, direction, comparison, effect_size_g", themes:"Theme 1, faster feedback cycles: students revised more often when AI feedback arrived within minutes (S02, S03, S08). Theme 2, surface edits over argument: AI feedback improved grammar and organisation more than argument quality (S07, S21, S24). Theme 3, unclear integrity boundaries: students disclosed AI use when class rules were explicit (S04, S05, S25).", quant:"14 studies with a comparison group (1,454 participants). All 14 effects favoured AI support. Median g: academic integrity 0.43 (2 studies, 0.31 to 0.55); feedback 0.15 (4 studies, 0.04 to 0.36); motivation 0.42 (3 studies, 0.06 to 0.47); writing quality 0.19 (5 studies, 0.14 to 0.33). Overall median 0.20, range 0.04 to 0.55. S13 excluded: qualitative design.", mainclaim:"Generative AI feedback helps undergraduates revise faster, but its effect on the quality of their arguments is small.",
+  reflist:"[1] Zawacki-Richter, O., Marín, V. I., Bond, M., & Gouverneur, F. (2019). Systematic review of research on artificial intelligence applications in higher education: where are the educators? International Journal of Educational Technology in Higher Education, 16, 39. One line: maps AI in higher education; little on teaching and writing. [2] Kasneci, E., et al. (2023). ChatGPT for good? On opportunities and challenges of large language models for education. Learning and Individual Differences, 103, 102274. One line: opportunities and risks of LLMs in education. [3] Fleckenstein, J., Liebenow, L. W., & Meyer, J. (2023). Automated feedback and writing: a multi-level meta-analysis of effects on students' performance. Frontiers in Artificial Intelligence, 6, 1162454. One line: automated writing feedback had a medium effect on writing performance (g = 0.55). [4] Fu, Q.-K., Zou, D., Xie, H., & Cheng, G. (2024). A review of AWE feedback: types, learning outcomes, and implications. Computer Assisted Language Learning, 37(1-2), 179-221. One line: AWE feedback helps the written product but is less effective than teacher or peer feedback.", priorrev:"Reviews [3] and [4] studied automated writing evaluation tools that predate generative AI. Neither synthesised generative AI feedback on undergraduate writing.", methmat:"Protocol registered on OSF (date). Databases: Scopus, Web of Science, ERIC; searched 3 Oct 2026; years 2022 to 2026; English only. Full Scopus string: [paste]. Criteria: undergraduates; generative AI feedback on writing; empirical studies. Screening: 412 records, 61 full texts, 27 included. Extraction fields: design, sample size, outcome focus, effect size g. Appraisal: MMAT 2018, two appraisers. Synthesis: thematic synthesis; SWiM by outcome.", claimtest:"Supported: all 14 comparison studies favoured AI support. Goes further than the evidence: 'helps revise faster' rests on 3 qualitative studies; the writing-quality effect is small (median g 0.19).", appraisal:"MMAT: 9 of 27 studies met all criteria. Common weaknesses: no comparison group, self-reported outcomes, single class.", reviews:"Review A: Fleckenstein et al. (2023), meta-analysis: automated writing feedback had a medium overall effect on writing performance (g = 0.55). Review B: Fu et al. (2024), systematic review: AWE feedback improves the written product but is less effective than human feedback; students found it useful but generic. Review C: Shi & Aryadoust (2024), systematic review of AI-based automated written feedback (ReCALL), 83 studies: research concentrated on English writing at tertiary level.", searchlimits:"Three databases, English only, 2022 to 2026, grey literature not searched. Title screening by one reviewer with AI assistance; 20% double-screened.", section:"Methods", items:"5 to 15",
   tools:"Gemini and NotebookLM, November 2026",
   used:"refining the review question, suggesting search terms, drafting eligibility criteria, extraction with page checks, language editing",
   notused:"screening decisions, appraisal judgements, generating data, quotations or references",
@@ -155,6 +157,8 @@ const V = {
   notes:"Question: telehealth and HbA1c in adults 60+ with type 2 diabetes. Sources: PubMed, CINAHL, Scopus (searched 1 March 2026). 942 records, 17 RCTs included. Themes: short-term gains; adherence fatigue; access gaps.",
   words:"250",
   ex1:"T02 | \"HbA1c fell by 0.4% at six months in the intervention arm\" | p. 9", code1:"short-term glycaemic gain", ex2:"T05 | \"Participants found video calls tiring\" | p. 14", code2:"digital fatigue", critic:"a biostatistician reviewing for a Q1 journal",
+  datafile:"trials_extraction.csv", columns:"study_id, design, sample_size, follow_up_months, hba1c_change_mean_diff, direction", themes:"Theme 1, convenience drives uptake: older adults valued not travelling to clinic (T01, T05, T08). Theme 2, digital fatigue: video calls tired participants over time (T05, T09). Theme 3, family as technical support: most participants relied on a relative to connect (T03, T07).", quant:"9 trials with a comparison group (1,812 participants). HbA1c mean difference: median -0.3% (range -0.6% to 0.1%); 8 of 9 favoured telehealth. Effects were larger at 6 months than at 12 months.", mainclaim:"Telehealth modestly improves glycaemic control in older adults with type 2 diabetes, but the benefit fades after six months.",
+  reflist:"[1] Lee, P. A., Greenfield, G., & Pappas, Y. (2018). The impact of telehealth remote patient monitoring on glycemic control in type 2 diabetes: a systematic review and meta-analysis of systematic reviews of randomised controlled trials. BMC Health Services Research, 18, 495. One line: telehealth lowered HbA1c more than usual care (MD -0.55%), with high heterogeneity. [2] Zhang, A., et al. (2022). A meta-analysis of the effectiveness of telemedicine in glycemic management among patients with type 2 diabetes in primary care. International Journal of Environmental Research and Public Health, 19(7), 4173. One line: modest HbA1c reduction in primary care (MD -0.22%). [3] Eberle, C., & Stichling, S. (2021). Effect of telemetric interventions on glycated hemoglobin A1c and management of type 2 diabetes mellitus: systematic meta-review. Journal of Medical Internet Research, 23(2), e23252. One line: meta-review of telemetric interventions across 99 studies.", priorrev:"Reviews [1] to [3] pooled adults of all ages. None focused on adults aged 60 and over.", methmat:"Protocol registered on PROSPERO (date). Databases: MEDLINE, CINAHL, Scopus; searched 1 Oct 2026; 2015 to 2026. Full MEDLINE string: [paste]. Criteria: adults 60+; type 2 diabetes; telehealth vs usual care. Screening: 1,203 records, 48 full texts, 9 trials and 6 qualitative studies included. Appraisal: RoB 2 and CASP. Synthesis: SWiM; thematic synthesis.", claimtest:"Supported: 8 of 9 trials favoured telehealth at 6 months. Goes further than the evidence: 'the benefit fades' rests on only 4 trials with 12-month follow-up.", appraisal:"RoB 2: 3 trials low risk, 4 some concerns, 2 high risk (no blinding of outcome assessment).", reviews:"Review A: Lee et al. (2018): telehealth lowered HbA1c more than usual care (MD -0.55%), but heterogeneity was high (I2 = 82%). Review B: Zhang et al. (2022), primary care: a smaller reduction (MD -0.22%), clearest at 6 months. Review C: Eberle & Stichling (2021): a meta-review of telemetric interventions across 99 studies, including 73 RCTs.", searchlimits:"Three databases, English only, no trial registries searched. Two reviewers screened all records.", section:"Methods", items:"5 to 15",
   tools:"ChatGPT and NotebookLM, November 2026",
   used:"drafting the search strategy, extraction with page checks, language editing",
   notused:"screening, risk-of-bias judgements, meta-analysis, references",
@@ -179,6 +183,8 @@ const V = {
   notes:"Question: deep learning accuracy for crop disease detection on smallholder farms. Sources: Scopus, WoS, IEEE Xplore (searched 10 May 2026). 2,113 records, 41 included. Themes: lab-to-field gap; small single-site datasets; on-device deployment.",
   words:"250",
   ex1:"D03 | \"Accuracy dropped from 97% in the lab to 71% on field images\" | p. 8", code1:"lab-to-field gap", ex2:"D06 | \"The dataset was collected on one farm\" | p. 4", code2:"single-site data", critic:"a research methodologist reviewing for a Q1 journal",
+  datafile:"detection_studies.csv", columns:"study_id, model, dataset_source, test_setting, accuracy_lab, accuracy_field", themes:"Theme 1, the lab-to-field gap: models trained on curated images lost accuracy on farm photographs (D03, D06, D11). Theme 2, single-site data: most datasets came from one farm or one season (D02, D06). Theme 3, farmer trust: users trusted apps that explained their diagnosis (D09, D12).", quant:"12 studies reported both lab and field accuracy. Median drop from lab to field: 19 percentage points (range 4 to 31). Only 3 of 12 tested on more than one farm.", mainclaim:"Deep learning detects crop disease well in the lab, but field accuracy is not yet good enough for smallholders to rely on.",
+  reflist:"[1] Savary, S., et al. (2019). The global burden of pathogens and pests on major food crops. Nature Ecology & Evolution, 3, 430-439. One line: estimates yield losses to pests and pathogens for five major crops. [2] Mohanty, S. P., Hughes, D. P., & Salathé, M. (2016). Using deep learning for image-based plant disease detection. Frontiers in Plant Science, 7, 1419. One line: 99.35% on a held-out lab test set, 31.4% on images taken under different conditions. [3] Kamilaris, A., & Prenafeta-Boldú, F. X. (2018). Deep learning in agriculture: a survey. Computers and Electronics in Agriculture, 147, 70-90. One line: survey of deep learning applications in agriculture. [4] Boulent, J., Foucher, S., Théau, J., & St-Charles, P.-L. (2019). Convolutional neural networks for the automatic identification of plant diseases. Frontiers in Plant Science, 10, 941. One line: review; training data must reflect field conditions.", priorrev:"Reviews [3] and [4] reported mostly lab accuracy. None compared lab and field accuracy across studies.", methmat:"Protocol: no registration; methods fixed before searching. Databases: IEEE Xplore, Scopus, Web of Science; searched 5 Oct 2026; 2018 to 2026. Full Scopus string: [paste]. Criteria: deep learning; crop disease detection; field evaluation reported. Screening: 892 records, 70 full texts, 12 included. Appraisal: adapted QUADAS-2. Synthesis: SWiM on accuracy drop.", claimtest:"Supported: median lab-to-field drop of 19 points. Goes further than the evidence: 'smallholders' is not studied directly; only 3 of 12 tested on more than one farm.", appraisal:"Adapted QUADAS-2: 8 of 12 studies high risk for test set selection (same farm as training).", reviews:"Review A: Kamilaris & Prenafeta-Boldú (2018), survey of deep learning in agriculture: high accuracy reported, mostly on curated datasets. Review B: Boulent et al. (2019): models work in the field only if training images reflect field complexity (backgrounds, light, symptom stages). Study C: Mohanty et al. (2016): 99.35% on lab images fell to 31.4% on images taken under different conditions.", searchlimits:"Three databases, English only, preprints excluded. One reviewer screened; a second checked exclusions.", section:"Methods", items:"5 to 15",
   tools:"Claude and Elicit, November 2026",
   used:"search string translation, extraction of reported metrics with page checks, figure captions",
   notused:"screening decisions, quality appraisal, generating metrics or references",
@@ -193,9 +199,11 @@ const LBL = {field:"Your field",question:"Your review question",topic:"Topic",pl
  claim1:"Claim from your draft",src1:"Source sentence",pg1:"Page",notes:"Your review card notes",words:"Word limit",tools:"Tools and dates",used:"Used for",
  notused:"NOT used for",checked:"How you checked",journal:"Journal name",title:"Manuscript title",why:"Why this journal",reg:"Registration",aisec:"Where the AI statement sits",
  scope:"Aims and scope",abstract:"Your abstract",
- ex1:"Example finding 1 (study | finding | page)",code1:"Your code for it",ex2:"Example finding 2 (study | finding | page)",code2:"Your code for it",critic:"Critic to play (methodologist, statistician, Reviewer 2, practitioner)"};
+ ex1:"Example finding 1 (study | finding | page)",code1:"Your code for it",ex2:"Example finding 2 (study | finding | page)",code2:"Your code for it",critic:"Critic to play (methodologist, statistician, Reviewer 2, practitioner)",
+ datafile:"Your cleaned data file",columns:"Its columns",themes:"Your themes, checked (output of Prompt 5.1)",quant:"Your numbers, checked (output of Prompt 5.3)",mainclaim:"Your one-sentence claim",
+ reflist:"Your reference list: papers you have read, one line each",priorrev:"Earlier reviews and what they missed",methmat:"Your methods material: protocol, sources, dates, string, criteria, counts, tools",claimtest:"Claim test (output of Prompt 5.4)",appraisal:"Appraisal summary (Session 6)",reviews:"Earlier reviews A to C, their findings in your words",searchlimits:"Limits of your search and process",section:"Section to check",items:"PRISMA 2020 item numbers"};
 const FAM = {chat:"#13a6dc", grnd:"#7c6cf2", data:"#e39a12", db:"#22b57a"};
-const TALL = new Set(["ex1","ex2","concepts","data","draft","notes","scope","abstract","used","notused","checked","question","finding"]);
+const TALL = new Set(["ex1","ex2","concepts","data","draft","notes","scope","abstract","used","notused","checked","question","finding","columns","themes","quant","mainclaim","reflist","priorrev","methmat","claimtest","appraisal","reviews","searchlimits"]);
 const P = [
  {id:"1.1",fam:"chat",mv:"Reverse: AI asks you",s:1,sn:"Develop Research Questions",t:"Let AI question you",tool:"Chat assistant, web search off",f:["field","question"],
   before:"Write your draft review question in one sentence, without AI.",
@@ -289,6 +297,34 @@ DATA:
 CONTEXT: My principal finding is: {finding} It rests on these studies: {studies}.
 TASK: Ask me 4 questions, ONE at a time, that a reviewer would ask about: how this compares with earlier reviews, why it might be so, what the evidence does not show, and who should act on it. Wait for my answer each time.
 CONSTRAINTS: Do not write the discussion for me. Do not cite references.`},
+ {id:"5.3",fam:"data",mv:"Constrain: say what not to do",s:5,sn:"Crafting Content and Discussion",t:"Summarise the numbers, don't pool them",tool:"Data analysis tool that runs code",f:["datafile","columns"],
+  before:"Clean your extraction table first (Session 4). Upload the cleaned file, not your PDFs.",
+  verify:"Rerun the code yourself. Check three effect sizes against your extraction table. Confirm every excluded study has a reason.",
+  tpl:`ROLE: You are a research methods assistant who writes and runs Python.
+CONTEXT: The uploaded file {datafile} is my cleaned extraction table. Columns: {columns}.
+TASK: Keep studies with a comparison group and an effect size. For each outcome group report: number of studies, total participants, median effect and range. Draw one dot plot (one dot per study, grouped by outcome) with a vertical line at zero.
+FORMAT: The code first, then the summary table, then the plot.
+CONSTRAINTS:
+- Do not pool the effects into one average or run a meta-analysis.
+- Do not count studies as significant or not significant.
+- Do not interpret the results. I will.
+CHECK: List every study you excluded and the reason.`},
+ {id:"5.4",fam:"chat",mv:"Ground: write only from my inputs",s:5,sn:"Crafting Content and Discussion",t:"Draft the synthesis from your evidence pack",tool:"Chat assistant, web search off, a new chat",f:["question","themes","quant","mainclaim"],
+  before:"Build the evidence pack: checked themes from 5.1, checked numbers from 5.3, and your own one-sentence claim.",
+  verify:"Every sentence ends with study IDs. Every number traces to INPUT 2. Resolve each [CHECK] by going back to 5.1 or 5.3, not to the AI.",
+  tpl:`ROLE: You are a co-author drafting the Results synthesis of a systematic review. Write only from the inputs below.
+CONTEXT: Review question: {question}
+INPUT 1, THEMES (checked):
+{themes}
+INPUT 2, NUMBERS (checked):
+{quant}
+INPUT 3, MY CLAIM: {mainclaim}
+TASK: Write one paragraph per theme and one paragraph for the numbers. Then write 3 sentences testing MY CLAIM against both: where the evidence supports it, and where it goes further than the evidence.
+FORMAT: End each evidence sentence with the study IDs in brackets. Mark anything you cannot support from the inputs with [CHECK].
+CONSTRAINTS:
+- Do not add studies, numbers or references that are not in the inputs.
+- Keep my hedges. Do not report a pooled effect.
+CHECK: List each number you used and which input it came from.`},
  {id:"6.1",fam:"grnd",mv:"Second opinion: you first",s:6,sn:"Critical Analysis and Enhancement",t:"AI as second appraiser",tool:"Source-grounded tool with one paper",f:["category"],
   before:"Appraise the paper yourself first: Yes, No or Can't tell for each MMAT criterion.",
   verify:"Log every disagreement and settle it from the paper, not by trusting either rater.",
@@ -326,8 +362,79 @@ CONSTRAINTS:
 - Formal academic English, active voice.
 CHECK: After the draft, list every number and every reference you used, and the line of my notes it came from. Mark any sentence my notes do not support with [CHECK].
 NOTES: {notes}`},
- {id:"7.2",fam:"chat",mv:"Chain step 2: from the draft only",s:7,sn:"Putting It All Together",t:"Write the abstract last",tool:"Same chat as 7.1",f:["words"],
-  before:"Assemble the draft first (Prompt 7.1).",
+ {id:"7.2",fam:"chat",mv:"Ground: cite only my list",s:7,sn:"Putting It All Together",t:"Introduction: a funnel from your own reading",tool:"Chat assistant, web search off",f:["question","reflist","priorrev"],
+  before:"List 3 to 5 papers you have actually read, numbered, with one line on what each shows.",
+  verify:"Open every cited paper: does it say what the sentence claims? Resolve each [CITE?] by finding a paper or softening the claim.",
+  tpl:`ROLE: You are my co-author for a systematic review introduction.
+CONTEXT: My review question: {question}
+MY LIST (the only references you may use):
+{reflist}
+Earlier reviews and their gap: {priorrev}
+TASK: Write four paragraphs: context, what is known, the gap, then my objective (restate my question).
+FORMAT: After each claim put the number of a paper from MY LIST in [ ]. If no paper fits, write [CITE?].
+CONSTRAINTS:
+- Cite only MY LIST. Do not add authors, years or references.
+- Do not claim "no study has..." unless my notes say so.
+CHECK: After the text, a table of each reference number and the claim it supports.`},
+ {id:"7.3",fam:"chat",mv:"Constrain: report, don't invent",s:7,sn:"Putting It All Together",t:"Methods: someone else could repeat your review",tool:"Chat assistant, web search off",f:["methmat"],
+  before:"Collect your protocol, search log (databases, dates, strings), criteria, screening counts and the tools you used.",
+  verify:"Compare each paragraph with the PRISMA 2020 checklist item it names. Could a stranger rerun your search from this text alone?",
+  tpl:`ROLE: You are a methods editor for systematic reviews.
+MATERIALS:
+{methmat}
+TASK: Write Methods sections 2.1 Eligibility and sources, 2.2 Search and selection, 2.3 Data extraction, 2.4 Appraisal and synthesis, in the past tense, following PRISMA 2020 items 5 to 15.
+FORMAT: Start each paragraph with its PRISMA item number in brackets.
+CONSTRAINTS:
+- Use only details in my materials. Do not invent reviewers, software, dates or counts.
+- Where an item has no material, write [TO COMPLETE: item n, what is needed].
+- Reproduce one full search string exactly as given.
+CHECK: List the PRISMA items still missing.`},
+ {id:"7.4",fam:"chat",mv:"Scaffold: four moves",s:7,sn:"Putting It All Together",t:"Discussion: four moves, your evidence",tool:"Chat assistant, web search off",f:["finding","claimtest","appraisal","reviews"],
+  before:"Use your answers from Prompt 5.2 and the claim test from Prompt 5.4. Summarise 2 or 3 earlier reviews you have read.",
+  verify:"Every explanation is labelled as possible. Every implication matches the certainty from your appraisal. No review is cited that is not in your list.",
+  tpl:`ROLE: You are my co-author.
+INPUTS:
+Principal finding: {finding}
+Claim test (Prompt 5.4): {claimtest}
+Appraisal summary: {appraisal}
+Earlier reviews: {reviews}
+TASK: Write the Discussion in four moves:
+1. The principal finding in two sentences.
+2. How it compares with REVIEWS A to C: where it agrees, where it differs.
+3. Possible explanations for the differences.
+4. Implications for practice and for research.
+FORMAT: One paragraph per move, labelled Move 1 to Move 4.
+CONSTRAINTS:
+- Compare only with the reviews I give.
+- Label every explanation as possible, not proven.
+- No implication stronger than the appraisal summary allows.
+CHECK: Mark any claim that has no basis in my inputs with [CHECK].`},
+ {id:"7.5",fam:"chat",mv:"Persona: Reviewer 2, then co-author",s:7,sn:"Putting It All Together",t:"Limitations and conclusion: honest at two levels",tool:"Chat assistant, web search off",f:["appraisal","searchlimits","finding"],
+  before:"Have your appraisal results and an honest list of what your search and process did not do.",
+  verify:"Each limitation states its likely effect on the findings. Read the conclusion beside your abstract: same strength?",
+  tpl:`ROLE: First act as Reviewer 2, then as my co-author.
+INPUTS:
+Appraisal results: {appraisal}
+Limits of my search and process: {searchlimits}
+Principal finding: {finding}
+TASK: As Reviewer 2, list the limitations a reviewer would raise at two levels: (a) the evidence, (b) this review's process. As co-author, turn them into a Limitations paragraph, then a Conclusion of at most 3 sentences.
+FORMAT: Each limitation: what it is, then its likely effect on the findings.
+CONSTRAINTS:
+- No new findings.
+- The conclusion must be no stronger than the principal finding.
+CHECK: For each conclusion sentence, quote the input it rests on.`},
+ {id:"7.6",fam:"chat",mv:"Checker, not writer",s:7,sn:"Putting It All Together",t:"The AI checks, you rewrite",tool:"Same chat, or a new one",f:["section","items"],
+  before:"Finish the section first. Item ranges: Introduction 3 to 4, Methods 5 to 15, Results 16 to 22, Discussion 23, Other information 24 to 27.",
+  verify:"Missing: go back to your material. Partly: rewrite it yourself. Reported: leave it. Spot-check two Reported rows against the checklist.",
+  tpl:`Check my {section} against PRISMA 2020 items {items}.
+FORMAT: A table only: Item | Status (Reported, Partly or Missing) | Where (quote up to 10 words) | What is missing.
+CONSTRAINTS:
+- Do not rewrite or improve my text.
+- Judge only what is written, not what I might have done.
+MY TEXT:
+[paste the section]`},
+ {id:"7.7",fam:"chat",mv:"Chain: last, from the checked draft only",s:7,sn:"Putting It All Together",t:"Write the abstract last",tool:"Same chat as 7.1",f:["words"],
+  before:"Write it last: assemble (7.1), build and check the sections (7.2 to 7.6), then write the abstract.",
   verify:"Every number in the abstract appears in the body, unchanged. Write the conclusion sentence yourself.",
   tpl:`From this draft ONLY, write a structured abstract of at most {words} words with these headings: Background, Objectives, Methods (sources, dates searched, eligibility, appraisal, synthesis), Results (number of studies and participants, main findings), Conclusions.
 Use only numbers that appear in the draft. After the abstract, list each number with the section it came from.
@@ -401,7 +508,7 @@ function show(){
  const h=location.hash.replace("#",""); cur=P.find(p=>slug(p)===h)||P[0];
  $("kick").textContent=`Session ${cur.s} · ${cur.sn} · Prompt ${cur.id}`;
  $("title").textContent=cur.t;
- $("sub").textContent=`Choose an example field to see the prompt filled in, or type your own details. The highlighted parts change; everything else stays the same.`;
+ $("sub").textContent=`Choose an example field to see the prompt filled in, or type your own details. The highlighted parts change; everything else stays the same. In the Session 7 examples the references are real; the review numbers are illustrative.`;
  $("tool").querySelector("span").textContent=cur.tool;
  $("tool").querySelector("i").style.background=FAM[cur.fam]; $("tool").querySelector("i").style.boxShadow="0 0 10px "+FAM[cur.fam];
  $("move").querySelector("span").textContent=cur.mv;
