@@ -84,6 +84,9 @@ input::placeholder{color:rgba(214,208,240,.5)}
 .msg .go{margin-top:9px;padding-top:8px;border-top:1px solid var(--line);font-size:13px}
 .msg .go a{color:var(--sea)}
 .pre,.pick{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+.pre.next{margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
+.pre.next .mono{font-size:10.5px}
+.pre button[data-more]{background:none;border-style:dashed;color:var(--mute)}
 .pre button,.pick button{text-align:left;font:inherit;font-size:13.5px;color:var(--paper);background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:8px;padding:8px 11px;cursor:pointer;transition:border-color .15s,background .15s}
 .pre button:hover,.pick button:hover:enabled{border-color:var(--gen);background:rgba(139,123,240,.14)}
 .pick{margin-bottom:10px}
@@ -188,6 +191,7 @@ const P={gen:{verb:'Generate',name:'Generative & Agentic AI',q:'What could exist
   sea:{verb:'Search',name:'Computational Intelligence & Optimization',q:'How do we find better ones?',body:'Evolutionary, immune and swarm algorithms decide what gets generated next. Quality-diversity archives such as MAP-Elites keep many different good answers.'}};
 const ORDER=['gen','eva','sea'];
 const pubUrl=p=>BASE+'/publications/'+p.g+'/';
+const rm=n=>'RM '+(n>=1e6?(n/1e6).toFixed(2)+'M':Math.round(n/1e3)+'k');      // 1510000 -> RM 1.51M
 // the records are fetched the first time the panel opens, so pages stay light for visitors who never ask
 function startBrain(){if(brainStarted)return;brainStarted=true;$('#llmStatus').textContent='Loading the site records';
   fetch(DATA_URL).then(r=>{if(!r.ok)throw new Error(r.status);return r.json()}).then(j=>brain(j.data,j.site))
@@ -317,15 +321,27 @@ function brain(D,SITE){
       .map(u=>{const pg=SITE&&SITE.find(c=>BASE+c.u===u);return{d:{url:u,title:pg?pg.t:(u.replace(BASE,'').replace(/[\/-]+/g,' ').trim()||'Home').replace(/^./,c=>c.toUpperCase())}}});
     const more=a.none?[]:(a.pages||pagesFor(q,2,4.2)).filter(x=>!known.some(k=>k.d.url===x.d.url));
     el.insertAdjacentHTML('beforeend',go(known.concat(more).slice(0,4))+'<div class="src">written on your device from this site\'s records</div>');log.scrollTop=log.scrollHeight;keep()}
-  async function ask(q,premade){if(busy||!mode||!q.trim())return;busy=true;say('u',esc(q));
+  // After every answer the visitor is offered what to ask next, so a ready-made answer is never a dead end:
+  // three ready-made questions they have not asked yet, and a way back to the full list.
+  function next(){const done=new Set([...log.querySelectorAll('.msg.u')].map(e=>e.textContent)),rest=PRE.filter(t=>!done.has(t)).slice(0,3);
+    return '<div class="pre next"><span class="mono">Ask next</span>'+rest.map(t=>`<button type="button" data-pre>${t}</button>`).join('')+'<button type="button" data-more>See all questions</button></div>'}
+  async function ask(q,premade){if(busy||!mode||!q.trim())return;busy=true;
+    log.querySelectorAll('.next').forEach(n=>n.remove());                        // only the latest answer carries suggestions
+    const mine=say('u',esc(q));
+    try{
     const a=answer(q),quick=()=>say('b',a.h+linksFor(q,a)+(a.src?`<div class="src">source: ${a.src}</div>`:''));
     if(a.none&&!pagesFor(q,1,1.8).length)say('b',a.h+menu());                    // nothing on the site about this: stay in scope
-    else if(llm&&!premade&&!/^(hi|hello|hey|salam)/i.test(q)){const el=say('b','…');try{await viaLLM(q,a,el)}catch(e){el.remove();quick()}}
-    else quick();
+    else{if(llm&&!premade&&!/^(hi|hello|hey|salam)/i.test(q)){const el=say('b','…');try{await viaLLM(q,a,el)}catch(e){el.remove();quick()}}
+      else quick();
+      log.lastElementChild.insertAdjacentHTML('beforeend',next())}
+    }catch(e){                                                                   // one failed answer must never freeze the assistant
+      say('b','Sorry, I could not put that answer together. Please try another question.'+next())}
+    log.scrollTop=Math.max(0,mine.offsetTop-log.offsetTop-8);keep();             // show the answer from its start, not its end
     busy=false}
   $('#say').addEventListener('submit',e=>{e.preventDefault();ask(input.value);input.value=''});
   log.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
     if(b.dataset.pre!==undefined)ask(b.textContent,true);
+    else if(b.dataset.more!==undefined){const m=say('b','Here are all the ready-made questions. You can also type your own.'+menu());log.scrollTop=Math.max(0,m.offsetTop-log.offsetTop-8)}
     else if(b.dataset.pick==='llm'){b.closest('.msg').querySelectorAll('button').forEach(x=>x.disabled=true);loadLLM(true)}
     else if(b.dataset.pick==='quick'){b.closest('.msg').querySelectorAll('button').forEach(x=>x.disabled=true);store.set('quick');quickMode('')}});
 
