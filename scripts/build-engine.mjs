@@ -82,6 +82,12 @@ function build() {
   fs.mkdirSync(out, { recursive: true })
   fs.writeFileSync(path.join(out, 'index.html'), tpl.replace('/*__DATA__*/null', () => json))
 
+  // The site-wide assistant (public/assistant/widget.js) reads the same records from a small JSON file.
+  // `site` is filled in after the build by scripts/index-site.mjs, once the finished pages exist.
+  const adir = path.join(process.cwd(), 'public', 'assistant')
+  fs.mkdirSync(adir, { recursive: true })
+  fs.writeFileSync(path.join(adir, 'data.json'), JSON.stringify({ data, site: null }))
+
   const n = (q) => pubs.filter((p) => p.q === q).length
   console.log(`[engine] ${pubs.length} publications · ${grants.length} grants · ${students.length} students · JCR Q1 ${n('Q1')} / Q2 ${n('Q2')} -> public/engine/index.html`)
 }
