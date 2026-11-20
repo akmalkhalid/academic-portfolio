@@ -655,7 +655,7 @@ const rm=n=>'RM '+(n>=1e6?(n/1e6).toFixed(2)+'M':Math.round(n/1e3)+'k');
       const posts=E.filter(e=>/professor|lecturer/i.test(e.role)),first=Math.min(...posts.map(e=>e.start)),all=Math.min(...E.map(e=>e.start));
       return{h:`He has been <b>${esc(cur.role)}</b> at ${esc(cur.place.replace(/\.$/,''))} since <b>${cur.start}</b>, about ${NOW-cur.start} year${NOW-cur.start===1?'':'s'}. He has held academic posts since ${first} (about ${NOW-first} years) and has worked in research since ${all}.<ul>`+E.map(e=>`<li><span class="mono">${esc(e.period)}</span> ${esc(e.role)}, ${esc(e.place)}</li>`).join('')+'</ul>',src:'CV data',url:[BASE+'/about/']}}
     if(is(/educat|degree|studied|did he study|his (phd|ph\.d|doctorate|master)|thesis|alma mater|qualification|ijazah|graduat(e|ed) from/))
-      return{h:'Education:<ul>'+D.cv.education.map(e=>`<li><span class="mono">${esc(e.period)}</span> <b>${esc(e.degree)}</b>, ${esc(e.place)}. ${esc(e.detail)}</li>`).join('')+'</ul>',src:'CV data'};
+      return{h:'Education:<ul>'+D.cv.education.map(e=>`<li><span class="mono">${esc(e.period)}</span> <b>${esc(e.degree)}</b>, ${esc(e.place)}. ${esc(e.detail)}</li>`).join('')+'</ul>',src:'CV data',url:[BASE+'/about/']};
     const pg=pagesFor(q,3),nav=is(/where|link|\bpage\b|\burl\b|show me|take me|\bopen\b|navigate|find|mana|ada tak/),wantPubs=is(/paper|publication|article|journal|published|wrote|written/);
     // answer with a page: its title as the link, its opening passage as the summary, and the matching section if there is one
     const pageAns=x=>{const t=x.d,lead=(SITE||[]).find(c=>c.u===t.meta.u)||t.meta,sec=t.meta.h&&t.meta.h.toLowerCase()!==t.title.toLowerCase()&&!x.th?` See the section “${esc(t.meta.h)}”.`:'';
@@ -704,7 +704,7 @@ const rm=n=>'RM '+(n>=1e6?(n/1e6).toFixed(2)+'M':Math.round(n/1e3)+'k');
   const PRE=['Who is Dr. Akmal?','How long has he worked in academia?','What is generative optimization?','Which grants does he lead?','Does he supervise postgraduate students?','What does he teach?','Does he offer workshops or training?','What books and tools does he offer?','Where can I find his CV?','How do I contact him?'];
   const menu=()=>'<div class="pre">'+PRE.map(t=>`<button type="button" data-pre>${t}</button>`).join('')+'</div>';
 
-  const SYS='You are the assistant on akmal.app, the website of Dr. Mohd Nor Akmal Khalid, Senior Lecturer in AI at Universiti Kebangsaan Malaysia. Answer the visitor in their language, in at most 110 words, using only the FACTS given. Only answer questions about Dr. Akmal and this website. If the FACTS do not contain the answer, say so and suggest emailing akmal@ukm.edu.my. Never invent papers, numbers, dates or links. Page links are added below your answer automatically.';
+  const SYS='You are the assistant on akmal.app, the website of Dr. Mohd Nor Akmal Khalid, Senior Lecturer in AI at Universiti Kebangsaan Malaysia. Answer the visitor in their language, in at most 110 words, using only the FACTS given. Write plain sentences only: no links, no URLs, no markdown, and never name a page that is not in the FACTS; the right links are added under your answer automatically. Only answer questions about Dr. Akmal and this website. If the FACTS do not contain the answer, say so and suggest emailing akmal@ukm.edu.my. Never invent papers, numbers, dates or links. Page links are added below your answer automatically.';
   const CARD='Career: '+D.cv.employment.map(e=>`${e.period} ${e.role}, ${e.place}`).join(' | ')+'\nEducation: '+D.cv.education.map(e=>`${e.period} ${e.degree}, ${e.place}`).join(' | ')+`\nTotals: ${D.pubs.length} publications, ${m.citations} citations, h-index ${m.hIndex}, ${D.grants.length} grants, ${D.students.length} postgraduate researchers. Current year: ${NOW}. Research programme: generative optimization (generate, evaluate, search).`;
   const plain=h=>h.replace(/<li>/g,'\n- ').replace(/<[^>]+>/g,' ').replace(/&middot;/g,'·').replace(/&amp;/g,'&').replace(/\s+\n/g,'\n').trim();
   async function viaLLM(q,a,el){
@@ -714,7 +714,12 @@ const rm=n=>'RM '+(n>=1e6?(n/1e6).toFixed(2)+'M':Math.round(n/1e3)+'k');
     if(llm.kind==='nano'){const st=llm.session.promptStreaming(user);for await(const ch of st){out+=ch;el.textContent=out;log.scrollTop=log.scrollHeight}}
     else{const st=await llm.engine.chat.completions.create({messages:[{role:'system',content:SYS},{role:'user',content:user}],stream:true,temperature:.3,max_tokens:300});
       for await(const ch of st){out+=ch.choices[0]?.delta?.content||'';el.textContent=out;log.scrollTop=log.scrollHeight}}
-    el.insertAdjacentHTML('beforeend',linksFor(q,a)+'<div class="src">written on your device from this site\'s records</div>');log.scrollTop=log.scrollHeight}
+    // small models like to invent links: drop anything link-shaped and attach only links we know exist
+    el.textContent=out.replace(/\[[^\]]*\]\([^)]*\)/g,'').replace(/https?:\/\/\S+/g,'').replace(/\*\*|__|^#+\s*/gm,'').replace(/[ \t]+\n/g,'\n').trim();
+    const known=[...new Set((a.url||[]).concat((a.h.match(/href="([^"]+)"/g)||[]).map(x=>x.slice(6,-1))))].filter(u=>u.startsWith(BASE)&&!/\/publications\/[^/]+/.test(u)).slice(0,3)
+      .map(u=>{const pg=SITE&&SITE.find(c=>BASE+c.u===u);return{d:{url:u,title:pg?pg.t:(u.replace(BASE,'').replace(/[\/-]+/g,' ').trim()||'Home').replace(/^./,c=>c.toUpperCase())}}});
+    const more=a.none?[]:(a.pages||pagesFor(q,2,4.2)).filter(x=>!known.some(k=>k.d.url===x.d.url));
+    el.insertAdjacentHTML('beforeend',go(known.concat(more).slice(0,4))+'<div class="src">written on your device from this site\'s records</div>');log.scrollTop=log.scrollHeight}
   async function ask(q,premade){if(busy||!mode||!q.trim())return;busy=true;say('u',esc(q));
     const a=answer(q),quick=()=>say('b',a.h+linksFor(q,a)+(a.src?`<div class="src">source: ${a.src}</div>`:''));
     if(a.none&&!pagesFor(q,1,1.8).length)say('b',a.h+menu());                    // nothing on the site about this: stay in scope
