@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Prompt Culinary Masterclass · Coming soon</title>
+<meta name="description" content="Prompt Culinary Masterclass: 47 plain-language recipes for turning prompts into reusable assistants, tools and agent briefs. By Mohd Nor Akmal Khalid. Coming soon.">
+<link rel="canonical" href="https://akmal.app/masterclass/">
+<meta property="og:type" content="book">
+<meta property="og:site_name" content="akmal.app">
+<meta property="og:title" content="Prompt Culinary Masterclass · The Craft and Science of Building with AI">
+<meta property="og:description" content="47 plain-language recipes for turning prompts into reusable assistants, tools and agent briefs. Coming soon.">
+<meta property="og:url" content="https://akmal.app/masterclass/">
+<meta property="og:image" content="https://akmal.app/masterclass/og.png">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#07060f;--navy:#0d1230;--gold:#d4a94e;--paper:#f4f2ff;--mute:#a9a4bd;--line:rgba(255,255,255,.12);color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ink);color:var(--paper);font:400 16px/1.6 Inter,system-ui,-apple-system,'Segoe UI',sans-serif;-webkit-font-smoothing:antialiased}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;background:radial-gradient(45% 38% at 14% 6%,rgba(123,107,240,.22),transparent 70%),radial-gradient(40% 34% at 90% 30%,rgba(26,163,145,.15),transparent 70%),radial-gradient(50% 40% at 50% 105%,rgba(212,169,78,.12),transparent 70%)}
+a{color:inherit}
+.wrap{position:relative;max-width:1080px;margin:0 auto;padding:0 24px}
+nav{display:flex;align-items:center;justify-content:space-between;height:60px;font:600 13px 'JetBrains Mono',monospace}
+nav a{text-decoration:none;color:var(--mute)}nav a:hover{color:#fff}
+.hero{display:grid;grid-template-columns:minmax(0,6fr) minmax(0,4fr);gap:56px;align-items:center;padding:44px 0 72px}
+.soon{display:inline-block;font:600 11px 'JetBrains Mono',monospace;letter-spacing:.14em;color:var(--gold);border:1px solid var(--gold);border-radius:99px;padding:6px 14px}
+h1{font:700 clamp(40px,6.4vw,72px)/1.02 'Space Grotesk',sans-serif;letter-spacing:-.035em;margin:20px 0 14px;color:var(--gold)}
+h1 small{display:block;font-size:.42em;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:#fff;margin-bottom:8px}
+.sub{font:500 clamp(19px,2.4vw,25px)/1.3 'Space Grotesk',sans-serif;color:#fff;margin:0 0 20px}
+.lede{color:rgba(214,208,240,.84);font-size:17px;max-width:54ch;margin:0 0 28px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:13px 22px;border-radius:9px;font-weight:500;font-size:15px;text-decoration:none;cursor:pointer;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.04);color:#e4e0f5;transition:transform .18s,background .18s}
+.btn:hover{transform:translateY(-2px);background:rgba(255,255,255,.1)}
+.btn.pri{background:var(--gold);border-color:var(--gold);color:#0a0812;box-shadow:0 14px 40px -18px var(--gold)}
+.btn.pri:hover{background:#e3bb63}
+.row{display:flex;flex-wrap:wrap;gap:12px}
+.cover{justify-self:center;width:min(340px,78vw);height:auto;border-radius:6px;transform:rotate(2.5deg);box-shadow:0 40px 90px -30px rgba(0,0,0,.9),0 0 80px -30px rgba(212,169,78,.6);transition:transform .4s}
+.cover:hover{transform:rotate(0) scale(1.02)}
+h2{font:600 clamp(26px,3.4vw,38px)/1.1 'Space Grotesk',sans-serif;letter-spacing:-.02em;margin:0 0 10px}
+.eyebrow{font:600 11.5px 'JetBrains Mono',monospace;letter-spacing:.16em;text-transform:uppercase;color:rgba(214,208,240,.6);margin:0 0 12px}
+section{padding:64px 0;border-top:1px solid var(--line)}
+.ladder{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;align-items:end;margin-top:30px}
+.rung{background:rgba(20,18,28,.7);border:1px solid var(--line);border-top:2px solid var(--gold);border-radius:10px;padding:14px}
+.rung b{display:block;font:600 17px 'Space Grotesk',sans-serif}
+.rung span{font-size:13.5px;color:var(--mute)}
+.rung i{font:600 11px 'JetBrains Mono',monospace;font-style:normal;color:var(--gold)}
+.rung:nth-child(1){padding-bottom:14px}.rung:nth-child(2){padding-bottom:30px}.rung:nth-child(3){padding-bottom:46px}.rung:nth-child(4){padding-bottom:62px}.rung:nth-child(5){padding-bottom:78px}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:28px}
+.card{background:rgba(20,18,28,.7);border:1px solid var(--line);border-radius:12px;padding:18px}
+.card i{font:600 11px 'JetBrains Mono',monospace;font-style:normal;color:var(--gold)}
+.card b{display:block;font:600 17px 'Space Grotesk',sans-serif;margin:6px 0 4px}
+.card span{font-size:14px;color:var(--mute)}
+.facts{display:flex;flex-wrap:wrap;gap:10px 28px;margin-top:22px;font:500 13px 'JetBrains Mono',monospace;color:var(--mute)}
+.facts b{color:#fff}
+form{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;margin-top:22px;max-width:760px}
+label{display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--mute)}
+input{font:inherit;color:#fff;padding:12px 13px;border-radius:9px;border:1px solid var(--line);background:rgba(7,6,15,.7)}
+input:focus-visible,.btn:focus-visible,a:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+form .btn{align-self:end}
+.trap{position:absolute;left:-9999px}
+#st{grid-column:1/-1;min-height:22px;font-size:14px;color:var(--gold);margin:0}
+.fine{grid-column:1/-1;font-size:12.5px;color:var(--mute);margin:0}
+footer{padding:36px 0 60px;border-top:1px solid var(--line);color:var(--mute);font-size:13px;display:flex;flex-wrap:wrap;gap:10px 24px;justify-content:space-between}
+@media(max-width:860px){.hero{grid-template-columns:1fr;gap:36px;padding-top:20px}.cover{order:-1;width:min(240px,60vw)}.ladder{grid-template-columns:1fr}.rung{padding-bottom:14px!important}.grid{grid-template-columns:1fr}form{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav><a href="/">← akmal.app</a><span><a href="/cookbook/">Prompt Cookbook (free)</a> &nbsp;·&nbsp; <a href="/autowriter/">AutoWriterAI</a></span></nav>
+
+<header class="hero">
+  <div>
+    <span class="soon">COMING SOON</span>
+    <h1><small>Prompt Culinary</small>Masterclass</h1>
+    <p class="sub">The Craft and Science of Building with AI</p>
+    <p class="lede">Good wording is only the first rung. This book takes you up the next four: preparing context, saving what works as a reusable assistant, describing a tool until it exists, and briefing AI that acts on your behalf.</p>
+    <div class="row"><a class="btn pri" href="#notify">Tell me when it is out</a><a class="btn" href="#inside">See what is inside</a></div>
+    <div class="facts"><span><b>47</b> recipes</span><span><b>10</b> chapters</span><span>No programming needed</span></div>
+    <p style="margin:18px 0 0;font-size:14.5px;color:var(--mute)">New to prompting? Start with the first book, the <a href="/cookbook/" style="color:var(--gold)">Prompt Cookbook</a>. It is free.</p>
+  </div>
+  <img class="cover" src="cover.jpg" width="720" height="1018" alt="Cover of Prompt Culinary Masterclass: gold title on a night-sky background, with five rising rungs labelled prompt, context, assistant, tool and agent">
+</header>
+
+<section>
+  <p class="eyebrow">/ the idea</p>
+  <h2>Five rungs. Each keeps what is below and adds one thing.</h2>
+  <div class="ladder">
+    <div class="rung"><i>01</i><b>Prompt</b><span>One good request</span></div>
+    <div class="rung"><i>02</i><b>Context</b><span>What the model needs to know</span></div>
+    <div class="rung"><i>03</i><b>Assistant</b><span>Memory of how you work</span></div>
+    <div class="rung"><i>04</i><b>Tool</b><span>Something others can use without you</span></div>
+    <div class="rung"><i>05</i><b>Agent</b><span>Steps taken on your behalf</span></div>
+  </div>
+</section>
+
+<section id="inside">
+  <p class="eyebrow">/ inside</p>
+  <h2>What the recipes cover</h2>
+  <div class="grid">
+    <div class="card"><i>CH 2</i><b>Mise en place</b><span>Context briefs, sample matching, context files and handover notes.</span></div>
+    <div class="card"><i>CH 3</i><b>Kitchen hacks</b><span>Ten workarounds, each matched to a specific failure.</span></div>
+    <div class="card"><i>CH 4</i><b>Recipes that write recipes</b><span>Prompts that write, critique, test and shorten other prompts.</span></div>
+    <div class="card"><i>CH 5</i><b>The house chef</b><span>Reusable assistants, with four complete sets of instructions.</span></div>
+    <div class="card"><i>CH 6–7</i><b>Your own utensils</b><span>Describe a tool until it exists, then assemble tools into a toolkit.</span></div>
+    <div class="card"><i>CH 8–9</i><b>Running the line</b><span>Briefing agents safely, checking output and disclosing AI use.</span></div>
+  </div>
+</section>
+
+<section id="notify">
+  <p class="eyebrow">/ get notified</p>
+  <h2>Be told when it is released.</h2>
+  <p class="lede" style="margin:0">Leave your name and email. You will get one email when the book is available.</p>
+  <form id="f" novalidate data-key="23f2a62f-3654-4a8e-83a5-8e2634920f17">
+    <input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" style="display:none">
+    <div class="trap" aria-hidden="true"><label for="f-web">Website</label><input type="text" id="f-web" name="website" tabindex="-1" autocomplete="off"></div>
+    <label for="f-name">Name<input type="text" id="f-name" name="name" autocomplete="name" required maxlength="100"></label>
+    <label for="f-email">Email<input type="email" id="f-email" name="email" autocomplete="email" required maxlength="200"></label>
+    <button class="btn pri" type="submit" id="f-send">Notify me</button>
+    <p id="st" role="status" aria-live="polite"></p>
+    <p class="fine">Your email is used for this notice only.</p>
+  </form>
+</section>
+
+<footer><span>© Mohd Nor Akmal Khalid · FTSM, UKM</span><span><a href="/">akmal.app</a> · <a href="/cookbook/">Prompt Cookbook</a> · <a href="/autowriter/">AutoWriterAI</a> · <a href="/newsletter/kopi-prompt/">Kopi &amp; Prompt</a></span></footer>
+</div>
+<script>
+(function(){
+  var f=document.getElementById('f'),st=document.getElementById('st'),send=document.getElementById('f-send');
+  f.addEventListener('submit',function(e){e.preventDefault();
+    var name=f.elements.name.value.trim(),email=f.elements.email.value.trim();
+    if(f.elements.website.value||f.elements.botcheck.checked)return;            // bot trap
+    if(!name){st.textContent='Please enter your name.';f.elements.name.focus();return}
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){st.textContent='Please enter a valid email address.';f.elements.email.focus();return}
+    send.disabled=true;send.textContent='Sending';st.textContent='';
+    fetch('https://api.web3forms.com/submit',{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},
+      body:JSON.stringify({access_key:f.dataset.key,subject:"Prompt Culinary Masterclass: "+name+' wants to be notified',from_name:"Prompt Culinary Masterclass page",name:name,email:email,botcheck:false})})
+    .then(function(r){return r.json()}).then(function(j){if(!j.success)throw 0;f.reset();send.textContent='Done';st.textContent='Thank you. You will hear from me once, when the book is out.'})
+    .catch(function(){send.disabled=false;send.textContent='Notify me';st.textContent='That did not go through. Please try again, or email akmal@ukm.edu.my.'});
+  });
+})();
+</script>
+</body>
+</html>
