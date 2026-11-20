@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Akmal Living Engine</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="canonical" href="https://akmal.app/engine/">
+<meta name="description" content="Dr. Mohd Nor Akmal Khalid: generative optimization, shown as a running algorithm, a searchable publication archive, a CV builder and an on-device assistant.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* Layout idea: akmal.app's own dark band, extended to a whole page. Near-black ground, a live particle field behind
+   everything, glass panels, mono HUD labels, and the three pillar colours used only for generate / evaluate / search. */
+:root{
+  --ink:#07060f; --bench:rgba(20,18,28,.68); --raise:rgba(255,255,255,.05); --line:rgba(255,255,255,.12); --pit:#0f0e14;
+  --paper:#f4f2ff; --mute:#a9a4bd;
+  --gen:#b6a8ff; --eva:#ff9b78; --sea:#4fd8c6; --sky:#4d8df0;
+  --display:'Space Grotesk',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --body:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
+  --rule:linear-gradient(90deg,#21b3a0 0%,#4d8df0 34%,#8b7bf0 58%,#f2683f 100%);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ink);color:var(--paper);font:400 16px/1.6 var(--body);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;background:
+  radial-gradient(42% 34% at 12% 8%,rgba(139,123,240,.20),transparent 70%),
+  radial-gradient(38% 30% at 92% 26%,rgba(33,179,160,.16),transparent 70%),
+  radial-gradient(46% 36% at 55% 100%,rgba(242,104,63,.13),transparent 70%)}
+#field{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;opacity:.75}
+nav,section,footer{position:relative;z-index:1}
+a{color:inherit}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid #8b7bf0;outline-offset:3px}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+.mono{font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:rgba(214,208,240,.6)}
+h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance;color:#fbfaff}
+h1{font-weight:700;font-size:clamp(34px,5vw,62px);line-height:1.05;letter-spacing:-.035em}
+h2{font-weight:600;font-size:clamp(28px,3.6vw,42px);line-height:1.08;letter-spacing:-.02em}
+p{margin:0}
+.lede{color:rgba(214,208,240,.82);max-width:62ch;font-size:17px}
+.gen{color:var(--gen)}.eva{color:var(--eva)}.sea{color:var(--sea)}
+.hl{white-space:nowrap}
+.hl.gen{text-shadow:0 0 34px rgba(139,123,240,.6)}.hl.eva{text-shadow:0 0 34px rgba(242,104,63,.55)}.hl.sea{text-shadow:0 0 34px rgba(33,179,160,.6)}
+section{padding:84px 0;scroll-margin-top:56px}
+section+section::before{content:'';position:absolute;left:0;right:0;top:0;height:1px;background:var(--rule);opacity:.45}
+.head{display:flex;flex-direction:column;gap:14px;margin-bottom:34px}
+.head .mono::before{content:'/ '}
+
+/* nav */
+nav{position:sticky;top:0;z-index:20;background:rgba(7,6,15,.72);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;align-items:center;gap:22px;height:56px}
+.brand{font-family:var(--mono);font-weight:600;font-size:14px;text-decoration:none;margin-right:auto;white-space:nowrap;display:flex;align-items:center;gap:10px}
+.live{width:8px;height:8px;border-radius:50%;background:#21b3a0;animation:liveDot 2.2s ease-out infinite;flex:0 0 auto}
+@keyframes liveDot{0%{box-shadow:0 0 0 0 rgba(33,179,160,.5)}70%{box-shadow:0 0 0 9px rgba(33,179,160,0)}100%{box-shadow:0 0 0 0 rgba(33,179,160,0)}}
+nav a.l{font-size:14px;text-decoration:none;color:rgba(228,224,245,.78)}
+nav a.l:hover{color:#fff}
+@media(max-width:700px){nav a.l{display:none}}
+
+/* buttons, chips */
+.btn{display:inline-flex;align-items:center;gap:8px;padding:12px 20px;border-radius:9px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.04);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);cursor:pointer;text-decoration:none;font-size:14.5px;font-weight:500;color:#e4e0f5;transition:transform .18s,box-shadow .18s,background .18s,border-color .18s}
+.btn:hover{transform:translateY(-2px);background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.36)}
+.btn.pri{color:#0a0812;background:#f4f2ff;border-color:#f4f2ff;box-shadow:0 14px 40px -20px rgba(244,242,255,.8)}
+.btn.pri:hover{background:#fff;box-shadow:0 20px 44px -18px rgba(244,242,255,.95)}
+.btn.sm{padding:7px 12px;font-size:13px;font-family:var(--mono)}
+.btn:disabled{opacity:.45;cursor:default;transform:none}
+.chip{font-family:var(--mono);font-size:12px;padding:6px 11px;border-radius:99px;border:1px solid var(--line);background:rgba(255,255,255,.03);cursor:pointer;color:var(--mute);white-space:nowrap;transition:all .15s}
+.chip:hover{color:#fff;border-color:rgba(255,255,255,.4)}
+.chip[aria-pressed="true"]{background:#f4f2ff;color:#0a0812;border-color:#f4f2ff}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+
+/* glass */
+.panel,.lab,.tile,.pill{background:var(--bench);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--line);border-radius:14px}
+
+/* hero */
+.hero{padding:64px 0 72px}
+.hero .grid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:44px;align-items:center}
+.hero .copy{display:flex;flex-direction:column;gap:22px}
+.eyebrow{display:flex;align-items:center;gap:10px}
+.who{font-size:14.5px;color:var(--mute);border-left:2px solid rgba(79,216,198,.5);padding-left:12px}
+.who b{color:#fff;font-weight:600}
+.lab{padding:16px;display:flex;flex-direction:column;gap:12px;box-shadow:0 40px 120px -50px rgba(139,123,240,.55)}
+.lab canvas{width:100%;display:block;border-radius:8px;background:rgba(7,6,15,.75);cursor:crosshair}
+.lab .bar{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:space-between}
+.read{display:flex;gap:20px;flex-wrap:wrap}
+.read div{display:flex;flex-direction:column;gap:2px}
+.read .mono{font-size:10px}
+.read b{font-family:var(--display);font-weight:600;font-size:22px;font-variant-numeric:tabular-nums;line-height:1.1}
+.read b.gen{text-shadow:0 0 18px rgba(139,123,240,.7)}.read b.eva{text-shadow:0 0 18px rgba(242,104,63,.6)}.read b.sea{text-shadow:0 0 18px rgba(33,179,160,.7)}
+.axes{display:flex;justify-content:space-between;gap:8px}
+.axes .mono{font-size:10px}
+.pick{display:grid;grid-template-columns:88px 1fr;gap:14px;align-items:center;border-top:1px solid var(--line);padding-top:12px}
+.pick canvas{width:88px;height:88px;cursor:default}
+.pick p{font-size:13px;color:var(--mute);line-height:1.5}
+.pick p b{color:#fff;font-weight:500}
+@media(max-width:940px){.hero .grid{grid-template-columns:1fr}}
+
+/* engine */
+.loop{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.pill{position:relative;padding:24px;display:flex;flex-direction:column;gap:14px;overflow:hidden}
+.pill::before{content:'';position:absolute;left:0;right:0;top:0;height:2px;background:currentColor;box-shadow:0 0 28px 2px currentColor}
+.pill>*{color:var(--paper)}
+.pill .verb{font-family:var(--display);font-weight:700;font-size:44px;letter-spacing:-.03em;line-height:1}
+.pill.gen .verb{color:var(--gen);text-shadow:0 0 34px rgba(139,123,240,.6)}
+.pill.eva .verb{color:var(--eva);text-shadow:0 0 34px rgba(242,104,63,.55)}
+.pill.sea .verb{color:var(--sea);text-shadow:0 0 34px rgba(33,179,160,.6)}
+.pill .q{font-family:var(--display);font-weight:500;font-size:19px;color:#fff}
+.pill .body{font-size:15px;color:var(--mute)}
+.pill .live{font-size:13px;border-left:2px solid;padding-left:10px;width:auto;height:auto;border-radius:0;background:none;animation:none}
+.pill>.spark.gen,.pill>.live.gen{color:var(--gen)}.pill>.spark.eva,.pill>.live.eva{color:var(--eva)}.pill>.spark.sea,.pill>.live.sea{color:var(--sea)}
+.nums{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;border-top:1px solid var(--line);padding-top:14px}
+.nums b{display:block;font-family:var(--display);font-weight:600;font-size:22px;font-variant-numeric:tabular-nums}
+.nums .mono{font-size:10px}
+.spark{display:flex;align-items:flex-end;gap:3px;height:46px}
+.spark i{flex:1;background:currentColor;min-height:1px;border-radius:2px 2px 0 0;box-shadow:0 0 10px -2px currentColor}
+.sig{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;font-size:14px}
+.sig a{text-decoration-color:rgba(255,255,255,.25);text-underline-offset:3px}
+.bench{margin-top:18px;padding:16px 22px;border:1px dashed rgba(255,255,255,.2);border-radius:14px;color:var(--mute);font-size:15px}
+.bench b{color:#fff}
+@media(max-width:940px){.loop{grid-template-columns:1fr}}
+
+/* archive */
+.tiles{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;margin-bottom:22px}
+.tile{padding:16px}
+.tile b{display:block;font-family:var(--display);font-weight:600;font-size:28px;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.tile .mono{font-size:10px}
+@media(max-width:940px){.tiles{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:480px){.tiles{grid-template-columns:repeat(2,1fr)}}
+.panel{padding:18px}
+.heat{overflow-x:auto}
+.heat table{border-collapse:separate;border-spacing:4px;width:100%;min-width:640px}
+.heat th{font-family:var(--mono);font-size:11px;font-weight:400;color:var(--mute);text-align:center;padding:2px}
+.heat th.r{text-align:left;white-space:nowrap;padding-right:10px;font-weight:600}
+.heat td{padding:0}
+.heat td button{width:100%;height:40px;border:1px solid transparent;border-radius:6px;cursor:pointer;font-family:var(--mono);font-size:12px;font-variant-numeric:tabular-nums;transition:transform .12s,box-shadow .12s}
+.heat td button:hover:enabled{transform:scale(1.08);box-shadow:0 0 18px -2px rgba(255,255,255,.5)}
+.heat td button[aria-pressed="true"]{border-color:#fff;box-shadow:0 0 0 1px #fff,0 0 22px -2px #fff}
+.heat td button:disabled{cursor:default;color:transparent}
+.dash{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,4fr);gap:18px;margin-top:18px;align-items:start}
+@media(max-width:940px){.dash{grid-template-columns:1fr}}
+.filters{display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
+#q,.say input,select{padding:11px 13px;border-radius:9px;border:1px solid var(--line);background:rgba(7,6,15,.7)}
+#q{width:100%}
+.list{max-height:560px;overflow-y:auto;display:flex;flex-direction:column;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.18) transparent}
+.pub{display:grid;grid-template-columns:44px 1fr;gap:10px;padding:13px 4px;border-top:1px solid var(--line)}
+.pub .y{font-family:var(--mono);font-size:13px;color:var(--mute);padding-top:2px}
+.pub a.t{font-weight:500;text-decoration:none;color:#fff}
+.pub a.t:hover{text-decoration:underline}
+.pub .m{font-size:13px;color:var(--mute)}
+.tag{font-family:var(--mono);font-size:10.5px;padding:2px 7px;border:1px solid var(--line);border-radius:4px;color:var(--mute);white-space:nowrap}
+.tag.gen{color:var(--gen);border-color:rgba(139,123,240,.5)}.tag.eva{color:var(--eva);border-color:rgba(242,104,63,.5)}.tag.sea{color:var(--sea);border-color:rgba(33,179,160,.5)}
+.side{display:flex;flex-direction:column;gap:18px}
+.bars{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.barrow{display:grid;grid-template-columns:minmax(0,1fr) 34px;gap:8px;align-items:center;font-size:13px}
+.barrow .lab2{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.barrow .n{font-family:var(--mono);text-align:right;font-variant-numeric:tabular-nums}
+.track{grid-column:1/-1;height:4px;background:rgba(255,255,255,.07);border-radius:3px;margin-top:-3px}
+.track i{display:block;height:100%;background:var(--rule);border-radius:3px}
+.note{font-size:13px;color:var(--mute);margin-top:12px}
+
+/* cv */
+.forge{display:grid;grid-template-columns:minmax(0,4fr) minmax(0,7fr);gap:22px;align-items:start}
+@media(max-width:940px){.forge{grid-template-columns:1fr}}
+.ctrl{display:flex;flex-direction:column;gap:18px;position:sticky;top:74px}
+@media(max-width:940px){.ctrl{position:static}}
+.ctrl label{display:flex;flex-direction:column;gap:8px}
+.presets{display:flex;flex-direction:column;gap:8px}
+.presets button{text-align:left;padding:12px 14px;border-radius:10px;border:1px solid var(--line);background:var(--bench);cursor:pointer;font-weight:500;transition:border-color .15s}
+.presets button small{display:block;color:var(--mute);font-size:13px;font-weight:400}
+.presets button:hover{border-color:rgba(255,255,255,.4)}
+.presets button[aria-pressed="true"]{border-color:#8b7bf0;box-shadow:0 0 30px -10px #8b7bf0,inset 0 0 0 1px #8b7bf0}
+input[type=range]{width:100%;accent-color:#8b7bf0}
+.fit{font-family:var(--mono);font-size:12px;color:var(--mute);line-height:1.8}
+.fit b{color:#fff;font-weight:500}
+.sheet{background:#fbfaf6;color:#1c1917;border-radius:6px;padding:40px 44px;font:400 13.5px/1.5 var(--body);max-height:820px;overflow-y:auto;box-shadow:0 40px 120px -40px rgba(139,123,240,.6)}
+.sheet h4{font-family:var(--display);font-weight:700;font-size:30px;letter-spacing:-.02em;margin:0;line-height:1.1}
+.sheet .sub{color:#57514b;margin-top:4px}
+.sheet .lead{margin-top:14px}
+.sheet h5{font-family:var(--mono);font-weight:600;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;margin:20px 0 6px;padding-bottom:4px;border-bottom:1px solid #e7e3dd;color:#57514b}
+.sheet ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:5px}
+.sheet li{display:grid;grid-template-columns:86px 1fr;gap:10px}
+.sheet li span:first-child{font-family:var(--mono);font-size:11px;color:#8a8279;padding-top:2px}
+@media(max-width:560px){.sheet{padding:24px 20px}.sheet li{grid-template-columns:1fr;gap:0}}
+@media print{body::before,#field,nav,footer,#orb,#orbTip,#panel,section:not(#cv),.ctrl,.head{display:none!important}body{background:#fff}section{padding:0}.forge{display:block}.sheet{max-height:none;box-shadow:none;padding:0;background:#fff}}
+
+/* assistant band */
+.facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.facts .panel{display:flex;flex-direction:column;gap:8px}
+.facts b{font-family:var(--display);font-weight:600;font-size:19px}
+.facts p{font-size:15px;color:var(--mute)}
+@media(max-width:940px){.facts{grid-template-columns:1fr}}
+
+/* floating assistant */
+#orb{position:fixed;z-index:60;width:58px;height:58px;padding:0;border-radius:50%;border:1px solid rgba(255,255,255,.25);background:rgba(20,18,28,.5);backdrop-filter:blur(12px) saturate(1.6);-webkit-backdrop-filter:blur(12px) saturate(1.6);cursor:grab;touch-action:none;display:grid;place-items:center;transition:opacity .7s,transform .45s,box-shadow .45s,border-color .45s;box-shadow:0 0 34px -4px rgba(139,123,240,.75)}
+#orb::before{content:'';position:absolute;inset:-3px;border-radius:50%;background:conic-gradient(#21b3a0,#4d8df0,#8b7bf0,#f2683f,#21b3a0);-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 3px),#000 calc(100% - 2px));mask:radial-gradient(farthest-side,transparent calc(100% - 3px),#000 calc(100% - 2px));animation:spin 5s linear infinite;transition:opacity .7s}
+#orb .core{position:relative;width:26px;height:26px;animation:spin 9s linear infinite reverse}
+#orb .core i{position:absolute;width:8px;height:8px;border-radius:50%}
+#orb .core i:nth-child(1){left:9px;top:0;background:var(--gen);box-shadow:0 0 10px var(--gen)}
+#orb .core i:nth-child(2){left:0;bottom:2px;background:var(--eva);box-shadow:0 0 10px var(--eva)}
+#orb .core i:nth-child(3){right:0;bottom:2px;background:var(--sea);box-shadow:0 0 10px var(--sea)}
+@keyframes spin{to{transform:rotate(360deg)}}
+#orb.drag{cursor:grabbing;transition:none}
+#orb.idle{opacity:.3;transform:scale(.74);box-shadow:none;border-color:rgba(255,255,255,.14)}
+#orb.idle::before{opacity:.25;animation-play-state:paused}
+#orb.idle .core{animation-play-state:paused}
+#orb:hover,#orb:focus-visible{opacity:1;transform:scale(1)}
+#orbTip{position:fixed;z-index:60;pointer-events:none;font-family:var(--mono);font-size:12px;padding:7px 12px;border-radius:99px;background:#f4f2ff;color:#0a0812;white-space:nowrap;transition:opacity .6s;box-shadow:0 10px 30px -10px rgba(244,242,255,.7)}
+#orbTip.off{opacity:0}
+#panel{position:fixed;z-index:59;width:min(392px,calc(100vw - 24px));height:min(540px,calc(100dvh - 96px));display:none;flex-direction:column;background:rgba(12,10,20,.97);backdrop-filter:blur(22px) saturate(1.4);-webkit-backdrop-filter:blur(22px) saturate(1.4);border:1px solid rgba(255,255,255,.16);border-radius:16px;overflow:hidden;box-shadow:0 30px 90px -20px rgba(0,0,0,.85),0 0 60px -22px rgba(139,123,240,.9)}
+#panel.open{display:flex;animation:pop .22s ease-out}
+@keyframes pop{from{opacity:0;transform:translateY(8px) scale(.97)}to{opacity:1;transform:none}}
+#panel::before{content:'';display:block;height:2px;background:var(--rule);flex:0 0 auto}
+#pHead{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--line);cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none}
+#pHead b{font-family:var(--display);font-weight:600;font-size:15px;margin-right:auto}
+#pHead .mono{font-size:9.5px}
+#pClose{width:28px;height:28px;border-radius:7px;border:1px solid var(--line);background:transparent;cursor:pointer;line-height:1;font-size:16px}
+.log{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:12px;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,.18) transparent}
+.msg{max-width:92%;padding:10px 13px;border-radius:12px;font-size:14.5px;line-height:1.5;overflow-wrap:anywhere}
+.msg.u{align-self:flex-end;background:#f4f2ff;color:#0a0812;border-bottom-right-radius:4px}
+.msg.b{align-self:flex-start;background:rgba(255,255,255,.06);border:1px solid var(--line);border-bottom-left-radius:4px}
+.msg ul{margin:6px 0 0;padding-left:18px}
+.msg li{margin-bottom:4px}
+.msg .mono{letter-spacing:.02em;text-transform:none;font-size:11px}
+.msg .src{margin-top:8px;font-family:var(--mono);font-size:10.5px;color:var(--mute)}
+#sugg{padding:0 14px 10px;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+.say{display:flex;gap:8px;padding:10px 14px}
+.say input{flex:1;min-width:0}
+.say .btn{padding:10px 16px}
+.pfoot{display:flex;flex-direction:column;gap:7px;padding:10px 14px 12px;border-top:1px solid var(--line);background:rgba(255,255,255,.02)}
+.pfoot .row{justify-content:space-between;flex-wrap:nowrap}
+#llmStatus{font-family:var(--mono);font-size:10.5px;color:var(--mute);overflow-wrap:anywhere;line-height:1.5}
+.meter{height:3px;background:rgba(255,255,255,.07);border-radius:3px;overflow:hidden}
+.meter i{display:block;height:100%;width:0;background:var(--rule)}
+footer{padding:44px 0 90px;border-top:1px solid var(--line);color:var(--mute);font-size:13px}
+footer .wrap{display:flex;flex-wrap:wrap;gap:12px 28px;justify-content:space-between}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<canvas id="field" aria-hidden="true"></canvas>
+<nav><div class="wrap">
+  <a class="brand" href="https://akmal.app/"><span class="live"></span>Dr. Akmal</a>
+  <a class="l" href="#engine">Pillars</a>
+  <a class="l" href="#archive">Publications</a>
+  <a class="l" href="#cv">CV builder</a>
+  <a class="l" href="https://akmal.app/">Main site</a>
+  <button class="btn sm" type="button" data-ask>Ask the site</button>
+</div></nav>
+
+<section class="hero" id="top"><div class="wrap grid">
+  <div class="copy">
+    <span class="mono eyebrow"><span class="live"></span>Generative optimization, running live</span>
+    <h1>This page is <span class="hl gen">generating,</span> <span class="hl eva">evaluating</span> and <span class="hl sea">searching</span> right now.</h1>
+    <p class="lede">Each tile in the grid is a game level that an algorithm in your browser just invented, tested and decided to keep. That loop is my research programme, and games, simulation and optimization are its engine.</p>
+    <p class="who"><b>Dr. Mohd Nor Akmal Khalid</b><br>Senior Lecturer, Faculty of Information Science &amp; Technology and Center for AI Technology, Universiti Kebangsaan Malaysia</p>
+    <div class="row">
+      <button class="btn pri" type="button" data-ask>Ask this site a question</button>
+      <a class="btn" href="#cv">Build a CV for your purpose</a>
+    </div>
+  </div>
+  <div class="lab">
+    <div class="bar">
+      <div class="read">
+        <div><span class="mono">generated</span><b id="rGen" class="gen">0</b></div>
+        <div><span class="mono">passed test</span><b id="rEva" class="eva">0</b></div>
+        <div><span class="mono">kept</span><b id="rSea" class="sea">0</b></div>
+        <div><span class="mono">niches filled</span><b id="rCov">0%</b></div>
+      </div>
+      <div class="row">
+        <button class="btn sm" id="bPause" type="button">Pause</button>
+        <button class="btn sm" id="bReset" type="button">New run</button>
+      </div>
+    </div>
+    <canvas id="arch" width="792" height="594" aria-label="Live archive of generated cave levels. Columns run from cramped to open, rows from short routes to long routes."></canvas>
+    <div class="axes"><span class="mono">cramped</span><span class="mono">column: how open the cave is</span><span class="mono">open</span></div>
+    <div class="pick">
+      <canvas id="big" width="176" height="176" aria-hidden="true"></canvas>
+      <p id="pickTxt">Starting the search.</p>
+    </div>
+  </div>
+</div></section>
+
+<section id="engine"><div class="wrap">
+  <div class="head">
+    <span class="mono">Research programme</span>
+    <h2>One loop, three research pillars</h2>
+    <p class="lede">Generative AI proposes. Models of human engagement judge. Metaheuristics decide what to try next. Each pillar below is one stage of that loop, with the publications, funding and students behind it.</p>
+  </div>
+  <div class="loop" id="loop"></div>
+  <p class="bench" id="benchLine"></p>
+</div></section>
+
+<section id="archive"><div class="wrap">
+  <div class="head">
+    <span class="mono">Publication archive</span>
+    <h2 id="archTitle">Publications</h2>
+    <p class="lede">The same grid idea, applied to a career. Rows are the three pillars, columns are years. Select a cell, a filter or a word and every chart and the list follow.</p>
+  </div>
+  <div class="tiles" id="tiles"></div>
+  <div class="panel heat" id="heat"></div>
+  <div class="dash">
+    <div class="panel">
+      <div class="filters">
+        <input id="q" type="search" placeholder="Search title, venue or author" aria-label="Search publications">
+        <div class="row" id="fP"></div>
+        <div class="row" id="fC"></div>
+      </div>
+      <div class="mono" id="count"></div>
+      <div class="list" id="list"></div>
+    </div>
+    <div class="side">
+      <div class="panel"><span class="mono">Journal quartile (JCR)</span><div class="bars" id="cQ"></div></div>
+      <div class="panel"><span class="mono">Most frequent venues</span><div class="bars" id="cV"></div></div>
+      <div class="panel"><span class="mono">Authorship</span><div class="bars" id="cA"></div>
+        <p class="note">Counts come from the site's publication files. Citations, h-index and i10 are the Google Scholar figures recorded in the site settings. Quartiles are JCR, as recorded in the CV data file.</p></div>
+    </div>
+  </div>
+</div></section>
+
+<section id="cv"><div class="wrap">
+  <div class="head">
+    <span class="mono">CV builder</span>
+    <h2>A CV assembled for whoever is asking</h2>
+    <p class="lede">Say who you are and how many pages you will read. A small optimizer scores every entry in the record for that reader and packs the best ones into the space.</p>
+  </div>
+  <div class="forge">
+    <div class="ctrl">
+      <div class="presets" id="presets" role="group" aria-label="Reader"></div>
+      <label><span class="mono">Length: <span id="pgOut">2</span> page(s)</span>
+        <input id="pg" type="range" min="1" max="5" step="1" value="2"></label>
+      <label><span class="mono">Emphasis</span>
+        <select id="emph"><option value="">All three pillars</option><option value="gen">Generate: generative and agentic AI</option><option value="eva">Evaluate: games and engagement</option><option value="sea">Search: optimization</option></select></label>
+      <div class="fit" id="fit"></div>
+      <div class="row">
+        <button class="btn pri" id="bCopy" type="button">Copy as Markdown</button>
+        <button class="btn" id="bPrint" type="button" hidden>Print or save as PDF</button>
+      </div>
+    </div>
+    <div class="sheet" id="sheet"></div>
+  </div>
+</div></section>
+
+<section id="assistant"><div class="wrap">
+  <div class="head">
+    <span class="mono">On-device assistant</span>
+    <h2>An assistant that runs on the visitor's machine</h2>
+    <p class="lede">The glowing orb follows you down the page. Drag it anywhere, open it when you have a question, and it fades into the background when you leave it alone.</p>
+  </div>
+  <div class="facts">
+    <div class="panel"><span class="mono gen">Step 1</span><b>Instant search</b><p>A ranking index is built in the browser from the same records as the charts. It answers on any phone or laptop, with no download.</p></div>
+    <div class="panel"><span class="mono eva">Step 2</span><b>Language model on your device</b><p>On request it loads the browser's built-in model, or downloads a small open model once (about 1 GB), and writes full answers from the same records.</p></div>
+    <div class="panel"><span class="mono sea">Always</span><b>Nothing leaves the tab</b><p>There is no server and no API key. Questions are processed on the visitor's own processor and graphics card.</p></div>
+  </div>
+  <div class="row" style="margin-top:22px"><button class="btn pri" type="button" data-ask>Open the assistant</button></div>
+</div></section>
+
+<button id="orb" type="button" aria-label="Site assistant. Press Enter to open, arrow keys to move." aria-expanded="false" aria-controls="panel"><span class="core"><i></i><i></i><i></i></span></button>
+<div id="orbTip">Ask this site. Drag me anywhere.</div>
+<div id="panel" role="dialog" aria-label="Site assistant">
+  <div id="pHead"><span class="live"></span><b>Ask this site</b><span class="mono">drag to move</span><button id="pClose" type="button" aria-label="Close the assistant">&times;</button></div>
+  <div class="log" id="log" aria-live="polite"></div>
+  <div class="row" id="sugg"></div>
+  <form class="say" id="say">
+    <input id="ask-in" type="text" autocomplete="off" placeholder="e.g. papers on game refinement" aria-label="Your question">
+    <button class="btn pri" type="submit">Ask</button>
+  </form>
+  <div class="pfoot">
+    <div class="row"><div id="llmStatus">Mode: instant search</div><button class="chip" id="bLLM" type="button">Load on-device model</button></div>
+    <div class="meter"><i id="llmBar"></i></div>
+  </div>
+</div>
+<footer><div class="wrap">
+  <span>No server. No API key. No tracking. One HTML file and the visitor's own machine.</span>
+  <span>Built from the records of <a href="https://akmal.app/">akmal.app</a></span>
+</div></footer>
+
+<script>
+const D={"pubs":[{"t":"Solving flexible manufacturing system distributed scheduling problem subject to maintenance using harmony search algorithm","a":["Khalid, M. N. A.","Yusof, Umi Kalsom","Sabudin, Maziani"],"y":2012,"v":"2012 4th Conference on Data Mining and Optimization (DMO)","c":"C","q":"","d":"https://doi.org/10.1109/DMO.2012.6329801","f":1,"s":0,"p":"sea","sim":0,"g":"2012-Khalid2012"},{"t":"A knowledge-based expert system for the smallholder palm oil cultivator in malaysia","a":["Khalid, M. N. A.","Yusof, Umi Kalsom"],"y":2012,"v":"2012 IEEE Student Conference on Research and Development (SCOReD)","c":"C","q":"","d":"https://doi.org/10.1109/SCOReD.2012.6518649","f":1,"s":0,"p":"gen","sim":0,"g":"2012-Khalid2012a"},{"t":"An artificial immune system algorithm for optimizing the distributed production scheduling in the semiconductor assembly industry","a":["Anuar, Nur Ifwah Mohd","Yusof, Umi Kalsom","Khalid, M. N. A."],"y":2013,"v":"2013 13th International Conference on Intellient Systems Design and Applications","c":"C","q":"","d":"https://doi.org/10.1109/ISDA.2013.6920745","f":0,"s":0,"p":"sea","sim":0,"g":"2013-Anuar2013"},{"t":"Preventive maintenance scheduling optimization in semiconductor assembly industry using harmony search algorithm","a":["Azhar, Nur Izzah","Yusof, Umi Kalsom","Khalid, M. N. A."],"y":2013,"v":"2013 IEEE Student Conference on Research and Developement","c":"C","q":"","d":"https://doi.org/10.1109/SCOReD.2013.7002583","f":0,"s":0,"p":"sea","sim":0,"g":"2013-Azhar2013"},{"t":"Solving flexible manufacturing system distributed scheduling problem subject to maintenance: An artificial immune system approach","a":["Khalid, M. N. A.","Yusof, Umi Kalsom","Khader, Ahamad Tajudin"],"y":2013,"v":"ICIC Express Letters","c":"J","q":"","d":"https://scholar.google.com/scholar?oi=bibs&cluster=3970680858223996715&btnI=1&hl=en","f":0,"s":0,"p":"sea","sim":0,"g":"2013-Khalid2013"},{"t":"An improved immune algorithms for solving flexible manufacturing system distributed production scheduling problem subjects to machine maintenance","a":["Khalid, M. N. A.","Yusof, Umi Kalsom"],"y":2013,"v":"Proceedings of the 2013 International Conference on Applied Mathematics and Computational Methods","c":"C","q":"","d":"https://scholar.google.com/scholar?oi=bibs&cluster=2129467486101888051&btnI=1&hl=en","f":1,"s":0,"p":"sea","sim":0,"g":"2013-Khalid2013a"},{"t":"Content-based filtering algorithm for mobile recipe application","a":["Cheng, Teh Lee","Yusof, Umi Kalsom","Khalid, M. N. A."],"y":2014,"v":"2014 8th. Malaysian Software Engineering Conference (MySEC)","c":"C","q":"","d":"https://doi.org/10.1109/MySec.2014.6986011","f":0,"s":0,"p":"gen","sim":1,"g":"2014-Cheng2014"},{"t":"Artificial immune system for optimizing public bus transportation route during peak and off-peak hour","a":["Fang, Lily Yeang Pui","Yusof, Umi Kalsom","Khalid, M. N. A."],"y":2014,"v":"Australian Journal of Basic and Applied Sciences","c":"J","q":"","d":"https://scholar.google.com/scholar?oi=bibs&cluster=14216183381409005354&btnI=1&hl=en","f":0,"s":0,"p":"sea","sim":1,"g":"2014-Fang2014"},{"t":"Improved immune algorithm for optimizing distributed production scheduling problem in flexible manufacturing system subject to machine maintenance","a":["Khalid, M. N. A.","Yusof, Umi Kalsom"],"y":2014,"v":"International Journal of Mathematics and Computers in Simulation","c":"J","q":"","d":"https://scholar.google.com/scholar?oi=bibs&cluster=14306372768590650465&btnI=1&hl=en","f":1,"s":0,"p":"sea","sim":0,"g":"2014-Khalid2014"},{"t":"Optimizing the distributed production scheduling problems using an immune-based algorithm","a":["Khalid, M. N. A.","Yusof, Umi Kalsom"],"y":2014,"v":"Journal of Network and Innovative Computing (JNIC)","c":"J","q":"","d":"https://cspub-jnic.org/index.php/jnic/article/view/66","f":1,"s":0,"p":"sea","sim":0,"g":"2014-Khalid2014a"},{"t":"A crowd modelling considering group cohesion in the emergency route planning problems","a":["Khalid, M. N. A.","Yusof, Umi Kalsom"],"y":2014,"v":"Aust. J. Basic Appl. Sci","c":"J","q":"","d":"https://scholar.google.com/scholar?oi=bibs&cluster=16429429444597720613&btnI=1&hl=en","f":1,"s":0,"p":"sea","sim":1,"g":"2014-Khalid2014b"},{"t":"Artificial immune system for flexible manufacturing system machine loading problem","a":["Yusof, U. K.","Khalid, M. N. A.","Khader, Ahamad Tajudin"],"y":2014,"v":"ICIC Express Letters","c":"J","q":"","d":"NA","f":0,"s":0,"p":"gen","sim":0,"g":"2014-Yusof2014"},{"t":"A cellular automata and navigation graph framework in simulating crowd behavior at bus terminal platform","a":["Abdul Khader, Nur Izzati","Shamsudin, Haziqah","Abdul Razak, Nur Diyana","Yusof, Umi Kalsom","Khalid, M. N. A."],"y":2015,"v":"International Workshop on Graph Algorithms 2015 (IWGA2015)","c":"C","q":"","d":"NA","f":0,"s":0,"p":"gen","sim":1,"g":"2015-AbdulKhader2015"},{"t":"Football player selection using fuzzy logic","a":["Burhanuddin, Muhammad Bukhari","Suhaimi, Muhammad Syazwan","Isa, Muhammad Thaqif","Yusof, Umi Kalsom","Khalid, M. N. A."],"y":2015,"v":"An Asean Conference on Information System (ACIS2015)","c":"C","q":"","d":"NA","f":0,"s":0,"p":"gen","sim":1,"g":"2015-Burhanuddin2015"},{"t":"Optimizing distributed production scheduling problem in flexible manufacturing system subjects to machine maintenance: A modified chemical reaction approach","a":["Khalid, M. N. A.","Yusof, Umi Kalsom"],"y":2015,"v":"International Journal of Innovative Computing, Information and Control","c":"J","q":"","d":"https://doi.org/10.24507/ijicic.11.01.213","f":1,"s":0,"p":"sea","sim":1,"g":"2015-Khalid2015"},{"t":"Survey on crowd guidance's optimization algorithm for emergency route planning and management problems","a":["Khalid, M. N. A.","Yusof, Umi Kalsom","Khader, Ahamad Tajudin"],"y":2015,"v":"International Journal of Innovative Computing, Information and Control","c":"J","q":"","d":"https://www.researchgate.net/profile/Mohd-Nor-Akmal-Khalid/publication/281152990_Survey_on_crowd_guidance's_optimization_algorithm_for_emergency_route_planning_and_management_problems/links/55d91f0008aec156b9ac29a8/Survey-on-crowd-guidances-optimization-algorithm-for-emergency-route-planning-and-management-problems.pdf","f":1,"s":0,"p":"sea","sim":1,"g":"2015-Khalid2015a"},{"t":"Immune-based approach for optimizing emergency route planning problem: application to case studies","a":["Khalid, M. N. A.","Yusof, Umi Kalsom"],"y":2015,"v":"ICIC Express Letters","c":"J","q":"","d":"https://scholar.google.com/scholar?oi=bibs&cluster=15314613329168065390&btnI=1&hl=en","f":1,"s":0,"p":"sea","sim":1,"g":"2015-Khalid2015b"},{"t":"An artificial immune approach for optimizing crowd emergency evacuation route planning problem","a":["Khalid, M. N. A.","Yusof, Umi Kalsom"],"y":2015,"v":"ICAART","c":"J","q":"","d":"https://doi.org/10.5220/0005275305030508","f":1,"s":0,"p":"sea","sim":1,"g":"2015-Khalid2015c"},{"t":"Critical position identification in games and its application to speculative play","a":["Khalid, M. N. A.","Yusof, Umi Kalsom","Iida, Hiroyuki","Ishitobi, Taichi"],"y":2015,"v":"ICAART","c":"J","q":"","d":"http://dx.doi.org/10.5220/0005179900380045","f":1,"s":0,"p":"eva","sim":1,"g":"2015-Khalid2015d"},{"t":"Incorporating dynamism in emergency route planning problem using immune-based approach","a":["Khalid, M. N. A.","Yusof, Umi Kalsom"],"y":2015,"v":"2015 4th International Conference on Software Engineering and Computer Systems (ICSECS)","c":"C","q":"","d":"https://doi.org/10.1109/ICSECS.2015.7333102","f":1,"s":0,"p":"sea","sim":1,"g":"2015-Khalid2015e"},{"t":"Identifying critical positions based on conspiracy numbers","a":["Khalid, M. N. A.","Ang, E. Mei","Yusof, Umi Kalsom","Iida, Hiroyuki","Ishitobi, Taichi"],"y":2015,"v":"Lecture Notes in Computer Science","c":"B","q":"","d":"https://doi.org/10.1007/978-3-319-27947-3_6","f":1,"s":0,"p":"eva","sim":1,"g":"2015-Khalid2015g"},{"t":"Dynamism in a semiconductor industrial machine allocation problem using a hybrid of the bio-inspired and musical-harmony approach","a":["Yusof, Umi Kalsom","Khalid, M. N. A."],"y":2015,"v":"IOP Conference Series: Materials Science and Engineering","c":"C","q":"","d":"https://doi.org/10.1088/1757-899X/83/1/012008","f":0,"s":0,"p":"sea","sim":1,"g":"2015-Yusof2015"},{"t":"A survey on bio-inspired multi-agent system for versatile manufacturing assembly line","a":["Khalid, M. N. A.","Yusof, Umi Kalsom","Ku Aman, Ku Munirah"],"y":2016,"v":"ICIC Express Letters","c":"J","q":"","d":"NA","f":1,"s":0,"p":"sea","sim":0,"g":"2016-Khalid2016"},{"t":"Model student selection using fuzzy logic reasoning approach","a":["Khalid, M. N. A.","Yusof, Umi Kalsom","Xiang, Looi Guo"],"y":2016,"v":"2016 International Conference On Advanced Informatics: Concepts, Theory And Application (ICAICTA)","c":"C","q":"","d":"https://doi.org/10.1109/ICAICTA.2016.7803116","f":1,"s":0,"p":"gen","sim":1,"g":"2016-Khalid2016a"},{"t":"Analysis of realm of valor and its business model on pc and mobile platform comparison","a":["Anunpattana, Punyawee","Khalid, M. N. A.","Yusof, Umi Kalsom","Iida, Hiroyuki"],"y":2018,"v":"Asia-Pacific Journal of Information Technology and Multimedia","c":"J","q":"","d":"https://www.doi.org/10.17576/apjitm-2018-0702(02)-01","f":0,"s":0,"p":"gen","sim":1,"g":"2018-Anunpattana2018"},{"t":"Alzheimer patient detection using bayesian network model","a":["Fei, Chong Tiam","Khalid, M. N. A.","Yusof, Umi Kalsom"],"y":2018,"v":"Advance Science Letters","c":"J","q":"","d":"https://doi.org/10.1166/asl.2018.10734","f":0,"s":0,"p":"gen","sim":1,"g":"2018-Fei2018"},{"t":"Dynamic crowd evacuation approach for the emergency route planning problem: Application to case studies","a":["Khalid, M. N. A.","Yusof, Umi Kalsom"],"y":2018,"v":"Safety science","c":"J","q":"","d":"https://doi.org/10.1016/j.ssci.2017.10.024","f":1,"s":0,"p":"sea","sim":1,"g":"2018-Khalid2018"},{"t":"An artificial immune system approach for type e assembly line balancing problem","a":["Khalid, M. N. A.","Yusof, Umi Kalsom","Zaaba, Zarul Fitri"],"y":2018,"v":"International Journal of Engineering and Technology (IJET)","c":"J","q":"","d":"https://doi.org/10.14419/ijet.v7i4.31.23371","f":1,"s":0,"p":"sea","sim":0,"g":"2018-Khalid2018a"},{"t":"Automatic detection method of pipeline anomalies on caliper data","a":["Khalid, M. N. A.","Yusof, Umi Kalsom","Isa, Muhammad Thaqif"],"y":2018,"v":"Advance Science Letters","c":"J","q":"","d":"https://doi.org/10.1166/asl.2018.10735","f":1,"s":0,"p":"gen","sim":1,"g":"2018-Khalid2018c"},{"t":"Classification of manufacturing high dimensional data using deep learning-based approach","a":["Yusof, Umi Kalsom","Khalid, M. N. A."],"y":2018,"v":"Big Data Summit 2: HPC and AI Empowering Data Analytics (co-locate with PRAGMA 35 Meeting)","c":"J","q":"","d":"NA","f":0,"s":0,"p":"sea","sim":1,"g":"2018-Yusof2018"},{"t":"Using curiosity model to characterize edutainment based on learner's growth rate","a":["Agarwal, Sakshi","Khalid, M. N. A.","Iida, Hiroyuki"],"y":2019,"v":"Proceedings of the 1st International Conference on Informatics, Engineering, Science and Technology","c":"C","q":"","d":"https://doi.org/10.4108/eai.18-7-2019.2287827","f":0,"s":0,"p":"eva","sim":1,"g":"2019-Agarwal2019"},{"t":"Game refinement theory: Paradigm shift from performance optimization to comfort in mind","a":["Agarwal, Sakshi","Khalid, M. N. A.","Iida, Hiroyuki"],"y":2019,"v":"Entertainment Computing","c":"J","q":"","d":"https://doi.org/10.1016/j.entcom.2019.100314","f":0,"s":0,"p":"eva","sim":1,"g":"2019-Agarwal2019a"},{"t":"User-centered entertainment factors for platform transformation and game development","a":["Anunpattana, Punyawee","Khalid, M. N. A.","Iida, Hiroyuki"],"y":2019,"v":"Proceedings of the Proceedings of the 1st International Conference on Informatics, Engineering, Science and Technology","c":"C","q":"","d":"https://doi.org/10.4108/eai.18-7-2019.2287794","f":0,"s":0,"p":"eva","sim":1,"g":"2019-Anunpattana2019"},{"t":"Can we save near-dying games? An approach using advantage of initiative and game refinement measures","a":["Aung, Htun Pa Pa","Khalid, M. N. A."],"y":2019,"v":"Proceedings of the Proceedings of the 1st International Conference on Informatics, Engineering, Science and Technology, INCITEST 2019","c":"C","q":"","d":"https://doi.org/10.4108/eai.18-7-2019.2287539","f":0,"s":0,"p":"eva","sim":1,"g":"2019-Aung2019"},{"t":"Towards a fairness solution of scrabble with komi system","a":["Aung, Htun Pa Pa","Khalid, M. N. A.","Iida, Hiroyuki"],"y":2019,"v":"2019 International Conference on Advanced Information Technologies (ICAIT)","c":"C","q":"","d":"https://doi.org/10.1109/aitc.2019.8921355","f":0,"s":0,"p":"eva","sim":1,"g":"2019-Aung2019a"},{"t":"Single conspiracy number analysis in checkers","a":["Busala, Sarot","Song, Zhang","Iida, Hiroyuki","Khalid, M. N. A.","Yusof, Umi Kalsom"],"y":2019,"v":"Proceedings of the 11th International Conference on Agents and Artificial Intelligence - Volume 2: ICAART,","c":"C","q":"","d":"https://doi.org/10.5220/0007344005390546","f":0,"s":0,"p":"eva","sim":1,"g":"2019-Busala2019"},{"t":"Simulating competitiveness and precision in a tournament structure: a reaper tournament system","a":["Dinh, An Vinh Nguyen","Bao, Nhien Pham Hoang","Khalid, M. N. A.","Iida, Hiroyuki"],"y":2019,"v":"International Journal of Information Technology","c":"J","q":"","d":"https://doi.org/10.1007/s41870-019-00397-5","f":0,"s":0,"p":"eva","sim":1,"g":"2019-Dinh2019"},{"t":"Analysis of card collection game hearthstone'","a":["Xiao, Chen","Primanita, Anggina","Khalid, M. N. A.","Iida, Hiroyuki"],"y":2019,"v":"2019 International Conference on Technologies and Applications of Artificial Intelligence (TAAI)","c":"C","q":"","d":"https://doi.org/10.1109/taai48200.2019.8959847","f":0,"s":0,"p":"eva","sim":1,"g":"2019-Xiao2019"},{"t":"Analysis of boardgames using eye-tracking: Case study with gomoku","a":["Xiaohan, Kang","Zhang, Zeliang","Primanita, Anggina","Khalid, M. N. A.","Iida, Hiroyuki","Han, Bing"],"y":2019,"v":"2019 International Conference on Technologies and Applications of Artificial Intelligence (TAAI)","c":"C","q":"","d":"https://doi.org/10.1109/taai48200.2019.8959853","f":0,"s":0,"p":"eva","sim":1,"g":"2019-Xiaohan2019"},{"t":"Evolution of games towards the discovery of noble uncertainty","a":["Yicong, Wu","Aung, Htun Pa Pa","Khalid, M. N. A.","Iida, Hiroyuki"],"y":2019,"v":"2019 International Conference on Advanced Information Technologies (ICAIT)","c":"C","q":"","d":"https://doi.org/10.1109/aitc.2019.8921061","f":0,"s":0,"p":"eva","sim":1,"g":"2019-Yicong2019"},{"t":"Ascertaining the play outcome using the single conspiracy number in gobang","a":["An, Yuan","Primanita, Anggina","Khalid, M. N. A.","Iida, Hiroyuki"],"y":2020,"v":"2020 IEEE Conference on Games (CoG)","c":"C","q":"","d":"https://doi.org/10.1109/cog47356.2020.9231621","f":0,"s":0,"p":"eva","sim":1,"g":"2020-An2020"},{"t":"Quantifying attractiveness of incomplete-information multi-player game: Case study using doudizhu","a":["Gao, Yuexian","Li, Wanxiang","Khalid, M. N. A.","Iida, Hiroyuki"],"y":2020,"v":"Computational Science and Technology","c":"B","q":"","d":"https://doi.org/10.1007/978-981-15-0058-9_29","f":0,"s":0,"p":"eva","sim":1,"g":"2020-Gao2020"},{"t":"Nature of attractive multiplayer games: case study on china's most popular card game extemdashDouDiZhu","a":["Gao, Yuexian","Li, Wanxiang","Xiao, Yuhao","Khalid, M. N. A.","Iida, Hiroyuki"],"y":2020,"v":"Information","c":"J","q":"Q2","d":"https://doi.org/10.3390/info11030141","f":0,"s":0,"p":"eva","sim":1,"g":"2020-Gao2020a"},{"t":"Finding flow in training activities by exploring single-agent arcade game information dynamics","a":["Gao, Yuexian","Gao, Naying","Khalid, M. N. A.","Iida, Hiroyuki"],"y":2020,"v":"Lecture Notes in Computer Science","c":"B","q":"","d":"https://doi.org/10.1007/978-3-030-65736-9_11","f":0,"s":0,"p":"eva","sim":1,"g":"2020-Gao2020b"},{"t":"Using games to study law of motions in mind","a":["Iida, Hiroyuki","Khalid, M. N. A."],"y":2020,"v":"IEEE Access","c":"J","q":"Q2","d":"https://doi.org/10.1109/access.2020.3012597","f":0,"s":1,"p":"eva","sim":1,"g":"2020-Iida2020"},{"t":"A paradigm shift from optimal play to mental comfort: A perspective from the game reﬁnement theory","a":["Iida, H.","Khalid, M. N. A."],"y":2020,"v":"International Journal of Informatics, Information System and Computer Engineering","c":"J","q":"","d":"https://doi.org/10.34010/injiiscom.v1i1.4021","f":0,"s":0,"p":"eva","sim":1,"g":"2020-Iida2020a"},{"t":"Analyzing the improvement process of table tennis using the game refinement theory","a":["Jiangzhou, Li","Primanita, Anggina","Khalid, M. N. A.","Iida, Hiroyuki"],"y":2020,"v":"Proceedings of the Sriwijaya International Conference on Information Technology and Its Applications","c":"C","q":"","d":"https://doi.org/10.2991/aisr.k.200424.067","f":0,"s":0,"p":"eva","sim":1,"g":"2020-Jiangzhou2020"},{"t":"An artificial immune system approach for solving type-e assembly line balancing problem with problem-specific information","a":["Khalid, M. N. A.","Yusof, Umi Kalsom","Iida, Hiroyuki"],"y":2020,"v":"2020 IEEE 16th International Conference on Control and Automation (ICCA)","c":"C","q":"","d":"https://doi.org/10.1109/icca51439.2020.9264382","f":1,"s":0,"p":"sea","sim":0,"g":"2020-Khalid2020a"},{"t":"Attractiveness of single-agent game: Case study using sliding puzzle","a":["Liu, Chang","Huang, Shunqi","Khalid, M. N. A.","Iida, Hiroyuki"],"y":2020,"v":"2020 International Conference on Advanced Information Technologies (ICAIT)","c":"C","q":"","d":"https://doi.org/10.1109/icait51105.2020.9261794","f":0,"s":0,"p":"eva","sim":1,"g":"2020-Liu2020"},{"t":"A key factor to maintain engagement: case study using login system'","a":["Naying, Gao","Primanita, Anggina","Khalid, M. N. A.","Iida, Hiroyuki"],"y":2020,"v":"Proceedings of the Sriwijaya International Conference on Information Technology and Its Applications","c":"C","q":"","d":"https://doi.org/10.2991/aisr.k.200424.076","f":0,"s":0,"p":"eva","sim":1,"g":"2020-Naying2020"},{"t":"Characterizing the nature of probability-based proof number search: A case study in the othello and connect four games","a":["Primanita, Anggina","Khalid, M. N. A.","Iida, Hiroyuki"],"y":2020,"v":"Information","c":"J","q":"Q2","d":"https://doi.org/10.3390/info11050264","f":0,"s":0,"p":"eva","sim":1,"g":"2020-Primanita2020"},{"t":"Analysis of jump and jump game and its possible enhancement","a":["Ri, Hong","Khalid, M. N. A.","Iida, Hiroyuki"],"y":2020,"v":"2020 International Conference on Advanced Information Technologies (ICAIT)","c":"C","q":"","d":"https://doi.org/10.1109/icait51105.2020.9261784","f":0,"s":0,"p":"eva","sim":1,"g":"2020-Ri2020"},{"t":"Analysis of business model transition based on active user and review value","a":["Rizani, Muhammad Nazhif","Khalid, M. N. A.","Iida, Hiroyuki","Malik, Reza Firsandaya"],"y":2020,"v":"International Conference on the Foundations of Digital Games","c":"C","q":"","d":"https://doi.org/10.1145/3402942.3409782","f":0,"s":0,"p":"eva","sim":1,"g":"2020-Rizani2020"},{"t":"Combining oversampling and undersampling techniques for imbalanced classification: A comparative study using credit card fraudulent transaction dataset","a":["Shamsudin, Haziqah","Yusof, Umi Kalsom","Jayalakshmi, Andal","Khalid, M. N. A."],"y":2020,"v":"2020 IEEE 16th International Conference on Control and Automation (ICCA)","c":"C","q":"","d":"https://doi.org/10.1109/icca51439.2020.9264517","f":0,"s":0,"p":"gen","sim":0,"g":"2020-Shamsudin2020"},{"t":"Analysis of single-agent game: Case study using minesweeper","a":["Tingting, Wu","Shunqi, Huang","Aung, Htung Pa Pa","Khalid, M. N. A.","Iida, Hiroyuki"],"y":2020,"v":"2020 International Conference on Advanced Information Technologies (ICAIT)","c":"C","q":"","d":"https://doi.org/10.1109/icait51105.2020.9261782","f":0,"s":0,"p":"eva","sim":1,"g":"2020-Tingting2020"},{"t":"Player satisfaction model and its implication to cultural change","a":["Xiaohan, Kang","Khalid, M. N. A.","Iida, Hiroyuki"],"y":2020,"v":"IEEE Access","c":"J","q":"Q2","d":"https://doi.org/10.1109/access.2020.3029817","f":0,"s":0,"p":"eva","sim":1,"g":"2020-Xiaohan2020"},{"t":"Finding appropriate settings for fairness and engagement in a newly designed game through self-playing AI program: A case study using japanese crossword game  extquotesingleMyoGo renju'","a":["Xinyue, Liu","Luping, Fu","Khalid, M. N. A.","Iida, Hiroyuki"],"y":2020,"v":"Entertainment Computing","c":"J","q":"Q2","d":"https://doi.org/10.1016/j.entcom.2020.100358","f":0,"s":0,"p":"eva","sim":1,"g":"2020-Xinyue2020"},{"t":"Informatical analysis of go, part 1: Evolutionary changes of board size","a":["Yicong, Wu","Khalid, M. N. A.","Iida, Hiroyuki"],"y":2020,"v":"2020 IEEE Conference on Games (CoG)","c":"C","q":"","d":"https://doi.org/10.1109/cog47356.2020.9231758","f":0,"s":0,"p":"eva","sim":1,"g":"2020-Yicong2020"},{"t":"Informational analysis of go, part 2: zuozi and huanqitou","a":["Yicong, Wu","Liu, Chang","Khalid, M. N. A.","Iida, Hiroyuki"],"y":2020,"v":"2020 International Conference on Advanced Information Technologies (ICAIT)","c":"C","q":"","d":"https://doi.org/10.1109/icait51105.2020.9261773","f":0,"s":0,"p":"eva","sim":1,"g":"2020-Yicong2020a"},{"t":"Analyzing the sophistication of chinese checkers","a":["Yisi, Wu","Khalid, M. N. A.","Iida, Hiroyuki"],"y":2020,"v":"Entertainment Computing","c":"J","q":"Q2","d":"https://doi.org/10.1016/j.entcom.2020.100363","f":0,"s":0,"p":"eva","sim":1,"g":"2020-Yisi2020"},{"t":"Capturing potential impact of challenge-based gamification on gamified quizzing in the classroom","a":["Anunpattana, Punyawee","Khalid, M. N. A.","Iida, Hiroyuki","Inchamnan, Wilawan"],"y":2021,"v":"Heliyon","c":"J","q":"","d":"https://doi.org/10.1016/j.heliyon.2021.e08637","f":0,"s":0,"p":"eva","sim":1,"g":"2021-Anunpattana2021"},{"t":"What constitutes fairness in games? A case study with scrabble","a":["Aung, Htun Pa Pa","Khalid, M. N. A.","Iida, Hiroyuki"],"y":2021,"v":"Information","c":"J","q":"Q2","d":"https://doi.org/10.3390/info12090352","f":0,"s":0,"p":"eva","sim":1,"g":"2021-Aung2021"},{"t":"Addictive games: Case study on multi-armed bandit game","a":["Kang, Xiaohan","Ri, Hong","Khalid, M. N. A.","Iida, Hiroyuki"],"y":2021,"v":"Information","c":"J","q":"Q2","d":"https://doi.org/10.3390/info12120521","f":0,"s":0,"p":"eva","sim":1,"g":"2021-Kang2021"},{"t":"Leveraging bio-inspired knowledge-intensive optimization algorithm in the assembly line balancing problem","a":["Khalid, M. N. A.","Yusof, Umi Kalsom"],"y":2021,"v":"IEEE Access","c":"J","q":"Q2","d":"https://doi.org/10.1109/ACCESS.2021.3106321","f":1,"s":1,"p":"sea","sim":0,"g":"2021-Khalid2021"},{"t":"Objectivity and subjectivity in games: Understanding engagement and addiction mechanism","a":["Khalid, M. N. A.","Iida, Hiroyuki"],"y":2021,"v":"IEEE Access","c":"J","q":"Q2","d":"https://doi.org/10.1109/ACCESS.2021.3075954","f":1,"s":1,"p":"eva","sim":1,"g":"2021-Khalid2021a"},{"t":"Incorporating shifting bottleneck identification in assembly line balancing problem using an artificial immune system approach","a":["Khalid, M. N. A.","Yusof, Umi Kalsom"],"y":2021,"v":"Flexible Services and Manufacturing Journal","c":"J","q":"Q2","d":"https://doi.org/10.1007/s10696-020-09389-1","f":1,"s":1,"p":"sea","sim":0,"g":"2021-Khalid2021b"},{"t":"Computing games: Bridging the gap between search and entertainment","a":["Primanita, Anggina","Khalid, M. N. A.","Iida, Hiroyuki"],"y":2021,"v":"IEEE Access","c":"J","q":"Q2","d":"https://doi.org/10.1109/ACCESS.2021.3079356","f":0,"s":0,"p":"eva","sim":1,"g":"2021-Primanita2021"},{"t":"MMORPG evolution analysis from explorer and achiever perspectives: a case study using the final fantasy series","a":["Wang, Haolan","Zhang, Zeliang","Khalid, M. N. A.","Iida, Hiroyuki","Li, Keqiu"],"y":2021,"v":"Information","c":"J","q":"Q2","d":"https://doi.org/10.3390/info12060229","f":0,"s":0,"p":"eva","sim":1,"g":"2021-Wang2021"},{"t":"Financial time series forecasting using prophet","a":["Yusof, Umi Kalsom","Khalid, M. N. A.","Hussain, Abir","Shamsudin, Haziqah"],"y":2021,"v":"Innovative Systems for Intelligent Health Informatics (IRICT 2020), Lecture Notes on Data Engineering and Communications Technologies, vol. 72, Springer","c":"C","q":"","d":"https://doi.org/10.1007/978-3-030-70713-2_45","f":0,"s":0,"p":"gen","sim":1,"g":"2021-Yusof2021"},{"t":"Bridging ride and play comfort","a":["Zhang, Zeliang","Xiaohan, Kang","Khalid, M. N. A.","Iida, Hiroyuki"],"y":2021,"v":"Information","c":"J","q":"Q2","d":"https://doi.org/10.3390/info12030119","f":0,"s":0,"p":"eva","sim":1,"g":"2021-Zhang2021"},{"t":"Implications of jerk’s on the measure of game’s entertainment: discovering potentially addictive games","a":["Gao, Naying","Chang, Hengyuan","Zhang, Zeliang","Khalid, M. N. A.","Iida, Hiroyuki"],"y":2022,"v":"IEEE Access","c":"J","q":"Q2","d":"https://doi.org/10.1109/ACCESS.2022.3232520","f":0,"s":0,"p":"eva","sim":1,"g":"2022-Gao2022"},{"t":"Nature of arcade games","a":["Gao, Yuexian","Liu, Chang","Gao, Naying","Khalid, M. N. A.","Iida, Hiroyuki"],"y":2022,"v":"Entertainment Computing","c":"J","q":"Q2","d":"https://doi.org/10.1016/j.entcom.2021.100469","f":0,"s":0,"p":"eva","sim":1,"g":"2022-Gao2022a"},{"t":"Analysis of the attractiveness of soccer: a game refinement model and the significance of antagonistic rate'","a":["Hao, Li","Khalid, M. N. A.","Iida, Hiroyuki"],"y":2022,"v":"Journal of Creative Industry and Sustainable Culture","c":"J","q":"Sc","d":"https://doi.org/10.32890/jcisc2022.1.9","f":0,"s":0,"p":"eva","sim":1,"g":"2022-Hao2022"},{"t":"Recent techniques in determining the effects of climate change on depressive patients: a systematic review","a":["Kader, Nur Izzati Ab","Yusof, Umi Kalsom","Khalid, M. N. A.","Husain, Nik Rosmawati Nik"],"y":2022,"v":"Journal of Environmental and Public Health","c":"J","q":"Sc","d":"https://doi.org/10.1155/2022/1803401","f":0,"s":0,"p":"eva","sim":1,"g":"2022-Kader2022"},{"t":"A solver of single-agent stochastic puzzle: A case study with minesweeper","a":["Liu, Chang","Huang, Shunqi","Naying, Gao","Khalid, M. N. A.","Iida, Hiroyuki"],"y":2022,"v":"Knowledge-Based Systems","c":"J","q":"Q1","d":"https://doi.org/10.1016/j.knosys.2022.108630","f":0,"s":0,"p":"eva","sim":1,"g":"2022-Liu2022"},{"t":"A computational game experience analysis via game refinement theory","a":["Naying, Gao","Yuexian, Gao","Khalid, M. N. A.","Iida, Hiroyuki"],"y":2022,"v":"Telematics and Informatics Reports","c":"J","q":"Sc","d":"https://doi.org/10.1016/j.teler.2022.100039","f":0,"s":0,"p":"eva","sim":1,"g":"2022-Naying2022"},{"t":"The dynamics of minority versus majority behaviors: A case study of the mafia game","a":["Ri, Hong","Kang, Xiaohan","Khalid, M. N. A.","Iida, Hiroyuki"],"y":2022,"v":"Information","c":"J","q":"Q2","d":"https://doi.org/10.3390/info13030134","f":0,"s":0,"p":"eva","sim":1,"g":"2022-Ri2022"},{"t":"Action games evolution analysis: a case study using the god of war series","a":["Zhang, Zeliang","Gao, Naying","Li, Siqi","Khalid, M. N. A.","Iida, Hiroyuki"],"y":2022,"v":"IEEE Access","c":"J","q":"Q2","d":"https://doi.org/10.1109/access.2022.3224469","f":0,"s":0,"p":"eva","sim":1,"g":"2022-Zhang2022"},{"t":"A Systematic Literature Review and a Conceptual Framework Proposition for Advanced Persistent Threats (APT) Detection for Mobile Devices Using Artificial Intelligence Techniques","a":["Al-Kadhimi, Amjed Ahmed","Singh, Manmeet Mahinderjit","Khalid, M. N. A."],"y":2023,"v":"Applied Sciences","c":"J","q":"Q1","d":"https://doi.org/10.3390/app13148056","f":0,"s":0,"p":"eva","sim":1,"g":"2023-Al-Kadhimi2023"},{"t":"A review of long short-term memory approach for time series analysis and forecasting","a":["Kader, Nur Izzati Ab","Yusof, Umi Kalsom","Khalid, M. N. A.","Husain, Nik Rosmawati Nik"],"y":2023,"v":"Proceedings of the 2nd International Conference on Emerging Technologies and Intelligent Systems (ICETIS 2022), Lecture Notes in Networks and Systems, vol. 573, Springer","c":"C","q":"","d":"https://doi.org/10.1007/978-3-031-20429-6_2","f":0,"s":0,"p":"gen","sim":1,"g":"2023-Kader2023"},{"t":"Forecasting of Outpatient Hospital Visits using A Bidirectional Long Short-Term Memory Model","a":["Ab Kader, Nur Izzati","Yusof, Umi Kalsom","Khalid, M. N. A."],"y":2023,"v":"2023 8th International Conference on Business and Industrial Research (ICBIR)","c":"C","q":"","d":"https://doi.org/10.1109/ICBIR57571.2023.10147645","f":0,"s":0,"p":"gen","sim":1,"g":"2023-Kader2023a"},{"t":"Guest editorial: Special issue on artificial intelligence and entertainment science: empathic entertainment technology'","a":["Khalid, M. N. A.","Iida, Hiroyuki","Yusof, Umi Kalsom","Mat, Ruzinoor Che"],"y":2023,"v":"Entertainment Computing","c":"J","q":"","d":"https://doi.org/10.1016/j.entcom.2022.100531","f":0,"s":0,"p":"eva","sim":1,"g":"2023-Khalid2023"},{"t":"Recent Developments in Game-Theory Approaches for the Detection and Defense against Advanced Persistent Threats (APTs): A Systematic Review","a":["Khalid, M. N. A.","Al-Kadhimi, Amjed Ahmed","Singh, Manmeet Mahinderjit"],"y":2023,"v":"Mathematics","c":"J","q":"Q1","d":"https://doi.org/10.3390/math11061353","f":0,"s":1,"p":"gen","sim":1,"g":"2023-Khalid2023a"},{"t":"Objectivity and Subjectivity in Variation of Multiple Choice Questions: Linking the Theoretical Concepts Using Motion in Mind","a":["Anunpattana, Punyawee","Khalid, M. N. A.","Iida, Hiroyuki"],"y":2023,"v":"IEEE Access","c":"J","q":"Q2","d":"https://doi.org/10.1109/ACCESS.2023.3265196","f":0,"s":0,"p":"eva","sim":1,"g":"2023-Punyawee2023"},{"t":"Application of Meta-Gaming Concept to the Publishing Platform: Analysis of the Steam Games Platform","a":["Rizani, Muhammad Nazhif","Khalid, M. N. A.","Iida, H."],"y":2023,"v":"Information","c":"J","q":"Q2","d":"https://doi.org/10.3390/info14020110","f":0,"s":0,"p":"eva","sim":1,"g":"2023-Rizani2023"},{"t":"What makes an ideal team? Analysis of popular multiplayer online battle arena (moba) games","a":["Thavamuni, Sagguneswaraan","Khalid, M. N. A.","Iida, Hiroyuki"],"y":2023,"v":"Entertainment Computing","c":"J","q":"Q2","d":"https://doi.org/10.1016/j.entcom.2022.100523","f":0,"s":0,"p":"eva","sim":1,"g":"2023-Thavamuni2023"},{"t":"Exploring Authentication Paradigms in the Internet of Things - A Comprehensive Scoping Review","a":["Kamarudin, Nazhatul Hafizah","Suhaimi, Nur Hanis Sabrina","Nor Rashid, Fadilla Atyka","Khalid, M. N. A.","Mohd Ali, Fazlina"],"y":2024,"v":"Symmetry","c":"J","q":"Q2","d":"https://doi.org/10.3390/sym16020171","f":0,"s":0,"p":"sea","sim":1,"g":"2024-Kamarudin2024"},{"t":"Rational Bidding Meets Emotional Viewing: The Landscape of English Auction Livestreams in The Age of Algorithms","a":["Li, Siqi","Khalid, M. N. A.","Iida, Hiroyuki"],"y":2024,"v":"Asia-Pacific Journal of Information Technology and Multimedia","c":"J","q":"Sc","d":"https://doi.org/10.17576/apjitm-2024-1301-08","f":0,"s":0,"p":"eva","sim":1,"g":"2024-Li2024"},{"t":"Strategic Selection and Design of the First Auction Item: Analyzing Auction Dynamics through “Motion in Mind” and “Potential Reinforcement Energy”","a":["Li, Siqi","Khalid, M. N. A.","Iida, Hiroyuki"],"y":2024,"v":"Asia-Pacific Journal of Information Technology and Multimedia","c":"J","q":"Sc","d":"https://doi.org/10.17576/apjitm-2024-1302-10","f":0,"s":0,"p":"eva","sim":1,"g":"2024-Li2024a"},{"t":"Clone node detection in static wireless sensor networks: A hybrid approach","a":["Numan, Muhammad","Subhan, Fazli","Khalid, M. N. A.","Khan, Wazir Zada","Iida, Hiroyuki"],"y":2024,"v":"Journal of Network and Computer Applications","c":"J","q":"Q1","d":"https://doi.org/10.1016/j.jnca.2024.104018","f":0,"s":0,"p":"eva","sim":1,"g":"2024-Numan2024"},{"t":"Analyzing Soccer Dynamics Using the Motion in Mind Model","a":["Numan, Muhammad","Iida, Hiroyuki","Khalid, M. N. A."],"y":2024,"v":"Asia-Pacific Journal of Information Technology and Multimedia","c":"J","q":"Sc","d":"https://doi.org/10.17576/apjitm-2024-1302-08","f":0,"s":0,"p":"eva","sim":1,"g":"2024-Numan2024a"},{"t":"A Serious Game (Fight With Virus\") for Preventing COVID-19 Health Rumors: Development and Experimental Study","a":["Xiong, Shuo","Zuo, Long","Chen, Qiwei","Zeliang, Zhang","Khalid, M. N. A."],"y":2024,"v":"JMIR Serious Games","c":"J","q":"Q4","d":"https://doi.org/10.2196/45546","f":0,"s":0,"p":"eva","sim":1,"g":"2024-Shuo2024"},{"t":"State-of-the-Art Authentication Measures in Satellite Communication Networks: A Comprehensive Analysis","a":["Suhaimi, Nur Hanis Sabrina","Kamarudin, Nazhatul Hafizah","Khalid, M. N. A.","Tahir, Ibrahim","Mohamed, Muhammad Amir Afiq"],"y":2024,"v":"IEEE Access","c":"J","q":"Q2","d":"https://doi.org/10.1109/access.2024.3467253","f":0,"s":0,"p":"gen","sim":1,"g":"2024-Suhaimi2024"},{"t":"A Systematic Literature Review on the Sand Cat Swarm Algorithm: Enhancements, Applications, and Future Directions","a":["Ahmad, Wirawati Dewi","Bakar, Azuraliza Abu","Khalid, M. N. A."],"y":2025,"v":"International Journal of Advanced Computer Science and Applications","c":"J","q":"Q4","d":"https://dx.doi.org/10.14569/IJACSA.2025.0160354","f":0,"s":0,"p":"sea","sim":0,"g":"2025-Ahmad2025"},{"t":"Machine Learning and Deep Learning Approaches for Fake News Detection: A Systematic Review of Techniques, Challenges, and Advancements","a":["Bashaddadh, Omar","Omar, Nazlia","Mohd, Masnizah","Khalid, M. N. A."],"y":2025,"v":"IEEE Access","c":"J","q":"Q2","d":"https://doi.org/10.1109/ACCESS.2025.3572051","f":0,"s":0,"p":"gen","sim":1,"g":"2025-Bashaddadh2025"},{"t":"The impact of performance degree on players: Exploring player enjoyment and engagement in the dynamic of game process","a":["Gao, Naying","Khalid, M. N. A.","Iida, Hiroyuki"],"y":2025,"v":"Entertainment Computing","c":"J","q":"Q2","d":"https://doi.org/10.1016/j.entcom.2024.100887","f":0,"s":0,"p":"eva","sim":1,"g":"2025-Gao2025"},{"t":"Ludogenic innovation: How playing incentivizes technological innovation","a":["Khalid, M. N. A."],"y":2025,"v":"Entertainment Computing","c":"J","q":"Q2","d":"https://doi.org/10.1016/j.entcom.2024.100900","f":1,"s":1,"p":"eva","sim":1,"g":"2025-Khalid2025"},{"t":"Simulating AI-Human Collaborative Strategies in Sudoku Puzzle Generation","a":["Khalid, M. N. A."],"y":2025,"v":"International Conference on Entertainment Computing","c":"C","q":"","d":"https://doi.org/10.1007/978-3-032-02555-5_35","f":1,"s":1,"p":"gen","sim":1,"g":"2025-Khalid2025a"},{"t":"Exploring Efficiency and Solution Diversity for Type-E Assembly Line Balancing Problem","a":["Khalid, M. N. A."],"y":2025,"v":"2025 IEEE 15th International Conference on Control System, Computing and Engineering (ICCSCE)","c":"C","q":"","d":"https://doi.org/10.1109/ICCSCE65566.2025.11182666","f":1,"s":0,"p":"sea","sim":0,"g":"2025-Khalid2025b"},{"t":"Framework for Assisted Knowledge Management Practices Using Large Language Models: Preliminary Findings.","a":["Khalid, M. N. A.","Kamarudin, Nazhatul Hafizah","Virgiyanti, Wiwied","Thurasamy, Ramayah"],"y":2025,"v":"Asia-Pacific Journal of Information Technology and Multimedia","c":"J","q":"Sc","d":"https://doi.org/10.17576/apjitm-2025-1402-05","f":1,"s":1,"p":"gen","sim":1,"g":"2025-Khalid2025c"},{"t":"Modeling Sports Engagement: A Game Refinement Theory Perspective on Game Length and Scoring Frequency","a":["Numan, Muhammad","Iida, Hiroyuki","Khalid, M. N. A."],"y":2025,"v":"IEEE Access","c":"J","q":"Q2","d":"https://doi.org/10.1109/ACCESS.2025.3580196","f":0,"s":0,"p":"eva","sim":1,"g":"2025-Numan2025"},{"t":"From Opening to Endgame: When Does the Game Get Engaging and Exciting? Exploring Phase-Based Velocity Dynamics Using the MiM Framework","a":["Numan, Muhammad","Iida, Hiroyuki","Khalid, M. N. A."],"y":2025,"v":"IEEE Access","c":"J","q":"Q2","d":"https://doi.org/10.1109/ACCESS.2025.3614624","f":0,"s":0,"p":"eva","sim":1,"g":"2025-Numan2025a"},{"t":"Enhancing auction experiences: Game dynamics and customer experience design","a":["Siqi, Li","Khalid, M. N. A.","Iida, Hiroyuki"],"y":2025,"v":"Entertainment Computing","c":"J","q":"Q2","d":"https://doi.org/10.1016/j.entcom.2025.100959","f":0,"s":0,"p":"eva","sim":1,"g":"2025-Siqi2025"},{"t":"A novel deep neural model for efficient and scalable historical place image classification","a":["Tasir, Md All Moon","Khalid, M. N. A."],"y":2025,"v":"Scientific Reports","c":"J","q":"Q1","d":"https://doi.org/10.1038/s41598-025-26897-y","f":0,"s":1,"p":"gen","sim":1,"g":"2025-Tasir2025"},{"t":"Analyzing the gacha system in genshin impact: Odds, mechanics and player enticement","a":["Thavamuni, S.","Khalid, M. N. A.","Kohda, Y.","Iida, H."],"y":2025,"v":"Asia-Pacific Journal of Information Technology and Multimedia","c":"J","q":"Sc","d":"https://doi.org/10.17576/apjitm-2025-1401-04","f":0,"s":0,"p":"eva","sim":1,"g":"2025-Thavamuni2025"},{"t":"Inherent Addiction Mechanisms in Video Games’ Gacha","a":["Thavamuni, Sagguneswaraan","Khalid, M. N. A.","Iida, Hiroyuki"],"y":2025,"v":"Information","c":"J","q":"Q2","d":"https://doi.org/10.3390/info16100890","f":0,"s":0,"p":"eva","sim":1,"g":"2025-Thavamuni2025a"},{"t":"Studying the Emotional Impact of Increasing Cooperative Players Towards the Difficulty of a Game.","a":["Thavamuni, Sagguneswaraan","Iida, Hiroyuki","Khalid, M. N. A."],"y":2025,"v":"Asia-Pacific Journal of Information Technology and Multimedia","c":"J","q":"Sc","d":"https://doi.org/10.17576/apjitm-2025-1402-04","f":0,"s":0,"p":"eva","sim":1,"g":"2025-Thavamuni2025b"},{"t":"Words shaping worlds: A comprehensive exploration of text-driven image and video generation with generative adversarial networks","a":["Anwar Ullah","Muhammad Numan","Khalid, M. N. A.","Abdul Majid"],"y":2025,"v":"Neurocomputing","c":"J","q":"Q1","d":"https://doi.org/10.1016/j.neucom.2025.129767","f":0,"s":0,"p":"gen","sim":0,"g":"2025-Ullah2025"},{"t":"A novel 2D hyperchaotic map with high complexity and its application in DCSK","a":["Yu, Xiong","Khalid, M. N. A.","Abu Bakar, Azuraliza","Sang, Haiwei","Gao, Xiushang","Wu, Feifei","Yang, Zongyun"],"y":2025,"v":"Physica Scripta","c":"J","q":"Q1","d":"https://doi.org/10.1088/1402-4896/ae1d2d","f":0,"s":0,"p":"sea","sim":1,"g":"2025-Yu2025"},{"t":"User Requirements of Adaptive Learning Through Digital Game-Based Learning: User-Centered Design Approach to Enhance the Language Literacy Development.","a":["Zaini, Nur Atiqah","Tengku Wook, Tengku Siti Meriam","Khalid, M. N. A.","Mohd Noah, Shahrul Azman"],"y":2025,"v":"International Journal of Advanced Computer Science and Applications","c":"J","q":"Q4","d":"https://doi.org/10.14569/IJACSA.2025.0160919","f":0,"s":0,"p":"sea","sim":1,"g":"2025-Zaini2025"},{"t":"A coordinated hybrid initialization and multi-operator framework for swarm-based optimization.","a":["Ahmad, Wirawati Dewi","Abu Bakar, Azuraliza","Khalid, Mohd Nor Akmal"],"y":2026,"v":"Engineering Research Express","c":"J","q":"","d":"https://doi.org/10.1088/2631-8695/ae98f8","f":0,"s":0,"p":"sea","sim":0,"g":"2026-Ahmad2026"},{"t":"Text-to-video generation with multi-loss sequential generative adversarial network.","a":["Ullah, Anwar, Zhang Xing, Md All Moon Tasir, Mohd Nor Akmal Khalid, Abdul Majid, Naresh Kumar,","Herbert Mukalazi"],"y":2026,"v":"Scientific Reports","c":"J","q":"","d":"https://doi.org/10.1038/s41598-026-45313-7","f":0,"s":0,"p":"gen","sim":1,"g":"2026-Ullah2026"},{"t":"Youth Economic Empowerment through Artificial Intelligence: An Analysis of Legal Literacy Needs and Innovation Governance.","a":["Yahya, Mohamad Azhan","Abd Rahman, Mohamad Rizal","Mohd Arif, Mohd Izzat Amsyar","Khalid, Mohd Nor Akmal","Ahmad Rosli, Muhammad Syahrul Deen","Abdul Manap, Nazura"],"y":2026,"v":"International Journal of Research and Innovation in Social Science (IJRISS)","c":"J","q":"","d":"https://doi.org/10.47772/IJRISS.2026.10100463","f":0,"s":0,"p":"gen","sim":1,"g":"2026-Yahya2026"}],"grants":[{"t":"Swarm-Based-Enhanced Hyperparameter Optimization for Advancing Random Forest Model in Healthcare Patient Prioritization","ag":"Fundamental Research Grant Scheme (FRGS)","amt":117700,"role":"Co-Investigator","s":"2024","e":"2027","st":"Active","p":"sea"},{"t":"Human-Machine Collaborative Framework Using Generative Adversarial Network and Map-Elites for a Creativity-Based Learning","ag":"Fundamental Research Grant Scheme (FRGS)","amt":125300,"role":"Principle Investigator","s":"2024","e":"2027","st":"Active","p":"sea"},{"t":"Pembangunan Infrastruktur Pemerkasaan AI sebagai platform Wahana Rintis Semantik Ayat National (WaRiSAN) Bahasa Melayu","ag":"INISIATIF BELANJAWAN 2025: AI ENHANCEMENT (BAHASA)","amt":635000,"role":"Co-Investigator","s":"2025","e":"2026","st":"Completed","p":"gen"},{"t":"Pembangunan Model Asas Bahasa Besar untuk Bahasa Kebangsaan Malaysia","ag":"INISIATIF BELANJAWAN 2025: AI ENHANCEMENT (BAHASA)","amt":400000,"role":"Principle Investigator","s":"2025","e":"2026","st":"Completed","p":"gen"},{"t":"TERAS--STEM: Teknologi Entiti Rangkaian Aplikasi Sintesis STEM","ag":"INISIATIF BELANJAWAN 2025: AI ENHANCEMENT (BAHASA)","amt":90000,"role":"Co-Investigator","s":"2025","e":"2026","st":"Completed","p":"gen"},{"t":"Intervensi ICT (AI) Untuk Komuniti Guru Sekolah Dalam Persekitaran Pengajaran Dan Pembelajaran (PDP) Digital","ag":"Dana Transformasi Komuniti FTSM","amt":8000,"role":"Co-Investigator","s":"2024","e":"2025","st":"Completed","p":"gen"},{"t":"Artificial Intelligence-Enhanced Pain Assessment in Postoperative Recovery: A Cross-Sectional Study of AI-Assisted Pain Assessment Tool with Patient Self-Reported Scores in the Post-Anaesthesia Care Unit","ag":"Geran Fundamental Fakulti Perubatan(GFFP)","amt":1850,"role":"Co-Investigator","s":"2026","e":"2030","st":"Active","p":"gen"},{"t":"A Modified Liquid Neural Network Architecture for Iterative Design Optimization","ag":"Geran Galakan Penyelidik Muda (GGPM)","amt":50000,"role":"Principle Investigator","s":"2024","e":"2026","st":"Active","p":"sea"},{"t":"Pembangunan Modul ITAP: Keusahawanan AI dan Perundangan untuk Belia Bandar Baru Bangi","ag":"","amt":3000,"role":"Co-Investigator","s":"2025","e":"2026","st":"Completed","p":"gen"},{"t":"Enhancing Braille Literacy through Novel Interactive Features: A Multidisciplinary Approach to Improve User Engagement in Braille Learning Devices","ag":"Geran Translasi UKM (TR-UKM)","amt":77500,"role":"Co-Investigator","s":"2024","e":"2026","st":"Active","p":"eva"}],"students":[{"n":"Saadeddin Ali Mohammad Hroub","t":"Swarm-Based-Enhanced Hyperparameter Optimization for Optimizing Random Forest Models in Surgical Operation Patient Prioritization","d":"PhD","st":"Ongoing","y":2020,"r":"Co-Supervisor","p":"sea"},{"n":"Yu Xiong","t":"Modeling Of Discrete Chaotic Maps with Enhanced Dynamical Properties and Their Application in Image Encryption","d":"PhD","st":"Ongoing","y":2021,"r":"Main Supervisor","p":"gen"},{"n":"Wang Yuting","t":"Large-Scale Differential Evolution Algorithm Based on Short-Board Dimension Identification and Improvement with Applications to Flexible Job Shop Scheduling","d":"PhD","st":"Ongoing","y":2023,"r":"Main Supervisor","p":"sea"},{"n":"Najwa binti Abd Ghafar","t":"A Cognitive Augmented Reality Learning Model Integrating Multimodal Interaction and Gamification to Enhance Long-Term Memory Retention","d":"PhD","st":"Ongoing","y":2022,"r":"Co-Supervisor","p":"gen"},{"n":"Marwan Ghazwan Mitab Al Zuhairi","t":"SHAP Analysis in Metaheuristic Multimodal Features Selection for Disease Progress Prediction","d":"PhD","st":"Ongoing","y":2022,"r":"Co-Supervisor","p":"gen"},{"n":"Wirawati Dewi binti Ahmad","t":"Algoritma Kawanan Kucing Pasir Berasaskan Hiperbolik Untuk Masalah Pengoptimuman Pelbagai Objektif Penjadualan Kerja Fleksibel","d":"PhD","st":"Ongoing","y":2023,"r":"Co-Supervisor","p":"gen"},{"n":"Omar Hammad Jasim","t":"Deep Learning for Misinformation Detection on Big Data in Arabic language","d":"PhD","st":"Ongoing","y":2023,"r":"Co-Supervisor","p":"gen"},{"n":"Md All Moon Tasir","t":"Hybrid CNN-Transformer-Mamba Architecture for Interpretable Historical Place Image Classification","d":"MSc by Research","st":"Ongoing","y":2024,"r":"Main Supervisor","p":"sea"},{"n":"Syed Sohaib Ali Shah","t":"PROTO-MOE: Prototype-Guided Sparse MoE for Efficient Multimodal Federated Fall Detection on Edge Devices","d":"PhD","st":"Ongoing","y":2024,"r":"Main Supervisor","p":"gen"},{"n":"Halimaton Saadiah binti Sadon","t":"Model Pembelajaran Multimodal Adaptif Berteras Keputusan bagi Pengoptimuman Pembelajaran Pelajar Pekak TVET","d":"PhD","st":"Ongoing","y":2025,"r":"Main Supervisor","p":"gen"},{"n":"Waseem Mishaal Hamdoon","t":"An Integrated Explainable AI (XAI) Framework for Urban Air Quality Early Warning: Leveraging Multi Source Environmental and Meteorological Data","d":"PhD","st":"Ongoing","y":2025,"r":"Main Supervisor","p":"sea"},{"n":"Nur Niswah Hasina binti Mohammad Amin","t":"Rangka Kerja Kolaboratif Manusia dan Kecerdasan Buatan dalam Pembelajaran Berasaskan Pemikiran Kreatif","d":"PhD","st":"Ongoing","y":2025,"r":"Main Supervisor","p":"gen"},{"n":"Haziqah binti Shamsudin","t":"Integration of FINCH Autoencoder Xgboost (AE-Xgb) in Boost epsilon-Greedy Policy Deep Q-Learning in Classifying Highly Imbalanced with High Complexity of Data","d":"PhD","st":"Graduated","y":2019,"r":"Co-Supervisor","p":"sea"},{"n":"Nur Izzati binti Abd Kader","t":"Hidden Markov Model with Recurrent Neural Network-based Approach in Determining The Impact of Climate Change to Depression in Malaysia","d":"PhD","st":"Graduated","y":2019,"r":"Co-Supervisor","p":"sea"}],"cv":{"profile":"Artificial-intelligence researcher and educator working on computational intelligence for games and engagement modelling — spanning nature-inspired optimization, game informatics & entertainment science, and generative/agentic AI. PhD in Evolutionary Computing (Universiti Sains Malaysia, 2018), with a prior appointment as Assistant Professor at the Japan Advanced Institute of Science and Technology (JAIST), where he co-founded the International Research Center for AI and Entertainment Science. Currently a Senior Lecturer at Universiti Kebangsaan Malaysia and Research Coordinator at CAIT, leading RM 575,300 as principal investigator within a cumulative RM 1.51M across ten competitive grants — including a national flagship on large language models for the Malay language. Author of 113 publications with 1,153 citations (h-index 18, i10-index 31) and supervisor of 14 postgraduate researchers. A certified Professional Technologist (MBOT), IEEE and AAAI member, guest editor and regular referee for Elsevier and IEEE journals.\n","education":[{"period":"2015–2018","degree":"Ph.D., Evolutionary Computing","place":"Universiti Sains Malaysia","detail":"Thesis: Enhanced Artificial Immune System for Assembly Line Balancing via Shifting Bottleneck Identification."},{"period":"2013–2015","degree":"M.Sc., Computer Science","place":"Universiti Sains Malaysia","detail":"Thesis: Optimizing Crowd Evacuation in the Emergency Route Planning Problem."},{"period":"2009–2013","degree":"B.Comp.Sc. (Hons)","place":"Universiti Sains Malaysia","detail":"Major: Intelligent Systems; Minor: Management. CGPA 3.15."}],"employment":[{"period":"2023–present","role":"Senior Lecturer","place":"Faculty of Information Science & Technology, UKM."},{"period":"2018–2023","role":"Assistant Professor","place":"School of Information Science, JAIST, Japan."},{"period":"2021–2023","role":"Part-Time Research Fellow","place":"School of Computer Sciences, USM."},{"period":"2013–2018","role":"Graduate Research & Teaching Assistant","place":"School of Computer Sciences, USM."}],"awards":["International Teaching Award (AI Champion) — Academia Month Celebration, UKM (2026)","Blended Learning Award, UKMFolio course with the highest participation (TTTK1153 Computer Organization & Architecture, Sem. 1 2025/26) — Academia Month Celebration, UKM (2026)","Gold Medal — kNovasi 2026, UKM, for “AI-Powered PdP to Support Metacognition”","Excellent Service Award (Anugerah Perkhidmatan Cemerlang) — UKM (2026)","Teaching Performance Excellence (SPPP 3.5–5.0) — FTSM, UKM, Sem. 2 2025/26","Outstanding Individual Award (Innovation), Science & Technology — MyRA@UKM Excellence Awards (2025)","Gold Medal, Digital Games category (team mentor) — DICE 3.0, KPT & UniSZA (2025)","Best Paper Award — M-CAIT 2021, UKM","Best Paper Award — IRICT 2020","Best Paper Award — iCiCSE 2018, Kuching","Best Student Paper Award — ICCST'16, Kota Kinabalu","Certificate of Excellence — Industrial Training, USM (2011)"],"teaching":[{"when":"Now","text":"Artificial Intelligence (TTTK2313, UG)"},{"when":"Now","text":"Advanced Artificial Intelligence (TTTC6544, PG)"},{"when":"Now","text":"Advanced Research Method in Computing (TTTM6124, PG)"},{"when":"Now","text":"Computer Organization & Architecture (TTTK1153, UG)"},{"when":"Now","text":"Digital Innovation (TTTT1221, UG)"},{"when":"Past","text":"3D Modelling (TTTH2213, UG)"},{"when":"Past","text":"Discrete Mathematics, System Simulation & Modeling, Probability & Statistics, Database (UG)"},{"when":"2019–23","text":"Game Informatics (M.Sc./Ph.D., JAIST)"}],"ip":[{"title":"AI Technopreneurship","place":"FTSM, UKM","year":"2025"},{"title":"AI for Education","place":"FTSM, UKM","year":"2025"},{"title":"AI for Workplace","place":"FTSM, UKM","year":"2025"},{"title":"AI-Assisted Research Writing","place":"FTSM, UKM","year":"2024"},{"title":"AI-Assisted Systematic Literature Review","place":"FTSM, UKM","year":"2024"}],"membership":["Professional Technologist, MBOT (2023–)","IEEE Member & Computational Intelligence Society (2019–)","AAAI Member · MyAIS (AIS Malaysia Chapter)","Research Coordinator, CAIT · JPPI Committee, FTSM"],"service":["Guest Editor — Entertainment Computing (Elsevier), Information (MDPI), PeerJ Computer Science","Program Committee — IFIP-ICEC, AGENTICS/IJCCI 2025, AWIST","General Chair — ASEAN Workshop on Information Science & Technology; AI & Entertainment Science Workshop, JAIST","Session Chair (Genetic Algorithms) — ECTA 2026, 18th Int. Conf. on Evolutionary Computation Theory & Applications (IJCCI 2026), Angers, France","Organising Committee & Reviewer — ICEEI 2025","Reviewer — IEEE Transactions on Affective Computing (2025); IEEE ICCSCE 2026","Referee — Elsevier, IEEE and other reputable journals","Academic Collaboration Advisor — JAIST (2024–2026)","External Academic Panel (Panel Pemeriksa Luar Akademik) — Diploma in Game Design (CM102), Kolej Poly-Tech MARA (KPTM) Ipoh (2025)","Judge — UKM Technopreneur Competition, Business Model Canvas pitches (2024)","Media — Panelist, RTM Selamat Pagi Malaysia, “Budget 2027: AI for the Rakyat” (Oct 2026); guest, Tuisyen Rakyat Studio podcast, Nuvia Alliance (Oct 2026); guest, Wadah ICT podcast, “Generative AI in Everyday Life” (Jul 2025)","Invited Speaker & Trainer — 80+ talks and workshops on AI, entertainment science, gamification & scientific publishing"],"skills":{"Programming":"C++ · C#.NET · Python · Java · R · MATLAB · Scilab · PHP · SQL · Prolog · LaTeX","Data & Web":"MySQL · Neo4j · SQLite · XQuery · HTML/CSS · JavaScript · Apache · Tomcat","AI Tools":"Gemini · NotebookLM · ChatGPT · Claude · Microsoft Copilot · Perplexity · LangChain · LangGraph","Professional":"Research & Publishing · Teaching & Training · Consultation · Peer Review","Languages":"English (fluent) · Bahasa Malaysia (native)"},"selectedPapers":[{"group":"Game Informatics & Entertainment Science","accent":"blue","items":[{"marker":"sole","quartile":"Q2","cite":"M. N. A. Khalid (2025). Ludogenic innovation: How playing incentivizes technological innovation. Entertainment Computing, 52, 100900."},{"marker":"first","quartile":"Q2","cite":"M. N. A. Khalid & H. Iida (2021). Objectivity and subjectivity in games: Understanding engagement and addiction mechanism. IEEE Access, 9, 65187–65205."},{"marker":"corr","quartile":"Q2","cite":"H. Iida & M. N. A. Khalid (2020). Using games to study law of motions in mind. IEEE Access, 8, 138701–138709."}]},{"group":"Computational Intelligence & Optimization","accent":"teal","items":[{"marker":"first","quartile":"Q1","cite":"M. N. A. Khalid & U. K. Yusof (2018). Dynamic crowd evacuation approach for the emergency route planning problem. Safety Science, 102, 263–274."},{"marker":"first","quartile":"Q2","cite":"M. N. A. Khalid & U. K. Yusof (2021). Leveraging bio-inspired knowledge-intensive optimization in the assembly line balancing problem. IEEE Access, 9, 117832–117844."},{"marker":"first","quartile":"Q2","cite":"M. N. A. Khalid & U. K. Yusof (2020). Incorporating shifting bottleneck identification in assembly line balancing via an artificial immune system approach. Flexible Services and Manufacturing Journal."}]},{"group":"Expert Systems, AI & Large Language Models","accent":"purple","items":[{"marker":"first","quartile":"Q1","cite":"M. N. A. Khalid, A. A. Al-Kadhimi & M. M. Singh (2023). Game-theory approaches for detection and defense against advanced persistent threats: A systematic review. Mathematics, 11(6), 1353."},{"marker":"first","quartile":"","cite":"M. N. A. Khalid, N. H. Kamarudin, W. Virgiyanti & R. Thurasamy (2025). Framework for assisted knowledge management practices using large language models. Asia-Pacific J. of Information Technology & Multimedia, 14(2)."},{"marker":"corr","quartile":"Q1","cite":"M. A. M. Tasir & M. N. A. Khalid (2025). A novel deep neural model for efficient and scalable historical place image classification. Scientific Reports, 15, 42745."},{"marker":"sole","quartile":"","cite":"M. N. A. Khalid (2025). Simulating AI-human collaborative strategies in Sudoku puzzle generation. Int. Conf. on Entertainment Computing, Springer, 468–477."}]}],"meta":{"name":"Mohd Nor Akmal Khalid","credential":"Ph.D.","title":"Senior Lecturer (DS13)","subtitle":"Artificial Intelligence, Games & Optimization","affiliation":"Faculty of Information Science & Technology · Center for AI Technology (CAIT) · Universiti Kebangsaan Malaysia"}},"metrics":{"citations":1153,"hIndex":18,"i10Index":31}};
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const COL={gen:css('--gen'),eva:css('--eva'),sea:css('--sea')};
+const P={
+  gen:{verb:'Generate',name:'Generative & Agentic AI',q:'What could exist?',
+    body:'Generative models, language models and agent teams propose candidates: levels, quests, puzzles, layouts, schedules. Generation is cheap and plentiful, and has no sense of what is worth keeping.',
+    live:'In the grid above, a cellular automaton proposes every level.'},
+  eva:{verb:'Evaluate',name:'Games Informatics & Engagement Modelling',q:'Is it any good, for people?',
+    body:'Each candidate is scored by models of how people experience it. Game refinement theory and the motion in mind model turn engagement into a number an algorithm can chase.',
+    live:'In the grid above, a flood fill and a route search test every cave. Unreachable floor shows in orange.'},
+  sea:{verb:'Search',name:'Computational Intelligence & Optimization',q:'How do we find better ones?',
+    body:'Evolutionary, immune and swarm algorithms decide what gets generated next. Quality-diversity archives such as MAP-Elites keep many different good answers in place of a single winner.',
+    live:'In the grid above, MAP-Elites picks parents and keeps the best cave in each niche.'}
+};
+const ORDER=['gen','eva','sea'];
+const pubUrl=p=>'https://akmal.app/publications/'+p.g+'/';
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- 1. Live MAP-Elites over cellular-automaton caves ---------- */
+(function(){
+  const GW=22,GH=22,BX=12,BY=9,BUDGET=9000,cv=$('#arch'),cx=cv.getContext('2d'),big=$('#big'),bx=big.getContext('2d');
+  cx.imageSmoothingEnabled=false;bx.imageSmoothingEnabled=false;
+  const CW=cv.width/BX,CH=cv.height/BY;
+  let arch,stat,sel,flash,run=true,vis=true,raf=0;
+  function rng(s){return()=>{s|=0;s=s+0x6D2B79F5|0;let t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+  function build(g){
+    const r=rng(g.seed);let a=new Uint8Array(GW*GH);
+    for(let y=0;y<GH;y++)for(let x=0;x<GW;x++)a[y*GW+x]=(x==0||y==0||x==GW-1||y==GH-1||r()<g.p)?1:0;
+    for(let s=0;s<g.steps;s++){const b=new Uint8Array(GW*GH);
+      for(let y=0;y<GH;y++)for(let x=0;x<GW;x++){let n=0;
+        for(let dy=-1;dy<=1;dy++)for(let dx=-1;dx<=1;dx++){if(!dx&&!dy)continue;const X=x+dx,Y=y+dy;n+=(X<0||Y<0||X>=GW||Y>=GH)?1:a[Y*GW+X]}
+        b[y*GW+x]=(x==0||y==0||x==GW-1||y==GH-1)?1:(n>=g.birth?1:(n<=2?0:a[y*GW+x]))}
+      a=b}
+    return a}
+  function bfs(a,start,mark,id){const q=[start],dist=new Int16Array(GW*GH).fill(-1);dist[start]=0;if(mark)mark[start]=id;let h=0,last=start;
+    while(h<q.length){const c=q[h++];last=c;const x=c%GW;for(const n of[c-1,c+1,c-GW,c+GW]){if(n<0||n>=GW*GH)continue;if(Math.abs(n%GW-x)>1)continue;
+      if(a[n]||dist[n]>=0)continue;dist[n]=dist[c]+1;if(mark)mark[n]=id;q.push(n)}}
+    return{n:q.length,last,d:dist[last]}}
+  function evaluate(a){
+    const mark=new Int16Array(GW*GH);let open=0,best=0,bestStart=-1,bestId=0,id=0;
+    for(let i=0;i<a.length;i++){if(a[i])continue;open++;if(mark[i])continue;id++;const r=bfs(a,i,mark,id);if(r.n>best){best=r.n;bestStart=i;bestId=id}}
+    if(open<12)return null;
+    const far=bfs(a,bestStart).last,route=bfs(a,far).d;
+    return{open:open/((GW-2)*(GH-2)),fit:best/open,route:route/(GW+GH),mark,bestId}}
+  function thumb(a,ev){const c=document.createElement('canvas');c.width=GW;c.height=GH;const x=c.getContext('2d'),im=x.createImageData(GW,GH);
+    const hex=h=>[1,3,5].map(i=>parseInt(h.slice(i,i+2),16)),S=hex(COL.sea),E=hex(COL.eva);
+    for(let i=0;i<a.length;i++){const k=i*4;if(a[i]){im.data[k+3]=0;continue}const m=ev.mark[i]===ev.bestId?S:E;im.data[k]=m[0];im.data[k+1]=m[1];im.data[k+2]=m[2];im.data[k+3]=255}
+    x.putImageData(im,0,0);return c}
+  const rnd=Math.random,clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+  const fresh=()=>({p:.3+rnd()*.32,steps:1+(rnd()*5|0),birth:4+(rnd()*3|0),seed:rnd()*2**31|0});
+  function mutate(g){const m={...g};const k=rnd();
+    if(k<.4)m.p=clamp(m.p+(rnd()-.5)*.08,.26,.66);else if(k<.6)m.steps=clamp(m.steps+(rnd()<.5?-1:1),1,6);else if(k<.75)m.birth=clamp(m.birth+(rnd()<.5?-1:1),4,6);else m.seed=rnd()*2**31|0;
+    return m}
+  function step(){
+    const keys=Object.keys(arch),g=(stat.gen<80||!keys.length)?fresh():mutate(arch[keys[rnd()*keys.length|0]].g);
+    stat.gen++;const a=build(g),ev=evaluate(a);if(!ev)return;stat.eva++;
+    const ix=clamp(Math.floor((ev.open-.12)/(.8-.12)*BX),0,BX-1),iy=clamp(Math.floor(ev.route/1.5*BY),0,BY-1),key=ix+','+iy,old=arch[key];
+    if(!old||ev.fit>old.ev.fit+1e-9){arch[key]={g,ev,ix,iy,img:thumb(a,ev),born:stat.gen};stat.kept++;flash[key]=performance.now();if(!sel||sel===key||!stat.locked)sel=key}}
+  function draw(){
+    cx.clearRect(0,0,cv.width,cv.height);const now=performance.now();
+    cx.strokeStyle='rgba(255,255,255,.06)';cx.lineWidth=1;
+    for(let i=1;i<BX;i++){cx.beginPath();cx.moveTo(i*CW+.5,0);cx.lineTo(i*CW+.5,cv.height);cx.stroke()}
+    for(let j=1;j<BY;j++){cx.beginPath();cx.moveTo(0,j*CH+.5);cx.lineTo(cv.width,j*CH+.5);cx.stroke()}
+    for(const k in arch){const e=arch[k],x=e.ix*CW,y=(BY-1-e.iy)*CH;cx.globalAlpha=.35+.65*e.ev.fit;cx.drawImage(e.img,x+2,y+2,CW-4,CH-4);cx.globalAlpha=1;
+      const f=flash[k]&&now-flash[k]<700?1-(now-flash[k])/700:0;if(f>0){cx.strokeStyle=COL.gen;cx.globalAlpha=f;cx.lineWidth=3;cx.strokeRect(x+1.5,y+1.5,CW-3,CH-3);cx.globalAlpha=1}
+      if(k===sel){cx.strokeStyle='#fff';cx.lineWidth=1.5;cx.strokeRect(x+1,y+1,CW-2,CH-2)}}
+    const n=Object.keys(arch).length;
+    $('#rGen').textContent=stat.gen.toLocaleString();$('#rEva').textContent=stat.eva.toLocaleString();$('#rSea').textContent=stat.kept.toLocaleString();$('#rCov').textContent=Math.round(n/(BX*BY)*100)+'%';
+    const e=arch[sel];if(e){bx.clearRect(0,0,176,176);bx.drawImage(e.img,0,0,176,176);
+      $('#pickTxt').innerHTML='<b>Cave #'+e.born.toLocaleString()+'</b> &middot; '+Math.round(e.ev.open*100)+'% open floor &middot; longest route '+Math.round(e.ev.route*(GW+GH))+' steps &middot; <b>'+Math.round(e.ev.fit*100)+'% reachable</b><br>Recipe: wall chance '+e.g.p.toFixed(2)+', '+e.g.steps+' smoothing pass(es), wall rule '+e.g.birth+'. '+(stat.gen>=BUDGET?'Run finished. Select any tile to inspect it.':'Select any tile to hold it here.')}}
+  function loop(){raf=0;if(run&&vis&&stat.gen<BUDGET){for(let i=0;i<14;i++)step()}draw();
+    const flashing=Object.values(flash).some(t=>performance.now()-t<700);
+    if((run&&vis&&stat.gen<BUDGET)||flashing)raf=requestAnimationFrame(loop);
+    if(stat.gen>=BUDGET)$('#bPause').disabled=true}
+  function kick(){if(!raf)raf=requestAnimationFrame(loop)}
+  function reset(){arch={};flash={};sel=null;stat={gen:0,eva:0,kept:0,locked:false};$('#bPause').disabled=false;$('#bPause').textContent='Pause';run=true;
+    if(reduce){while(stat.gen<2500)step();flash={};run=false;$('#bPause').disabled=true;draw()}else{for(let i=0;i<500;i++)step();kick()}}
+  cv.addEventListener('click',ev=>{const r=cv.getBoundingClientRect(),ix=Math.floor((ev.clientX-r.left)/r.width*BX),iy=BY-1-Math.floor((ev.clientY-r.top)/r.height*BY),k=ix+','+iy;if(arch[k]){sel=k;stat.locked=true;draw()}});
+  $('#bPause').onclick=()=>{run=!run;$('#bPause').textContent=run?'Pause':'Resume';kick()};
+  $('#bReset').onclick=reset;
+  if('IntersectionObserver'in window)new IntersectionObserver(es=>{vis=es[0].isIntersecting;if(vis)kick()}).observe(cv);
+  reset();
+})();
+
+/* ---------- 2. Pillars ---------- */
+const YEARS=(()=>{const ys=D.pubs.map(p=>p.y),a=Math.min(...ys),b=Math.max(...ys);return Array.from({length:b-a+1},(_,i)=>a+i)})();
+const rm=n=>'RM '+(n>=1e6?(n/1e6).toFixed(2)+'M':Math.round(n/1e3)+'k');
+(function(){
+  $('#loop').innerHTML=ORDER.map((k,i)=>{const ps=D.pubs.filter(p=>p.p===k),gr=D.grants.filter(g=>g.p===k),st=D.students.filter(s=>s.p===k);
+    const per=YEARS.map(y=>ps.filter(p=>p.y===y).length),mx=Math.max(...per,1);
+    const sig=ps.filter(p=>p.s).sort((a,b)=>b.y-a.y).slice(0,2);
+    return `<article class="pill ${k}">
+      <span class="mono">Stage ${i+1} of 3 &middot; ${esc(P[k].name)}</span>
+      <div class="verb">${P[k].verb}</div>
+      <div class="q">${P[k].q}</div>
+      <p class="body">${P[k].body}</p>
+      <p class="live ${k}"><span style="color:var(--paper)">${P[k].live}</span></p>
+      <div class="spark ${k}" role="img" aria-label="Publications per year, ${YEARS[0]} to ${YEARS[YEARS.length-1]}">${per.map((n,j)=>`<i style="height:${n/mx*100}%" title="${YEARS[j]}: ${n}"></i>`).join('')}</div>
+      <div class="row" style="justify-content:space-between"><span class="mono">${YEARS[0]}</span><span class="mono">papers per year</span><span class="mono">${YEARS[YEARS.length-1]}</span></div>
+      <div class="nums"><div><b>${ps.length}</b><span class="mono">papers</span></div><div><b>${rm(gr.reduce((s,g)=>s+g.amt,0))}</b><span class="mono">${gr.length} grants</span></div><div><b>${st.length}</b><span class="mono">students</span></div></div>
+      <ul class="sig">${sig.map(p=>`<li><a href="${pubUrl(p)}">${esc(p.t)}</a> <span class="mono">${p.y}</span></li>`).join('')}</ul>
+    </article>`}).join('');
+  const sim=D.pubs.filter(p=>p.sim).length;
+  $('#benchLine').innerHTML=`<b>Simulation is the test bench.</b> ${sim} of ${D.pubs.length} publications use agent-based, self-play or Monte Carlo simulation to run the loop before anything reaches real players, patients or factory floors.`;
+})();
+
+/* ---------- 3. Archive dashboard ---------- */
+(function(){
+  const F={p:'',c:'',y:0,q:''};
+  const CAT={J:'Journal',C:'Conference',B:'Book chapter'},QN={Q1:'Q1',Q2:'Q2',Q3:'Q3',Q4:'Q4',Sc:'No JCR quartile (Scopus-indexed)','':'No JCR quartile'};
+  const m=D.metrics,jr=D.pubs.filter(p=>p.c==='J');
+  $('#archTitle').textContent=D.pubs.length+' publications as one searchable archive';
+  $('#tiles').innerHTML=[[D.pubs.length,'publications'],[m.citations.toLocaleString(),'citations'],[m.hIndex,'h-index'],[m.i10Index,'i10-index'],
+    [jr.filter(p=>p.q==='Q1').length+' / '+jr.filter(p=>p.q==='Q2').length,'Q1 / Q2 (JCR)'],[D.pubs.filter(p=>p.f).length,'first author']]
+    .map(t=>`<div class="tile"><b>${t[0]}</b><span class="mono">${t[1]}</span></div>`).join('');
+  const chips=(el,opts,key)=>{el.innerHTML=opts.map(o=>`<button type="button" class="chip" data-v="${o[0]}" aria-pressed="${F[key]===o[0]}">${o[1]}</button>`).join('');
+    el.onclick=e=>{const b=e.target.closest('button');if(!b)return;F[key]=b.dataset.v;if(key==='p')F.y=F.y;render()}};
+  const match=p=>(!F.p||p.p===F.p)&&(!F.c||p.c===F.c)&&(!F.y||p.y===F.y)&&(!F.q||(p.t+' '+p.v+' '+p.a.join(' ')).toLowerCase().includes(F.q));
+  function bars(el,rows,total){const mx=Math.max(...rows.map(r=>r[1]),1);
+    el.innerHTML=rows.length?rows.map(r=>`<div class="barrow"><span class="lab2" title="${esc(r[0])}">${esc(r[0])}</span><span class="n">${r[1]}</span><span class="track"><i style="width:${r[1]/mx*100}%"></i></span></div>`).join(''):'<span class="note">Nothing in this selection.</span>'}
+  function heat(){
+    const mx=Math.max(...ORDER.flatMap(k=>YEARS.map(y=>D.pubs.filter(p=>p.p===k&&p.y===y).length)));
+    $('#heat').innerHTML='<table><thead><tr><th class="r"></th>'+YEARS.map(y=>`<th>${String(y).slice(2)}</th>`).join('')+'</tr></thead><tbody>'+
+      ORDER.map(k=>`<tr><th class="r ${k}">${P[k].verb}</th>`+YEARS.map(y=>{const n=D.pubs.filter(p=>p.p===k&&p.y===y).length,a=n?(.18+.82*n/mx):0,on=F.p===k&&F.y===y;
+        return `<td><button type="button" ${n?'':'disabled'} data-p="${k}" data-y="${y}" aria-pressed="${on}" aria-label="${P[k].verb} ${y}: ${n} publications" style="background:color-mix(in srgb, ${COL[k]} ${Math.round(a*100)}%, #0f0e14);color:${a>.55?'#07060f':'#f4f2ff'};box-shadow:${n?'0 0 '+Math.round(a*18)+'px -4px '+COL[k]:'none'}">${n||''}</button></td>`}).join('')+'</tr>').join('')+'</tbody></table>';
+  }
+  $('#heat').onclick=e=>{const b=e.target.closest('button');if(!b)return;const y=+b.dataset.y,p=b.dataset.p;if(F.p===p&&F.y===y){F.p='';F.y=0}else{F.p=p;F.y=y}render()};
+  function render(){
+    chips($('#fP'),[['','All pillars'],...ORDER.map(k=>[k,P[k].verb])],'p');
+    chips($('#fC'),[['','All types'],['J','Journals'],['C','Conferences'],['B','Chapters']],'c');
+    heat();
+    const L=D.pubs.filter(match).sort((a,b)=>b.y-a.y||a.t.localeCompare(b.t));
+    $('#count').innerHTML=L.length+' of '+D.pubs.length+' shown'+(F.y?' &middot; year '+F.y+' <button type="button" class="chip" id="clrY">clear year</button>':'');
+    const cy=$('#clrY');if(cy)cy.onclick=()=>{F.y=0;render()};
+    $('#list').innerHTML=L.map(p=>`<div class="pub"><span class="y">${p.y}</span><div><a class="t" href="${pubUrl(p)}">${esc(p.t)}</a>
+      <div class="m">${esc(p.a.length>4?p.a.slice(0,3).join('; ')+' et al.':p.a.join('; '))}</div>
+      <div class="m"><em>${esc(p.v)}</em></div>
+      <div class="row" style="margin-top:6px"><span class="tag ${p.p}">${P[p.p].verb}</span><span class="tag">${CAT[p.c]}</span>${p.q&&p.q!=='Sc'?`<span class="tag">${p.q}</span>`:''}${p.f?'<span class="tag">first author</span>':''}${p.d?`<a class="tag" href="${esc(p.d)}">DOI</a>`:''}</div></div></div>`).join('')||'<p class="note">No publication matches. Clear a filter or try another word.</p>';
+    const J=L.filter(p=>p.c==='J');
+    bars($('#cQ'),['Q1','Q2','Q3','Q4','Sc',''].map(q=>[QN[q],J.filter(p=>p.q===q).length]).filter(r=>r[1]));
+    const vc={};L.forEach(p=>vc[p.v]=(vc[p.v]||0)+1);
+    bars($('#cV'),Object.entries(vc).sort((a,b)=>b[1]-a[1]).slice(0,6));
+    bars($('#cA'),[['First author',L.filter(p=>p.f).length],['Co-author',L.filter(p=>!p.f).length]]);
+  }
+  $('#q').oninput=e=>{F.q=e.target.value.trim().toLowerCase();render()};
+  render();
+})();
+
+/* ---------- 4. CV builder: score every entry for the reader, pack by value per line ---------- */
+(function(){
+  const C=D.cv,LPP=54;
+  const PRE={
+    promotion:{n:'Promotion or expert panel',d:'Research record first',pg:4,o:['focus','employment','education','grants','pubs','supervision','awards','service','teaching','ip','membership'],
+      w:{focus:9,employment:8,education:7,grants:9,pubs:8,supervision:8,awards:6,service:6,teaching:5,ip:4,membership:4,skills:.5},
+      lead:`Senior Lecturer at UKM working on generative optimization: generative AI that proposes, models of engagement that evaluate, and metaheuristics that search. ${D.pubs.length} publications, ${D.metrics.citations.toLocaleString()} citations, h-index ${D.metrics.hIndex}. Principal investigator on competitive national and university grants and formerly Assistant Professor at JAIST, Japan.`},
+    industry:{n:'Industry or training client',d:'Trainer and consultant first',pg:2,o:['focus','ip','service','employment','grants','skills','teaching','awards','education','pubs','membership'],
+      w:{focus:8,ip:10,service:8,employment:8,grants:5,skills:7,teaching:6,awards:5,education:6,pubs:2.5,membership:6,supervision:1},
+      lead:`AI researcher, trainer and Professional Technologist (MBOT) who turns generative AI, optimization and simulation into working tools and practical training. Creator of five registered AI training modules at UKM and a frequent invited speaker on AI for research, education and the workplace.`},
+    grant:{n:'Grant reviewer',d:'Track record and capacity to deliver',pg:2,o:['focus','grants','pubs','supervision','employment','awards','education','service'],
+      w:{focus:8,grants:10,pubs:8,supervision:7,employment:7,awards:5,education:6,service:3,teaching:1,ip:2,membership:3,skills:.5},
+      lead:`Principal investigator with a record of funded, delivered projects in computational intelligence and generative AI, including the national programme on large language models for Bahasa Melayu. ${D.grants.length} grants to date, ${D.students.length} postgraduate researchers supervised.`},
+    student:{n:'Prospective postgraduate',d:'Topics, supervision and active projects',pg:1,o:['focus','supervision','grants','pubs','teaching','employment','education'],
+      w:{focus:10,supervision:9,grants:7,pubs:6,teaching:6,employment:5,education:4,awards:2,service:1,ip:2,membership:1,skills:1},
+      lead:`I supervise MSc and PhD research where AI generates, evaluates and optimizes: metaheuristics and swarm intelligence, game and engagement modelling, and generative and agentic AI. Current student topics and active grants are listed below.`},
+    card:{n:'One-page summary',d:'For a bio pack or a conference chair',pg:1,o:['focus','employment','education','pubs','grants','awards'],
+      w:{focus:9,employment:8,education:7,pubs:7,grants:7,awards:5,supervision:3,service:3,teaching:2,ip:3,membership:3,skills:.5},
+      lead:`Senior Lecturer in artificial intelligence at Universiti Kebangsaan Malaysia. Research on generative optimization across games, simulation and engagement modelling. ${D.pubs.length} publications, h-index ${D.metrics.hIndex}.`}
+  };
+  const TITLE={focus:'Research focus',employment:'Appointments',education:'Education',grants:'Research grants',pubs:'Selected publications',supervision:'Postgraduate supervision',awards:'Awards',service:'Professional service',teaching:'Teaching',ip:'Registered training modules',membership:'Memberships',skills:'Skills'};
+  const now=YEARS[YEARS.length-1],rec=y=>1/(1+.12*Math.max(0,now-(+y||now)));
+  const isPI=r=>/^princip/i.test(r);
+  const pool=[];const add=(sec,k,txt,base,p)=>pool.push({sec,k,txt,base,p:p||'',i:pool.length});
+  ORDER.forEach(k=>add('focus',P[k].verb,P[k].name+'. '+P[k].body.split('. ')[0]+'.',1.2,k));
+  C.employment.forEach((e,i)=>add('employment',e.period,e.role+', '+e.place,1.3-i*.15));
+  C.education.forEach((e,i)=>add('education',e.period,e.degree+', '+e.place+'. '+e.detail,1.2-i*.15));
+  [...D.grants].sort((a,b)=>isPI(b.role)-isPI(a.role)||b.amt-a.amt).forEach(g=>add('grants',g.s+'–'+g.e,(isPI(g.role)?'PI':'Co-I')+'. '+g.t+'. '+g.ag+(g.amt?', RM '+g.amt.toLocaleString():'')+'.',(isPI(g.role)?1.5:.8)*(.6+Math.log10(Math.max(g.amt,1e3))/6)*(g.st==='Active'?1.15:1),g.p));
+  [...D.pubs].sort((a,b)=>b.y-a.y).forEach(p=>add('pubs',String(p.y),(p.a.length>3?p.a[0]+' et al.':p.a.join(', '))+' '+p.t+'. '+p.v+'.'+(p.q&&p.q!=='Sc'?' ['+p.q+']':''),
+    (.45+rec(p.y)*.6)*(p.s?1.7:1)*(p.f?1.35:1)*({Q1:1.5,Q2:1.25}[p.q]||1)*(p.c==='J'?1.1:.85),p.p));
+  [...D.students].sort((a,b)=>(a.r.startsWith('Main')?0:1)-(b.r.startsWith('Main')?0:1)||b.y-a.y).forEach(s=>add('supervision',s.d+' '+(s.y||''),s.n+' ('+s.r.replace('-Supervisor','').replace(' Supervisor','')+' supervisor, '+s.st.toLowerCase()+'). '+s.t+'.',(s.r.startsWith('Main')?1.3:.85)*(s.st==='Ongoing'?1:1.1),s.p));
+  C.awards.forEach((a,i)=>add('awards','',a,1.1-i*.1));
+  C.service.forEach((a,i)=>add('service','',a,1.1-i*.08));
+  C.teaching.forEach((t,i)=>add('teaching',t.when,t.text,1.1-i*.1));
+  C.ip.forEach((t,i)=>add('ip',t.year,t.title+' ('+t.place+')',1.1-i*.05));
+  C.membership.forEach((t,i)=>add('membership','',t,1-i*.1));
+  Object.entries(C.skills).forEach(([k,v])=>add('skills',k,v,1));
+  pool.forEach(it=>it.cost=Math.max(1,Math.ceil((it.txt.length+(it.k?0:0))/84)));
+  let cur='promotion',md='';
+  function build(){
+    const pr=PRE[cur],pages=+$('#pg').value,em=$('#emph').value;
+    let budget=pages*LPP-(8+Math.ceil(pr.lead.length/95)),used=0;const open={},pick=[];
+    const scored=pool.map(it=>({it,v:(pr.w[it.sec]||0)*it.base*(em&&it.p?(it.p===em?1.7:.6):1)})).filter(s=>s.v>0).sort((a,b)=>b.v/b.it.cost-a.v/a.it.cost);
+    for(const s of scored){const extra=open[s.it.sec]?0:2;if(used+s.it.cost+extra>budget)continue;if(s.it.sec==='pubs'&&pages<3&&(open.pubs||0)>=pages*9)continue;
+      used+=s.it.cost+extra;open[s.it.sec]=(open[s.it.sec]||0)+1;pick.push(s.it)}
+    const secs=[...pr.o,...Object.keys(TITLE).filter(k=>!pr.o.includes(k))].filter(k=>open[k]);
+    let h=`<h4>${esc(C.meta.name)}, ${esc(C.meta.credential)}</h4><div class="sub">${esc(C.meta.title.replace(/\s*\(.*\)/,''))} &middot; ${esc(C.meta.affiliation)}</div><div class="sub">akmal@ukm.edu.my &middot; akmal.app &middot; ORCID 0000-0002-7909-8869</div><p class="lead">${esc(pr.lead)}</p>`;
+    md=`# ${C.meta.name}, ${C.meta.credential}\n${C.meta.title.replace(/\s*\(.*\)/,'')} · ${C.meta.affiliation}\nakmal@ukm.edu.my · akmal.app · ORCID 0000-0002-7909-8869\n\n${pr.lead}\n`;
+    for(const k of secs){const items=pick.filter(i=>i.sec===k).sort((a,b)=>a.i-b.i),ttl=k==='pubs'&&items.length===D.pubs.length?'Publications':TITLE[k];
+      h+=`<h5>${ttl}</h5><ul>`+items.map(i=>`<li><span>${esc(i.k)}</span><span>${esc(i.txt)}</span></li>`).join('')+'</ul>';
+      md+=`\n## ${ttl}\n`+items.map(i=>'- '+(i.k?'**'+i.k+'** ':'')+i.txt).join('\n')+'\n'}
+    $('#sheet').innerHTML=h;$('#sheet').scrollTop=0;
+    const np=pick.filter(i=>i.sec==='pubs').length;
+    $('#fit').innerHTML=`<b>${pick.length}</b> of ${pool.length} entries kept &middot; <b>${np}</b> of ${D.pubs.length} publications<br>about <b>${used+8}</b> of ${pages*LPP} lines used<br>left out for this reader: ${Object.keys(TITLE).filter(k=>!open[k]).map(k=>TITLE[k].toLowerCase()).join(', ')||'nothing'}`;
+    $('#pgOut').textContent=pages;
+  }
+  $('#presets').innerHTML=Object.entries(PRE).map(([k,p])=>`<button type="button" data-k="${k}" aria-pressed="${k===cur}">${p.n}<small>${p.d}</small></button>`).join('');
+  $('#presets').onclick=e=>{const b=e.target.closest('button');if(!b)return;cur=b.dataset.k;$('#pg').value=PRE[cur].pg;[...$('#presets').children].forEach(c=>c.setAttribute('aria-pressed',c===b));build()};
+  $('#pg').oninput=build;$('#emph').onchange=build;
+  $('#bCopy').onclick=async()=>{const b=$('#bCopy');try{await navigator.clipboard.writeText(md);b.textContent='Copied'}catch(e){b.textContent='Copy blocked here: select the text instead'}setTimeout(()=>b.textContent='Copy as Markdown',2200)};
+  let framed=true;try{framed=window.self!==window.top}catch(e){}
+  if(!framed){$('#bPrint').hidden=false;$('#bPrint').onclick=()=>window.print()}
+  $('#pg').value=PRE[cur].pg;build();
+})();
+
+/* ---------- 5. Assistant: BM25 index now, optional on-device language model ---------- */
+(function(){
+  const STOP=new Set('a an the of on in for to and or is are was were be been do does did what which who whom how many much he his him has have had with about any there their this that it its at as by from i me my you your can could would should tell show list give papers paper publications publication work works research dr akmal khalid'.split(' '));
+  const SYN={llm:['language','model','llms','large'],llms:['language','model','large'],pcg:['procedural','content','generation'],ga:['genetic','algorithm'],ai:['artificial','intelligence','ai'],malay:['malay','melayu','bahasa'],
+    students:['supervision','phd','student'],student:['supervision','phd','student'],supervise:['supervision','phd','student'],phd:['phd','supervision'],funding:['grant','frgs'],grants:['grant','frgs'],
+    swarm:['swarm','metaheuristic'],games:['game'],gaming:['game'],scheduling:['scheduling','schedule'],evacuation:['evacuation','crowd']};
+  const tok=s=>s.toLowerCase().replace(/[^a-z0-9\s-]/g,' ').split(/[\s-]+/).filter(w=>w.length>1&&!STOP.has(w)).map(w=>w.length>4&&w.endsWith('s')&&!w.endsWith('ss')?w.slice(0,-1):w);
+  const docs=[];const add=(type,title,text,url,meta)=>docs.push({type,title,text,url,meta});
+  D.pubs.forEach(p=>add('pub',p.t,`${p.t}. ${p.v}. ${p.y}. ${P[p.p].name}. ${p.a.join(', ')}`,pubUrl(p),p));
+  D.grants.forEach(g=>add('grant',g.t,`${g.t}. ${g.ag}. grant funding ${g.role} ${g.s}-${g.e} ${g.st}. ${P[g.p].name}`,'https://akmal.app/research/',g));
+  D.students.forEach(s=>add('student',s.t,`${s.t}. ${s.d} student supervision ${s.r} ${s.st}. ${P[s.p].name}`,'https://akmal.app/teaching/',s));
+  ORDER.forEach(k=>add('pillar',P[k].name,`${P[k].verb}. ${P[k].name}. ${P[k].q} ${P[k].body}`,'https://akmal.app/generative-optimization/',{k}));
+  add('bio','Profile',D.cv.profile,'https://akmal.app/about/');
+  D.cv.teaching.forEach(t=>add('teach',t.text,`teaching course ${t.text} ${t.when}`,'https://akmal.app/teaching/'));
+  D.cv.awards.forEach(t=>add('award',t,`award ${t}`,'https://akmal.app/cv/'));
+  D.cv.service.forEach(t=>add('service',t,`service ${t}`,'https://akmal.app/cv/'));
+  D.cv.ip.forEach(t=>add('ip',t.title,`training module workshop ${t.title} ${t.place} ${t.year}`,'https://akmal.app/teaching/'));
+  const df={};let avg=0;docs.forEach(d=>{d.tk=tok(d.text);d.tf={};d.tk.forEach(w=>d.tf[w]=(d.tf[w]||0)+1);Object.keys(d.tf).forEach(w=>df[w]=(df[w]||0)+1);avg+=d.tk.length});avg/=docs.length;
+  function search(q,types,n=6){let qt=tok(q);qt=[...new Set(qt.flatMap(w=>[w,...(SYN[w]||[])]))];
+    const yr=(q.match(/\b(19|20)\d{2}\b/g)||[]).map(Number);
+    return{qt,hits:docs.filter(d=>!types||types.includes(d.type)).map(d=>{let s=0;for(const w of qt){const f=d.tf[w];if(!f)continue;const idf=Math.log(1+(docs.length-df[w]+.5)/(df[w]+.5));s+=idf*f*2.2/(f+1.2*(.25+.75*d.tk.length/avg))}
+      if(d.type==='pub'&&yr.length&&s>0&&yr.includes(d.meta.y))s*=1.5;return{d,s}}).filter(x=>x.s>0).sort((a,b)=>b.s-a.s).slice(0,n)}}
+  const link=d=>`<a href="${d.url}">${esc(d.title)}</a>`;
+  const m=D.metrics,isPI=r=>/^princip/i.test(r);
+  function answer(q){
+    const s=q.toLowerCase(),has=r=>r.test(s);
+    if(has(/^(hi|hello|hey|salam|assalam|hai)\b/))return{h:'Hello. I can answer from this site\'s records: publications, grants, supervision, teaching and how to get in touch. What would you like to know?'};
+    if(has(/contact|email|e-mail|reach|get in touch|hubungi/))return{h:'Email is the best route: <b>akmal@ukm.edu.my</b>. He is based at the Faculty of Information Science &amp; Technology, UKM Bangi. Profiles: <a href="https://scholar.google.com/citations?user=GJeS-CwAAAAJ">Google Scholar</a>, <a href="https://orcid.org/0000-0002-7909-8869">ORCID</a>.',src:'site settings'};
+    if(has(/generative optimi[sz]ation|three pillars|3 pillars|pillars|research (focus|area|direction)/))return{h:'<b>Generative optimization</b> joins three lines of work into one loop:<ul>'+ORDER.map(k=>`<li><b>${P[k].verb}</b> (${P[k].name}, ${D.pubs.filter(p=>p.p===k).length} papers): ${P[k].body.split('. ')[0]}.</li>`).join('')+'</ul>The cave grid at the top of this page is that loop running.',src:'research programme'};
+    if(has(/how many|number of|count|berapa/)||has(/\b(h-?index|citations?|metrics|stats)\b/)){
+      const act=D.grants.filter(g=>g.st==='Active').length,on=D.students.filter(x=>x.st==='Ongoing').length;
+      return{h:`The record on this site: <b>${D.pubs.length}</b> publications (${D.pubs.filter(p=>p.c==='J').length} journal, ${D.pubs.filter(p=>p.c==='C').length} conference, ${D.pubs.filter(p=>p.c==='B').length} chapters), <b>${m.citations.toLocaleString()}</b> citations, h-index <b>${m.hIndex}</b>, i10-index <b>${m.i10Index}</b>. ${D.grants.length} grants worth ${rm(D.grants.reduce((a,g)=>a+g.amt,0))} in total (${act} active), and ${D.students.length} postgraduate researchers (${on} ongoing).`,src:'publication files, site settings (Google Scholar figures)'}}
+    if(has(/grant|funding|funded|frgs|geran|principal investigator|\bpi\b/)){const r=search(q,['grant'],4).hits.map(x=>x.d.meta),L=(r.length&&!has(/all|lead|list|what grants/)?r:[...D.grants].sort((a,b)=>isPI(b.role)-isPI(a.role)||b.amt-a.amt).slice(0,6));
+      return{h:`${D.grants.length} grants, ${rm(D.grants.reduce((a,g)=>a+g.amt,0))} in total, ${rm(D.grants.filter(g=>isPI(g.role)).reduce((a,g)=>a+g.amt,0))} as principal investigator. Most relevant:<ul>`+L.map(g=>`<li><b>${isPI(g.role)?'PI':'Co-I'}</b>, ${g.s}–${g.e}: ${esc(g.t)} (${esc(g.ag)}${g.amt?', RM '+g.amt.toLocaleString():''})</li>`).join('')+'</ul>',src:'project files'}}
+    if(has(/supervis|phd|ph\.d|master|msc|postgrad|student|pelajar/)){const on=D.students.filter(x=>x.st==='Ongoing'),r=search(q,['student'],5).hits.map(x=>x.d.meta),L=r.length>1?r:on.slice(0,6);
+      return{h:`He supervises ${D.students.length} postgraduate researchers, ${on.length} of them ongoing (${on.filter(x=>x.r.startsWith('Main')).length} as main supervisor). Example topics:<ul>`+L.map(x=>`<li>${esc(x.t)} <span class="mono">${x.d}</span></li>`).join('')+'</ul>For openings, write to <b>akmal@ukm.edu.my</b> with a short proposal that fits one of the three pillars.',src:'student records'}}
+    if(has(/teach|course|subject|kursus|lectur/))return{h:'Teaching:<ul>'+D.cv.teaching.map(t=>`<li><span class="mono">${esc(t.when)}</span> ${esc(t.text)}</li>`).join('')+'</ul>',src:'CV data'};
+    if(has(/workshop|training|module|bengkel|speaker|talk/))return{h:'Registered training modules at UKM:<ul>'+D.cv.ip.map(t=>`<li>${esc(t.title)} (${t.year})</li>`).join('')+'</ul>He also gives invited talks on AI for research, education and the workplace. To book a session, email <b>akmal@ukm.edu.my</b>.',src:'CV data'};
+    if(has(/award|prize|anugerah/))return{h:'Awards:<ul>'+D.cv.awards.map(a=>`<li>${esc(a)}</li>`).join('')+'</ul>',src:'CV data'};
+    if(has(/^who\b|about (him|akmal)|background|biograph|bio\b|siapa|career|education|degree|jaist/))return{h:esc(D.cv.profile),src:'CV data'};
+    const r=search(q,['pub'],6);
+    if(!r.hits.length||r.hits[0].s<2.2){const any=search(q,null,3).hits;
+      if(any.length&&any[0].s>=2.2)return{h:'Closest matches on the site:<ul>'+any.map(x=>`<li>${link(x.d)} <span class="mono">${x.d.type}</span></li>`).join('')+'</ul>',src:'site index'};
+      return{h:'I could not find that in this site\'s records. I only know what is published here: papers, grants, supervision, teaching and contact details. Try a topic such as <em>assembly line balancing</em>, <em>gacha</em> or <em>large language models</em>.'}}
+    const by={};r.hits.forEach(x=>by[x.d.meta.p]=(by[x.d.meta.p]||0)+1);const top=Object.entries(by).sort((a,b)=>b[1]-a[1])[0][0];
+    return{h:`${r.hits.length===1?'One close publication, in the':r.hits.length+' closest publications, mostly from the'} <b>${P[top].verb.toLowerCase()}</b> pillar (${P[top].name}):<ul>`+r.hits.map(x=>`<li>${link(x.d)} <span class="mono">${x.d.meta.y} &middot; ${esc(x.d.meta.v)}</span></li>`).join('')+'</ul>',src:'publication files'}}
+
+  const log=$('#log');let llm=null,busy=false,asked=false;
+  function say(cls,html){const d=document.createElement('div');d.className='msg '+cls;d.innerHTML=html;log.appendChild(d);log.scrollTop=log.scrollHeight;return d}
+  const SYS='You are the assistant on the website of Dr. Mohd Nor Akmal Khalid, Senior Lecturer in AI at Universiti Kebangsaan Malaysia. Answer the visitor in their language, in at most 120 words, using only the FACTS given. If the facts do not contain the answer, say so and suggest emailing akmal@ukm.edu.my. Never invent papers, numbers or dates.';
+  async function viaLLM(q,el){
+    const ctx=search(q,null,7).hits.map(x=>'- ['+x.d.type+'] '+x.d.text).join('\n');
+    const facts=`Totals: ${D.pubs.length} publications, ${m.citations} citations, h-index ${m.hIndex}, ${D.grants.length} grants, ${D.students.length} postgraduate researchers. Research programme: generative optimization (generate, evaluate, search).\n${ctx}`;
+    const user='FACTS:\n'+facts+'\n\nQUESTION: '+q;let out='';
+    if(llm.kind==='nano'){const st=llm.session.promptStreaming(user);for await(const ch of st){out+=ch;el.textContent=out;log.scrollTop=log.scrollHeight}}
+    else{const st=await llm.engine.chat.completions.create({messages:[{role:'system',content:SYS},{role:'user',content:user}],stream:true,temperature:.3,max_tokens:320});
+      for await(const ch of st){out+=ch.choices[0]?.delta?.content||'';el.textContent=out;log.scrollTop=log.scrollHeight}}
+    el.insertAdjacentHTML('beforeend','<div class="src">written by the on-device model from site records</div>')}
+  async function ask(q){if(busy||!q.trim())return;busy=true;say('u',esc(q));if(!asked){asked=true;$('#sugg').style.display='none'}
+    const a=answer(q);
+    if(llm&&!/^(hi|hello|hey|salam)/i.test(q)){const el=say('b','…');try{await viaLLM(q,el)}catch(e){el.innerHTML=a.h+'<div class="src">model failed, answered by instant search</div>'}}
+    else say('b',a.h+(a.src?`<div class="src">source: ${a.src}</div>`:''));
+    busy=false}
+  $('#say').addEventListener('submit',e=>{e.preventDefault();const i=$('#ask-in');ask(i.value);i.value=''});
+  $('#sugg').innerHTML=['What is generative optimization?','Papers on game refinement','Work on Malay language models?','Which grants does he lead?','PhD supervision topics','How do I contact him?'].map(t=>`<button type="button" class="chip">${t}</button>`).join('');
+  $('#sugg').onclick=e=>{const b=e.target.closest('button');if(b)ask(b.textContent)};
+  say('b','Hello. Ask about publications, grants, supervision, teaching or training. I answer from this site\'s own records, inside your browser.');
+
+  const MODEL='Qwen2.5-1.5B-Instruct-q4f16_1-MLC',status=t=>$('#llmStatus').textContent=t,bar=v=>$('#llmBar').style.width=Math.round(v*100)+'%';
+  $('#bLLM').onclick=async()=>{const b=$('#bLLM');b.disabled=true;
+    try{
+      if('LanguageModel'in window){status('Checking the browser\'s built-in model');const av=await LanguageModel.availability();
+        if(av==='available'){const session=await LanguageModel.create({initialPrompts:[{role:'system',content:SYS}]});llm={kind:'nano',session};bar(1);status('Mode: browser built-in model (Gemini Nano), on this device');b.hidden=true;return}}
+      if(!navigator.gpu)throw new Error('This browser does not expose WebGPU, so a model cannot run here. Instant search stays active.');
+      status('Fetching the model runtime');
+      const webllm=await import('https://cdn.jsdelivr.net/npm/@mlc-ai/web-llm@0.2.84/+esm');
+      const engine=await webllm.CreateMLCEngine(MODEL,{initProgressCallback:p=>{bar(p.progress||0);status(p.text||'Loading')}});
+      llm={kind:'webllm',engine};bar(1);status('Mode: '+MODEL.split('-q4')[0]+' on your graphics card');b.hidden=true;
+    }catch(e){b.disabled=false;bar(0);
+      status(/WebGPU/.test(e.message)?e.message:'Could not download the model in this preview, which blocks outside downloads. Hosted on akmal.app the same button works. Instant search stays active.')}}
+})();
+
+/* ---------- 6. Ambient particle field ---------- */
+(function(){
+  const c=$('#field'),x=c.getContext('2d'),HUE=['#8b7bf0','#21b3a0','#f2683f','#4d8df0'];let W,H,P=[],raf=0,last=0;
+  function size(){W=c.width=innerWidth;H=c.height=innerHeight;const n=Math.min(90,Math.round(W*H/22000));
+    P=Array.from({length:n},(_,i)=>({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.22,vy:(Math.random()-.5)*.22,r:.8+Math.random()*1.6,c:HUE[i%4]}));draw()}
+  function draw(){x.clearRect(0,0,W,H);
+    for(let i=0;i<P.length;i++){const a=P[i];
+      for(let j=i+1;j<P.length;j++){const b=P[j],dx=a.x-b.x,dy=a.y-b.y,d=dx*dx+dy*dy;if(d<15000){x.globalAlpha=(1-d/15000)*.22;x.strokeStyle=a.c;x.lineWidth=1;x.beginPath();x.moveTo(a.x,a.y);x.lineTo(b.x,b.y);x.stroke()}}
+      x.globalAlpha=.85;x.fillStyle=a.c;x.shadowColor=a.c;x.shadowBlur=8;x.beginPath();x.arc(a.x,a.y,a.r,0,7);x.fill();x.shadowBlur=0}
+    x.globalAlpha=1}
+  function tick(t){raf=requestAnimationFrame(tick);if(t-last<33)return;last=t;
+    for(const a of P){a.x+=a.vx;a.y+=a.vy;if(a.x<-10)a.x=W+10;if(a.x>W+10)a.x=-10;if(a.y<-10)a.y=H+10;if(a.y>H+10)a.y=-10}draw()}
+  addEventListener('resize',size);size();
+  if(!reduce){raf=requestAnimationFrame(tick);document.addEventListener('visibilitychange',()=>{cancelAnimationFrame(raf);if(!document.hidden)raf=requestAnimationFrame(tick)})}
+})();
+
+/* ---------- 7. Floating assistant: draggable orb, fades when idle ---------- */
+(function(){
+  const orb=$('#orb'),panel=$('#panel'),tip=$('#orbTip'),S=58,KEY='engine-orb';let open=false,idleT=0,moved=false,pos=null;
+  try{const v=JSON.parse(localStorage.getItem(KEY));if(v&&isFinite(v.x)&&isFinite(v.y))pos=v}catch(e){}
+  if(!pos)pos={x:innerWidth-S-22,y:innerHeight-S-22};
+  const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(pos))}catch(e){}};
+  function place(){const m=8;pos.x=Math.max(m,Math.min(innerWidth-S-m,pos.x));pos.y=Math.max(m,Math.min(innerHeight-S-m,pos.y));
+    orb.style.left=pos.x+'px';orb.style.top=pos.y+'px';
+    const tw=tip.offsetWidth;tip.style.top=(pos.y+13)+'px';tip.style.left=(pos.x-tw-10>8?pos.x-tw-10:pos.x+S+10)+'px';
+    if(open){const pw=panel.offsetWidth,ph=panel.offsetHeight,g=12;let px=pos.x+S-pw;if(px<g)px=Math.min(pos.x,innerWidth-pw-g);px=Math.max(g,px);
+      let py=pos.y-ph-g;if(py<g)py=pos.y+S+g;if(py+ph>innerHeight-g){py=Math.max(g,Math.min(pos.y+S-ph,innerHeight-ph-g));py=Math.max(g,py);if(pos.x-pw-g>=g)px=pos.x-pw-g;else if(pos.x+S+g+pw<=innerWidth-g)px=pos.x+S+g}
+      panel.style.left=px+'px';panel.style.top=py+'px'}}
+  function wake(){orb.classList.remove('idle');clearTimeout(idleT);if(!open)idleT=setTimeout(()=>{orb.classList.add('idle');tip.classList.add('off')},5000)}
+  function toggle(v){open=v===undefined?!open:v;panel.classList.toggle('open',open);orb.setAttribute('aria-expanded',open);tip.classList.add('off');place();wake();
+    if(open&&matchMedia('(hover:hover)').matches)$('#ask-in').focus()}
+  function draggable(el,isOrb){let sx,sy,ox,oy,on=false;
+    el.addEventListener('pointerdown',e=>{if(!isOrb&&e.target.closest('button'))return;on=true;moved=false;sx=e.clientX;sy=e.clientY;ox=pos.x;oy=pos.y;el.setPointerCapture(e.pointerId);wake()});
+    el.addEventListener('pointermove',e=>{if(!on)return;const dx=e.clientX-sx,dy=e.clientY-sy;if(!moved&&Math.abs(dx)+Math.abs(dy)<6)return;moved=true;orb.classList.add('drag');tip.classList.add('off');pos.x=ox+dx;pos.y=oy+dy;place()});
+    const end=()=>{if(!on)return;on=false;orb.classList.remove('drag');if(moved)save();wake()};
+    el.addEventListener('pointerup',end);el.addEventListener('pointercancel',end)}
+  draggable(orb,true);draggable($('#pHead'),false);
+  orb.addEventListener('click',()=>{if(moved){moved=false;return}toggle()});
+  orb.addEventListener('keydown',e=>{const d={ArrowLeft:[-24,0],ArrowRight:[24,0],ArrowUp:[0,-24],ArrowDown:[0,24]}[e.key];if(!d)return;e.preventDefault();pos.x+=d[0];pos.y+=d[1];place();save();wake()});
+  orb.addEventListener('pointerenter',wake);orb.addEventListener('focus',wake);
+  $('#pClose').onclick=()=>{toggle(false);orb.focus()};
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&open){toggle(false);orb.focus()}});
+  document.querySelectorAll('[data-ask]').forEach(b=>b.addEventListener('click',()=>toggle(true)));
+  addEventListener('resize',place);
+  place();wake();
+})();
+</script>
+</body>
+</html>
