@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "prebuild": "node scripts/fetch-citation-links.mjs",
+    "prebuild": "node scripts/fetch-citation-links.mjs && node scripts/build-engine.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
