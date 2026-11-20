@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import Script from 'next/script'
 import SiteNav from '@/components/SiteNav'
 import PageTransition from '@/components/PageTransition'
 import VisitCounter from '@/components/VisitCounter'
@@ -53,6 +54,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </div>
           </div>
         </footer>
+        {/* Site assistant: floating orb + chat, runs in the visitor's browser (public/assistant/widget.js) */}
+        <Script src="/assistant/widget.js" strategy="lazyOnload" />
       </body>
     </html>
   )
