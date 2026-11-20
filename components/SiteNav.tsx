@@ -23,7 +23,7 @@ const NAV = [
 // there is no flash of the light bar over the dark fold.
 const DARK_TOP = new Set([
   '', '/about', '/research', '/publications', '/playground',
-  '/teaching', '/cv', '/contact', '/postgraduate-guide', '/toolkit',
+  '/teaching', '/cv', '/cv/industry', '/cv/custom', '/contact', '/postgraduate-guide', '/toolkit',
   '/generative-optimization',
 ])
 

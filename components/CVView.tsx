@@ -11,6 +11,7 @@ import { loadCV } from "../lib/cv-data.js";
 // @ts-ignore
 import { renderBody, CV_CSS_SCOPED, PROFILES } from "../lib/cv-template.js";
 import PageBanner from "@/components/PageBanner";
+import CVVariants from "@/components/CVVariants";
 
 type Profile = "academic" | "industry";
 
@@ -29,20 +30,6 @@ export default function CVView({ profile }: { profile: Profile }) {
   const data = loadCV();
   const body = renderBody(data, { profile });
   const other: Profile = profile === "academic" ? "industry" : "academic";
-  const tab = (p: Profile, href: string, label: string) => (
-    <a
-      href={href}
-      aria-current={p === profile ? "page" : undefined}
-      style={{
-        padding: "8px 16px", borderRadius: 999, fontSize: 14, fontWeight: 600, textDecoration: "none",
-        background: p === profile ? "#1b2a5c" : "transparent",
-        color: p === profile ? "#fff" : "#1b2a5c",
-      }}
-    >
-      {label}
-    </a>
-  );
-
   return (
     <>
       <PageBanner
@@ -66,16 +53,7 @@ export default function CVView({ profile }: { profile: Profile }) {
         />
         <style dangerouslySetInnerHTML={{ __html: CV_CSS_SCOPED }} />
 
-        <nav
-          aria-label="CV version"
-          style={{
-            display: "flex", gap: 4, width: "fit-content", margin: "0 auto 12px", padding: 4,
-            background: "#fff", border: "1px solid #e5e7eb", borderRadius: 999,
-          }}
-        >
-          {tab("academic", "/cv/", "Academic")}
-          {tab("industry", "/cv/industry/", "Industry · Trainer")}
-        </nav>
+        <CVVariants current={profile} />
 
         <div style={{ maxWidth: 900, margin: "0 auto 16px", fontSize: 13, color: "#6b7280", textAlign: "center" }}>
           {COPY[profile].note} Auto-generated from the same data as the PDF — always current.
