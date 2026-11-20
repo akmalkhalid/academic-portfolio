@@ -43,7 +43,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <p style={s("font-family:'JetBrains Mono',monospace;font-size:11px;color:#a39a8f;margin:0")}>Cookie-free analytics · honours Do-Not-Track · no personal data stored</p>
             <div style={s('display:flex;gap:18px;font-size:13px')}>
               <a href="/toolkit/" style={s('color:#57514b;text-decoration:none')}>Toolkit</a>
+              <a href="/cookbook/" style={s('color:#57514b;text-decoration:none')}>Prompt Cookbook <span style={s("font-family:'JetBrains Mono',monospace;font-size:9.5px;font-weight:600;letter-spacing:.06em;color:#0d6b5f;background:rgba(33,179,160,.16);padding:2px 5px;border-radius:4px;vertical-align:1px")}>FREE</span></a>
               <a href="/autowriter/" style={s('color:#57514b;text-decoration:none')}>AutoWriterAI <span style={s("font-family:'JetBrains Mono',monospace;font-size:9.5px;font-weight:600;letter-spacing:.06em;color:#4b3fb3;background:rgba(139,123,240,.14);padding:2px 5px;border-radius:4px;vertical-align:1px")}>SOON</span></a>
+              <a href="/masterclass/" style={s('color:#57514b;text-decoration:none')}>Masterclass <span style={s("font-family:'JetBrains Mono',monospace;font-size:9.5px;font-weight:600;letter-spacing:.06em;color:#7a5c14;background:rgba(201,162,74,.18);padding:2px 5px;border-radius:4px;vertical-align:1px")}>SOON</span></a>
               {social.scholar && <a href={social.scholar} target="_blank" rel="noopener noreferrer" style={s('color:#57514b;text-decoration:none')}>Scholar</a>}
               {social.orcid && <a href={social.orcid} target="_blank" rel="noopener noreferrer" style={s('color:#57514b;text-decoration:none')}>ORCID</a>}
               {social.linkedin && <a href={social.linkedin} target="_blank" rel="noopener noreferrer" style={s('color:#57514b;text-decoration:none')}>LinkedIn</a>}

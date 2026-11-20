@@ -3,7 +3,7 @@
 // Home — deliberately sparse. Five beats, in order:
 //   hero (the question + the record) → the signature demo (the loop, running)
 //   → the loop in words (three stages + horizon) → selected work
-//   → one in-development card (AutoWriterAI) → contact.
+//   → three product cards (free Prompt Cookbook; AutoWriterAI and Prompt Culinary Masterclass coming soon) → contact.
 // Everything else lives one click away: grants on /research, demos on
 // /playground, the full record on /publications.
 
@@ -180,9 +180,17 @@ export default function HomeClient({
         <a href="/publications" style={s("display:inline-block;margin-top:22px;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;text-decoration:none;color:#1c1917;border-bottom:2px solid #4d8df0;padding-bottom:2px")}>All {stats.pubs} publications →</a>
       </section>
 
-      {/* IN DEVELOPMENT — one quiet card for a product that has not launched yet */}
+      {/* BOOKS AND TOOLS — one free book, two products that have not launched yet */}
       <section id="building" style={s('max-width:1120px;margin:0 auto;padding:40px 28px 0')}>
-        <p style={eyebrow(false)}>/ in development</p>
+        <p style={eyebrow(false)}>/ books and tools</p>
+        <a href="/cookbook/" className="home-building" style={s('display:flex;flex-wrap:wrap;align-items:center;gap:18px 28px;background:#fff;border:1px solid #e7e3dd;border-left:3px solid #21b3a0;border-radius:14px;padding:22px 26px;margin-bottom:14px;text-decoration:none;color:#1c1917')}>
+          <div style={s('flex:1 1 420px;min-width:0')}>
+            <span style={s("font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:600;letter-spacing:.08em;color:#0d6b5f;background:rgba(33,179,160,.16);padding:3px 8px;border-radius:5px")}>BOOK · FREE DOWNLOAD</span>
+            <div style={s(`font-family:${stack};font-weight:600;font-size:20px;margin:10px 0 6px`)}>Prompt Cookbook</div>
+            <div style={s('font-size:14px;line-height:1.6;color:#57514b;max-width:640px')}>Recipes for AI innovation: an 86-page guide to prompt engineering for research and academic writing, with frameworks, templates and an ethics chapter.</div>
+          </div>
+          <span style={s("font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;border-bottom:2px solid #21b3a0;padding-bottom:2px;white-space:nowrap")}>Download free →</span>
+        </a>
         <a href="/autowriter/" className="home-building" style={s('display:flex;flex-wrap:wrap;align-items:center;gap:18px 28px;background:#fff;border:1px solid #e7e3dd;border-left:3px solid #8b7bf0;border-radius:14px;padding:22px 26px;text-decoration:none;color:#1c1917')}>
           <div style={s('flex:1 1 420px;min-width:0')}>
             <span style={s("font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:600;letter-spacing:.08em;color:#4b3fb3;background:rgba(139,123,240,.14);padding:3px 8px;border-radius:5px")}>COMING SOON</span>
@@ -190,6 +198,14 @@ export default function HomeClient({
             <div style={s('font-size:14px;line-height:1.6;color:#57514b;max-width:640px')}>A private desktop workspace for scientific writing, from first idea to published paper, with a mentor that checks your argument as you write. In English and Bahasa Melayu.</div>
           </div>
           <span style={s("font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;border-bottom:2px solid #8b7bf0;padding-bottom:2px;white-space:nowrap")}>Join the waitlist →</span>
+        </a>
+        <a href="/masterclass/" className="home-building" style={s('display:flex;flex-wrap:wrap;align-items:center;gap:18px 28px;background:#fff;border:1px solid #e7e3dd;border-left:3px solid #c9a24a;border-radius:14px;padding:22px 26px;margin-top:14px;text-decoration:none;color:#1c1917')}>
+          <div style={s('flex:1 1 420px;min-width:0')}>
+            <span style={s("font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:600;letter-spacing:.08em;color:#7a5c14;background:rgba(201,162,74,.18);padding:3px 8px;border-radius:5px")}>BOOK · COMING SOON</span>
+            <div style={s(`font-family:${stack};font-weight:600;font-size:20px;margin:10px 0 6px`)}>Prompt Culinary Masterclass</div>
+            <div style={s('font-size:14px;line-height:1.6;color:#57514b;max-width:640px')}>The craft and science of building with AI: 47 plain-language recipes for turning prompts into reusable assistants, tools and agent briefs. For academics, writers and professionals. No programming needed.</div>
+          </div>
+          <span style={s("font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;border-bottom:2px solid #c9a24a;padding-bottom:2px;white-space:nowrap")}>Get notified →</span>
         </a>
       </section>
 
