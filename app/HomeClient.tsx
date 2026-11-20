@@ -187,7 +187,7 @@ export default function HomeClient({
           <div style={s('flex:1 1 420px;min-width:0')}>
             <span style={s("font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:600;letter-spacing:.08em;color:#0d6b5f;background:rgba(33,179,160,.16);padding:3px 8px;border-radius:5px")}>BOOK · FREE DOWNLOAD</span>
             <div style={s(`font-family:${stack};font-weight:600;font-size:20px;margin:10px 0 6px`)}>Prompt Cookbook</div>
-            <div style={s('font-size:14px;line-height:1.6;color:#57514b;max-width:640px')}>Recipes for AI innovation: an 86-page guide to prompt engineering for research and academic writing, with frameworks, templates and an ethics chapter.</div>
+            <div style={s('font-size:14px;line-height:1.6;color:#57514b;max-width:640px')}>Recipes for AI innovation: an 88-page guide to prompt engineering for research and academic writing, with frameworks, templates and an ethics chapter.</div>
           </div>
           <span style={s("font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;border-bottom:2px solid #21b3a0;padding-bottom:2px;white-space:nowrap")}>Download free →</span>
         </a>
