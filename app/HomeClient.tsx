@@ -180,33 +180,61 @@ export default function HomeClient({
         <a href="/publications" style={s("display:inline-block;margin-top:22px;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;text-decoration:none;color:#1c1917;border-bottom:2px solid #4d8df0;padding-bottom:2px")}>All {stats.pubs} publications →</a>
       </section>
 
-      {/* BOOKS AND TOOLS — one free book, two products that have not launched yet */}
+      {/* BOOKS AND TOOLS — tiles in the style of a product shelf: each stage shows the thing itself
+          rising out of a panel tinted with its own palette; label, line and action sit underneath.
+          Styles: .bt-* in app/globals.css (hover needs real CSS). */}
       <section id="building" style={s('max-width:1120px;margin:0 auto;padding:40px 28px 0')}>
         <p style={eyebrow(false)}>/ books and tools</p>
-        <a href="/cookbook/" className="home-building" style={s('display:flex;flex-wrap:wrap;align-items:center;gap:18px 28px;background:#fff;border:1px solid #e7e3dd;border-left:3px solid #21b3a0;border-radius:14px;padding:22px 26px;margin-bottom:14px;text-decoration:none;color:#1c1917')}>
-          <div style={s('flex:1 1 420px;min-width:0')}>
-            <span style={s("font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:600;letter-spacing:.08em;color:#0d6b5f;background:rgba(33,179,160,.16);padding:3px 8px;border-radius:5px")}>BOOK · FREE DOWNLOAD</span>
-            <div style={s(`font-family:${stack};font-weight:600;font-size:20px;margin:10px 0 6px`)}>Prompt Cookbook</div>
-            <div style={s('font-size:14px;line-height:1.6;color:#57514b;max-width:640px')}>Recipes for AI innovation: an 88-page guide to prompt engineering for research and academic writing, with frameworks, templates and an ethics chapter.</div>
-          </div>
-          <span style={s("font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;border-bottom:2px solid #21b3a0;padding-bottom:2px;white-space:nowrap")}>Download free →</span>
-        </a>
-        <a href="/autowriter/" className="home-building" style={s('display:flex;flex-wrap:wrap;align-items:center;gap:18px 28px;background:#fff;border:1px solid #e7e3dd;border-left:3px solid #8b7bf0;border-radius:14px;padding:22px 26px;text-decoration:none;color:#1c1917')}>
-          <div style={s('flex:1 1 420px;min-width:0')}>
-            <span style={s("font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:600;letter-spacing:.08em;color:#4b3fb3;background:rgba(139,123,240,.14);padding:3px 8px;border-radius:5px")}>COMING SOON</span>
-            <div style={s(`font-family:${stack};font-weight:600;font-size:20px;margin:10px 0 6px`)}>AutoWriterAI</div>
-            <div style={s('font-size:14px;line-height:1.6;color:#57514b;max-width:640px')}>A private desktop workspace for scientific writing, from first idea to published paper, with a mentor that checks your argument as you write. In English and Bahasa Melayu.</div>
-          </div>
-          <span style={s("font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;border-bottom:2px solid #8b7bf0;padding-bottom:2px;white-space:nowrap")}>Join the waitlist →</span>
-        </a>
-        <a href="/masterclass/" className="home-building" style={s('display:flex;flex-wrap:wrap;align-items:center;gap:18px 28px;background:#fff;border:1px solid #e7e3dd;border-left:3px solid #c9a24a;border-radius:14px;padding:22px 26px;margin-top:14px;text-decoration:none;color:#1c1917')}>
-          <div style={s('flex:1 1 420px;min-width:0')}>
-            <span style={s("font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:600;letter-spacing:.08em;color:#7a5c14;background:rgba(201,162,74,.18);padding:3px 8px;border-radius:5px")}>BOOK · COMING SOON</span>
-            <div style={s(`font-family:${stack};font-weight:600;font-size:20px;margin:10px 0 6px`)}>Prompt Culinary Masterclass</div>
-            <div style={s('font-size:14px;line-height:1.6;color:#57514b;max-width:640px')}>The craft and science of building with AI: 47 plain-language recipes for turning prompts into reusable assistants, tools and agent briefs. For academics, writers and professionals. No programming needed.</div>
-          </div>
-          <span style={s("font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;border-bottom:2px solid #c9a24a;padding-bottom:2px;white-space:nowrap")}>Get notified →</span>
-        </a>
+        <div className="bt-grid">
+          <a href="/cookbook/" className="bt-tile bt-cook">
+            <div className="bt-stage">
+              <span className="bt-chip">PDF · 88 pages</span>
+              <div className="bt-page bt-page-back" aria-hidden="true" />
+              <img className="bt-cover" src="/cookbook/cover.jpg" alt="Prompt Cookbook cover" loading="lazy" />
+            </div>
+            <div className="bt-body">
+              <span className="bt-tag">Book · Free download</span>
+              <h3>Prompt Cookbook</h3>
+              <p>Recipes for AI innovation: prompt engineering for research and academic writing, with frameworks, templates and an ethics chapter.</p>
+              <span className="bt-cta">Download free →</span>
+            </div>
+          </a>
+          <a href="/autowriter/" className="bt-tile bt-auto">
+            <div className="bt-stage">
+              <span className="bt-chip">Desktop · EN / BM</span>
+              <div className="bt-win" aria-hidden="true">
+                <div className="bt-win-bar"><i /><i /><i /><b>AutoWriterAI</b></div>
+                <div className="bt-canvas">
+                  <svg viewBox="0 0 100 170" preserveAspectRatio="none" className="bt-wires"><path d="M41 22 C48 22 46 56 52 56" /><path d="M20 34 C20 70 24 70 24 104" /><path d="M66 68 C66 80 70 80 70 92" /></svg>
+                  <span className="bt-node" style={s('left:4%;top:10px')}>Research question</span>
+                  <span className="bt-node" style={s('left:52%;top:44px')}>1 · Methods</span>
+                  <span className="bt-node bt-node-hot" style={s('left:8%;top:104px')}>3 · Introduction</span>
+                  <span className="bt-hint"><em>LOGIC</em> “will eliminate” is stronger than your evidence.</span>
+                </div>
+              </div>
+            </div>
+            <div className="bt-body">
+              <span className="bt-tag">App · Coming soon</span>
+              <h3>AutoWriterAI</h3>
+              <p>A private desktop workspace for scientific writing, from first idea to published paper, with a mentor that checks your argument as you write.</p>
+              <span className="bt-cta">Join the waitlist →</span>
+            </div>
+          </a>
+          <a href="/masterclass/" className="bt-tile bt-master">
+            <div className="bt-stage">
+              <span className="bt-chip">47 recipes</span>
+              <div className="bt-page bt-page-back" aria-hidden="true" />
+              <div className="bt-page bt-page-mid" aria-hidden="true" />
+              <img className="bt-cover" src="/masterclass/cover.jpg" alt="Prompt Culinary Masterclass cover" loading="lazy" />
+            </div>
+            <div className="bt-body">
+              <span className="bt-tag">Book · Coming soon</span>
+              <h3>Prompt Culinary Masterclass</h3>
+              <p>The craft and science of building with AI: plain-language recipes for turning prompts into reusable assistants, tools and agent briefs.</p>
+              <span className="bt-cta">Get notified →</span>
+            </div>
+          </a>
+        </div>
       </section>
 
       {/* CONTACT */}
