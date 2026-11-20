@@ -19,6 +19,7 @@
      A. Styles and markup (inside a shadow root, so no page can restyle it and it restyles no page)
      B. Orb, bubble and panel: dragging, idle fade, positioning
      C. Brain: search, ready-made answers, optional on-device language model
+        (phones and tablets: ready-made answers and site search only, no model download)
    ============================================================================================ */
 (function(){
 'use strict';
@@ -288,7 +289,11 @@ function brain(D,SITE){
   // the conversation follows the visitor from page to page for as long as the tab stays open
   const LOG='akmal-assistant-log';
   function keep(){try{while(log.innerHTML.length>60000&&log.firstChild)log.firstChild.remove();sessionStorage.setItem(LOG,log.innerHTML)}catch(e){}}
-  const canLLM=('LanguageModel'in window)||!!navigator.gpu;
+  // Phones and tablets get quick answers only: a 1 GB model is too heavy for mobile data, memory and battery.
+  // Laptops and desktops are offered the on-device model when the browser can run one.
+  // A handheld is recognised by how it is used (finger, no hover), not by its name.
+  const handheld=matchMedia('(pointer:coarse)').matches&&!matchMedia('(hover:hover)').matches;
+  const canLLM=!handheld&&(('LanguageModel'in window)||!!navigator.gpu);
   const store={get(){try{return localStorage.getItem(KEY)}catch(e){return null}},set(v){try{localStorage.setItem(KEY,v)}catch(e){}}};
   function say(cls,html){const d=document.createElement('div');d.className='msg '+cls;d.innerHTML=html;log.appendChild(d);log.scrollTop=log.scrollHeight;keep();return d}
   function gate(on,hint){input.disabled=!on;send.disabled=!on;input.placeholder=hint}
@@ -350,7 +355,7 @@ function brain(D,SITE){
   const saved=store.get(),old=session.get(LOG);
   if(old&&(saved||!canLLM)){log.innerHTML=old;log.querySelectorAll('.pick button').forEach(b=>b.disabled=true);log.scrollTop=log.scrollHeight}
   const again=!!log.firstChild;
-  if(!canLLM)return quickMode('This browser cannot run a language model on the device.',again);
+  if(!canLLM)return quickMode('',again);
   if(saved==='llm'){if(!again)say('b','Welcome back. Loading the assistant you chose last time.');return loadLLM(false,again)}
   if(saved==='quick')return quickMode('',again);
   gate(false,'Choose how to start, above');bL.hidden=true;status('Choose a mode to begin');
