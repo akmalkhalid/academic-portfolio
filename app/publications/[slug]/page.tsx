@@ -51,7 +51,7 @@ export default function PublicationPage({ params }: { params: { slug: string } }
   return (
     <div data-screen-label="Publication" style={s('min-height:100vh')}>
       <article style={s('max-width:820px;margin:0 auto;padding:48px 28px 72px')}>
-        <a href="/publications" style={s("font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:500;text-decoration:none;color:#8a8279;display:inline-block;margin-bottom:26px")}>← All publications</a>
+        <a href="/research/#papers" style={s("font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:500;text-decoration:none;color:#8a8279;display:inline-block;margin-bottom:26px")}>← All publications</a>
 
         <div style={s('display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:16px')}>
           <span style={s(`font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;padding:4px 10px;border-radius:6px;background:${accent}1a;color:${accent}`)}>{p.category}</span>
