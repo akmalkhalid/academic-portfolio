@@ -1,13 +1,17 @@
-// Builds the standalone "Living Engine" page: public/engine/index.html  ->  https://akmal.app/engine/
+// Builds the site assistant's records: public/assistant/data.json
 //
 // What it does, in order:
 //   1. reads the site's own records (publications, projects, students, cv.yml, site.yml)
 //   2. reduces them to one compact JSON object
-//   3. drops that JSON into scripts/engine-template.html at the /*__DATA__*/null marker
+//   3. writes it where the browser can fetch it
 //
-// The page itself has no server and no API: charts, the CV builder and the assistant all
-// read this one JSON object in the visitor's browser. Run by `npm run build` (prebuild).
-// Run by hand:  node scripts/build-engine.mjs
+// Two things read that file in the visitor's browser, with no server and no API:
+//   - the site assistant        public/assistant/widget.js
+//   - the tailored CV builder   components/CVBuilder.tsx  (/cv/custom/)
+// Run by `npm run build` (prebuild). Run by hand:  node scripts/build-engine.mjs
+//
+// (The name is historical: this script first built the standalone /engine/ page. That page was
+//  folded into the home page; public/engine/index.html is now a small redirect kept by hand.)
 //
 // QUARTILES: taken from the `journals:` list in content/cv.yml (JCR). The `quartile:` field
 // in content/publications/*.md is NOT used here until both files agree.
@@ -75,22 +79,15 @@ function build() {
   keep.meta = Object.fromEntries(['name', 'credential', 'title', 'subtitle', 'affiliation'].map((k) => [k, cv.meta[k]]))
 
   const data = { pubs, grants, students, cv: keep, metrics: site.metrics }
-  const json = JSON.stringify(data).replace(/<\//g, '<\\/')
-  const tpl = read(path.join(process.cwd(), 'scripts', 'engine-template.html'))
-  if (!tpl.includes('/*__DATA__*/null')) throw new Error('data marker missing from scripts/engine-template.html')
-  const out = path.join(process.cwd(), 'public', 'engine')
-  fs.mkdirSync(out, { recursive: true })
-  fs.writeFileSync(path.join(out, 'index.html'), tpl.replace('/*__DATA__*/null', () => json))
-
-  // The site-wide assistant (public/assistant/widget.js) reads the same records from a small JSON file.
+  // One small JSON file for the assistant and the CV builder.
   // `site` is filled in after the build by scripts/index-site.mjs, once the finished pages exist.
   const adir = path.join(process.cwd(), 'public', 'assistant')
   fs.mkdirSync(adir, { recursive: true })
   fs.writeFileSync(path.join(adir, 'data.json'), JSON.stringify({ data, site: null }))
 
   const n = (q) => pubs.filter((p) => p.q === q).length
-  console.log(`[engine] ${pubs.length} publications · ${grants.length} grants · ${students.length} students · JCR Q1 ${n('Q1')} / Q2 ${n('Q2')} -> public/engine/index.html`)
+  console.log(`[records] ${pubs.length} publications · ${grants.length} grants · ${students.length} students · JCR Q1 ${n('Q1')} / Q2 ${n('Q2')} -> public/assistant/data.json`)
 }
 
-// Never break a deploy: on any error keep the previously committed page.
-try { build() } catch (e) { console.warn('[engine] skipped:', e.message) }
+// Never break a deploy: on any error keep the previously committed file.
+try { build() } catch (e) { console.warn('[records] skipped:', e.message) }

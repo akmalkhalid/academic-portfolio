@@ -22,7 +22,7 @@ const MAX_CHARS = 520          // characters kept per passage
 
 // Pages the assistant should not index even though they are public.
 const SKIP = [
-  /^engine\//,                 // the assistant's own page
+  /^engine\//,                 // old address, now a redirect to the home page
   /^404/,
   /^publications\/[^/]+\//,    // one page per paper: the assistant already has every paper as data
   /^_next\//,
