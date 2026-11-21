@@ -27,7 +27,7 @@ export default function Page() {
   const selected = gsel.map((g, gi) => ({
     title: g.title, accent: g.accent,
     items: featuredPubs.filter((p) => groupKey(p) === gi).sort((a, b) => b.year - a.year).map((p) => ({
-      quartile: p.quartile || '',
+      quartile: p.jcr || '',   // JCR quartile, edition of the paper's year
       marker: p.isCorrespondingAuthor ? '†' : (p.authors && !p.authors.includes(' and ') && p.isFirstAuthor ? '§' : (p.isFirstAuthor ? '∗' : '')),
       cite: chicago(p),
       slug: p._slug.replace(/^md_files_/, ''),
