@@ -206,9 +206,9 @@ function brain(D,SITE){
   const tok=s=>s.toLowerCase().replace(/[^a-z0-9\s-]/g,' ').split(/[\s-]+/).filter(w=>w.length>1&&!STOP.has(w)).map(w=>w.length>4&&w.endsWith('s')&&!w.endsWith('ss')?w.slice(0,-1):w);
   const docs=[];const add=(type,title,text,url,meta)=>docs.push({type,title,text,url,meta});
   D.pubs.forEach(p=>add('pub',p.t,`${p.t}. ${p.v}. ${p.y}. ${P[p.p].name}. ${p.a.join(', ')}`,pubUrl(p),p));
-  D.grants.forEach(g=>add('grant',g.t,`${g.t}. ${g.ag}. grant funding ${g.role} ${g.s}-${g.e} ${g.st}. ${P[g.p].name}`,BASE+'/research/',g));
-  D.students.forEach(s=>add('student',s.t,`${s.t}. ${s.d} student supervision ${s.r} ${s.st}. ${P[s.p].name}`,BASE+'/teaching/',s));
-  ORDER.forEach(k=>add('pillar',P[k].name,`${P[k].verb}. ${P[k].name}. ${P[k].q} ${P[k].body}`,BASE+'/generative-optimization/',{k}));
+  D.grants.forEach(g=>add('grant',g.t,`${g.t}. ${g.ag}. grant funding ${g.role} ${g.s}-${g.e} ${g.st}. ${P[g.p].name}`,BASE+'/research/#grants',g));
+  D.students.forEach(s=>add('student',s.t,`${s.t}. ${s.d} student supervision ${s.r} ${s.st}. ${P[s.p].name}`,BASE+'/research/#people',s));
+  ORDER.forEach(k=>add('pillar',P[k].name,`${P[k].verb}. ${P[k].name}. ${P[k].q} ${P[k].body}`,BASE+'/research/#ideas',{k}));
   add('bio','Profile',D.cv.profile,BASE+'/about/');
   D.cv.employment.forEach(e=>add('career',e.role+', '+e.place,`employment career appointment position ${e.period} ${e.role} ${e.place}`,BASE+'/about/'));
   D.cv.education.forEach(e=>add('edu',e.degree+', '+e.place,`education degree ${e.period} ${e.degree} ${e.place} ${e.detail}`,BASE+'/cv/'));
@@ -261,7 +261,7 @@ function brain(D,SITE){
       if(best)return pageAns({d:best.d,th:1,s:9})}
     if(pg.length&&!wantPubs&&(pg[0].th>=2||(nav&&pg[0].th>=1)))return pageAns(pg[0]);       // the question names a page by its title
     if(is(/\bmember|membership|\bieee\b|\bmbot\b|\baaai\b|professional (body|technologist)|\bahli\b/))return{h:'Professional memberships and roles:<ul>'+D.cv.membership.map(t=>`<li>${esc(t)}</li>`).join('')+'</ul>',src:'CV data'};
-    if(is(/generative optimi[sz]ation|three pillars|3 pillars|pillars|research (focus|area|direction|interest)/))return{h:'<b>Generative optimization</b> joins three lines of work into one loop:<ul>'+ORDER.map(k=>`<li><b>${P[k].verb}</b> (${P[k].name}, ${D.pubs.filter(p=>p.p===k).length} papers): ${P[k].body.split('. ')[0]}.</li>`).join('')+`</ul>The level grid at the top of this page is that loop running. More on the <a href="${BASE}/generative-optimization/">programme page</a>.`,src:'research programme'};
+    if(is(/generative optimi[sz]ation|three pillars|3 pillars|pillars|research (focus|area|direction|interest)/))return{h:'<b>Generative optimization</b> joins three lines of work into one loop:<ul>'+ORDER.map(k=>`<li><b>${P[k].verb}</b> (${P[k].name}, ${D.pubs.filter(p=>p.p===k).length} papers): ${P[k].body.split('. ')[0]}.</li>`).join('')+`</ul>The level grid at the top of this page is that loop running. More on the <a href="${BASE}/research/#ideas">programme page</a>.`,src:'research programme'};
     if(is(/how many|number of|count|berapa/)||is(/\b(h-?index|citations?|metrics|stats)\b/)){
       const act=D.grants.filter(g=>g.st==='Active').length,on=D.students.filter(x=>x.st==='Ongoing').length;
       return{h:`The record on this site: <b>${D.pubs.length}</b> publications (${D.pubs.filter(p=>p.c==='J').length} journal, ${D.pubs.filter(p=>p.c==='C').length} conference, ${D.pubs.filter(p=>p.c==='B').length} chapters), <b>${m.citations.toLocaleString()}</b> citations, h-index <b>${m.hIndex}</b>, i10-index <b>${m.i10Index}</b>. ${D.grants.length} grants worth ${rm(D.grants.reduce((a,g)=>a+g.amt,0))} in total (${act} active), and ${D.students.length} postgraduate researchers (${on} ongoing).`,src:'publication files, site settings (Google Scholar figures)'}}
@@ -285,7 +285,7 @@ function brain(D,SITE){
       if(uniq.length)return{h:(wantPubs?'No publication matches that closely. ':'')+'Closest matches on the site:<ul>'+uniq.map(x=>`<li>${link(x.d)}</li>`).join('')+'</ul>',src:'site records'};
       return{none:1,h:'I could not find that on this site. I only answer about Dr. Akmal and what is published here: his background, research, publications, grants, teaching, books and tools, and how to reach him.'}}
     const by={};r.hits.forEach(x=>by[x.d.meta.p]=(by[x.d.meta.p]||0)+1);const top=Object.entries(by).sort((a,b)=>b[1]-a[1])[0][0];
-    return{h:`${r.hits.length===1?'One close publication, in the':r.hits.length+' closest publications, mostly from the'} <b>${P[top].verb.toLowerCase()}</b> pillar (${P[top].name}):<ul>`+r.hits.map(x=>`<li>${link(x.d)} <span class="mono">${x.d.meta.y} &middot; ${esc(x.d.meta.v)}</span></li>`).join('')+'</ul>',src:'publication files',url:[BASE+'/publications/']}}
+    return{h:`${r.hits.length===1?'One close publication, in the':r.hits.length+' closest publications, mostly from the'} <b>${P[top].verb.toLowerCase()}</b> pillar (${P[top].name}):<ul>`+r.hits.map(x=>`<li>${link(x.d)} <span class="mono">${x.d.meta.y} &middot; ${esc(x.d.meta.v)}</span></li>`).join('')+'</ul>',src:'publication files',url:[BASE+'/research/#papers']}}
   // page links to show under an answer: those the answer chose, else the best matches for the question
   const linksFor=(q,a)=>a.none?'':go(a.pages||pagesFor(q,2,4.2),(a.url||[]).concat((a.h.match(/href="([^"]+)"/g)||[]).map(x=>x.slice(6,-1))));
 
