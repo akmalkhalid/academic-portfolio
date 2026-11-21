@@ -1,6 +1,7 @@
 import { getAllPublications, getAllProjects, getStudents, getSiteConfig } from '@/lib/content'
 import { codesFromTags, catCode, PCOL, isPI } from '@/lib/view'
 import { chicago } from '@/lib/cite'
+import { pillarOf, PILLAR_ORDER } from '@/lib/pillars'
 import HomeClient from './HomeClient'
 
 export default function Page() {
@@ -55,11 +56,31 @@ export default function Page() {
     firstYear,
   }
 
+  // The record behind each research pillar, shown on the three stage cards:
+  // papers (and papers per year), grants and their value, and students.
+  const lastYear = pubs.length ? Math.max(...pubs.map((p) => p.year)) : firstYear
+  const span = Array.from({ length: lastYear - firstYear + 1 }, (_, i) => firstYear + i)
+  const pillars = Object.fromEntries(PILLAR_ORDER.map((k) => {
+    const ps = pubs.filter((p) => pillarOf(p.topicTags) === k)
+    const gs = projects.filter((g) => pillarOf(g.researchTags) === k)
+    return [k, {
+      papers: ps.length,
+      perYear: span.map((y) => ps.filter((p) => p.year === y).length),
+      grants: gs.length,
+      amount: gs.reduce((sum, g) => sum + (g.amountMyr || 0), 0),
+      students: students.filter((st) => pillarOf(st.researchTags) === k).length,
+    }]
+  })) as Record<'gen' | 'eva' | 'sea', { papers: number; perYear: number[]; grants: number; amount: number; students: number }>
+  const simCount = pubs.filter((p) => (p.topicTags || []).includes('simulation')).length
+
   return (
     <HomeClient
       hero={{ headline: cfg.heroHeadline, sub: cfg.heroSubheadline }}
       stats={stats}
       articles={selected}
+      pillars={pillars}
+      years={[firstYear, lastYear]}
+      simCount={simCount}
     />
   )
 }

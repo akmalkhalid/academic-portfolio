@@ -1,16 +1,20 @@
 'use client'
 
-// Home — deliberately sparse. Five beats, in order:
-//   hero (the question + the record) → the signature demo (the loop, running)
-//   → the loop in words (three stages + horizon) → selected work
-//   → three product cards (free Prompt Cookbook; AutoWriterAI and Prompt Culinary Masterclass coming soon) → contact.
+// Home — deliberately sparse. Six beats, in order:
+//   hero (the question + the record)
+//   → books and tools (free Prompt Cookbook; AutoWriterAI and Prompt Culinary Masterclass coming soon)
+//   → the signature demo (the loop, running on two problems: Sudoku puzzles and game levels)
+//   → the three research pillars (one per stage of the loop, each with its record) + horizon
+//   → selected work → contact.
+// The former standalone /engine/ page was folded in here: its live level search is the second
+// face of the demo, and its pillar figures sit on the three stage cards.
 // Everything else lives one click away: grants on /research, demos on
 // /playground, the full record on /publications.
 
 import { s } from '@/lib/style'
 import { PCOL } from '@/lib/view'
 import LatentField from '@/components/LatentField'
-import PuzzleLoop from '@/components/PuzzleLoop'
+import DemoDeck from '@/components/DemoDeck'
 
 type Stats = {
   pubs: number; citations: number; hIndex: number | null; i10Index: number | null
@@ -18,6 +22,8 @@ type Stats = {
   autoCitations?: number | null; autoSource?: string | null
   fundingTotal: number; fundingPI: number; firstYear: number
 }
+// One research pillar's record, counted in page.tsx (rule: lib/pillars.ts).
+type PillarStat = { papers: number; perYear: number[]; grants: number; amount: number; students: number }
 type SelectedGroup = { title: string; accent: string; items: { quartile: string; marker: string; cite: string; slug: string }[] }
 
 const stack = "'Space Grotesk', system-ui, sans-serif"
@@ -25,14 +31,17 @@ const eyebrow = (dark: boolean) => s(`font-family:'JetBrains Mono',monospace;fon
 const h2 = (dark: boolean) => s(`font-family:${stack};font-weight:600;font-size:clamp(28px,3.6vw,40px);line-height:1.08;letter-spacing:-.02em;margin:0;color:${dark ? '#ECEAF3' : '#1c1917'}`)
 
 const STAGES = [
-  { n: '01', stage: 'Generate', accent: PCOL.gen, title: 'Generative & Agentic AI', line: 'Generative models, LLMs and agent teams propose candidate designs.' },
-  { n: '02', stage: 'Evaluate', accent: PCOL.gam, title: 'Games Informatics & Engagement Modelling', line: 'Game refinement theory scores each design by how engaging it is to people.' },
-  { n: '03', stage: 'Search', accent: PCOL.evo, title: 'Computational Intelligence & Optimization', line: 'Metaheuristics and quality-diversity search decide what to generate next.' },
+  { n: '01', key: 'gen' as const, q: 'What could exist?', stage: 'Generate', accent: PCOL.gen, title: 'Generative & Agentic AI', line: 'Generative models, LLMs and agent teams propose candidate designs.' },
+  { n: '02', key: 'eva' as const, q: 'Is it any good, for people?', stage: 'Evaluate', accent: PCOL.gam, title: 'Games Informatics & Engagement Modelling', line: 'Game refinement theory scores each design by how engaging it is to people.' },
+  { n: '03', key: 'sea' as const, q: 'How do we find better ones?', stage: 'Search', accent: PCOL.evo, title: 'Computational Intelligence & Optimization', line: 'Metaheuristics and quality-diversity search decide what to generate next.' },
 ]
 
 export default function HomeClient({
-  hero, stats, articles,
-}: { hero: { headline: string; sub: string }; stats: Stats; articles: SelectedGroup[] }) {
+  hero, stats, articles, pillars, years, simCount,
+}: {
+  hero: { headline: string; sub: string }; stats: Stats; articles: SelectedGroup[]
+  pillars: Record<'gen' | 'eva' | 'sea', PillarStat>; years: [number, number]; simCount: number
+}) {
   // Ringgit, short form: 1508350 → "RM 1.51M". Derived upstream, never typed.
   const fmtMYR = (n: number) =>
     n >= 1e6 ? `RM ${(n / 1e6).toFixed(2)}M` : n >= 1e3 ? `RM ${Math.round(n / 1e3)}k` : `RM ${n}`
@@ -77,6 +86,7 @@ export default function HomeClient({
               <div className="hero-ctas">
                 <a href="#demo" className="btn-lume">Watch the loop run <span aria-hidden="true">→</span></a>
                 <a href="/generative-optimization" className="btn-ghost">The programme</a>
+                <a href="#building" className="btn-ghost">Books and tools</a>
                 <a href="/cv/" className="btn-ghost">CV <span aria-hidden="true">→</span></a>
               </div>
               <p className="hero-foot">
@@ -108,83 +118,15 @@ export default function HomeClient({
         </div>
       </section>
 
-      {/* SIGNATURE DEMO — the whole loop, running */}
-      <section id="demo" style={s('background:#0f0e14;padding:66px 0 60px;scroll-margin-top:60px')}>
-        <div style={s('max-width:1120px;margin:0 auto;padding:0 28px')}>
-          <p style={eyebrow(true)}>/ the loop, running live</p>
-          <h2 style={h2(true)}>Watch an algorithm design an engaging puzzle.</h2>
-          <p style={s('font-size:15.5px;line-height:1.65;color:#9b96aa;max-width:680px;margin:14px 0 30px')}>
-            A generator edits Sudoku puzzles, a simulated player rates how engaging each one is, and a search archive
-            keeps the best puzzle for every style. Most designs land too easy; watch the search find the narrow
-            comfortable zone.
-          </p>
-          <div style={s('background:#16141f;border:1px solid rgba(255,255,255,.07);border-radius:18px;padding:24px')}>
-            <PuzzleLoop />
-          </div>
-          <p style={s('font-size:12.5px;line-height:1.6;color:#6f6a82;margin:14px 0 0;max-width:820px')}>
-            An illustrative teaching model of my work on{' '}
-            <a href="/publications/2025-Khalid2025a" style={s('color:#9b96aa')}>puzzle generation</a> and{' '}
-            <a href="/publications/2020-Iida2020" style={s('color:#9b96aa')}>game refinement</a>: the generator here makes
-            random edits where the research uses AI agents, and GR = √G / T is a simplified measure (G cells placed, T
-            candidate values weighed).
-          </p>
-        </div>
-      </section>
-
-      {/* THE LOOP — three stages, then the horizon */}
-      <section id="research" style={s('max-width:1120px;margin:0 auto;padding:70px 28px 30px')}>
-        <p style={eyebrow(false)}>/ research programme</p>
-        <h2 style={h2(false)}>Generative optimization: one loop, three stages.</h2>
-        <div className="home-stages">
-          {STAGES.map((st) => (
-            <a key={st.n} href="/generative-optimization#loop" className="home-stage" style={s(`border-top:3px solid ${st.accent}`)}>
-              <span style={s(`font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:600;letter-spacing:.08em;color:${st.accent}`)}>{st.n} · {st.stage.toUpperCase()}</span>
-              <span style={s(`display:block;font-family:${stack};font-weight:600;font-size:18px;line-height:1.22;margin:10px 0 8px;color:#1c1917`)}>{st.title}</span>
-              <span style={s('display:block;font-size:14px;line-height:1.6;color:#57514b')}>{st.line}</span>
-            </a>
-          ))}
-        </div>
-        <div className="home-horizon">
-          <div style={s('background:#fff;border:1px solid #e7e3dd;border-radius:14px;padding:20px 22px')}>
-            <span style={s("font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:600;letter-spacing:.08em;color:#27500a;background:#eaf3de;padding:3px 8px;border-radius:5px")}>NOW</span>
-            <div style={s(`font-family:${stack};font-weight:600;font-size:18px;margin:10px 0 6px`)}>Generative Optimization</div>
-            <div style={s('font-size:13.5px;line-height:1.55;color:#57514b')}>Closing the loop for individual design problems, optimized against human engagement.</div>
-          </div>
-          <div className="gopt-arrow" aria-hidden="true">→</div>
-          <div style={s('background:#16142e;border-radius:14px;padding:20px 22px')}>
-            <span style={s("font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:600;letter-spacing:.08em;color:#c9c1ff;background:rgba(139,123,240,.18);padding:3px 8px;border-radius:5px")}>NEXT</span>
-            <div style={s(`font-family:${stack};font-weight:600;font-size:18px;margin:10px 0 6px;color:#fff`)}>Generative Optinformatics</div>
-            <div style={s('font-size:13.5px;line-height:1.55;color:#bdb8d6')}>A loop that learns from its own search history and transfers it to new design problems.</div>
-          </div>
-        </div>
-        <a href="/generative-optimization" style={s("display:inline-block;margin-top:24px;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;text-decoration:none;color:#1c1917;border-bottom:2px solid #8b7bf0;padding-bottom:2px")}>Read the programme →</a>
-      </section>
-
-      {/* SELECTED WORK — two papers per stage */}
-      <section id="pubs" style={s('max-width:1120px;margin:0 auto;padding:50px 28px 30px')}>
-        <p style={eyebrow(false)}>/ selected work</p>
-        <h2 style={h2(false)}>Selected articles.</h2>
-        <div className="home-pubs">
-          {articles.map((group) => (
-            <div key={group.title} style={s('min-width:0')}>
-              <div style={s(`font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:600;letter-spacing:.06em;color:${group.accent};margin-bottom:6px`)}>{group.title.split(' · ')[0].toUpperCase()}</div>
-              {group.items.slice(0, 2).map((it) => (
-                <a key={it.slug} href={`/publications/${it.slug}`} style={s('display:block;padding:12px 0;border-bottom:1px solid #ece8e1;text-decoration:none;font-size:13.5px;line-height:1.55;color:#44403c')}>
-                  {it.quartile && it.quartile !== 'NA' && (<span style={s(`font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;padding:1px 6px;border-radius:4px;background:${group.accent}22;color:#1c1917;margin-right:7px`)}>{it.quartile}</span>)}
-                  {it.cite}
-                </a>
-              ))}
-            </div>
-          ))}
-        </div>
-        <a href="/publications" style={s("display:inline-block;margin-top:22px;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;text-decoration:none;color:#1c1917;border-bottom:2px solid #4d8df0;padding-bottom:2px")}>All {stats.pubs} publications →</a>
-      </section>
-
       {/* BOOKS AND TOOLS — tiles in the style of a product shelf: each stage shows the thing itself
           rising out of a panel tinted with its own palette; label, line and action sit underneath.
           Styles: .bt-* in app/globals.css (hover needs real CSS). */}
-      <section id="building" style={s('max-width:1120px;margin:0 auto;padding:40px 28px 0')}>
+      <section id="building" style={s('max-width:1120px;margin:0 auto;padding:64px 28px 60px;scroll-margin-top:60px')}>
         <p style={eyebrow(false)}>/ books and tools</p>
+        <h2 style={h2(false)}>Things I have built that you can use.</h2>
+        <p style={s('font-size:15.5px;line-height:1.65;color:#57514b;max-width:680px;margin:14px 0 28px')}>
+          A free book to start with today, and a writing app and a second book on the way.
+        </p>
         <div className="bt-grid">
           <a href="/cookbook/" className="bt-tile bt-cook">
             <div className="bt-stage">
@@ -235,6 +177,81 @@ export default function HomeClient({
             </div>
           </a>
         </div>
+      </section>
+
+      {/* SIGNATURE DEMO — the whole loop, running, on two design problems (a two-sided 3D viewer) */}
+      <section id="demo" style={s('background:#0f0e14;padding:66px 0 60px;scroll-margin-top:60px')}>
+        <div style={s('max-width:1120px;margin:0 auto;padding:0 28px')}>
+          <p style={eyebrow(true)}>/ the loop, running live</p>
+          <h2 style={h2(true)}>Watch an algorithm design, on two different problems.</h2>
+          <DemoDeck />
+        </div>
+      </section>
+
+      {/* THE LOOP — three stages, then the horizon */}
+      <section id="research" style={s('max-width:1120px;margin:0 auto;padding:70px 28px 30px')}>
+        <p style={eyebrow(false)}>/ research programme</p>
+        <h2 style={h2(false)}>Generative optimization: one loop, three stages.</h2>
+        <div className="home-stages">
+          {STAGES.map((st) => (
+            <a key={st.n} href="/generative-optimization#loop" className="home-stage" style={s(`border-top:3px solid ${st.accent}`)}>
+              <span style={s(`font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:600;letter-spacing:.08em;color:${st.accent}`)}>{st.n} · {st.stage.toUpperCase()}</span>
+              <span style={s(`display:block;font-family:${stack};font-weight:600;font-size:18px;line-height:1.22;margin:10px 0 8px;color:#1c1917`)}>{st.title}</span>
+              <span style={s(`display:block;font-family:${stack};font-weight:500;font-size:15px;color:${st.accent};margin:0 0 8px`)}>{st.q}</span>
+              <span style={s('display:block;font-size:14px;line-height:1.6;color:#57514b;margin-bottom:16px')}>{st.line}</span>
+              {/* the record behind this stage: papers per year, then papers, funding and students */}
+              <span className="home-spark" role="img" aria-label={`Publications per year, ${years[0]} to ${years[1]}`}>
+                {pillars[st.key].perYear.map((n, i) => (
+                  <i key={i} style={{ height: `${Math.max(4, (n / Math.max(...pillars[st.key].perYear, 1)) * 100)}%`, background: st.accent, opacity: n ? 1 : 0.18 }} />
+                ))}
+              </span>
+              <span className="home-spark-axis"><span>{years[0]}</span><span>papers per year</span><span>{years[1]}</span></span>
+              <span className="home-nums">
+                <span><b>{pillars[st.key].papers}</b>papers</span>
+                <span><b>{fmtMYR(pillars[st.key].amount)}</b>{pillars[st.key].grants} grant{pillars[st.key].grants === 1 ? '' : 's'}</span>
+                {pillars[st.key].students > 0 ? <span><b>{pillars[st.key].students}</b>student{pillars[st.key].students === 1 ? '' : 's'}</span> : null}
+              </span>
+            </a>
+          ))}
+        </div>
+        <p style={s('font-size:14px;line-height:1.6;color:#57514b;margin:18px 0 0;max-width:820px')}>
+          <b style={s('color:#1c1917')}>Simulation is the test bench.</b> {simCount} of {stats.pubs} publications use agent-based, self-play or Monte
+          Carlo simulation to run the loop before anything reaches real players, patients or factory floors.
+        </p>
+        <div className="home-horizon">
+          <div style={s('background:#fff;border:1px solid #e7e3dd;border-radius:14px;padding:20px 22px')}>
+            <span style={s("font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:600;letter-spacing:.08em;color:#27500a;background:#eaf3de;padding:3px 8px;border-radius:5px")}>NOW</span>
+            <div style={s(`font-family:${stack};font-weight:600;font-size:18px;margin:10px 0 6px`)}>Generative Optimization</div>
+            <div style={s('font-size:13.5px;line-height:1.55;color:#57514b')}>Closing the loop for individual design problems, optimized against human engagement.</div>
+          </div>
+          <div className="gopt-arrow" aria-hidden="true">→</div>
+          <div style={s('background:#16142e;border-radius:14px;padding:20px 22px')}>
+            <span style={s("font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:600;letter-spacing:.08em;color:#c9c1ff;background:rgba(139,123,240,.18);padding:3px 8px;border-radius:5px")}>NEXT</span>
+            <div style={s(`font-family:${stack};font-weight:600;font-size:18px;margin:10px 0 6px;color:#fff`)}>Generative Optinformatics</div>
+            <div style={s('font-size:13.5px;line-height:1.55;color:#bdb8d6')}>A loop that learns from its own search history and transfers it to new design problems.</div>
+          </div>
+        </div>
+        <a href="/generative-optimization" style={s("display:inline-block;margin-top:24px;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;text-decoration:none;color:#1c1917;border-bottom:2px solid #8b7bf0;padding-bottom:2px")}>Read the programme →</a>
+      </section>
+
+      {/* SELECTED WORK — two papers per stage */}
+      <section id="pubs" style={s('max-width:1120px;margin:0 auto;padding:50px 28px 30px')}>
+        <p style={eyebrow(false)}>/ selected work</p>
+        <h2 style={h2(false)}>Selected articles.</h2>
+        <div className="home-pubs">
+          {articles.map((group) => (
+            <div key={group.title} style={s('min-width:0')}>
+              <div style={s(`font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:600;letter-spacing:.06em;color:${group.accent};margin-bottom:6px`)}>{group.title.split(' · ')[0].toUpperCase()}</div>
+              {group.items.slice(0, 2).map((it) => (
+                <a key={it.slug} href={`/publications/${it.slug}`} style={s('display:block;padding:12px 0;border-bottom:1px solid #ece8e1;text-decoration:none;font-size:13.5px;line-height:1.55;color:#44403c')}>
+                  {it.quartile && it.quartile !== 'NA' && (<span style={s(`font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;padding:1px 6px;border-radius:4px;background:${group.accent}22;color:#1c1917;margin-right:7px`)}>{it.quartile}</span>)}
+                  {it.cite}
+                </a>
+              ))}
+            </div>
+          ))}
+        </div>
+        <a href="/publications" style={s("display:inline-block;margin-top:22px;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;text-decoration:none;color:#1c1917;border-bottom:2px solid #4d8df0;padding-bottom:2px")}>All {stats.pubs} publications →</a>
       </section>
 
       {/* CONTACT */}
