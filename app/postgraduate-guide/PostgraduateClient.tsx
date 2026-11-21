@@ -89,7 +89,7 @@ export default function PostgraduateClient({ email }: { email: string }) {
         <h2 style={s(`font-family:${stack};font-weight:600;font-size:clamp(24px,3.1vw,34px);letter-spacing:-.02em;margin:0 0 20px`)}>Before you write to me</h2>
         <div style={s('background:#fff;border:1px solid #e7e3dd;border-left:3px solid #8b7bf0;border-radius:14px;padding:22px 24px;max-width:760px')}>
           <p style={s('font-size:16px;line-height:1.7;color:#44403c;margin:0 0 14px')}>Please read at least three of my recent first-author publications. Your proposal should connect to themes in my actual work — not just a research-area title.</p>
-          <a href="/publications" style={s("font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:500;text-decoration:none;color:#16142e")}>Browse publications →</a>
+          <a href="/research/#papers" style={s("font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:500;text-decoration:none;color:#16142e")}>Browse publications →</a>
         </div>
       </section>
 
