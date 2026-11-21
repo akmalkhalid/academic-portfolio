@@ -13,8 +13,9 @@
 // (The name is historical: this script first built the standalone /engine/ page. That page was
 //  folded into the home page; public/engine/index.html is now a small redirect kept by hand.)
 //
-// QUARTILES: taken from the `journals:` list in content/cv.yml (JCR). The `quartile:` field
-// in content/publications/*.md is NOT used here until both files agree.
+// QUARTILES: the `jcr:` field of each file in content/publications (the journal's best JIF
+// quartile in the JCR edition of the paper's own year). The formal CV keeps its own Scopus
+// quartiles in content/cv.yml; they are not used here.
 import fs from 'node:fs'
 import path from 'node:path'
 import yaml from 'js-yaml'
@@ -42,21 +43,13 @@ function build() {
   const cv = yaml.load(read(path.join(C, 'cv.yml')))
   const site = yaml.load(read(path.join(C, 'site.yml')))
 
-  // JCR quartile per journal paper, keyed by normalised title.
-  const jcr = {}
-  for (const j of cv.journals) {
-    const m = /\(\d{4}\)\.\s*(.+?)\.\s/.exec(j.cite)
-    if (m) jcr[norm(m[1])] = j.q || ''
-  }
-
   const mdFiles = (dir) => fs.readdirSync(path.join(C, dir)).filter((f) => f.endsWith('.md')).sort()
 
   const pubs = mdFiles('publications').map((f) => {
     const d = matter(read(path.join(C, 'publications', f))).data
     const t = clean(d.title)
     const tags = d.topicTags || []
-    let q = d.category === 'Journal' ? jcr[norm(t)] ?? '' : ''
-    if (q === 'Scopus') q = 'Sc'
+    const q = /^Q[1-4]$/.test(d.jcr || '') ? d.jcr : ''   // JCR quartile; '' when the journal had none that year
     return {
       t, a: clean(d.authors).split(/\s+and\s+/).map((x) => x.trim()), y: d.year, v: clean(d.venue),
       c: d.category[0], q, d: d.doi || '', f: d.isFirstAuthor ? 1 : 0, s: d.featured ? 1 : 0,
