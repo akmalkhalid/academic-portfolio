@@ -7,6 +7,7 @@ category: "Conference"
 pages: "275--281"
 isFirstAuthor: false
 quartile: "NA"
+jcr: "NA"
 doi: "NA"
 featured: false
 topicTags: ["expert-systems", "simulation"]

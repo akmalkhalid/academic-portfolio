@@ -8,6 +8,7 @@ volume: "1"
 pages: "132--139"
 isFirstAuthor: true
 quartile: "NA"
+jcr: "NA"
 doi: "https://scholar.google.com/scholar?oi=bibs&cluster=2129467486101888051&btnI=1&hl=en"
 featured: false
 demo: "production-scheduling"

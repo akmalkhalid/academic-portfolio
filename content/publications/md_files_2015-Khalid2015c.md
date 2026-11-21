@@ -8,6 +8,7 @@ volume: "2"
 pages: "503--508"
 isFirstAuthor: true
 quartile: "NA"
+jcr: "NA"
 doi: "https://doi.org/10.5220/0005275305030508"
 featured: false
 demo: "crowd-evacuation"

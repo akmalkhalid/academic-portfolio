@@ -6,6 +6,7 @@ venue: "An Asean Conference on Information System (ACIS2015)"
 category: "Conference"
 isFirstAuthor: false
 quartile: "NA"
+jcr: "NA"
 doi: "NA"
 featured: false
 topicTags: ["expert-systems", "simulation"]

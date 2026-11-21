@@ -7,6 +7,7 @@ category: "Book Chapter"
 pages: "100--127"
 isFirstAuthor: true
 quartile: "NA"
+jcr: "NA"
 doi: "https://doi.org/10.1007/978-3-319-27947-3_6"
 featured: false
 topicTags: ["games-informatics", "simulation"]

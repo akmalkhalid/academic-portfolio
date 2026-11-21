@@ -8,6 +8,7 @@ volume: "2"
 pages: "166--177"
 isFirstAuthor: true
 quartile: "NA"
+jcr: "NA"
 doi: "https://cspub-jnic.org/index.php/jnic/article/view/66"
 featured: false
 demo: "production-scheduling"

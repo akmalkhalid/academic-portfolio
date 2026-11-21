@@ -6,6 +6,7 @@ venue: "2013 IEEE Student Conference on Research and Developement"
 category: "Conference"
 pages: "254--259"
 quartile: "NA"
+jcr: "NA"
 doi: "https://doi.org/10.1109/SCOReD.2013.7002583"
 isFirstAuthor: false
 featured: false

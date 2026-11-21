@@ -6,6 +6,7 @@ venue: "International Conference on the Foundations of Digital Games"
 category: "Conference"
 isFirstAuthor: false
 quartile: "NA"
+jcr: "NA"
 doi: "https://doi.org/10.1145/3402942.3409782"
 featured: false
 topicTags: ["games-informatics", "simulation"]

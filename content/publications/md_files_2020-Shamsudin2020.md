@@ -6,6 +6,7 @@ venue: "2020 IEEE 16th International Conference on Control and Automation (ICCA)
 category: "Conference"
 isFirstAuthor: false
 quartile: "NA"
+jcr: "NA"
 doi: "https://doi.org/10.1109/icca51439.2020.9264517"
 featured: false
 topicTags: ["expert-systems", "optimization"]

@@ -9,6 +9,7 @@ issue: "12"
 pages: "3291--3298"
 isFirstAuthor: true
 quartile: "NA"
+jcr: "NA"
 doi: "https://scholar.google.com/scholar?oi=bibs&cluster=15314613329168065390&btnI=1&hl=en"
 featured: false
 demo: "crowd-evacuation"

@@ -7,6 +7,7 @@ category: "Conference"
 pages: "160--165"
 isFirstAuthor: true
 quartile: "NA"
+jcr: "NA"
 doi: "https://doi.org/10.1109/ICSECS.2015.7333102"
 featured: false
 demo: "crowd-evacuation"

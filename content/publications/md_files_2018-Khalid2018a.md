@@ -9,6 +9,7 @@ issue: "4"
 pages: "220--227"
 isFirstAuthor: true
 quartile: "NA"
+jcr: "NA"
 doi: "https://doi.org/10.14419/ijet.v7i4.31.23371"
 featured: false
 demo: "assembly-line-balancing"

@@ -6,6 +6,7 @@ venue: "2020 {IEEE} Conference on Games ({CoG})"
 category: "Conference"
 isFirstAuthor: false
 quartile: "NA"
+jcr: "NA"
 doi: "https://doi.org/10.1109/cog47356.2020.9231621"
 featured: false
 topicTags: ["games-informatics", "simulation"]

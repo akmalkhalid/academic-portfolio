@@ -9,6 +9,7 @@ issue: "1"
 pages: "213--229"
 isFirstAuthor: true
 quartile: "NA"
+jcr: "NA"
 doi: "https://doi.org/10.24507/ijicic.11.01.213"
 featured: false
 demo: "production-scheduling"

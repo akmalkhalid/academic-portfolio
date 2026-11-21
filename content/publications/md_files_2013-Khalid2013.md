@@ -7,6 +7,7 @@ category: "Journal"
 volume: "7"
 issue: "3"
 quartile: "NA"
+jcr: "NA"
 doi: "https://scholar.google.com/scholar?oi=bibs&cluster=3970680858223996715&btnI=1&hl=en"
 isFirstAuthor: false
 featured: false

@@ -8,6 +8,7 @@ volume: "32"
 pages: "100314"
 isFirstAuthor: false
 quartile: "Q2"
+jcr: "Q3"
 doi: "https://doi.org/10.1016/j.entcom.2019.100314"
 featured: false
 demo: "game-refinement"

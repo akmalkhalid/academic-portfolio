@@ -8,6 +8,7 @@ volume: "8"
 pages: "33--39"
 isFirstAuthor: true
 quartile: "NA"
+jcr: "NA"
 doi: "https://scholar.google.com/scholar?oi=bibs&cluster=16429429444597720613&btnI=1&hl=en"
 featured: false
 demo: "crowd-evacuation"

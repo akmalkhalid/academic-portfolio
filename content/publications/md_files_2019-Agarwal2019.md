@@ -6,6 +6,7 @@ venue: "Proceedings of the 1st International Conference on Informatics, Engineer
 category: "Conference"
 isFirstAuthor: false
 quartile: "NA"
+jcr: "NA"
 doi: "https://doi.org/10.4108/eai.18-7-2019.2287827"
 featured: false
 topicTags: ["games-informatics", "simulation"]

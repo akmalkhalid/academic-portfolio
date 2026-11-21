@@ -7,6 +7,7 @@ category: "Conference"
 pages: "539-546"
 isFirstAuthor: false
 quartile: "NA"
+jcr: "NA"
 doi: "https://doi.org/10.5220/0007344005390546"
 featured: false
 topicTags: ["games-informatics", "simulation"]

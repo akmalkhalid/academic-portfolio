@@ -8,6 +8,7 @@ volume: "8"
 pages: "184375--184382"
 isFirstAuthor: false
 quartile: "Q1"
+jcr: "Q2"
 doi: "https://doi.org/10.1109/access.2020.3029817"
 featured: false
 topicTags: ["games-informatics", "simulation"]

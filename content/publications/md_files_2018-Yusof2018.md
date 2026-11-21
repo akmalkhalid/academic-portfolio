@@ -7,6 +7,7 @@ category: "Journal"
 pages: "1"
 isFirstAuthor: false
 quartile: "NA"
+jcr: "NA"
 doi: "NA"
 featured: false
 topicTags: ["optimization", "simulation"]

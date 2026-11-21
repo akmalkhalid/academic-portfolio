@@ -6,6 +6,7 @@ venue: "2019 International Conference on Technologies and Applications of Artifi
 category: "Conference"
 isFirstAuthor: false
 quartile: "NA"
+jcr: "NA"
 doi: "https://doi.org/10.1109/taai48200.2019.8959847"
 featured: false
 topicTags: ["games-informatics", "simulation"]

@@ -9,6 +9,7 @@ issue: "2"
 pages: "1--11"
 isFirstAuthor: false
 quartile: "Q3"
+jcr: "NA"
 doi: "https://www.doi.org/10.17576/apjitm-2018-0702(02)-01"
 featured: false
 topicTags: ["expert-systems", "simulation"]

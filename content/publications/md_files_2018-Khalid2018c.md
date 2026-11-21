@@ -9,6 +9,7 @@ issue: "2"
 pages: "1293--1297(5)"
 isFirstAuthor: true
 quartile: "NA"
+jcr: "NA"
 doi: "https://doi.org/10.1166/asl.2018.10735"
 featured: false
 topicTags: ["expert-systems", "simulation"]

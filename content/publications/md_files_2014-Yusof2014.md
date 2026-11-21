@@ -9,6 +9,7 @@ issue: "3"
 pages: "709--716"
 isFirstAuthor: false
 quartile: "NA"
+jcr: "NA"
 doi: "NA"
 featured: false
 demo: "production-scheduling"

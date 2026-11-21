@@ -9,6 +9,7 @@ issue: "1"
 pages: "1--7"
 isFirstAuthor: true
 quartile: "Q4"
+jcr: "NA"
 doi: "NA"
 featured: false
 demo: "assembly-line-balancing"

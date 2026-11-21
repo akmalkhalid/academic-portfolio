@@ -8,6 +8,7 @@ volume: "11"
 pages: "141"
 isFirstAuthor: false
 quartile: "NA"
+jcr: "NA"
 doi: "https://doi.org/10.3390/info11030141"
 featured: false
 topicTags: ["games-informatics", "simulation"]

@@ -6,6 +6,7 @@ venue: "2019 International Conference on Advanced Information Technologies ({ICA
 category: "Conference"
 isFirstAuthor: false
 quartile: "NA"
+jcr: "NA"
 doi: "https://doi.org/10.1109/aitc.2019.8921061"
 featured: false
 topicTags: ["games-informatics", "simulation"]

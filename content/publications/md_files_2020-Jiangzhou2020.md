@@ -6,6 +6,7 @@ venue: "Proceedings of the Sriwijaya International Conference on Information Tec
 category: "Conference"
 isFirstAuthor: false
 quartile: "NA"
+jcr: "NA"
 doi: "https://doi.org/10.2991/aisr.k.200424.067"
 featured: false
 demo: "game-refinement"
