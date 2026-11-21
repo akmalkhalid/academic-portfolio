@@ -77,6 +77,9 @@ export type Publication = {
   title: string; authors: string; year: number
   venue: string; venueShort?: string; category: string
   quartile?: string; volume?: string; issue?: string; pages?: string
+  // jcr: the journal's best JIF quartile in the JCR edition of the paper's own year ("Q1".."Q4" or "NA").
+  // This is what the site shows. `quartile` above is the older Scopus-style value, kept for reference.
+  jcr?: string
   doi?: string; externalLink?: string; pdfUrl?: string
   indexing?: string[]; topicTags?: string[]
   isFirstAuthor?: boolean; isCorrespondingAuthor?: boolean
