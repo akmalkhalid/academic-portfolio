@@ -32,7 +32,8 @@ function cellColour(e: Scored | null) {
   return z === 'too easy' ? `rgba(33,179,160,${a})` : `rgba(139,123,240,${a})`
 }
 
-export default function PuzzleLoop({ compact = false }: { compact?: boolean }) {
+// `paused`: set by the two-sided viewer (components/DemoDeck.tsx) while this demo faces away.
+export default function PuzzleLoop({ compact = false, paused = false }: { compact?: boolean; paused?: boolean }) {
   const archRef = useRef<Archive | null>(null)
   const rootRef = useRef<HTMLDivElement>(null)
   const [, force] = useState(0)
@@ -63,7 +64,7 @@ export default function PuzzleLoop({ compact = false }: { compact?: boolean }) {
 
   // the loop clock
   useEffect(() => {
-    if (!playing || !visible || !archRef.current) return
+    if (!playing || !visible || paused || !archRef.current) return
     const timers: ReturnType<typeof setTimeout>[] = []
     const tick = () => {
       const a = archRef.current!
@@ -91,7 +92,7 @@ export default function PuzzleLoop({ compact = false }: { compact?: boolean }) {
     tick()
     const id = setInterval(tick, fast ? 220 : 900)
     return () => { clearInterval(id); timers.forEach(clearTimeout) }
-  }, [playing, visible, fast])
+  }, [playing, visible, fast, paused])
 
   const a = archRef.current
   const shown: Scored | null = inspect != null && a ? a.cells[inspect] : ev?.child ?? null
