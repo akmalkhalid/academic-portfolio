@@ -61,7 +61,7 @@ export default function PubDashboard({
 
   const journals = shown.filter((p) => p.cat === 'j')
   const quartiles = (['Q1', 'Q2', 'Q3', 'Q4', 'NA'] as const)
-    .map((q): [string, number, string] => [q === 'NA' ? 'No quartile recorded' : q, journals.filter((p) => p.q === q).length, QCOL[q] || '#7d7890'])
+    .map((q): [string, number, string] => [q === 'NA' ? 'No JCR quartile' : q, journals.filter((p) => p.q === q).length, QCOL[q] || '#7d7890'])
     .filter((r) => r[1] > 0)
   const byVenue: Record<string, number> = {}
   shown.forEach((p) => { byVenue[p.v] = (byVenue[p.v] || 0) + 1 })
@@ -106,11 +106,11 @@ export default function PubDashboard({
       </div>
 
       <div className="pd-row">
-        <Bars title="Journal quartile" rows={quartiles} colour="#8b7bf0" />
+        <Bars title="Journal quartile (JCR)" rows={quartiles} colour="#8b7bf0" />
         <Bars title="Most frequent venues" rows={venues} colour="#4d8df0" />
         <Bars title="Authorship" rows={[['First author', first], ['Co-author', shown.length - first]].filter((r) => (r[1] as number) > 0) as [string, number][]} colour="#21b3a0" />
       </div>
-      <p className="pd-note" style={{ fontFamily: mono }}>Counted from this site&apos;s publication files. Quartiles are as recorded in each paper&apos;s file.</p>
+      <p className="pd-note" style={{ fontFamily: mono }}>Quartiles are from Journal Citation Reports: the journal&apos;s best category quartile in the edition of the paper&apos;s own year.</p>
     </div>
   )
 }

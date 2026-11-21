@@ -11,7 +11,7 @@ export default function Page() {
     t: (p.title || '').replace(/\.\s*$/, ''),
     y: p.year,
     pills: codesFromTags(p.topicTags),
-    q: p.quartile || 'NA',
+    q: p.jcr || 'NA',   // JCR quartile, edition of the paper's year
     cat: catCode(p.category),
     v: (p.venueShort || p.venue || '—').replace(/[{}]/g, ''),   // drop BibTeX braces so "{IEEE} Access" and "IEEE Access" count as one venue
     slug: p._slug.replace(/^md_files_/, ''),
@@ -22,15 +22,15 @@ export default function Page() {
 
   const { links, counts, citeSource } = buildLinks(pubs)
 
-  const qCount = (q: string) => pubs.filter((p) => (p.quartile || 'NA') === q).length
+  const qCount = (q: string) => pubs.filter((p) => (p.jcr || 'NA') === q).length
   const pillarsUsed = new Set<Code>()
   nodes.forEach((n) => n.pills.forEach((p) => pillarsUsed.add(p)))
   const quartileStats = [
     { num: String(pubs.length), label: 'Total papers', color: '#16142e' },
-    { num: String(qCount('Q1')), label: 'Q1 journals', color: '#21b3a0' },
-    { num: String(qCount('Q2')), label: 'Q2 journals', color: '#4d8df0' },
-    { num: String(qCount('Q3')), label: 'Q3 journals', color: '#d99320' },
-    { num: String(qCount('Q4')), label: 'Q4 journals', color: '#f2683f' },
+    { num: String(qCount('Q1')), label: 'Q1 journals (JCR)', color: '#21b3a0' },
+    { num: String(qCount('Q2')), label: 'Q2 journals (JCR)', color: '#4d8df0' },
+    { num: String(qCount('Q3')), label: 'Q3 journals (JCR)', color: '#d99320' },
+    { num: String(qCount('Q4')), label: 'Q4 journals (JCR)', color: '#f2683f' },
     { num: String(pillarsUsed.size), label: 'Research pillars', color: '#8b7bf0' },
   ]
 

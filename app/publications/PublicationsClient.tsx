@@ -81,7 +81,7 @@ export default function PublicationsClient({
   const catKeys = ['j', 'c', 'b'].filter((k) => pubs.some((d) => d.cat === k))
   const catChips = [{ key: 'all', label: 'All', dot: '#cfcad9' } as any].concat(catKeys.map((k) => ({ key: k, label: CATNAME[k], dot: k === 'j' ? '#7d8fb3' : k === 'c' ? '#b39a7d' : '#9a7db3' }))).map((c) => { const active = c.key === 'all' ? catFilter.length === 0 : catFilter.includes(c.key); return { label: c.label, dot: c.dot, active, onClick: () => (c.key === 'all' ? setCatFilter([]) : setCatFilter((f) => toggle(f, c.key))) } })
   const qKeys = ['Q1', 'Q2', 'Q3', 'Q4', 'NA'].filter((k) => pubs.some((d) => d.q === k))
-  const quartileChips = [{ key: 'all', label: 'All', dot: '#cfcad9' } as any].concat(qKeys.map((k) => ({ key: k, label: k === 'NA' ? 'Non-indexed' : k, dot: QCOL[k] }))).map((c) => { const active = c.key === 'all' ? quartileFilter.length === 0 : quartileFilter.includes(c.key); return { label: c.label, dot: c.dot, active, onClick: () => (c.key === 'all' ? setQuartileFilter([]) : setQuartileFilter((f) => toggle(f, c.key))) } })
+  const quartileChips = [{ key: 'all', label: 'All', dot: '#cfcad9' } as any].concat(qKeys.map((k) => ({ key: k, label: k === 'NA' ? 'No JCR quartile' : k, dot: QCOL[k] }))).map((c) => { const active = c.key === 'all' ? quartileFilter.length === 0 : quartileFilter.includes(c.key); return { label: c.label, dot: c.dot, active, onClick: () => (c.key === 'all' ? setQuartileFilter([]) : setQuartileFilter((f) => toggle(f, c.key))) } })
 
   const tabOn = "font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:600;cursor:pointer;padding:7px 15px;border-radius:6px;border:none;background:#ECEAF3;color:#0f0e14"
   const tabOff = "font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:500;cursor:pointer;padding:7px 15px;border-radius:6px;border:none;background:transparent;color:#9b96aa"
@@ -135,7 +135,7 @@ export default function PublicationsClient({
             <span style={s("font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;color:#6f6a82;margin-right:4px")}>TYPE ·</span>
             {catChips.map((c, i) => (<button key={i} type="button" onClick={c.onClick} style={s(chipStyle(c.active))}><span style={s(`width:8px;height:8px;border-radius:50%;background:${c.dot};display:inline-block;margin-right:7px;vertical-align:middle`)} />{c.label}</button>))}
             <span style={s('width:1px;height:18px;background:rgba(255,255,255,.12);margin:0 6px')} />
-            <span style={s("font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;color:#6f6a82;margin-right:4px")}>QUARTILE ·</span>
+            <span style={s("font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;color:#6f6a82;margin-right:4px")}>JCR QUARTILE ·</span>
             {quartileChips.map((c, i) => (<button key={i} type="button" onClick={c.onClick} style={s(chipStyle(c.active))}><span style={s(`width:8px;height:8px;border-radius:50%;background:${c.dot};display:inline-block;margin-right:7px;vertical-align:middle`)} />{c.label}</button>))}
           </div>
           <div style={s('display:flex;align-items:center;gap:14px;margin-bottom:18px;flex-wrap:wrap')}>
