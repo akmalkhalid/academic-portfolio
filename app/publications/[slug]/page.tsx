@@ -55,8 +55,8 @@ export default function PublicationPage({ params }: { params: { slug: string } }
 
         <div style={s('display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:16px')}>
           <span style={s(`font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;padding:4px 10px;border-radius:6px;background:${accent}1a;color:${accent}`)}>{p.category}</span>
-          {p.quartile && p.quartile !== 'NA' && (
-            <span style={s(`font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;padding:4px 10px;border-radius:6px;background:${(QCOL[p.quartile] || '#6f6a82')}1a;color:${QCOL[p.quartile] || '#6f6a82'}`)}>{p.quartile}</span>
+          {p.jcr && p.jcr !== 'NA' && (
+            <span style={s(`font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;padding:4px 10px;border-radius:6px;background:${(QCOL[p.jcr] || '#6f6a82')}1a;color:${QCOL[p.jcr] || '#6f6a82'}`)} title={`Journal Citation Reports quartile, ${p.year} edition`}>JCR {p.jcr}</span>
           )}
           {codes.map((c) => (
             <span key={c} style={s(`font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:500;padding:4px 10px;border-radius:6px;background:${PCOL[c]}14;color:${PCOL[c]}`)}>{PNAME[c]}</span>
