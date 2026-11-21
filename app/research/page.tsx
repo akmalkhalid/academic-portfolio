@@ -1,67 +1,79 @@
-import { getAllProjects } from '@/lib/content'
-import { codesFromTags, isPI, PCOL, PNAME, PBADGE, type Code } from '@/lib/view'
+// /research — the whole research record on one page: papers, grants, students and the idea
+// that ties them together. It replaces three older pages (/research, /publications and
+// /generative-optimization); the two retired addresses now forward here.
+//
+// This file runs at build time only. It reads the content folder, gives every record ONE
+// pillar (lib/pillars.ts) and hands plain arrays to ResearchClient, which does the drawing
+// and filtering in the browser.
+//
+// To change what the page shows, edit the content, not this file:
+//   content/publications/*.md   one file per paper (jcr: is the quartile shown)
+//   content/projects/*.md       one file per grant
+//   content/students/students.yml
+import type { Metadata } from 'next'
+import { getAllPublications, getAllProjects, getStudents } from '@/lib/content'
+import { codesFromTags, catCode, isPI } from '@/lib/view'
+import { pillarOf } from '@/lib/pillars'
+import { chicago } from '@/lib/cite'
+import { buildLinks } from '@/lib/pub-links'
 import ResearchClient from './ResearchClient'
 
-const D0 = 2024, SPAN = 6.5
-const left = (f: number) => ((f - D0) / SPAN) * 100
-const frac = (ym: string) => { const p = ym.split('-'); return +p[0] + ((+p[1] || 1) - 1) / 12 }
-const fmt = (n: number) => 'RM ' + n.toLocaleString()
-const tagChip = (c: Code) => ({ label: PNAME[c], style: `font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:500;padding:2px 8px;border-radius:5px;background:${PBADGE[c].bg};color:${PBADGE[c].fg}` })
+export const metadata: Metadata = {
+  title: 'Research and publications — Mohd Nor Akmal Khalid',
+  description:
+    'Papers, grants, students and the Generative Optimization programme of Dr. Mohd Nor Akmal Khalid (UKM) on one page: generative AI proposes, models of human engagement evaluate, metaheuristic search steers.',
+  keywords: [
+    'Generative Optimization', 'Generative Optinformatics', 'Optinformatics', 'Evolutionary Computation', 'Metaheuristics',
+    'Quality-Diversity', 'Procedural Content Generation', 'Game Refinement Theory', 'Large Language Models', 'Publications',
+  ],
+}
+
+// "2024-08" -> 2024.58, so a grant can start and end part-way through a year.
+const frac = (ym: string) => { const [y, m] = ym.split('-'); return +y + ((+m || 1) - 1) / 12 }
 
 export default function Page() {
-  const projects = getAllProjects()
-  const grants = projects.map((p) => ({
-    title: p.title,
-    agency: p.fundingAgency,
-    grantCode: p.grantCode || '',
-    amount: p.amountMyr || 0,
-    role: isPI(p.role) ? 'Principal Investigator' : 'Co-Investigator',
-    start: (p.startDate || '').slice(0, 7),
-    end: (p.endDate || '').slice(0, 7),
-    status: p.status,
-    codes: codesFromTags(p.researchTags),
+  const pubs = getAllPublications()
+
+  const papers = pubs.map((p) => ({
+    t: (p.title || '').replace(/\.\s*$/, ''),
+    y: p.year,
+    pl: pillarOf(p.topicTags),                 // the one pillar this paper counts under
+    pills: codesFromTags(p.topicTags),         // all its field tags (shown as small dots)
+    q: p.jcr || 'NA',                          // JCR quartile, edition of the paper's own year
+    cat: catCode(p.category),
+    v: (p.venueShort || p.venue || '—').replace(/[{}]/g, ''),
+    au: p.authors || '',
+    slug: p._slug.replace(/^md_files_/, ''),
+    citation: chicago(p),
+    scholar: 'https://scholar.google.com/scholar?q=' + encodeURIComponent(p.title || ''),
   }))
+  const { links, counts, citeSource } = buildLinks(pubs)
 
-  const total = grants.reduce((sum, g) => sum + g.amount, 0)
-  const active = grants.filter((g) => g.status === 'Active')
-  const completed = grants.filter((g) => g.status === 'Completed')
-  const piGrants = grants.filter((g) => g.role === 'Principal Investigator')
-  const piTotal = piGrants.reduce((sum, g) => sum + g.amount, 0)
+  const grants = getAllProjects().map((g) => {
+    const s0 = (g.startDate || '').slice(0, 7), s1 = (g.endDate || '').slice(0, 7)
+    return {
+      t: g.title, agency: g.fundingAgency, code: g.grantCode || '', amt: g.amountMyr || 0,
+      pi: isPI(g.role), s0, s1, y0: frac(s0), y1: frac(s1), status: g.status,
+      pl: pillarOf(g.researchTags), pills: codesFromTags(g.researchTags),
+    }
+  }).sort((a, b) => a.y0 - b.y0 || b.amt - a.amt)
 
-  const stats = [
-    { num: piTotal, prefix: 'RM ', display: piTotal.toLocaleString(), label: 'Research funding led as PI', hint: 'RM ' + total.toLocaleString() + ' cumulative · ' + grants.length + ' grants', dot: '#8b7bf0' },
-    { num: grants.length, prefix: '', display: String(grants.length), label: 'Funded grants', hint: active.length + ' active · ' + completed.length + ' completed', dot: '#4d8df0' },
-    { num: piGrants.length, prefix: '', display: String(piGrants.length), label: 'As Principal Investigator', hint: 'lead-led projects', dot: '#21b3a0' },
-    { num: active.length, prefix: '', display: String(active.length), label: 'Active right now', hint: 'running 2024 — 2030', dot: '#f2683f' },
-  ]
+  const students = getStudents().map((st) => ({
+    name: st.studentName, thesis: st.thesisTitle, degree: st.degree, status: st.status,
+    y0: st.startYear, y1: st.completionYear || null, role: st.role, pl: pillarOf(st.researchTags),
+  })).sort((a, b) => a.y0 - b.y0)
 
-  const timeline = grants.slice().sort((a, b) => frac(a.start) - frac(b.start) || b.amount - a.amount).map((g) => {
-    const l = left(frac(g.start)), w = Math.max(2.4, left(frac(g.end)) - l)
-    const done = g.status === 'Completed'
-    const col = PCOL[g.codes[0]]
-    const barStyle = `position:absolute;top:5px;bottom:5px;left:${l}%;width:${w}%;border-radius:5px;display:flex;align-items:center;padding:0 7px;overflow:hidden;background:${col};${done ? 'opacity:.42;' : 'box-shadow:0 2px 8px -3px ' + col + ';'}transition:transform .15s,filter .15s;cursor:default`
-    return { short: g.title, amountFmt: fmt(g.amount), roleShort: g.role === 'Principal Investigator' ? 'PI' : 'Co-I', title: g.title, barStyle, barLabel: w > 16 ? g.agency : '' }
-  })
-  const years = [2024, 2025, 2026, 2027, 2028, 2029, 2030].map((y) => ({ label: String(y), left: left(y) }))
-  const now = new Date()
-  const todayLeft = left(now.getFullYear() + now.getMonth() / 12)
+  // The timeline runs from the first paper to the last grant end.
+  const yearMin = Math.min(...papers.map((p) => p.y))
+  const yearMax = Math.max(...papers.map((p) => p.y), ...grants.map((g) => Math.floor(g.y1)))
 
-  const decorate = (g: typeof grants[number]) => ({
-    title: g.title, agency: g.agency, grantCode: g.grantCode, role: g.role,
-    amountFmt: fmt(g.amount), years: g.start.slice(0, 4) + '–' + g.end.slice(0, 4),
-    accent: PCOL[g.codes[0]], tags: g.codes.slice(0, 2).map(tagChip),
-  })
+  const now = new Date()   // build date: where the "today" line sits on the timeline
 
   return (
     <ResearchClient
-      stats={stats}
-      timeline={timeline}
-      years={years}
-      todayLeft={todayLeft}
-      active={active.map(decorate)}
-      completed={completed.map(decorate)}
-      activeCount={active.length}
-      completedCount={completed.length}
+      papers={papers} grants={grants} students={students}
+      links={links} linkCounts={counts} citeUpdated={citeSource.updated}
+      years={[yearMin, yearMax]} today={now.getFullYear() + now.getMonth() / 12}
     />
   )
 }
