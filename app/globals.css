@@ -765,3 +765,42 @@ body {
 .pd-search:focus { border-color: #8b7bf0; box-shadow: 0 0 0 3px rgba(139,123,240,.22); }
 .pd-search::placeholder { color: #6f6a82; }
 @media (max-width: 860px) { .pd-row { grid-template-columns: 1fr; } .pd-search { min-width: 0; flex: 1 1 100%; } }
+
+/* ---- /research: one-page research record (app/research/ResearchClient.tsx) -------------
+   rs-top   = 3D header beside the headline numbers      rs-time = the shared timeline
+   rs-list  = a scrolling list of rows                   rs-col  = one clickable year column */
+.rs-dark { background: #0f0e14; color: #ECEAF3; }
+.rs-wrap { max-width: 1160px; margin: 0 auto; padding: 30px 28px 64px; }
+.rs-top { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(0, 1fr); gap: 18px; align-items: stretch; }
+.rs-stage { position: relative; border-radius: 14px; overflow: hidden; border: 1px solid rgba(255,255,255,.09); background: radial-gradient(130% 130% at 50% 40%, #16151d 0%, #0c0b11 75%); }
+.rs-side { display: flex; flex-direction: column; gap: 12px; justify-content: space-between; min-width: 0; }
+.rs-nums { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.rs-num { display: flex; flex-direction: column; align-items: flex-start; text-align: left; padding: 14px 16px; border-radius: 12px; border: 1px solid rgba(255,255,255,.09); background: rgba(255,255,255,.03); cursor: pointer; transition: background .2s ease, border-color .2s ease; }
+.rs-num:hover { background: rgba(255,255,255,.07); border-color: rgba(255,255,255,.22); }
+.rs-pill { display: flex; align-items: center; gap: 10px; padding: 10px 13px; border-radius: 10px; border: 1px solid; cursor: pointer; transition: opacity .2s ease, background .2s ease; }
+.rs-pill:hover { opacity: 1 !important; }
+.rs-num:focus-visible, .rs-pill:focus-visible, .rs-col:focus-visible { outline: 2px solid #8b7bf0; outline-offset: 2px; }
+.rs-time { position: relative; border: 1px solid rgba(255,255,255,.09); border-radius: 14px; background: rgba(255,255,255,.02); overflow: hidden; }
+.rs-band { position: relative; height: 112px; border-bottom: 1px solid rgba(255,255,255,.07); transition: opacity .25s ease; }
+.rs-axis { display: flex; height: 22px; align-items: center; }
+.rs-axis span { flex: 1; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 10.5px; }
+.rs-axis i { font-style: normal; }
+.rs-col { position: absolute; top: 0; bottom: 0; padding: 0; border: none; background: transparent; cursor: pointer; }
+.rs-col:hover { background: rgba(255,255,255,.045); }
+.rs-list { border: 1px solid rgba(255,255,255,.09); border-radius: 14px; max-height: 540px; overflow-y: auto; background: rgba(255,255,255,.02); }
+.rs-row { display: flex; gap: 14px; align-items: baseline; padding: 13px 18px; border-bottom: 1px solid rgba(255,255,255,.05); cursor: pointer; }
+.rs-row:last-child, .rs-nb:last-child { border-bottom: none; }
+.rs-row:hover { background: rgba(255,255,255,.035); }
+.rs-row a:hover { text-decoration: underline !important; }
+.rs-three { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.rs-two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.rs-nb { display: grid; grid-template-columns: 1fr 1fr 1.3fr; gap: 18px; padding: 15px 18px; border-bottom: 1px solid rgba(255,255,255,.05); }
+@media (max-width: 900px) {
+  .rs-wrap { padding: 20px 16px 48px; }
+  .rs-top, .rs-three, .rs-two, .rs-nb { grid-template-columns: 1fr; }
+  .rs-nb { gap: 8px; }
+  .rs-band { height: 100px; }
+  .rs-yy { display: none; }           /* 2012 becomes 12 so nineteen years fit a phone */
+  .rs-axis span { font-size: 9px; }
+  .rs-row { gap: 10px; padding: 12px 13px; flex-wrap: wrap; }
+}

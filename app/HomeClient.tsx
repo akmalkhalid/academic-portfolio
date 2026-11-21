@@ -85,7 +85,7 @@ export default function HomeClient({
               </p>
               <div className="hero-ctas">
                 <a href="#demo" className="btn-lume">Watch the loop run <span aria-hidden="true">→</span></a>
-                <a href="/generative-optimization" className="btn-ghost">The programme</a>
+                <a href="/research/#ideas" className="btn-ghost">The programme</a>
                 <a href="#building" className="btn-ghost">Books and tools</a>
                 <a href="/cv/" className="btn-ghost">CV <span aria-hidden="true">→</span></a>
               </div>
@@ -194,7 +194,7 @@ export default function HomeClient({
         <h2 style={h2(false)}>Generative optimization: one loop, three stages.</h2>
         <div className="home-stages">
           {STAGES.map((st) => (
-            <a key={st.n} href="/generative-optimization#loop" className="home-stage" style={s(`border-top:3px solid ${st.accent}`)}>
+            <a key={st.n} href="/research/#ideas" className="home-stage" style={s(`border-top:3px solid ${st.accent}`)}>
               <span style={s(`font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:600;letter-spacing:.08em;color:${st.accent}`)}>{st.n} · {st.stage.toUpperCase()}</span>
               <span style={s(`display:block;font-family:${stack};font-weight:600;font-size:18px;line-height:1.22;margin:10px 0 8px;color:#1c1917`)}>{st.title}</span>
               <span style={s(`display:block;font-family:${stack};font-weight:500;font-size:15px;color:${st.accent};margin:0 0 8px`)}>{st.q}</span>
@@ -231,7 +231,7 @@ export default function HomeClient({
             <div style={s('font-size:13.5px;line-height:1.55;color:#bdb8d6')}>A loop that learns from its own search history and transfers it to new design problems.</div>
           </div>
         </div>
-        <a href="/generative-optimization" style={s("display:inline-block;margin-top:24px;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;text-decoration:none;color:#1c1917;border-bottom:2px solid #8b7bf0;padding-bottom:2px")}>Read the programme →</a>
+        <a href="/research/#ideas" style={s("display:inline-block;margin-top:24px;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;text-decoration:none;color:#1c1917;border-bottom:2px solid #8b7bf0;padding-bottom:2px")}>Read the programme →</a>
       </section>
 
       {/* SELECTED WORK — two papers per stage */}
@@ -251,7 +251,7 @@ export default function HomeClient({
             </div>
           ))}
         </div>
-        <a href="/publications" style={s("display:inline-block;margin-top:22px;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;text-decoration:none;color:#1c1917;border-bottom:2px solid #4d8df0;padding-bottom:2px")}>All {stats.pubs} publications →</a>
+        <a href="/research/#papers" style={s("display:inline-block;margin-top:22px;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600;text-decoration:none;color:#1c1917;border-bottom:2px solid #4d8df0;padding-bottom:2px")}>All {stats.pubs} publications →</a>
       </section>
 
       {/* CONTACT */}
