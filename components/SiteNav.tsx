@@ -11,8 +11,7 @@ import { s } from '@/lib/style'
 // from Teaching and the Research CTA. Add a link by appending one entry here.
 const NAV = [
   { href: '/about', label: 'About' },
-  { href: '/research', label: 'Research' },
-  { href: '/publications', label: 'Publications' },
+  { href: '/research', label: 'Research' },   // papers, grants, students and the programme, on one page
   { href: '/teaching', label: 'Teaching' },
   { href: '/cv', label: 'CV' },
 ]

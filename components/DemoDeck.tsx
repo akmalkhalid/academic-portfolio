@@ -44,7 +44,7 @@ const COPY: Record<Side, { lede: string; note: React.ReactNode }> = {
     note: (
       <>
         An illustrative model of quality-diversity search for{' '}
-        <a href="/generative-optimization">procedural content generation</a>: caves are grown with a cellular automaton, and
+        <a href="/research/#ideas">procedural content generation</a>: caves are grown with a cellular automaton, and
         each tile is one of 108 styles. Teal floor is reachable; coral floor is cut off.
       </>
     ),
