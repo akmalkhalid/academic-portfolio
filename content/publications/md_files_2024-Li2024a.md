@@ -8,6 +8,7 @@ volume: "13"
 pages: "298–312"
 isFirstAuthor: false
 quartile: "Q3"
+jcr: "NA"
 doi: "https://doi.org/10.17576/apjitm-2024-1302-10"
 featured: false
 topicTags: ["games-informatics", "simulation"]

@@ -8,6 +8,7 @@ volume: "52"
 pages: "100887"
 isFirstAuthor: false
 quartile: "Q2"
+jcr: "Q3"
 doi: "https://doi.org/10.1016/j.entcom.2024.100887"
 featured: false
 topicTags: ["games-informatics", "simulation"]

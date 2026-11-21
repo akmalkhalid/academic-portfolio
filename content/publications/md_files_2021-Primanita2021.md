@@ -8,6 +8,7 @@ volume: "9"
 pages: "72087--72102"
 isFirstAuthor: false
 quartile: "Q1"
+jcr: "Q2"
 doi: "https://doi.org/10.1109/ACCESS.2021.3079356"
 featured: false
 demo: "game-refinement"

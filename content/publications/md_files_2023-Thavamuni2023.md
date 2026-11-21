@@ -8,6 +8,7 @@ volume: "44"
 pages: "100523"
 isFirstAuthor: false
 quartile: "Q2"
+jcr: "Q2"
 doi: "https://doi.org/10.1016/j.entcom.2022.100523"
 featured: false
 topicTags: ["games-informatics", "simulation"]

@@ -8,6 +8,7 @@ volume: "14"
 issue: "2"
 isFirstAuthor: false
 quartile: "NA"
+jcr: "Q3"
 doi: "https://doi.org/10.3390/info14020110"
 featured: false
 topicTags: ["games-informatics", "simulation"]

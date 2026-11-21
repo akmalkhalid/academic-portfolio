@@ -8,6 +8,7 @@ volume: "13"
 pages: "266–286"
 isFirstAuthor: false
 quartile: "Q3"
+jcr: "NA"
 doi: "https://doi.org/10.17576/apjitm-2024-1302-08"
 featured: false
 demo: "game-refinement"

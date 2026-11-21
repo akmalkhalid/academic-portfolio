@@ -8,6 +8,7 @@ volume: "232"
 pages: "104018"
 isFirstAuthor: false
 quartile: "Q3"
+jcr: "Q1"
 doi: "https://doi.org/10.1016/j.jnca.2024.104018"
 featured: false
 topicTags: ["games-informatics", "simulation"]

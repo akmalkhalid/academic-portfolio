@@ -8,6 +8,7 @@ volume: "1"
 pages: "203–223"
 isFirstAuthor: false
 quartile: "NA"
+jcr: "NA"
 doi: "https://doi.org/10.32890/jcisc2022.1.9"
 featured: false
 demo: "game-refinement"

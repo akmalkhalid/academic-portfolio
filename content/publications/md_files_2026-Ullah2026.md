@@ -7,6 +7,7 @@ category: "Journal"
 volume: "16"
 isFirstAuthor: false
 quartile: "Q1"
+jcr: "NA"
 doi: "https://doi.org/10.1038/s41598-026-45313-7"
 featured: false
 demo: "quest-generation"

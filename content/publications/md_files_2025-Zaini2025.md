@@ -7,6 +7,7 @@ category: "Journal"
 volume: "16"
 isFirstAuthor: false
 quartile: "NA"
+jcr: "Q3"
 doi: "https://doi.org/10.14569/IJACSA.2025.0160919"
 featured: false
 topicTags: ["simulation"]

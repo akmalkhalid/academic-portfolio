@@ -8,6 +8,7 @@ volume: "7"
 pages: "e08637"
 isFirstAuthor: false
 quartile: "Q1"
+jcr: "Q2"
 doi: "https://doi.org/10.1016/j.heliyon.2021.e08637"
 featured: false
 topicTags: ["games-informatics", "simulation"]

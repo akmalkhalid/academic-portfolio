@@ -6,6 +6,7 @@ venue: "Flexible Services and Manufacturing Journal"
 category: "Journal"
 isFirstAuthor: true
 quartile: "NA"
+jcr: "Q3"
 doi: "https://doi.org/10.1007/s10696-020-09389-1"
 featured: true
 demo: "assembly-line-balancing"

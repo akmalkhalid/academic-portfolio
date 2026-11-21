@@ -8,6 +8,7 @@ volume: "16"
 pages: "538–553"
 isFirstAuthor: false
 quartile: "NA"
+jcr: "Q3"
 doi: "https://dx.doi.org/10.14569/IJACSA.2025.0160354"
 featured: false
 topicTags: ["evolutionary-computing", "optimization"]

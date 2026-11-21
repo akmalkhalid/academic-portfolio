@@ -8,6 +8,7 @@ volume: "13"
 pages: "90433-90466"
 isFirstAuthor: false
 quartile: "Q1"
+jcr: "Q2"
 doi: "https://doi.org/10.1109/ACCESS.2025.3572051"
 featured: false
 topicTags: ["generative-ai", "simulation"]

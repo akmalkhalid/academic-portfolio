@@ -8,6 +8,7 @@ volume: "34"
 pages: "100358"
 isFirstAuthor: false
 quartile: "Q2"
+jcr: "Q3"
 doi: "https://doi.org/10.1016/j.entcom.2020.100358"
 featured: false
 demo: "game-refinement"

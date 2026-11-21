@@ -7,6 +7,7 @@ category: "Journal"
 volume: "8"
 isFirstAuthor: false
 quartile: "NA"
+jcr: "NA"
 doi: "https://doi.org/10.1088/2631-8695/ae98f8"
 featured: false
 topicTags: ["optimization", "evolutionary-computing"]

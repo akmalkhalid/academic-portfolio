@@ -8,6 +8,7 @@ volume: "100"
 pages: "115228"
 isFirstAuthor: false
 quartile: "Q2"
+jcr: "Q2"
 doi: "https://doi.org/10.1088/1402-4896/ae1d2d"
 featured: false
 topicTags: ["optimization", "simulation"]

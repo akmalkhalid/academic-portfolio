@@ -8,6 +8,7 @@ volume: "9"
 pages: "117832--117844"
 isFirstAuthor: true
 quartile: "Q1"
+jcr: "Q2"
 doi: "https://doi.org/10.1109/ACCESS.2021.3106321"
 featured: true
 demo: "assembly-line-balancing"

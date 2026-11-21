@@ -6,6 +6,7 @@ venue: "2020 International Conference on Advanced Information Technologies ({ICA
 category: "Conference"
 isFirstAuthor: false
 quartile: "NA"
+jcr: "NA"
 doi: "https://doi.org/10.1109/icait51105.2020.9261773"
 featured: false
 topicTags: ["games-informatics", "simulation"]

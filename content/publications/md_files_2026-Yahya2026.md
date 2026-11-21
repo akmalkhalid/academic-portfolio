@@ -7,6 +7,7 @@ category: "Journal"
 volume: "10"
 isFirstAuthor: false
 quartile: "NA"
+jcr: "NA"
 doi: "https://doi.org/10.47772/IJRISS.2026.10100463"
 featured: false
 topicTags: ["generative-ai", "simulation"]

@@ -8,6 +8,7 @@ volume: "14"
 pages: "61--71"
 isFirstAuthor: false
 quartile: "Q3"
+jcr: "NA"
 doi: "https://doi.org/10.17576/apjitm-2025-1401-04"
 featured: false
 topicTags: ["games-informatics", "simulation"]

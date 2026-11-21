@@ -8,6 +8,7 @@ volume: "2022"
 pages: "1--11"
 isFirstAuthor: false
 quartile: "NA"
+jcr: "NA"
 doi: "https://doi.org/10.1155/2022/1803401"
 featured: false
 topicTags: ["games-informatics", "simulation"]

@@ -8,6 +8,7 @@ volume: "11"
 issue: "6"
 isFirstAuthor: false
 quartile: "Q2"
+jcr: "Q1"
 doi: "https://doi.org/10.3390/math11061353"
 featured: true
 topicTags: ["expert-systems", "simulation"]

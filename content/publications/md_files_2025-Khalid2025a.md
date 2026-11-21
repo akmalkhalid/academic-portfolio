@@ -7,6 +7,7 @@ category: "Conference"
 pages: "468--477"
 isFirstAuthor: true
 quartile: "NA"
+jcr: "NA"
 doi: "https://doi.org/10.1007/978-3-032-02555-5_35"
 featured: true
 demo: "puzzle-loop"

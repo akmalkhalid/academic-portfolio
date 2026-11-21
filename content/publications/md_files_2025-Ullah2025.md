@@ -5,6 +5,7 @@ year: 2025
 venue: "Neurocomputing"
 category: "Journal"
 quartile: "NA"
+jcr: "Q1"
 volume: "632"
 pages: "129767"
 doi: "https://doi.org/10.1016/j.neucom.2025.129767"

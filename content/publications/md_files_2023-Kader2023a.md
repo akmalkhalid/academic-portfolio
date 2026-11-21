@@ -7,6 +7,7 @@ category: "Conference"
 pages: "1003--1008"
 isFirstAuthor: false
 quartile: "NA"
+jcr: "NA"
 doi: "https://doi.org/10.1109/ICBIR57571.2023.10147645"
 featured: false
 topicTags: ["expert-systems", "simulation"]
