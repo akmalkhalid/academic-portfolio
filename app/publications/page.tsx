@@ -13,10 +13,11 @@ export default function Page() {
     pills: codesFromTags(p.topicTags),
     q: p.quartile || 'NA',
     cat: catCode(p.category),
-    v: p.venueShort || p.venue || '—',
+    v: (p.venueShort || p.venue || '—').replace(/[{}]/g, ''),   // drop BibTeX braces so "{IEEE} Access" and "IEEE Access" count as one venue
     slug: p._slug.replace(/^md_files_/, ''),
     citation: chicago(p),
     scholar: 'https://scholar.google.com/scholar?q=' + encodeURIComponent(p.title || ''),
+    f: !!p.isFirstAuthor,   // for the authorship bar in the dashboard
   }))
 
   const { links, counts, citeSource } = buildLinks(pubs)

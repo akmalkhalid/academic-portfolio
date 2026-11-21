@@ -5,8 +5,9 @@ import { s } from '@/lib/style'
 import PageBanner from '@/components/PageBanner'
 import Constellation3D, { type CLink } from '@/components/Constellation3D'
 import { PCOL, PNAME, QCOL, CATNAME, type Code } from '@/lib/view'
+import PubDashboard, { PILLARS, pillarKey } from './PubDashboard'
 
-type PubNode = { t: string; y: number; pills: Code[]; q: string; cat: string; v: string; citation: string; scholar: string; slug: string }
+type PubNode = { t: string; y: number; pills: Code[]; q: string; cat: string; v: string; citation: string; scholar: string; slug: string; f: boolean }
 
 export default function PublicationsClient({
   pubs, links, linkCounts, citeUpdated, quartileStats, minYearBound, maxYearBound,
@@ -23,6 +24,8 @@ export default function PublicationsClient({
   const [minYear, setMinYear] = useState(minYearBound)
   const [selected, setSelected] = useState<PubNode | null>(null)
   const [copied, setCopied] = useState(false)
+  const [query, setQuery] = useState('')                          // free-text search over title, venue and authors
+  const [gridPillar, setGridPillar] = useState<string | null>(null) // pillar picked in the dashboard's heat grid
 
 
   useEffect(() => {
@@ -60,8 +63,15 @@ export default function PublicationsClient({
   const toggle = (arr: string[], key: string) => (arr.includes(key) ? arr.filter((x) => x !== key) : arr.concat(key))
   const chipStyle = (active: boolean) => "font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:500;cursor:pointer;padding:7px 13px;border-radius:8px;" + (active ? 'background:rgba(255,255,255,.14);color:#ECEAF3;border:1px solid rgba(255,255,255,.22)' : 'background:transparent;color:#9b96aa;border:1px solid rgba(255,255,255,.1)')
 
-  const matchD = (d: PubNode) => (pillarFilter.length === 0 || d.pills.some((p) => pillarFilter.includes(p))) && (catFilter.length === 0 || catFilter.includes(d.cat)) && (quartileFilter.length === 0 || quartileFilter.includes(d.q)) && d.y >= minYear
+  const needle = query.trim().toLowerCase()
+  // every filter except the year (the dashboard's heat grid needs all years to stay a whole grid)
+  const matchNoYear = (d: PubNode) => (pillarFilter.length === 0 || d.pills.some((p) => pillarFilter.includes(p))) && (catFilter.length === 0 || catFilter.includes(d.cat)) && (quartileFilter.length === 0 || quartileFilter.includes(d.q))
+    && (!gridPillar || pillarKey(d.pills) === gridPillar)
+    && (!needle || (d.t + ' ' + d.v + ' ' + d.citation).toLowerCase().includes(needle))
+  const matchD = (d: PubNode) => matchNoYear(d) && d.y >= minYear
   const filtered = pubs.filter(matchD)
+  // a cell in the heat grid narrows the page to one pillar from one year on; picking it again clears both
+  const pickCell = (pillar: string | null, year: number | null) => { setGridPillar(pillar); setMinYear(year ?? minYearBound) }
   const matchedAll = pubs.map(matchD)
   const selectedIdx = selected ? pubs.indexOf(selected) : null
   const filteredPubs = filtered.slice().sort((a, b) => b.y - a.y)
@@ -136,6 +146,8 @@ export default function PublicationsClient({
               <button type="button" onClick={() => setMinYear((y) => Math.min(maxYearBound, y + 1))} aria-label="Later start year" style={s(yrBtn(minYear < maxYearBound))}>›</button>
             </div>
             <span style={s("font-family:'JetBrains Mono',monospace;font-size:13px;color:#9b96aa;font-weight:500")}>— {maxYearBound}</span>
+            <input type="search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search title, venue or author" aria-label="Search publications" className="pd-search" />
+            {gridPillar ? <button type="button" onClick={() => pickCell(null, null)} style={s(chipStyle(true))}>{PILLARS.find((p) => p.key === gridPillar)?.verb} from {minYear} ✕</button> : null}
             <span style={s("font-family:'JetBrains Mono',monospace;font-size:11px;color:#56516a;margin-left:auto")}>{filtered.length} of {pubs.length} shown</span>
           </div>
 
@@ -170,6 +182,9 @@ export default function PublicationsClient({
             </div>
           </div>
           <p style={s("font-family:'JetBrains Mono',monospace;font-size:11px;color:#56516a;margin:14px 0 0;letter-spacing:.04em")}>{linkCounts.cite} citation streams (particles flow from citing to cited paper{citeUpdated ? `, OpenAlex · ${citeUpdated}` : ', refreshed at each deploy'}) · {linkCounts.coauthor} shared co-author lines · {linkCounts.similar} dotted similar-topic threads · ringed spheres span two fields · size ≈ quartile</p>
+
+          {/* THE SAME SELECTION, COUNTED — heat grid and bars (was the dashboard on /engine/) */}
+          <PubDashboard shown={filtered} grid={pubs.filter(matchNoYear)} minYear={minYear} years={[minYearBound, maxYearBound]} active={gridPillar} onPick={pickCell} />
         </div>
       </section>
 
