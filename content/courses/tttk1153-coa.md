@@ -35,4 +35,12 @@ labs:
     href: "/courses/coa-tutorial-7/"
     emoji: "🛤️"
     blurb: "The data path, control units and pipeline registers, pipeline stages and hazards, then applying pipelining — guided, with a protected submission file."
+  - title: "Tutorial 8 · Parallel Architectures and Multicores"
+    href: "/courses/coa-tutorial-8/"
+    emoji: "🧵"
+    blurb: "Parallel system basics, multithreading and MIMD, threads, heterogeneity and clusters, then applying parallel concepts — guided, with a protected submission file."
+  - title: "Tutorial 9 · Advanced Memory Systems"
+    href: "/courses/coa-tutorial-9/"
+    emoji: "🗂️"
+    blurb: "Fragmentation, segmentation and paging, compaction and allocation, then addresses, caches and swapping — guided, with a protected submission file."
 ---
