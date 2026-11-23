@@ -228,7 +228,7 @@ footer .mono { font: 400 0.7rem var(--mono); color: var(--faint); margin-left: a
         <h1 data-ms="Daripada &lt;span class=&quot;hl-b&quot;&gt;idea pertama&lt;/span&gt; hingga &lt;span class=&quot;hl-a&quot;&gt;kertas terbit&lt;/span&gt;, di atas &lt;span class=&quot;hl-c&quot;&gt;satu kanvas&lt;/span&gt;.">From <span class="hl-b">first idea</span> to <span class="hl-a">published paper</span>, on <span class="hl-c">one canvas</span>.</h1>
         <p class="lead" data-ms="AutoWriterAI ialah ruang kerja desktop untuk penulisan saintifik. Susun manuskrip anda sebagai blok yang bersambung, jahit sumber anda menjadi hujah, dan biarkan U'lama' menyemak penaakulan anda semasa anda menulis. Hasil kerja anda kekal pada komputer anda.">AutoWriterAI is a desktop workspace for scientific writing. Lay out your manuscript as connected blocks, stitch your sources into arguments, and let U'lama' check your reasoning as you write. Your work stays on your computer.</p>
         <div class="cta">
-          <a class="btn primary" href="https://akmal.app/contact" target="_blank" rel="noopener" data-ms="Minta dimaklumkan">Ask to be notified</a>
+          <a class="btn primary" href="#notify" data-ms="Minta dimaklumkan">Ask to be notified</a>
           <a class="btn" href="#preview" data-ms="Tonton pratonton">Watch the preview</a>
         </div>
         <p class="meta" data-ms="Windows · macOS · Linux · dalam bahasa Inggeris dan Bahasa Melayu">Windows · macOS · Linux · in English and Bahasa Melayu</p>
@@ -353,7 +353,25 @@ footer .mono { font: 400 0.7rem var(--mono); color: var(--faint); margin-left: a
   <div class="wrap"><div class="closing">
     <span class="pill"><i></i><span data-ms="Akan datang">Coming soon</span></span>
     <h2 data-ms="Jadilah antara yang pertama mencubanya.">Be among the first to try it.</h2>
-    <div class="cta"><a class="btn primary" href="https://akmal.app/contact" target="_blank" rel="noopener" data-ms="Minta dimaklumkan">Ask to be notified</a></div>
+    <p class="intro" data-ms="Tinggalkan nama dan e-mel anda. Kami akan menghantar satu e-mel apabila AutoWriterAI sedia untuk dimuat turun.">Leave your name and email. We will send you one email when AutoWriterAI is ready to download.</p>
+    <form class="notify" id="notify" novalidate data-key="23f2a62f-3654-4a8e-83a5-8e2634920f17">
+      <!-- Traps for bots: people never see, tick or fill these -->
+      <input type="checkbox" name="botcheck" id="notify-botcheck" tabindex="-1" autocomplete="off" style="display:none">
+      <div class="trap" aria-hidden="true"><label for="notify-website">Website</label><input type="text" id="notify-website" name="website" tabindex="-1" autocomplete="off"></div>
+      <label for="notify-name"><span data-ms="Nama">Name</span>
+        <input type="text" id="notify-name" name="name" autocomplete="name" required maxlength="100"></label>
+      <label for="notify-email"><span data-ms="E-mel">Email</span>
+        <input type="email" id="notify-email" name="email" autocomplete="email" required maxlength="200"></label>
+      <label for="notify-message" class="wide"><span data-ms="Apa yang anda tulis? (pilihan)">What do you write? (optional)</span>
+        <input type="text" id="notify-message" name="message" maxlength="300" placeholder="e.g. PhD thesis in public health" data-ms-placeholder="cth. tesis PhD dalam kesihatan awam"></label>
+      <button type="submit" class="btn primary" id="notify-send" data-ms="Maklumkan saya">Notify me</button>
+      <p class="notify-status" id="notify-status" role="status" aria-live="polite"></p>
+      <p class="fine" data-ms="E-mel anda digunakan untuk makluman ini sahaja.">Your email is used for this notice only.</p>
+    </form>
+    <div class="notify-done" id="notify-done" hidden>
+      <h3 data-ms="Terima kasih. Anda dalam senarai.">Thank you. You are on the list.</h3>
+      <p data-ms="Kami akan menghantar e-mel kepada anda apabila AutoWriterAI dilancarkan.">We will email you when AutoWriterAI launches.</p>
+    </div>
   </div></div>
 </section>
 
