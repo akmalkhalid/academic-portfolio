@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="js">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -13,109 +13,212 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600&family=JetBrains+Mono:wght@400;500;600&display=swap"
     />
     <style>
-      * { box-sizing: border-box; }
-      body {
-        margin: 0;
-        background: #faf9f7;
-        color: #1c1917;
-        font-family: 'Inter', system-ui, sans-serif;
-        -webkit-font-smoothing: antialiased;
+      :root {
+        --bg0: #04060f; --bg1: #070b1c; --ink: #eaf0ff; --ink2: #b4bedb; --ink3: #7c87a8;
+        --line: rgba(148, 170, 255, .14); --glass: rgba(16, 22, 48, .55);
+        --cy: #38e1ff; --vi: #9b7bff; --pk: #ff5fd2; --ok: #5cf2a5;
       }
-      ::selection { background: #16142e; color: #fff; }
-      .wrap { max-width: 940px; margin: 0 auto; padding: 0 28px; }
+      * { box-sizing: border-box; }
+      html { background: var(--bg0); scroll-behavior: smooth; }
+      body {
+        margin: 0; min-height: 100vh; color: var(--ink);
+        background:
+          radial-gradient(1200px 700px at 78% -8%, rgba(56, 225, 255, .14), transparent 60%),
+          radial-gradient(900px 700px at -12% 30%, rgba(155, 123, 255, .14), transparent 60%),
+          radial-gradient(800px 600px at 60% 110%, rgba(255, 95, 210, .08), transparent 60%),
+          linear-gradient(180deg, var(--bg1), var(--bg0) 40%);
+        font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased;
+        overflow-x: hidden;
+      }
+      /* Fine noise + scanlines over everything: the "screen" texture. */
+      body::before {
+        content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 50; opacity: .5;
+        background: repeating-linear-gradient(0deg, rgba(255,255,255,.018) 0 1px, transparent 1px 3px);
+        mix-blend-mode: overlay;
+      }
+      ::selection { background: var(--cy); color: #021018; }
+      .wrap { max-width: 1080px; margin: 0 auto; padding: 0 28px; position: relative; z-index: 2; }
       .mono { font-family: 'JetBrains Mono', ui-monospace, monospace; }
       h1, h2 { font-family: 'Space Grotesk', system-ui, sans-serif; letter-spacing: -0.02em; }
+      a { color: var(--cy); }
 
+      /* ---------- header ---------- */
       header.bar {
-        position: sticky; top: 0; z-index: 5;
-        background: rgba(250, 249, 247, 0.85);
-        backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-        border-bottom: 1px solid #e7e3dd;
+        position: sticky; top: 0; z-index: 20;
+        background: rgba(5, 8, 20, .6); backdrop-filter: blur(14px) saturate(1.4); -webkit-backdrop-filter: blur(14px) saturate(1.4);
+        border-bottom: 1px solid var(--line);
       }
-      .bar-in {
-        max-width: 940px; margin: 0 auto; padding: 13px 28px;
-        display: flex; align-items: center; justify-content: space-between; gap: 16px;
+      header.bar::after {
+        content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px;
+        background: linear-gradient(90deg, transparent, var(--cy), var(--vi), transparent); opacity: .55;
       }
-      .brand { display: flex; align-items: center; gap: 9px; text-decoration: none; color: #1c1917; font-weight: 600; font-size: 14px; }
-      .dot { width: 10px; height: 10px; border-radius: 50%; background: #16142e; }
-
-      .langs { display: flex; gap: 4px; }
+      .bar-in { max-width: 1080px; margin: 0 auto; padding: 13px 28px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+      .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--ink); font-weight: 600; font-size: 14px; }
+      .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--cy); box-shadow: 0 0 0 3px rgba(56,225,255,.15), 0 0 14px var(--cy); }
+      .langs { display: flex; gap: 4px; padding: 3px; border: 1px solid var(--line); border-radius: 9px; background: rgba(255,255,255,.03); }
       .langs button {
-        font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600;
-        letter-spacing: .06em; cursor: pointer; padding: 5px 11px; border-radius: 6px;
-        border: 1px solid #ddd6cc; background: #fff; color: #57514b;
+        font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; letter-spacing: .08em;
+        cursor: pointer; padding: 5px 11px; border-radius: 6px; border: 0; background: transparent; color: var(--ink3);
       }
-      .langs button[aria-pressed='true'] { background: #16142e; border-color: #16142e; color: #fff; }
+      .langs button[aria-pressed='true'] { background: linear-gradient(135deg, var(--cy), var(--vi)); color: #050816; box-shadow: 0 0 16px rgba(56,225,255,.35); }
+      .langs button:focus-visible { outline: 2px solid var(--cy); outline-offset: 2px; }
 
-      .intro { padding: 52px 0 8px; }
-      .eyebrow { font-size: 11.5px; letter-spacing: .14em; text-transform: uppercase; color: #a39a8f; margin: 0 0 14px; }
-      h1 { font-weight: 600; font-size: clamp(30px, 5vw, 46px); line-height: 1.05; margin: 0 0 16px; text-wrap: balance; }
-      .lede { font-size: 17px; line-height: 1.6; color: #57514b; max-width: 620px; margin: 0; }
+      /* ---------- hero ---------- */
+      .hero { position: relative; overflow: hidden; border-bottom: 1px solid var(--line); }
+      .hero-in { max-width: 1080px; margin: 0 auto; padding: 72px 28px 64px; position: relative; z-index: 2; min-height: 520px; display: flex; flex-direction: column; justify-content: center; }
+      #globe { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; }
+      .floor {
+        position: absolute; left: -50%; right: -50%; bottom: -10%; height: 70%; z-index: 0;
+        background-image:
+          linear-gradient(rgba(56,225,255,.22) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(155,123,255,.22) 1px, transparent 1px);
+        background-size: 56px 56px;
+        transform: perspective(520px) rotateX(68deg); transform-origin: 50% 0;
+        -webkit-mask-image: linear-gradient(180deg, transparent, #000 30%, #000 60%, transparent);
+                mask-image: linear-gradient(180deg, transparent, #000 30%, #000 60%, transparent);
+        animation: floor 6s linear infinite;
+      }
+      @keyframes floor { to { background-position: 0 56px, 0 0; } }
+      .eyebrow { font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: var(--cy); margin: 0 0 18px; display: flex; align-items: center; gap: 10px; }
+      .eyebrow::before { content: ''; width: 26px; height: 1px; background: var(--cy); box-shadow: 0 0 8px var(--cy); }
+      .caret { display: inline-block; width: .6em; height: 1em; background: var(--cy); vertical-align: -2px; margin-left: 4px; animation: blink 1.1s steps(1) infinite; }
+      @keyframes blink { 50% { opacity: 0; } }
+      h1 { font-weight: 600; font-size: clamp(38px, 6.4vw, 72px); line-height: .98; margin: 0 0 22px; max-width: 640px; text-wrap: balance; }
+      h1 .grad, h1 { background: linear-gradient(100deg, #fff 0%, #dfe8ff 35%, var(--cy) 62%, var(--vi) 82%, var(--pk) 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+      .lede { font-size: 17.5px; line-height: 1.65; color: var(--ink2); max-width: 560px; margin: 0; }
+      .stats { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 30px; }
+      .stat {
+        display: flex; align-items: baseline; gap: 8px; padding: 9px 14px; border-radius: 10px;
+        border: 1px solid var(--line); background: rgba(10, 16, 38, .6); backdrop-filter: blur(8px);
+        font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink3);
+      }
+      .stat b { font-family: 'Space Grotesk', sans-serif; font-size: 22px; letter-spacing: 0; color: var(--ink); text-shadow: 0 0 18px rgba(56,225,255,.45); }
 
       .note {
-        margin: 26px 0 0; padding: 13px 16px; border-radius: 10px;
-        background: #fbf3ea; border: 1px solid #f0dcc4;
-        font-size: 13.5px; line-height: 1.55; color: #6b4f2a;
+        margin: 34px 0 0; padding: 13px 16px 13px 44px; border-radius: 10px; max-width: 620px; position: relative;
+        background: rgba(255, 184, 77, .06); border: 1px solid rgba(255, 184, 77, .28);
+        font-size: 13.5px; line-height: 1.55; color: #f5d9ac;
       }
-      .note b { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: #a8703a; }
+      .note::before { content: '◈'; position: absolute; left: 16px; top: 12px; color: #ffb84d; text-shadow: 0 0 10px #ffb84d; }
+      .note b { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: #ffb84d; }
 
-      .cards { display: flex; flex-direction: column; gap: 16px; padding: 34px 0 10px; }
+      /* ---------- section label ---------- */
+      .sec { display: flex; align-items: center; gap: 14px; margin: 54px 0 0; font-family: 'JetBrains Mono', monospace; font-size: 11.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink3); }
+      .sec::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, var(--line), transparent); }
+      .sec span { color: var(--cy); }
+
+      /* ---------- cards ---------- */
+      .cards { display: flex; flex-direction: column; gap: 22px; padding: 26px 0 10px; perspective: 1400px; }
       .card {
-        position: relative;
-        display: block; text-decoration: none; color: #1c1917;
-        background: #fff; border: 1px solid #e7e3dd; border-radius: 15px;
-        padding: 24px 26px; transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+        --acc: #38e1ff;
+        --acc-hi: color-mix(in srgb, var(--acc) 62%, white);
+        --rx: 0deg; --ry: 0deg; --mx: 50%; --my: 0%;
+        position: relative; display: block; text-decoration: none; color: var(--ink);
+        padding: 28px 230px 28px 30px; border-radius: 20px;
+        background:
+          linear-gradient(160deg, color-mix(in srgb, var(--acc) 13%, transparent), transparent 45%),
+          var(--glass);
+        border: 1px solid color-mix(in srgb, var(--acc) 28%, rgba(148,170,255,.12));
+        box-shadow: 0 30px 60px -40px rgba(0,0,0,.9), inset 0 1px 0 rgba(255,255,255,.06);
+        transform: rotateX(var(--rx)) rotateY(var(--ry));
+        transform-style: preserve-3d;
+        transition: transform .25s cubic-bezier(.2,.8,.2,1), box-shadow .3s ease, border-color .3s ease, opacity .7s ease, translate .7s cubic-bezier(.2,.8,.2,1), scale .7s cubic-bezier(.2,.8,.2,1);
       }
-      .card:hover { transform: translateY(-2px); box-shadow: 0 16px 36px -24px rgba(28, 25, 23, .5); }
-      .card:focus-visible { outline: 2px solid #8b7bf0; outline-offset: 3px; }
-      .kicker { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 12px; padding-right: 34px; }
-      .tag { font-size: 10.5px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; padding: 3px 9px; border-radius: 5px; }
-      .card h2 { font-weight: 600; font-size: clamp(19px, 2.6vw, 24px); line-height: 1.18; margin: 0 0 9px; }
-      .card p { font-size: 14.5px; line-height: 1.6; color: #57514b; margin: 0 0 14px; max-width: 640px; }
-      .facts { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 18px; }
-      .fact { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: #6b6560; background: #f4f1ec; border: 1px solid #e7e3dd; padding: 3px 9px; border-radius: 5px; }
-
-      /* The whole panel is the link; the button is the affordance that says so. */
+      /* Top accent beam */
+      .card::after {
+        content: ''; position: absolute; left: 24px; right: 24px; top: -1px; height: 2px; border-radius: 2px; pointer-events: none;
+        background: linear-gradient(90deg, transparent, var(--acc-hi), transparent);
+        box-shadow: 0 0 18px var(--acc);
+      }
+      /* Pointer glare */
+      .card::before {
+        content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0;
+        background: radial-gradient(520px circle at var(--mx) var(--my), color-mix(in srgb, var(--acc) 22%, transparent), transparent 45%);
+        transition: opacity .3s ease;
+      }
+      .card:hover, .card:focus-within {
+        border-color: color-mix(in srgb, var(--acc) 60%, transparent);
+        box-shadow: 0 40px 80px -40px color-mix(in srgb, var(--acc) 55%, black), 0 0 0 1px color-mix(in srgb, var(--acc) 25%, transparent), inset 0 1px 0 rgba(255,255,255,.08);
+      }
+      .card:hover::before { opacity: 1; }
+      .card:focus-visible { outline: 2px solid var(--acc-hi); outline-offset: 4px; }
+      .idx {
+        position: absolute; left: -14px; top: 22px; transform: translateZ(40px);
+        font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; letter-spacing: .08em;
+        padding: 3px 7px; border-radius: 6px; color: #050816; background: var(--acc-hi); box-shadow: 0 0 16px var(--acc);
+      }
+      .holo {
+        position: absolute; right: 26px; top: 50%; width: 180px; height: 180px; margin-top: -90px;
+        transform: translateZ(60px); pointer-events: none;
+      }
+      .holo-base {
+        position: absolute; right: 46px; bottom: 26px; width: 140px; height: 34px; pointer-events: none;
+        border-radius: 50%; border: 1px solid color-mix(in srgb, var(--acc) 50%, transparent);
+        background: radial-gradient(closest-side, color-mix(in srgb, var(--acc) 30%, transparent), transparent);
+        transform: translateZ(20px);
+      }
+      .kicker { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 14px; }
+      .tag {
+        font-size: 10.5px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; padding: 4px 9px; border-radius: 6px;
+        color: var(--acc-hi); background: color-mix(in srgb, var(--acc) 14%, transparent); border: 1px solid color-mix(in srgb, var(--acc) 35%, transparent);
+      }
+      .tag.free { color: var(--ok); background: rgba(92,242,165,.08); border-color: rgba(92,242,165,.3); }
+      .card h2 { font-weight: 600; font-size: clamp(20px, 2.7vw, 27px); line-height: 1.15; margin: 0 0 10px; color: #fff; }
+      .card p { font-size: 14.5px; line-height: 1.65; color: var(--ink2); margin: 0 0 16px; max-width: 640px; }
+      .facts { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 20px; }
+      .fact {
+        font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: var(--ink2);
+        background: rgba(255,255,255,.035); border: 1px solid var(--line); padding: 4px 9px; border-radius: 6px;
+      }
       .btn {
-        display: inline-block; font-family: 'JetBrains Mono', monospace;
-        font-size: 12px; font-weight: 600; color: #fff; background: #16142e;
-        padding: 9px 16px; border-radius: 8px; transition: background .2s ease;
+        display: inline-flex; align-items: center; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600;
+        color: #050816; background: linear-gradient(135deg, var(--acc-hi), color-mix(in srgb, var(--acc) 80%, white 0%));
+        padding: 10px 17px; border-radius: 10px; box-shadow: 0 0 0 1px rgba(255,255,255,.1) inset, 0 10px 30px -12px var(--acc);
+        transition: box-shadow .25s ease, filter .25s ease;
       }
-      .card:hover .btn { background: #2a2650; }
+      .btn::after { content: '→'; transition: transform .25s ease; }
+      .card:hover .btn { box-shadow: 0 0 0 1px rgba(255,255,255,.2) inset, 0 0 26px var(--acc); filter: brightness(1.08); }
+      .card:hover .btn::after { transform: translateX(3px); }
+      .arrow { display: none; }
 
-      /* Corner chevron — a second, quieter cue that the panel itself is clickable. */
-      .arrow {
-        position: absolute; top: 22px; right: 24px;
-        font-family: 'JetBrains Mono', monospace; font-size: 17px; line-height: 1;
-        color: #d5cec4; transition: transform .2s ease, color .2s ease;
-      }
-      .card:hover .arrow { transform: translateX(4px); }
-
-      /* Cards with more than one link: the title link stretches over the panel,
-         the secondary link sits above it. */
       .card-multi h2 a.stretch { color: inherit; text-decoration: none; }
-      .card-multi h2 a.stretch::after { content: ''; position: absolute; inset: 0; border-radius: 15px; }
+      .card-multi h2 a.stretch::after { content: ''; position: absolute; inset: 0; border-radius: 20px; z-index: 1; }
       .card-multi h2 a.stretch:focus-visible { outline: none; }
-      .card-multi:focus-within { outline: 2px solid #8b7bf0; outline-offset: 3px; }
+      .card-multi:focus-within { outline: 2px solid var(--acc-hi); outline-offset: 4px; }
       .actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
       .btn-ghost {
-        position: relative; z-index: 1; display: inline-block;
-        font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600;
-        color: #16142e; background: #fff; border: 1px solid #ddd6cc;
-        padding: 8px 15px; border-radius: 8px; text-decoration: none;
-        transition: border-color .2s ease, background .2s ease;
+        position: relative; z-index: 2; display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600;
+        color: var(--acc-hi); background: rgba(5,8,22,.5); border: 1px solid color-mix(in srgb, var(--acc) 45%, transparent);
+        padding: 9px 15px; border-radius: 10px; text-decoration: none; transition: background .2s ease, box-shadow .2s ease;
       }
-      .btn-ghost:hover { border-color: #16142e; background: #f4f1ec; }
-      .btn-ghost:focus-visible { outline: 2px solid #8b7bf0; outline-offset: 2px; }
+      .btn-ghost:hover { background: color-mix(in srgb, var(--acc) 16%, transparent); box-shadow: 0 0 18px color-mix(in srgb, var(--acc) 45%, transparent); }
+      .btn-ghost:focus-visible { outline: 2px solid var(--acc-hi); outline-offset: 2px; }
 
-      footer { padding: 38px 0 64px; color: #a39a8f; font-size: 12.5px; line-height: 1.6; }
-      footer a { color: #57514b; }
+      /* Scroll reveal (only when JS runs, so nothing is hidden without it). */
+      .js .card { opacity: 0; translate: 0 46px; scale: .97; }
+      .js .card.in { opacity: 1; translate: 0 0; scale: 1; }
+
+      footer { padding: 46px 0 70px; margin-top: 40px; color: var(--ink3); font-size: 12.5px; line-height: 1.7; border-top: 1px solid var(--line); }
+      footer a { color: var(--cy); }
 
       [data-bm] { display: none; }
       body.bm [data-en] { display: none; }
       body.bm [data-bm] { display: revert; }
+      body.bm .eyebrow[data-bm] { display: flex; }
 
-      @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+      @media (max-width: 760px) {
+        .card { padding: 26px 22px 24px; }
+        .holo { position: relative; right: auto; top: auto; margin: -8px 0 4px auto; width: 120px; height: 120px; display: block; float: right; }
+        .holo-base { display: none; }
+        .idx { left: 14px; top: -11px; }
+        .hero-in { min-height: 0; padding: 56px 22px 48px; }
+        #globe { opacity: .45; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after { transition: none !important; animation: none !important; }
+        .js .card { opacity: 1; translate: none; scale: none; }
+        .card { transform: none !important; }
+      }
     </style>
   </head>
   <body>
@@ -129,10 +232,12 @@
       </div>
     </header>
 
-    <main class="wrap">
-      <section class="intro">
-        <p class="eyebrow mono" data-en>/ workshops · self-paced series</p>
-        <p class="eyebrow mono" data-bm>/ bengkel · siri pembelajaran kendiri</p>
+    <section class="hero">
+      <div class="floor" aria-hidden="true"></div>
+      <canvas id="globe" aria-hidden="true"></canvas>
+      <div class="hero-in">
+        <p class="eyebrow mono" data-en>workshops · self-paced series<span class="caret"></span></p>
+        <p class="eyebrow mono" data-bm>bengkel · siri pembelajaran kendiri<span class="caret"></span></p>
 
         <h1 data-en>Workshops and self-paced series.</h1>
         <h1 data-bm>Bengkel dan siri pembelajaran kendiri.</h1>
@@ -146,6 +251,13 @@
           mengikut kadar anda. Percuma, dwibahasa, dan tiada pendaftaran diperlukan.
         </p>
 
+
+        <div class="stats">
+          <div class="stat"><b id="kit-count">11</b><span data-en>kits</span><span data-bm>kit</span></div>
+          <div class="stat"><b data-en>Free</b><b data-bm>Percuma</b><span data-en>open access</span><span data-bm>akses terbuka</span></div>
+          <div class="stat"><b>BM·EN</b><span data-en>bilingual</span><span data-bm>dwibahasa</span></div>
+        </div>
+
         <p class="note">
           <b data-en>Unlisted</b><b data-bm>Tidak tersenarai</b><br />
           <span data-en>
@@ -157,17 +269,24 @@
             carian. Ia wujud supaya satu pautan boleh dikongsi dengan kohort, bukan beberapa pautan.
           </span>
         </p>
-      </section>
+      </div>
+    </section>
+
+    <main class="wrap">
+      <p class="sec"><span>//</span> <span data-en>Kits · newest first</span><span data-bm>Kit · terbaharu dahulu</span></p>
 
       <section class="cards">
         <!-- AI-Assisted Automation of ICT Workflows (full day, 7 modules, bilingual deck).
              Multi-link card: slides (title link) + 101-ticket dataset. -->
-        <div class="card card-multi" style="border-top: 3px solid #7c5cf0">
-          <span class="arrow" aria-hidden="true" style="color: #c4b7f7">→</span>
+        <div class="card card-multi" style="--acc: #7c5cf0">
+          <span class="arrow" aria-hidden="true">→</span>
+          <span class="idx" aria-hidden="true">01</span>
+          <canvas class="holo" aria-hidden="true"></canvas>
+          <span class="holo-base" aria-hidden="true"></span>
           <div class="kicker">
-            <span class="tag mono" style="background: #efebfd; color: #3f2a99" data-en>Workshop kit · ICT automation</span>
-            <span class="tag mono" style="background: #efebfd; color: #3f2a99" data-bm>Kit bengkel · Automasi ICT</span>
-            <span class="tag mono" style="background: #eaf3de; color: #27500a">FREE · OPEN ACCESS</span>
+            <span class="tag mono" data-en>Workshop kit · ICT automation</span>
+            <span class="tag mono" data-bm>Kit bengkel · Automasi ICT</span>
+            <span class="tag mono free">FREE · OPEN ACCESS</span>
           </div>
           <h2 data-en><a class="stretch" href="/workshops/ai-automation-ict/">AI-Assisted Automation of ICT Workflows</a></h2>
           <h2 data-bm><a class="stretch" href="/workshops/ai-automation-ict/">Automasi Berbantukan AI untuk Aliran Kerja ICT</a></h2>
@@ -206,12 +325,15 @@
 
         <!-- Boosting Your Research with AI (2-day, 8 sessions, systematic review).
              Multi-link card: slides (title link), Prompt Studio, practice CSV. -->
-        <div class="card card-multi" style="border-top: 3px solid #1aa3d9">
-          <span class="arrow" aria-hidden="true" style="color: #8fd8f2">→</span>
+        <div class="card card-multi" style="--acc: #1aa3d9">
+          <span class="arrow" aria-hidden="true">→</span>
+          <span class="idx" aria-hidden="true">02</span>
+          <canvas class="holo" aria-hidden="true"></canvas>
+          <span class="holo-base" aria-hidden="true"></span>
           <div class="kicker">
-            <span class="tag mono" style="background: #e2f5fc; color: #0b5875" data-en>Workshop kit · Systematic review</span>
-            <span class="tag mono" style="background: #e2f5fc; color: #0b5875" data-bm>Kit bengkel · Sorotan sistematik</span>
-            <span class="tag mono" style="background: #eaf3de; color: #27500a">FREE · OPEN ACCESS</span>
+            <span class="tag mono" data-en>Workshop kit · Systematic review</span>
+            <span class="tag mono" data-bm>Kit bengkel · Sorotan sistematik</span>
+            <span class="tag mono free">FREE · OPEN ACCESS</span>
           </div>
           <h2 data-en><a class="stretch" href="/workshops/boosting-research-ai/">Boosting Your Research with AI: Tools, Techniques and Best Practices</a></h2>
           <h2 data-bm><a class="stretch" href="/workshops/boosting-research-ai/">Memperkasa Penyelidikan dengan AI: Alat, Teknik dan Amalan Terbaik</a></h2>
@@ -250,12 +372,15 @@
         </div>
 
         <!-- Bengkel Penyelidikan AI: From Zero To Hero (3-day, 9 slots + case study) -->
-        <a class="card" href="/workshops/bengkel-penyelidikan-ai/" style="border-top: 3px solid #0f766e">
-          <span class="arrow" aria-hidden="true" style="color: #94d1c8">→</span>
+        <a class="card" href="/workshops/bengkel-penyelidikan-ai/" style="--acc: #0f766e">
+          <span class="arrow" aria-hidden="true">→</span>
+          <span class="idx" aria-hidden="true">03</span>
+          <canvas class="holo" aria-hidden="true"></canvas>
+          <span class="holo-base" aria-hidden="true"></span>
           <div class="kicker">
-            <span class="tag mono" style="background: #e3f4f1; color: #0b524c" data-en>Workshop kit · Research methods</span>
-            <span class="tag mono" style="background: #e3f4f1; color: #0b524c" data-bm>Kit bengkel · Kaedah penyelidikan</span>
-            <span class="tag mono" style="background: #eaf3de; color: #27500a">FREE · OPEN ACCESS</span>
+            <span class="tag mono" data-en>Workshop kit · Research methods</span>
+            <span class="tag mono" data-bm>Kit bengkel · Kaedah penyelidikan</span>
+            <span class="tag mono free">FREE · OPEN ACCESS</span>
           </div>
           <h2 data-en>AI Research Workshop: From Zero To Hero</h2>
           <h2 data-bm>Bengkel Penyelidikan AI: From Zero To Hero</h2>
@@ -288,12 +413,15 @@
         </a>
 
         <!-- Kit Penulisan Jurnal Berimpak / Impact Journal Writing Kit -->
-        <a class="card" href="/workshops/penulisan-berimpak/" style="border-top: 3px solid #4338a8">
-          <span class="arrow" aria-hidden="true" style="color: #aaa3e6">→</span>
+        <a class="card" href="/workshops/penulisan-berimpak/" style="--acc: #4338a8">
+          <span class="arrow" aria-hidden="true">→</span>
+          <span class="idx" aria-hidden="true">04</span>
+          <canvas class="holo" aria-hidden="true"></canvas>
+          <span class="holo-base" aria-hidden="true"></span>
           <div class="kicker">
-            <span class="tag mono" style="background: #ecebfa; color: #2e2680" data-en>Workshop kit · Academic writing</span>
-            <span class="tag mono" style="background: #ecebfa; color: #2e2680" data-bm>Kit bengkel · Penulisan akademik</span>
-            <span class="tag mono" style="background: #eaf3de; color: #27500a">FREE · OPEN ACCESS</span>
+            <span class="tag mono" data-en>Workshop kit · Academic writing</span>
+            <span class="tag mono" data-bm>Kit bengkel · Penulisan akademik</span>
+            <span class="tag mono free">FREE · OPEN ACCESS</span>
           </div>
           <h2 data-en>Impact Journal Writing Kit</h2>
           <h2 data-bm>Kit Penulisan Jurnal Berimpak</h2>
@@ -327,12 +455,15 @@
         </a>
 
         <!-- MVP Sprint: AI-Powered Prototyping -->
-        <a class="card" href="/workshops/mvp-sprint/" style="border-top: 3px solid #e8833a">
-          <span class="arrow" aria-hidden="true" style="color: #f4c39c">→</span>
+        <a class="card" href="/workshops/mvp-sprint/" style="--acc: #e8833a">
+          <span class="arrow" aria-hidden="true">→</span>
+          <span class="idx" aria-hidden="true">05</span>
+          <canvas class="holo" aria-hidden="true"></canvas>
+          <span class="holo-base" aria-hidden="true"></span>
           <div class="kicker">
-            <span class="tag mono" style="background: #fdf0e6; color: #8a4510" data-en>Workshop kit · Prototyping</span>
-            <span class="tag mono" style="background: #fdf0e6; color: #8a4510" data-bm>Kit bengkel · Pemprototaipan</span>
-            <span class="tag mono" style="background: #eaf3de; color: #27500a">FREE · OPEN ACCESS</span>
+            <span class="tag mono" data-en>Workshop kit · Prototyping</span>
+            <span class="tag mono" data-bm>Kit bengkel · Pemprototaipan</span>
+            <span class="tag mono free">FREE · OPEN ACCESS</span>
           </div>
           <h2 data-en>MVP Sprint: AI-Powered Prototyping</h2>
           <h2 data-bm>MVP Sprint: Pemprototaipan Berkuasa AI</h2>
@@ -362,12 +493,15 @@
         </a>
 
         <!-- Bengkel Kajian Literatur AI (FSSK x PTSL, 20 Oct 2026) -->
-        <a class="card" href="/workshops/bengkel-kajian-literatur-ai/" style="border-top: 3px solid #2f8f5b">
-          <span class="arrow" aria-hidden="true" style="color: #9fd3b4">→</span>
+        <a class="card" href="/workshops/bengkel-kajian-literatur-ai/" style="--acc: #2f8f5b">
+          <span class="arrow" aria-hidden="true">→</span>
+          <span class="idx" aria-hidden="true">06</span>
+          <canvas class="holo" aria-hidden="true"></canvas>
+          <span class="holo-base" aria-hidden="true"></span>
           <div class="kicker">
-            <span class="tag mono" style="background: #e4f4ea; color: #1c5a37" data-en>Workshop · 3 hours</span>
-            <span class="tag mono" style="background: #e4f4ea; color: #1c5a37" data-bm>Bengkel · 3 jam</span>
-            <span class="tag mono" style="background: #eaf3de; color: #27500a">FREE · OPEN ACCESS</span>
+            <span class="tag mono" data-en>Workshop · 3 hours</span>
+            <span class="tag mono" data-bm>Bengkel · 3 jam</span>
+            <span class="tag mono free">FREE · OPEN ACCESS</span>
           </div>
           <h2 data-en>AI Literature Review Workshop</h2>
           <h2 data-bm>Bengkel Kajian Literatur AI</h2>
@@ -402,12 +536,15 @@
         <!-- Ollama + Hermes Agent: local AI assistant (half-day, hands-on).
              A <div> rather than an <a> because the card carries two links (deck +
              practice pack); the title link is stretched to cover the whole panel. -->
-        <div class="card card-multi" style="border-top: 3px solid #d4a017">
-          <span class="arrow" aria-hidden="true" style="color: #ecd38a">→</span>
+        <div class="card card-multi" style="--acc: #d4a017">
+          <span class="arrow" aria-hidden="true">→</span>
+          <span class="idx" aria-hidden="true">07</span>
+          <canvas class="holo" aria-hidden="true"></canvas>
+          <span class="holo-base" aria-hidden="true"></span>
           <div class="kicker">
-            <span class="tag mono" style="background: #fbf3d9; color: #6b4c00" data-en>Workshop kit · Local AI agents</span>
-            <span class="tag mono" style="background: #fbf3d9; color: #6b4c00" data-bm>Kit bengkel · Ejen AI setempat</span>
-            <span class="tag mono" style="background: #eaf3de; color: #27500a">FREE · OPEN ACCESS</span>
+            <span class="tag mono" data-en>Workshop kit · Local AI agents</span>
+            <span class="tag mono" data-bm>Kit bengkel · Ejen AI setempat</span>
+            <span class="tag mono free">FREE · OPEN ACCESS</span>
           </div>
           <h2 data-en><a class="stretch" href="/workshops/ollama-hermes/">Your Own AI Assistant: Ollama + Hermes Agent</a></h2>
           <h2 data-bm><a class="stretch" href="/workshops/ollama-hermes/">Pembantu AI Anda Sendiri: Ollama + Hermes Agent</a></h2>
@@ -441,12 +578,15 @@
         </div>
 
         <!-- Sumitomo Grant Kit FY2026 -->
-        <a class="card" href="/workshops/sumitomo-grant-kit/" style="border-top: 3px solid #d9485f">
-          <span class="arrow" aria-hidden="true" style="color: #f0b3bd">→</span>
+        <a class="card" href="/workshops/sumitomo-grant-kit/" style="--acc: #d9485f">
+          <span class="arrow" aria-hidden="true">→</span>
+          <span class="idx" aria-hidden="true">08</span>
+          <canvas class="holo" aria-hidden="true"></canvas>
+          <span class="holo-base" aria-hidden="true"></span>
           <div class="kicker">
-            <span class="tag mono" style="background: #fcebee; color: #8a1c2b" data-en>Workshop kit · Grant writing</span>
-            <span class="tag mono" style="background: #fcebee; color: #8a1c2b" data-bm>Kit bengkel · Penulisan geran</span>
-            <span class="tag mono" style="background: #eaf3de; color: #27500a">FREE · OPEN ACCESS</span>
+            <span class="tag mono" data-en>Workshop kit · Grant writing</span>
+            <span class="tag mono" data-bm>Kit bengkel · Penulisan geran</span>
+            <span class="tag mono free">FREE · OPEN ACCESS</span>
           </div>
           <h2 data-en>Sumitomo Grant Kit FY2026</h2>
           <h2 data-bm>Kit Geran Sumitomo FY2026</h2>
@@ -476,12 +616,15 @@
         </a>
 
         <!-- SIM Builder -->
-        <a class="card" href="/workshops/sim-builder/" style="border-top: 3px solid #21b3a0">
-          <span class="arrow" aria-hidden="true" style="color: #96ddd2">→</span>
+        <a class="card" href="/workshops/sim-builder/" style="--acc: #21b3a0">
+          <span class="arrow" aria-hidden="true">→</span>
+          <span class="idx" aria-hidden="true">09</span>
+          <canvas class="holo" aria-hidden="true"></canvas>
+          <span class="holo-base" aria-hidden="true"></span>
           <div class="kicker">
-            <span class="tag mono" style="background: #e1f5ee; color: #085041" data-en>Series · 4 units</span>
-            <span class="tag mono" style="background: #e1f5ee; color: #085041" data-bm>Siri · 4 unit</span>
-            <span class="tag mono" style="background: #eaf3de; color: #27500a">FREE · OPEN ACCESS</span>
+            <span class="tag mono" data-en>Series · 4 units</span>
+            <span class="tag mono" data-bm>Siri · 4 unit</span>
+            <span class="tag mono free">FREE · OPEN ACCESS</span>
           </div>
           <h2 data-en>SIM Builder</h2>
           <h2 data-bm>SIM Builder</h2>
@@ -508,12 +651,15 @@
       
 
         <!-- Integrating AI into Research & Pedagogy -->
-        <a class="card" href="/workshops/ai-research-pedagogy/" style="border-top: 3px solid #4d8df0">
-          <span class="arrow" aria-hidden="true" style="color: #a8c8f5">→</span>
+        <a class="card" href="/workshops/ai-research-pedagogy/" style="--acc: #4d8df0">
+          <span class="arrow" aria-hidden="true">→</span>
+          <span class="idx" aria-hidden="true">10</span>
+          <canvas class="holo" aria-hidden="true"></canvas>
+          <span class="holo-base" aria-hidden="true"></span>
           <div class="kicker">
-            <span class="tag mono" style="background: #e6f1fb; color: #0c447c" data-en>Workshop · 2 sessions</span>
-            <span class="tag mono" style="background: #e6f1fb; color: #0c447c" data-bm>Bengkel · 2 sesi</span>
-            <span class="tag mono" style="background: #eaf3de; color: #27500a">FREE · OPEN ACCESS</span>
+            <span class="tag mono" data-en>Workshop · 2 sessions</span>
+            <span class="tag mono" data-bm>Bengkel · 2 sesi</span>
+            <span class="tag mono free">FREE · OPEN ACCESS</span>
           </div>
           <h2 data-en>Integrating AI into Research &amp; Pedagogy</h2>
           <h2 data-bm>Mengintegrasikan AI dalam Penyelidikan &amp; Pedagogi</h2>
@@ -540,12 +686,15 @@
         </a>
 
         <!-- Prompt Engineering Architect -->
-        <a class="card" href="/workshops/prompt-engineering-architect/" style="border-top: 3px solid #8b7bf0">
-          <span class="arrow" aria-hidden="true" style="color: #b8afe8">→</span>
+        <a class="card" href="/workshops/prompt-engineering-architect/" style="--acc: #8b7bf0">
+          <span class="arrow" aria-hidden="true">→</span>
+          <span class="idx" aria-hidden="true">11</span>
+          <canvas class="holo" aria-hidden="true"></canvas>
+          <span class="holo-base" aria-hidden="true"></span>
           <div class="kicker">
-            <span class="tag mono" style="background: #eeedfe; color: #3c3489" data-en>Self-instructional module</span>
-            <span class="tag mono" style="background: #eeedfe; color: #3c3489" data-bm>Modul pembelajaran kendiri</span>
-            <span class="tag mono" style="background: #eaf3de; color: #27500a">FREE · OPEN ACCESS</span>
+            <span class="tag mono" data-en>Self-instructional module</span>
+            <span class="tag mono" data-bm>Modul pembelajaran kendiri</span>
+            <span class="tag mono free">FREE · OPEN ACCESS</span>
           </div>
           <h2 data-en>Prompt Engineering Architect</h2>
           <h2 data-bm>Arkitek Kejuruteraan Prompt</h2>
@@ -588,21 +737,218 @@
     </main>
 
     <script>
-      ;(function () {
-        var en = document.getElementById('btn-en')
-        var bm = document.getElementById('btn-bm')
-        function set(lang) {
-          var isBM = lang === 'bm'
-          document.body.classList.toggle('bm', isBM)
-          document.documentElement.lang = isBM ? 'ms' : 'en'
-          en.setAttribute('aria-pressed', String(!isBM))
-          bm.setAttribute('aria-pressed', String(isBM))
+;(function () {
+  // ---------- language toggle (unchanged behaviour) ----------
+  var en = document.getElementById('btn-en')
+  var bm = document.getElementById('btn-bm')
+  function set(lang) {
+    var isBM = lang === 'bm'
+    document.body.classList.toggle('bm', isBM)
+    document.documentElement.lang = isBM ? 'ms' : 'en'
+    en.setAttribute('aria-pressed', String(!isBM))
+    bm.setAttribute('aria-pressed', String(isBM))
+  }
+  en.addEventListener('click', function () { set('en') })
+  bm.addEventListener('click', function () { set('bm') })
+  // ?lang=bm lets a link open straight into Bahasa Melayu
+  if (/[?&]lang=(bm|ms)\b/i.test(location.search)) set('bm')
+
+  var cards = Array.prototype.slice.call(document.querySelectorAll('.cards .card'))
+  var n = document.getElementById('kit-count'); if (n) n.textContent = cards.length
+
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  var DPR = Math.min(window.devicePixelRatio || 1, 2)
+
+  // ---------- tiny 3D helpers ----------
+  function rot(p, ax, ay) {            // rotate point around Y then X
+    var cy = Math.cos(ay), sy = Math.sin(ay), cx = Math.cos(ax), sx = Math.sin(ax)
+    var x = p[0] * cy + p[2] * sy, z = -p[0] * sy + p[2] * cy
+    var y = p[1] * cx - z * sx; z = p[1] * sx + z * cx
+    return [x, y, z]
+  }
+  function rgb(hex) { hex = hex.replace('#', ''); return [0, 2, 4].map(function (i) { return parseInt(hex.substr(i, 2), 16) }) }
+  function rng(seed) { return function () { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296 } }
+
+  // ---------- hero: neural globe ----------
+  var cv = document.getElementById('globe')
+  if (cv) {
+    var g = cv.getContext('2d'), W = 0, H = 0, R = 1
+    var N = 360, pts = [], links = [], r = rng(7)
+    for (var i = 0; i < N; i++) {                  // Fibonacci sphere
+      var y = 1 - (i / (N - 1)) * 2, rad = Math.sqrt(1 - y * y), th = i * 2.399963
+      pts.push([Math.cos(th) * rad, y, Math.sin(th) * rad, r()])
+    }
+    for (i = 0; i < N; i++) {                      // link each node to its 2 nearest
+      var best = []
+      for (var j = 0; j < N; j++) if (j !== i) {
+        var d = Math.pow(pts[i][0] - pts[j][0], 2) + Math.pow(pts[i][1] - pts[j][1], 2) + Math.pow(pts[i][2] - pts[j][2], 2)
+        best.push([d, j])
+      }
+      best.sort(function (a, b) { return a[0] - b[0] })
+      for (var k = 0; k < 2; k++) if (i < best[k][1]) links.push([i, best[k][1]])
+    }
+    var pulses = []; for (i = 0; i < 26; i++) pulses.push([Math.floor(r() * links.length), r(), 0.25 + r() * 0.5])
+    var mx = 0, my = 0, tmx = 0, tmy = 0
+    window.addEventListener('pointermove', function (e) { tmx = e.clientX / innerWidth - .5; tmy = e.clientY / innerHeight - .5 })
+    function size() {
+      var b = cv.getBoundingClientRect(); W = b.width; H = b.height
+      cv.width = W * DPR; cv.height = H * DPR; g.setTransform(DPR, 0, 0, DPR, 0, 0)
+      R = Math.min(H * 0.36, W * 0.28)
+    }
+    size(); window.addEventListener('resize', size)
+    var cyan = [56, 225, 255], vio = [155, 123, 255], pink = [255, 95, 210]
+    function mix(a, b, t) { return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t] }
+    function drawGlobe(t) {
+      mx += (tmx - mx) * 0.05; my += (tmy - my) * 0.05
+      g.clearRect(0, 0, W, H)
+      var cx = W > 760 ? W * 0.74 : W * 0.5, cy = H * 0.5
+      var ay = t * 0.18 + mx * 0.9, ax = -0.35 + my * 0.5
+      var P = pts.map(function (p) {
+        var breathe = 1 + 0.035 * Math.sin(t * 1.4 + p[3] * 12)
+        var q = rot([p[0] * breathe, p[1] * breathe, p[2] * breathe], ax, ay)
+        var s = 2.6 / (2.6 + q[2])
+        return [cx + q[0] * R * s, cy + q[1] * R * s, q[2], s]
+      })
+      // glow core
+      var grd = g.createRadialGradient(cx, cy, 0, cx, cy, R * 1.25)
+      grd.addColorStop(0, 'rgba(56,225,255,.16)'); grd.addColorStop(.6, 'rgba(155,123,255,.06)'); grd.addColorStop(1, 'rgba(0,0,0,0)')
+      g.fillStyle = grd; g.beginPath(); g.arc(cx, cy, R * 1.25, 0, 6.283); g.fill()
+      // orbit rings
+      for (var o = 0; o < 3; o++) {
+        g.beginPath()
+        for (var a = 0; a <= 64; a++) {
+          var ang = a / 64 * 6.283
+          var q = rot(rot([Math.cos(ang) * 1.45, 0, Math.sin(ang) * 1.45], 0.5 + o * 0.55, o * 1.1 + t * 0.05), ax, ay)
+          var s = 2.6 / (2.6 + q[2]), X = cx + q[0] * R * s, Y = cy + q[1] * R * s
+          a ? g.lineTo(X, Y) : g.moveTo(X, Y)
         }
-        en.addEventListener('click', function () { set('en') })
-        bm.addEventListener('click', function () { set('bm') })
-        // ?lang=bm lets a link open straight into Bahasa Melayu
-        if (/[?&]lang=(bm|ms)\b/i.test(location.search)) set('bm')
-      })()
+        g.strokeStyle = ['rgba(56,225,255,.22)', 'rgba(155,123,255,.2)', 'rgba(255,95,210,.14)'][o]; g.lineWidth = 1; g.stroke()
+        var sa = t * (0.5 + o * 0.17) + o * 2
+        var sq = rot(rot([Math.cos(sa) * 1.45, 0, Math.sin(sa) * 1.45], 0.5 + o * 0.55, o * 1.1 + t * 0.05), ax, ay)
+        var ss = 2.6 / (2.6 + sq[2])
+        g.fillStyle = ['#38e1ff', '#9b7bff', '#ff5fd2'][o]; g.shadowColor = g.fillStyle; g.shadowBlur = 14
+        g.beginPath(); g.arc(cx + sq[0] * R * ss, cy + sq[1] * R * ss, 3.2 * ss, 0, 6.283); g.fill(); g.shadowBlur = 0
+      }
+      // links
+      g.lineWidth = 1
+      for (var l = 0; l < links.length; l++) {
+        var A = P[links[l][0]], B = P[links[l][1]], z = (A[2] + B[2]) / 2
+        var al = 0.05 + 0.3 * (1 - (z + 1) / 2)
+        var c = mix(cyan, vio, (z + 1) / 2)
+        g.strokeStyle = 'rgba(' + (c[0] | 0) + ',' + (c[1] | 0) + ',' + (c[2] | 0) + ',' + al.toFixed(3) + ')'
+        g.beginPath(); g.moveTo(A[0], A[1]); g.lineTo(B[0], B[1]); g.stroke()
+      }
+      // nodes
+      for (i = 0; i < N; i++) {
+        var p = P[i], front = 1 - (p[2] + 1) / 2
+        var c2 = mix(cyan, vio, 1 - front)
+        g.fillStyle = 'rgba(' + (c2[0] | 0) + ',' + (c2[1] | 0) + ',' + (c2[2] | 0) + ',' + (0.25 + 0.75 * front).toFixed(3) + ')'
+        g.beginPath(); g.arc(p[0], p[1], (0.6 + 1.5 * front) * p[3], 0, 6.283); g.fill()
+      }
+      // data pulses travelling along links
+      for (i = 0; i < pulses.length; i++) {
+        var pl = pulses[i], L = links[pl[0]], f = (pl[1] + t * pl[2]) % 1
+        var A2 = P[L[0]], B2 = P[L[1]]
+        if ((A2[2] + B2[2]) / 2 > 0.3) continue
+        var X2 = A2[0] + (B2[0] - A2[0]) * f, Y2 = A2[1] + (B2[1] - A2[1]) * f
+        g.fillStyle = i % 3 ? '#bff6ff' : '#ffc2f0'; g.shadowColor = i % 3 ? '#38e1ff' : '#ff5fd2'; g.shadowBlur = 12
+        g.beginPath(); g.arc(X2, Y2, 1.9, 0, 6.283); g.fill(); g.shadowBlur = 0
+        if (f > 0.97) pl[0] = (pl[0] * 31 + 17) % links.length
+      }
+    }
+  }
+
+  // ---------- card holograms: one wireframe solid per card ----------
+  var PHI = (1 + Math.sqrt(5)) / 2
+  function byMinEdge(v) {
+    var e = [], m = Infinity, i, j, d
+    for (i = 0; i < v.length; i++) for (j = i + 1; j < v.length; j++) { d = Math.hypot(v[i][0] - v[j][0], v[i][1] - v[j][1], v[i][2] - v[j][2]); if (d < m) m = d }
+    for (i = 0; i < v.length; i++) for (j = i + 1; j < v.length; j++) { d = Math.hypot(v[i][0] - v[j][0], v[i][1] - v[j][1], v[i][2] - v[j][2]); if (d < m * 1.01) e.push([i, j]) }
+    return { v: norm(v), e: e }
+  }
+  function norm(v) { var m = 0; v.forEach(function (p) { m = Math.max(m, Math.hypot(p[0], p[1], p[2])) }); return v.map(function (p) { return [p[0] / m, p[1] / m, p[2] / m] }) }
+  function perm(base) { var out = []; base.forEach(function (b) { [[0, 1, 2], [1, 2, 0], [2, 0, 1]].forEach(function (c) { out.push([b[c[0]], b[c[1]], b[c[2]]]) }) }); return out }
+  function signs(v) { var out = []; v.forEach(function (p) { [-1, 1].forEach(function (a) { [-1, 1].forEach(function (b) { [-1, 1].forEach(function (c) { out.push([p[0] * a, p[1] * b, p[2] * c]) }) }) }) }); return dedupe(out) }
+  function dedupe(v) { var s = {}, o = []; v.forEach(function (p) { var k = p.map(function (x) { return x.toFixed(4) }).join(); if (!s[k]) { s[k] = 1; o.push(p) } }); return o }
+  function curve(f, n, closed) { var v = [], e = []; for (var i = 0; i < n; i++) { v.push(f(i / n)); if (i) e.push([i - 1, i]) } if (closed) e.push([n - 1, 0]); return { v: norm(v), e: e } }
+  function grid(f, nu, nv) { var v = [], e = []; for (var i = 0; i < nu; i++) for (var j = 0; j < nv; j++) { v.push(f(i / nu, j / nv)); var k = i * nv + j; e.push([k, i * nv + (j + 1) % nv]); e.push([k, ((i + 1) % nu) * nv + j]) } return { v: norm(v), e: e } }
+  var SHAPES = [
+    function () { return byMinEdge(dedupe(perm(signs([[0, 1, PHI]])))) },                                         // icosahedron
+    function () { return grid(function (u, w) { var a = u * 6.283, b = w * 6.283; return [(1 + .42 * Math.cos(b)) * Math.cos(a), .42 * Math.sin(b), (1 + .42 * Math.cos(b)) * Math.sin(a)] }, 18, 8) }, // torus
+    function () { return curve(function (s) { var a = s * 6.283 * 2, p = 2, q = 3, rr = Math.cos(q * a / 2 * 1) + 2; a = s * 6.283; rr = Math.cos(q * a) + 2; return [rr * Math.cos(p * a), -Math.sin(q * a), rr * Math.sin(p * a)] }, 160, true) }, // torus knot
+    function () { return byMinEdge(signs([[1, 1, 1]])) },                                                         // cube
+    function () { return byMinEdge(dedupe(perm(signs([[1, 0, 0]])))) },                                           // octahedron
+    function () { var v = [], e = []; for (var i = 0; i < 40; i++) { var a = i / 40 * 6.283 * 2.2, y = i / 40 * 2 - 1; v.push([Math.cos(a), y, Math.sin(a)]); v.push([-Math.cos(a), y, -Math.sin(a)]); var k = i * 2; e.push([k, k + 1]); if (i) { e.push([k - 2, k]); e.push([k - 1, k + 1]) } } return { v: norm(v), e: e } }, // DNA helix
+    function () { return byMinEdge(dedupe(signs([[1, 1, 1]]).concat(perm(signs([[0, 1 / PHI, PHI]]))))) },        // dodecahedron
+    function () { return grid(function (u, w) { var a = u * 6.283, b = (w - .5) * 3.1; return [Math.cos(b) * Math.cos(a), Math.sin(b), Math.cos(b) * Math.sin(a)] }, 16, 9) }, // globe
+    function () { var v = [], e = []; for (var x = 0; x < 3; x++) for (var y = 0; y < 3; y++) for (var z = 0; z < 3; z++) { v.push([x - 1, y - 1, z - 1]); var k = x * 9 + y * 3 + z; if (x < 2) e.push([k, k + 9]); if (y < 2) e.push([k, k + 3]); if (z < 2) e.push([k, k + 1]) } return { v: norm(v), e: e } }, // lattice
+    function () { var v = [[1, 1, 1], [1, -1, -1], [-1, 1, -1], [-1, -1, 1]]; return byMinEdge(v) },             // tetrahedron
+    function () { var v = [], e = []; for (var i = 0; i < 6; i++) { var a = i / 6 * 6.283; v.push([Math.cos(a), -1.2, Math.sin(a)]); v.push([Math.cos(a), 1.2, Math.sin(a)]) } for (i = 0; i < 6; i++) { e.push([i * 2, i * 2 + 1]); e.push([i * 2, ((i + 1) % 6) * 2]); e.push([i * 2 + 1, ((i + 1) % 6) * 2 + 1]) } return { v: norm(v), e: e } } // hex prism
+  ]
+  var holos = []
+  cards.forEach(function (card, i) {
+    var acc = getComputedStyle(card).getPropertyValue('--acc').trim() || '#38e1ff'
+    var c = card.querySelector('.holo'); if (!c) return
+    var s = c.getBoundingClientRect()
+    holos.push({ card: card, c: c, g: c.getContext('2d'), shape: SHAPES[i % SHAPES.length](), col: rgb(acc), seed: i * 1.7, vis: false, hover: 0, hov: false })
+  })
+  function sizeHolos() { holos.forEach(function (h) { var b = h.c.getBoundingClientRect(); h.w = b.width; h.h = b.height; h.c.width = b.width * DPR; h.c.height = b.height * DPR; h.g.setTransform(DPR, 0, 0, DPR, 0, 0) }) }
+  sizeHolos(); window.addEventListener('resize', sizeHolos)
+  function drawHolo(h, t) {
+    var g2 = h.g, w = h.w, hh = h.h, cx = w / 2, cy = hh / 2, R2 = Math.min(w, hh) * 0.34
+    g2.clearRect(0, 0, w, hh)
+    h.hover += ((h.hov ? 1 : 0) - h.hover) * 0.08
+    var ay = t * (0.45 + h.hover * 0.9) + h.seed, ax = 0.45 + Math.sin(t * 0.6 + h.seed) * 0.25
+    var bob = Math.sin(t * 1.3 + h.seed) * 4
+    var P = h.shape.v.map(function (p) { var q = rot(p, ax, ay), s = 3 / (3 + q[2]); return [cx + q[0] * R2 * s, cy + bob + q[1] * R2 * s, q[2]] })
+    var c = h.col, lift = 'rgba(' + Math.min(255, c[0] + 90) + ',' + Math.min(255, c[1] + 90) + ',' + Math.min(255, c[2] + 90) + ','
+    g2.lineWidth = 1.2; g2.shadowColor = 'rgb(' + c.join(',') + ')'; g2.shadowBlur = 8 + h.hover * 10
+    h.shape.e.forEach(function (e) {
+      var A = P[e[0]], B = P[e[1]], z = (A[2] + B[2]) / 2
+      g2.strokeStyle = lift + (0.25 + 0.6 * (1 - (z + 1) / 2)).toFixed(3) + ')'
+      g2.beginPath(); g2.moveTo(A[0], A[1]); g2.lineTo(B[0], B[1]); g2.stroke()
+    })
+    g2.shadowBlur = 0
+    if (h.shape.v.length < 60) P.forEach(function (p) { g2.fillStyle = lift + (0.5 + 0.5 * (1 - (p[2] + 1) / 2)).toFixed(3) + ')'; g2.beginPath(); g2.arc(p[0], p[1], 2, 0, 6.283); g2.fill() })
+  }
+
+  // ---------- visibility, reveal, tilt ----------
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        if (e.isIntersecting) e.target.classList.add('in')
+        holos.forEach(function (h) { if (h.card === e.target) h.vis = e.isIntersecting })
+      })
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 })
+    cards.forEach(function (c) { io.observe(c) })
+  } else { cards.forEach(function (c) { c.classList.add('in') }); holos.forEach(function (h) { h.vis = true }) }
+
+  if (!reduce) cards.forEach(function (card) {
+    var h = holos.filter(function (x) { return x.card === card })[0]
+    card.addEventListener('pointermove', function (e) {
+      if (e.pointerType === 'touch') return
+      var b = card.getBoundingClientRect(), px = (e.clientX - b.left) / b.width, py = (e.clientY - b.top) / b.height
+      card.style.setProperty('--ry', ((px - .5) * 5).toFixed(2) + 'deg')
+      card.style.setProperty('--rx', ((.5 - py) * 5).toFixed(2) + 'deg')
+      card.style.setProperty('--mx', (px * 100).toFixed(1) + '%')
+      card.style.setProperty('--my', (py * 100).toFixed(1) + '%')
+      if (h) h.hov = true
+    })
+    card.addEventListener('pointerleave', function () {
+      card.style.setProperty('--rx', '0deg'); card.style.setProperty('--ry', '0deg'); if (h) h.hov = false
+    })
+  })
+
+  // ---------- one clock for everything ----------
+  var t0 = performance.now()
+  function frame(now) {
+    var t = (now - t0) / 1000
+    if (cv) drawGlobe(t)
+    holos.forEach(function (h) { if (h.vis) drawHolo(h, t) })
+    if (!reduce) requestAnimationFrame(frame)
+  }
+  if (reduce) { holos.forEach(function (h) { h.vis = true }); frame(t0 + 4000) } else requestAnimationFrame(frame)
+})()
     </script>
   </body>
 </html>
