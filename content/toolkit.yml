@@ -21,7 +21,7 @@
 # tool is deliberately pinned to the top (SciSpace in "search", Nov 2026).
 #
 # price: one of  Free | Free tier | Open source | Paid | Institutional | Coming soon
-#   (Coming soon is for my own unreleased tools; the button reads "Join waitlist".)
+#   (Coming soon is for my own unreleased tools; the button reads "See preview".)
 # usedIn: keys from `sessions` below.
 
 sessions:
