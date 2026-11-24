@@ -1,8 +1,9 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { s } from '@/lib/style'
 import PageBanner from '@/components/PageBanner'
+import LearningStage, { FOCUS, FOCUS_ORDER, type Focus, type StageTile } from '@/components/LearningStage'
 
 const stack = "'Space Grotesk', system-ui, sans-serif"
 
@@ -21,6 +22,48 @@ export default function TeachingClient({
   ongoing: Ongoing[]; graduated: Grad[]; supStats: { num: string; label: string; color: string }[]
 }) {
   const wrapRef = useRef<HTMLDivElement>(null)
+
+  // ---- the learning focus ------------------------------------------------------------
+  // One choice drives two things: the 3D stage at the top (which structure is in front)
+  // and the order of the four sections below it (the chosen one comes first).
+  // The address can carry it too: /teaching/#training opens on Training.
+  const [focus, setFocus] = useState<Focus>('teaching')
+  useEffect(() => {
+    const fromHash = () => {
+      const h = location.hash.slice(1)
+      const hit = FOCUS_ORDER.find((k) => k === h || FOCUS[k].anchor === h)
+      if (hit) setFocus(hit)
+    }
+    fromHash(); window.addEventListener('hashchange', fromHash)
+    return () => window.removeEventListener('hashchange', fromHash)
+  }, [])
+  const pickFocus = (f: Focus) => {
+    // Where the browser supports it, the re-ordering of the sections is cross-faded.
+    const doc = document as Document & { startViewTransition?: (cb: () => void) => void }
+    if (doc.startViewTransition && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) doc.startViewTransition(() => setFocus(f))
+    else setFocus(f)
+    history.replaceState(null, '', '#' + f)
+  }
+  // chosen section first, the rest in their usual order
+  const orderOf = (f: Focus) => (f === focus ? 0 : 1 + FOCUS_ORDER.indexOf(f))
+
+  // Every item on the page as one small tile for the 3D stage.
+  const tiles = useMemo<StageTile[]>(() => {
+    const labs = [...current, ...past].flatMap((c) => c.labs.map((l) => ({ group: 'open' as const, kicker: c.code + ' · lab tool', title: l.title, href: l.href })))
+    return [
+      ...current.map((c) => ({ group: 'teaching' as const, kicker: c.code + ' · now', title: c.title, href: '#teaching' })),
+      ...past.map((c) => ({ group: 'teaching' as const, kicker: c.code + ' · taught', title: c.title, href: '#teaching' })),
+      ...training.next.slice(0, 2).map((r) => ({ group: 'training' as const, kicker: r.when + ' · next', title: r.title, href: '#training' })),
+      ...training.done.slice(0, 12).map((r) => ({ group: 'training' as const, kicker: r.when, title: r.title, href: '#training' })),
+      ...ongoing.map((o) => ({ group: 'supervision' as const, kicker: o.degShort + ' · ' + o.roleShort, title: o.name, href: '#supervision', inner: o.roleShort === 'Main' })),
+      ...graduated.map((g) => ({ group: 'supervision' as const, kicker: g.degree + ' · graduated', title: g.name, href: '#supervision', inner: g.role === 'Main' })),
+      { group: 'open', kicker: 'Weekly newsletter', title: 'Kopi & Prompt, the archive', href: '/newsletter/kopi-prompt/' },
+      { group: 'open', kicker: 'Book · free', title: 'Prompt Cookbook', href: '/cookbook/' },
+      { group: 'open', kicker: 'Tools', title: 'The toolkit from my workshops', href: '/toolkit/' },
+      { group: 'open', kicker: 'Live demos', title: 'Playground: things you can run', href: '/playground/' },
+      ...labs.slice(0, 8),
+    ]
+  }, [current, past, training, ongoing, graduated])
   useEffect(() => {
     const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches
     if (reduce) return
@@ -52,14 +95,18 @@ export default function TeachingClient({
         lede="Undergraduate and postgraduate courses at FTSM, postgraduate researchers under supervision, and open-access materials anyone can learn from."
       />
 
+      {/* THE 3D STAGE: pick a focus, the model and the sections below rearrange */}
+      <LearningStage tiles={tiles} focus={focus} onFocus={pickFocus} />
+
       {/* Prompt Engineering Architect used to be featured here. It now lives with
           the other self-paced series under /workshops/, which are unlisted —
           shared directly with a cohort rather than linked from the site.
           Kopi & Prompt is the opposite: public, indexed and linked — see the
           Open learning section at the foot of this page. */}
 
+      <div className="teach-flow">
       {/* COURSES */}
-      <section style={s('max-width:1120px;margin:0 auto;padding:56px 28px 10px')}>
+      <section id="teaching" style={s(`order:${orderOf('teaching')};width:100%;max-width:1120px;margin:0 auto;padding:46px 28px 10px`)}>
         <h2 style={s(`font-family:${stack};font-weight:600;font-size:clamp(24px,3vw,32px);letter-spacing:-.02em;margin:0 0 8px`)}>Courses</h2>
         <p style={s("font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#a39a8f;margin:0 0 16px")}>Currently teaching · {currentCount}</p>
         <div style={s('display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:26px')}>
@@ -109,7 +156,7 @@ export default function TeachingClient({
       </section>
 
       {/* SUPERVISION */}
-      <section style={s('max-width:1120px;margin:0 auto;padding:46px 28px 10px')}>
+      <section id="supervision" style={s(`order:${orderOf('supervision')};width:100%;max-width:1120px;margin:0 auto;padding:46px 28px 10px`)}>
         <h2 style={s(`font-family:${stack};font-weight:600;font-size:clamp(24px,3vw,32px);letter-spacing:-.02em;margin:0 0 18px`)}>Postgraduate supervision</h2>
         <div style={s('display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:28px')}>
           {supStats.map((st, i) => (
@@ -151,7 +198,7 @@ export default function TeachingClient({
 
       {/* TRAINING & WORKSHOPS — rows come from content/cv.yml › training.delivered,
           the same data both CVs print. Future-dated rows show as "Coming up". */}
-      <section id="training" style={s('max-width:1120px;margin:0 auto;padding:46px 28px 10px')}>
+      <section id="training" style={s(`order:${orderOf('training')};width:100%;max-width:1120px;margin:0 auto;padding:46px 28px 10px`)}>
         <h2 style={s(`font-family:${stack};font-weight:600;font-size:clamp(24px,3vw,32px);letter-spacing:-.02em;margin:0 0 8px`)}>Training &amp; workshops</h2>
         <p style={s('font-size:15px;line-height:1.6;color:#57514b;margin:0 0 18px;max-width:660px')}>Hands-on AI training beyond the lecture hall — for police officers, hospital staff, corporate teams, faculties, libraries and visiting cohorts. <a href="/cv/industry/" style={s('color:#1c1917')}>See the trainer CV →</a></p>
         <div className="tr-grid" style={s('display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:26px')}>
@@ -192,7 +239,7 @@ export default function TeachingClient({
       </section>
 
       {/* OPEN LEARNING — Kopi & Prompt archive (static page under /public/newsletter/) */}
-      <section style={s('max-width:1120px;margin:0 auto;padding:46px 28px 0')}>
+      <section id="open-learning" style={s(`order:${orderOf('open')};width:100%;max-width:1120px;margin:0 auto;padding:46px 28px 10px`)}>
         <h2 style={s(`font-family:${stack};font-weight:600;font-size:clamp(24px,3vw,32px);letter-spacing:-.02em;margin:0 0 8px`)}>Open learning</h2>
         <p style={s('font-size:15px;line-height:1.6;color:#57514b;margin:0 0 18px;max-width:660px')}>Open-access material anyone can read, use and adapt — no sign-up, no paywall.</p>
         <a
@@ -217,6 +264,8 @@ export default function TeachingClient({
           <span style={s("display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:#fff;background:#16142e;padding:9px 16px;border-radius:8px")}>Open the archive →</span>
         </a>
       </section>
+
+      </div>
 
       {/* CTA */}
       <section style={s('max-width:1120px;margin:36px auto 0;padding:20px 28px 70px')}>
