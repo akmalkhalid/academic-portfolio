@@ -46,7 +46,7 @@ export default function CVView({ profile }: { profile: Profile }) {
         </a>
       </PageBanner>
 
-      <div style={{ background: "#f4f5f7", minHeight: "100vh", padding: "28px 12px 64px" }}>
+      <div style={{ background: "var(--bg)", minHeight: "100vh", padding: "28px 12px 64px" }}>
         <link
           rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { s } from '@/lib/style'
+import Glyph from '@/components/Glyph'
 
 // Kept to five links (Nov 2026 simplification): Playground is linked from
 // Research, and Contact is the Collaborate button.
@@ -29,6 +30,17 @@ const DARK_TOP = new Set([
 export default function SiteNav({ shortName }: { shortName: string }) {
   const [open, setOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  // Theme: 'dark' (default) or 'light'. The real switch is the data-theme attribute on
+  // <html>; an inline script in app/layout.tsx sets it before first paint from the saved
+  // choice, and this state only mirrors it so the button shows the right icon.
+  const [theme, setTheme] = useState<'dark' | 'light'>('dark')
+  useEffect(() => { setTheme(document.documentElement.dataset.theme === 'light' ? 'light' : 'dark') }, [])
+  const flipTheme = () => {
+    const next = theme === 'dark' ? 'light' : 'dark'
+    document.documentElement.dataset.theme = next
+    try { localStorage.setItem('akmal-theme', next) } catch { /* private mode: the choice lasts for this page only */ }
+    setTheme(next)
+  }
   const pathname = usePathname()
   const isActive = (href: string) => pathname === href || pathname.startsWith(href + '/')
 
@@ -47,14 +59,14 @@ export default function SiteNav({ shortName }: { shortName: string }) {
 
   return (
     <header className="nav-shell" data-solid={solid ? '1' : '0'}>
-      <nav style={s('max-width:1120px;margin:0 auto;padding:14px 28px;display:flex;align-items:center;justify-content:space-between;gap:24px;position:relative')}>
+      <nav style={s('max-width:1120px;margin:0 auto;padding:14px 28px;display:flex;align-items:center;gap:24px;position:relative')}>
         <Link href="/" onClick={() => setOpen(false)} className="nav-brand" style={s('display:flex;align-items:center;gap:10px;text-decoration:none')}>
-          <span className="nav-brand-dot" style={s('width:11px;height:11px;border-radius:50%;display:inline-block')} />
+          <span className="nav-glyph" style={s('display:inline-flex')}><Glyph name="mark" size={28} /></span>
           <span style={s("font-family:'JetBrains Mono',monospace;font-weight:600;font-size:14px;letter-spacing:.02em")}>{shortName}</span>
         </Link>
 
         {/* Desktop links */}
-        <ul className="nav-desktop" style={s('display:flex;gap:26px;list-style:none;margin:0;padding:0;font-size:13.5px;align-items:center')}>
+        <ul className="nav-desktop" style={s('display:flex;gap:26px;list-style:none;margin:0 auto;padding:0;font-size:13.5px;align-items:center')}>
           {NAV.map((n) => (
             <li key={n.href}>
               <Link
@@ -69,9 +81,15 @@ export default function SiteNav({ shortName }: { shortName: string }) {
           ))}
         </ul>
 
-        <Link className="nav-cta" href="/contact" style={s("font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:500;text-decoration:none;padding:8px 15px;border-radius:7px")}>
-          Collaborate
-        </Link>
+        {/* right side: theme switch (always visible) and the Collaborate button (desktop) */}
+        <div style={s('display:flex;align-items:center;gap:12px')} className="nav-right">
+          <button type="button" className="theme-btn" onClick={flipTheme} aria-label={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'} title={theme === 'dark' ? 'Light theme' : 'Dark theme'}>
+            <Glyph name={theme === 'dark' ? 'sun' : 'moon'} size={18} />
+          </button>
+          <Link className="nav-cta" href="/contact" style={s("font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:500;text-decoration:none;padding:8px 15px;border-radius:7px")}>
+            Collaborate
+          </Link>
+        </div>
 
         {/* Mobile burger */}
         <button
@@ -89,7 +107,7 @@ export default function SiteNav({ shortName }: { shortName: string }) {
 
         {/* Mobile dropdown */}
         {open && (
-          <ul style={s('position:absolute;top:100%;left:0;right:0;display:flex;flex-direction:column;list-style:none;background:#faf9f7;border-bottom:1px solid #e7e3dd;padding:6px 0;margin:0;box-shadow:0 14px 26px -18px rgba(28,25,23,.5);z-index:50')}>
+          <ul style={s('position:absolute;top:100%;left:0;right:0;display:flex;flex-direction:column;list-style:none;background:var(--bg);border-bottom:1px solid #e7e3dd;padding:6px 0;margin:0;box-shadow:0 14px 26px -18px rgba(28,25,23,.5);z-index:50')}>
             {NAV.concat({ href: '/contact', label: 'Collaborate' }).map((n) => (
               <li key={n.href} style={s('padding:11px 28px')}>
                 <Link href={n.href} onClick={() => setOpen(false)} style={s('text-decoration:none;font-size:14px;' + (isActive(n.href) ? 'color:#16142e;font-weight:500' : 'color:#57514b'))}>
