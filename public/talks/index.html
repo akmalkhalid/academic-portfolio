@@ -1,7 +1,8 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="dark">
   <head>
     <meta charset="utf-8" />
+    <script>try{var t=localStorage.getItem("akmal-theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}</script>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Talks &amp; seminars — Mohd Nor Akmal Khalid</title>
     <!-- Deliberately unlisted, on the same terms as /workshops: nothing in the
@@ -14,11 +15,17 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Space+Grotesk:wght@500;600&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap"
     />
     <style>
+      /* Theme: same variables and saved choice ('akmal-theme') as the main site. Dark is the
+         default; the round button in the top bar switches. Pastel tags keep their colours. */
+      :root, [data-theme='dark'] { color-scheme: dark; --bg:#0a0911; --panel:#14131d; --panel-2:#1b1a27; --ink:#f1eff8; --body:#b4afc6; --faint:#6d6883; --line:rgba(255,255,255,.10); --nav-bg:rgba(12,11,19,.78); }
+      [data-theme='light'] { color-scheme: light; --bg:#f6f5f2; --panel:#fff; --panel-2:#f1eee9; --ink:#16142e; --body:#57514b; --faint:#978e83; --line:#e4dfd8; --nav-bg:rgba(246,245,242,.85); }
+      .theme-btn { width:32px; height:32px; border-radius:8px; border:1px solid var(--line); background:transparent; color:var(--ink); cursor:pointer; font-size:15px; line-height:1; }
+
       * { box-sizing: border-box; }
       body {
         margin: 0;
-        background: #faf9f7;
-        color: #1c1917;
+        background: var(--bg);
+        color: var(--ink);
         font-family: 'Inter', system-ui, sans-serif;
         -webkit-font-smoothing: antialiased;
       }
@@ -29,41 +36,41 @@
 
       header.bar {
         position: sticky; top: 0; z-index: 5;
-        background: rgba(250, 249, 247, 0.85);
+        background: var(--nav-bg);
         backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-        border-bottom: 1px solid #e7e3dd;
+        border-bottom: 1px solid var(--line);
       }
       .bar-in {
         max-width: 940px; margin: 0 auto; padding: 13px 28px;
         display: flex; align-items: center; justify-content: space-between; gap: 16px;
       }
-      .brand { display: flex; align-items: center; gap: 9px; text-decoration: none; color: #1c1917; font-weight: 600; font-size: 14px; }
+      .brand { display: flex; align-items: center; gap: 9px; text-decoration: none; color: var(--ink); font-weight: 600; font-size: 14px; }
       .dot { width: 10px; height: 10px; border-radius: 50%; background: #16142e; }
 
       .langs { display: flex; gap: 4px; }
       .langs button {
         font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600;
         letter-spacing: .06em; cursor: pointer; padding: 5px 11px; border-radius: 6px;
-        border: 1px solid #ddd6cc; background: #fff; color: #57514b;
+        border: 1px solid #ddd6cc; background: var(--panel); color: var(--body);
       }
-      .langs button[aria-pressed='true'] { background: #16142e; border-color: #16142e; color: #fff; }
+      .langs button[aria-pressed='true'] { background: #16142e; border-color: var(--ink); color: #fff; }
 
       .intro { padding: 52px 0 8px; }
-      .eyebrow { font-size: 11.5px; letter-spacing: .14em; text-transform: uppercase; color: #a39a8f; margin: 0 0 14px; }
+      .eyebrow { font-size: 11.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--faint); margin: 0 0 14px; }
       h1 { font-weight: 600; font-size: clamp(30px, 5vw, 46px); line-height: 1.05; margin: 0 0 16px; text-wrap: balance; }
-      .lede { font-size: 17px; line-height: 1.6; color: #57514b; max-width: 620px; margin: 0; }
+      .lede { font-size: 17px; line-height: 1.6; color: var(--body); max-width: 620px; margin: 0; }
 
       .note {
         margin: 26px 0 0; padding: 13px 16px; border-radius: 10px;
-        background: #fbf3ea; border: 1px solid #f0dcc4;
-        font-size: 13.5px; line-height: 1.55; color: #6b4f2a;
+        background: rgba(226,160,60,.14); border: 1px solid rgba(226,160,60,.35);
+        font-size: 13.5px; line-height: 1.55; color: var(--body);
       }
       .note b { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: #a8703a; }
 
       /* Year rules break the reverse-chronological run into readable groups. */
       .year {
         display: flex; align-items: center; gap: 14px;
-        margin: 38px 0 2px; color: #a39a8f;
+        margin: 38px 0 2px; color: var(--faint);
         font-family: 'JetBrains Mono', monospace; font-size: 11.5px;
         letter-spacing: .14em; text-transform: uppercase;
       }
@@ -76,8 +83,8 @@
       }
       .card {
         position: relative;
-        display: flex; flex-direction: column; text-decoration: none; color: #1c1917;
-        background: #fff; border: 1px solid #e7e3dd; border-radius: 15px;
+        display: flex; flex-direction: column; text-decoration: none; color: var(--ink);
+        background: var(--panel); border: 1px solid var(--line); border-radius: 15px;
         padding: 20px 22px; transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
       }
       .card:hover { transform: translateY(-2px); box-shadow: 0 16px 36px -24px rgba(28, 25, 23, .5); }
@@ -86,24 +93,24 @@
       .tag { font-size: 10px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; padding: 3px 8px; border-radius: 5px; }
       .card h2 { font-weight: 600; font-size: clamp(17px, 2vw, 20px); line-height: 1.2; margin: 0 0 4px; }
       .subtitle { font-size: 13px; line-height: 1.4; color: #7a736c; margin: 0 0 9px; font-style: italic; }
-      .card p.abstract { font-size: 13.5px; line-height: 1.55; color: #57514b; margin: 0 0 14px; }
+      .card p.abstract { font-size: 13.5px; line-height: 1.55; color: var(--body); margin: 0 0 14px; }
 
       /* The record fields — what a panel or a host actually wants to read. */
       .meta {
         margin: 0 0 14px; padding: 12px 14px;
-        background: #faf9f7; border: 1px solid #efece6; border-radius: 10px;
+        background: var(--bg); border: 1px solid var(--line); border-radius: 10px;
         font-size: 12.5px; line-height: 1.45;
       }
       .meta dt {
         font-family: 'JetBrains Mono', monospace; font-size: 9.5px;
-        letter-spacing: .08em; text-transform: uppercase; color: #a39a8f;
+        letter-spacing: .08em; text-transform: uppercase; color: var(--faint);
         margin: 0 0 1px;
       }
-      .meta dd { margin: 0 0 8px; color: #453f3a; }
+      .meta dd { margin: 0 0 8px; color: var(--body); }
       .meta dd:last-of-type { margin-bottom: 0; }
 
       .facts { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
-      .fact { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #6b6560; background: #f4f1ec; border: 1px solid #e7e3dd; padding: 3px 8px; border-radius: 5px; }
+      .fact { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--body); background: var(--panel-2); border: 1px solid var(--line); padding: 3px 8px; border-radius: 5px; }
 
       .cta { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: auto; }
       /* The whole panel is the link; the button is the affordance that says so. */
@@ -113,7 +120,7 @@
         padding: 9px 16px; border-radius: 8px; transition: background .2s ease;
       }
       .card:hover .btn { background: #2a2650; }
-      .rights { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: #a39a8f; line-height: 1.5; }
+      .rights { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: var(--faint); line-height: 1.5; }
 
       /* Corner chevron — a second, quieter cue that the panel itself is clickable. */
       .arrow {
@@ -125,21 +132,21 @@
 
       .licence {
         margin: 30px 0 0; padding: 16px 18px; border-radius: 12px;
-        background: #fff; border: 1px solid #e7e3dd;
-        font-size: 13.5px; line-height: 1.6; color: #57514b;
+        background: var(--panel); border: 1px solid var(--line);
+        font-size: 13.5px; line-height: 1.6; color: var(--body);
       }
       .licence h3 {
         font-family: 'JetBrains Mono', monospace; font-size: 10.5px; font-weight: 600;
-        letter-spacing: .08em; text-transform: uppercase; color: #a39a8f;
+        letter-spacing: .08em; text-transform: uppercase; color: var(--faint);
         margin: 0 0 8px;
       }
       .licence code {
         font-family: 'JetBrains Mono', monospace; font-size: 12px;
-        background: #f4f1ec; border: 1px solid #e7e3dd; border-radius: 5px; padding: 1px 6px;
+        background: var(--panel-2); border: 1px solid var(--line); border-radius: 5px; padding: 1px 6px;
       }
 
-      footer { padding: 38px 0 64px; color: #a39a8f; font-size: 12.5px; line-height: 1.6; }
-      footer a { color: #57514b; }
+      footer { padding: 38px 0 64px; color: var(--faint); font-size: 12.5px; line-height: 1.6; }
+      footer a { color: var(--body); }
 
       [data-bm] { display: none; }
       body.bm [data-en] { display: none; }
@@ -155,6 +162,7 @@
     <header class="bar">
       <div class="bar-in">
         <a class="brand" href="/"><span class="dot"></span> Dr. Akmal</a>
+        <button type="button" class="theme-btn" aria-label="Switch between dark and light theme" onclick="var d=document.documentElement,n=d.dataset.theme==='light'?'dark':'light';d.dataset.theme=n;try{localStorage.setItem('akmal-theme',n)}catch(e){}">◐</button>
         <div class="langs" role="group" aria-label="Language">
           <button type="button" id="btn-en" aria-pressed="true">EN</button>
           <button type="button" id="btn-bm" aria-pressed="false">BM</button>
