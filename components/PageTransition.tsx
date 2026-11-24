@@ -195,8 +195,16 @@ export default function PageTransition() {
       cover(href, labelFor(route), APP_ROUTES.includes(route === '' ? '/' : route), x, y)
     }
     document.addEventListener('click', onClick, true)
-    // Coming back with the browser's Back button can restore a page with the veil still up.
-    const onShow = () => { if (covered) { hide(); leaving = false } }
+    // Coming back with the browser's Back button: the browser can restore this page exactly
+    // as it was left, which is mid-transition (veil up, page sunk back and dimmed). Put it
+    // back to normal: drop the veil AND cancel the "sunk back" animation on the page, or the
+    // page stays dim. (Only the veil used to be dropped, which was the dimmed-page bug.)
+    const onShow = () => {
+      if (!covered && !leaving) return
+      if (safety) { clearTimeout(safety); safety = null }
+      page()?.getAnimations().forEach((an) => an.cancel())
+      hide(); leaving = false
+    }
     window.addEventListener('pageshow', onShow)
 
     ctrl.current = { reveal }
