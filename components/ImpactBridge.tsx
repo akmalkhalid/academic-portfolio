@@ -1,6 +1,6 @@
 // ImpactBridge — how each research pillar continues into an expected impact.
 //
-//     Generate  ──▶  Design thinking     ideas people can shape      (desirable)
+//     Generate  ──▶  Ludogenist          people who innovate by play (desirable)
 //     Evaluate  ──▶  Explainability      reasons people can check    (trustworthy)
 //     Search    ──▶  Sustainability      solutions that cost less    (sustainable)
 //
@@ -25,10 +25,10 @@ const ROWS: {
   {
     key: 'gen', col: '#8b7bf0', verb: 'Generate', glyph: 'generate', field: 'Generative & Agentic AI',
     does: 'Models and agent teams propose many candidate designs, quickly.',
-    impact: 'Design thinking', impactGlyph: 'design', value: 'Desirable',
-    promise: 'A design partner for the early, messy part of a project: wide ideation first, so people spend their time choosing and refining instead of starting from a blank page.',
-    expected: 'Faster and broader ideation in game, learning and product design, with the human still deciding.',
-    grounded: ['AI–human co-design of Sudoku puzzles', 'Agentic quest generation', 'GAN + MAP-Elites creativity framework (FRGS)'],
+    impact: 'Ludogenist', impactGlyph: 'design', value: 'Desirable',
+    promise: 'A ludogenist innovates through play. Generation makes trying an idea cheap, so designing becomes a playful loop of propose, test, discard and try again, and new ideas come from playing with possibilities instead of starting from a blank page.',
+    expected: 'People and teams who innovate by playing with machine-generated possibilities, in games, learning and product design, with the human still deciding.',
+    grounded: ['Ludogenic innovation (2025)', 'AI–human co-design of Sudoku puzzles', 'Agentic quest generation', 'GAN + MAP-Elites creativity framework (FRGS)'],
   },
   {
     key: 'eva', col: '#f2683f', verb: 'Evaluate', glyph: 'evaluate', field: 'Games Informatics & Engagement Modelling',
