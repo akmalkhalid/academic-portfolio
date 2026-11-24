@@ -11,6 +11,7 @@
 // Everything else lives one click away: grants on /research, demos on
 // /playground, the full record on /publications.
 
+import Glyph from '@/components/Glyph'
 import { s } from '@/lib/style'
 import { PCOL } from '@/lib/view'
 import LatentField from '@/components/LatentField'
@@ -31,9 +32,9 @@ const eyebrow = (dark: boolean) => s(`font-family:'JetBrains Mono',monospace;fon
 const h2 = (dark: boolean) => s(`font-family:${stack};font-weight:600;font-size:clamp(28px,3.6vw,40px);line-height:1.08;letter-spacing:-.02em;margin:0;color:${dark ? '#ECEAF3' : '#1c1917'}`)
 
 const STAGES = [
-  { n: '01', key: 'gen' as const, q: 'What could exist?', stage: 'Generate', accent: PCOL.gen, title: 'Generative & Agentic AI', line: 'Generative models, LLMs and agent teams propose candidate designs.' },
-  { n: '02', key: 'eva' as const, q: 'Is it any good, for people?', stage: 'Evaluate', accent: PCOL.gam, title: 'Games Informatics & Engagement Modelling', line: 'Game refinement theory scores each design by how engaging it is to people.' },
-  { n: '03', key: 'sea' as const, q: 'How do we find better ones?', stage: 'Search', accent: PCOL.evo, title: 'Computational Intelligence & Optimization', line: 'Metaheuristics and quality-diversity search decide what to generate next.' },
+  { n: '01', key: 'gen' as const, q: 'What could exist?', stage: 'Generate', accent: PCOL.gen, title: 'Generative & Agentic AI', line: 'Generative models, LLMs and agent teams propose candidate designs.', glyph: 'generate' as const, impact: 'Design thinking' },
+  { n: '02', key: 'eva' as const, q: 'Is it any good, for people?', stage: 'Evaluate', accent: PCOL.gam, title: 'Games Informatics & Engagement Modelling', line: 'Game refinement theory scores each design by how engaging it is to people.', glyph: 'evaluate' as const, impact: 'Explainability' },
+  { n: '03', key: 'sea' as const, q: 'How do we find better ones?', stage: 'Search', accent: PCOL.evo, title: 'Computational Intelligence & Optimization', line: 'Metaheuristics and quality-diversity search decide what to generate next.', glyph: 'search' as const, impact: 'Sustainability' },
 ]
 
 export default function HomeClient({
@@ -195,10 +196,15 @@ export default function HomeClient({
         <div className="home-stages">
           {STAGES.map((st) => (
             <a key={st.n} href="/research/#ideas" className="home-stage" style={s(`border-top:3px solid ${st.accent}`)}>
-              <span style={s(`font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:600;letter-spacing:.08em;color:${st.accent}`)}>{st.n} · {st.stage.toUpperCase()}</span>
+              <span style={s('display:flex;align-items:center;justify-content:space-between;gap:10px')}>
+                <span style={s(`font-family:'JetBrains Mono',monospace;font-size:11.5px;font-weight:600;letter-spacing:.08em;color:${st.accent}`)}>{st.n} · {st.stage.toUpperCase()}</span>
+                <Glyph name={st.glyph} size={34} color={st.accent} />
+              </span>
               <span style={s(`display:block;font-family:${stack};font-weight:600;font-size:18px;line-height:1.22;margin:10px 0 8px;color:#1c1917`)}>{st.title}</span>
               <span style={s(`display:block;font-family:${stack};font-weight:500;font-size:15px;color:${st.accent};margin:0 0 8px`)}>{st.q}</span>
-              <span style={s('display:block;font-size:14px;line-height:1.6;color:#57514b;margin-bottom:16px')}>{st.line}</span>
+              <span style={s('display:block;font-size:14px;line-height:1.6;color:#57514b;margin-bottom:10px')}>{st.line}</span>
+              {/* what this stage is aimed at (the full story is on /about/#impact) */}
+              <span style={s(`display:table;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;padding:4px 9px;border-radius:6px;margin-bottom:16px;background:${st.accent}1f;color:${st.accent}`)}>→ {st.impact}</span>
               {/* the record behind this stage: papers per year, then papers, funding and students */}
               <span className="home-spark" role="img" aria-label={`Publications per year, ${years[0]} to ${years[1]}`}>
                 {pillars[st.key].perYear.map((n, i) => (

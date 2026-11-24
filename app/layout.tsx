@@ -4,6 +4,7 @@ import Script from 'next/script'
 import SiteNav from '@/components/SiteNav'
 import PageTransition from '@/components/PageTransition'
 import VisitCounter from '@/components/VisitCounter'
+import PanelFX from '@/components/PanelFX'
 import { getSiteConfig } from '@/lib/content'
 import { s } from '@/lib/style'
 
@@ -17,8 +18,11 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const social = cfg.social || ({} as typeof cfg.social)
   return (
-    <html lang="en">
+    <html lang="en" data-theme="dark" suppressHydrationWarning>
       <head>
+        {/* Theme, before first paint: use the visitor's saved choice, otherwise dark.
+            Runs inline so a light-theme visitor never sees a dark flash. */}
+        <script dangerouslySetInnerHTML={{ __html: `try{var t=localStorage.getItem('akmal-theme');if(t==='light'||t==='dark')document.documentElement.dataset.theme=t}catch(e){}` }} />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
@@ -36,9 +40,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <VisitCounter />
         <PageTransition />
+        <PanelFX />
         <SiteNav shortName={cfg.authorShortName} />
         <main>{children}</main>
-        <footer style={s('border-top:1px solid #e7e3dd;background:#fff')}>
+        <footer style={s('border-top:1px solid #e7e3dd;background:var(--bg)')}>
           <div style={s('max-width:1120px;margin:0 auto;padding:30px 28px;display:flex;flex-wrap:wrap;gap:14px 28px;align-items:center;justify-content:space-between')}>
             <p style={s('font-size:13px;color:#8a8279;margin:0')}>© {new Date().getFullYear()} {cfg.authorName} · FTSM, UKM</p>
             <p style={s("font-family:'JetBrains Mono',monospace;font-size:11px;color:#a39a8f;margin:0")}>Cookie-free analytics · honours Do-Not-Track · no personal data stored</p>
