@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react'
 import { s } from '@/lib/style'
 import PageBanner from '@/components/PageBanner'
+import ImpactBridge, { type PillarStats } from '@/components/ImpactBridge'
 
 const P = { purple: '#8b7bf0', blue: '#4d8df0', teal: '#21b3a0', coral: '#f2683f', green: '#84b53a', amber: '#d99320' }
 const stack = "'Space Grotesk', system-ui, sans-serif"
@@ -22,7 +23,7 @@ const facts = [
   { k: 'PhD', v: '2018' },
 ]
 
-export default function AboutClient({ name, jobTitle, profiles }: { name: string; jobTitle: string; profiles: { label: string; href: string }[] }) {
+export default function AboutClient({ name, jobTitle, profiles, stats }: { name: string; jobTitle: string; profiles: { label: string; href: string }[]; stats: PillarStats }) {
   const wrapRef = useRef<HTMLDivElement>(null)
   const motifRef = useRef<HTMLCanvasElement>(null)
 
@@ -115,7 +116,7 @@ export default function AboutClient({ name, jobTitle, profiles }: { name: string
       </PageBanner>
 
       {/* BIO */}
-      <section style={s('max-width:1120px;margin:0 auto;padding:56px 28px 10px;display:grid;grid-template-columns:1.6fr 1fr;gap:48px;align-items:start')}>
+      <section className="about-split" style={s('max-width:1120px;margin:0 auto;padding:56px 28px 10px;display:grid;grid-template-columns:1.6fr 1fr;gap:48px;align-items:start')}>
         <div style={s('max-width:680px')}>
           <h2 data-tw="5" style={s(`font-family:${stack};font-weight:600;font-size:clamp(24px,3vw,32px);letter-spacing:-.02em;margin:0 0 20px`)}>A research program built on one question.</h2>
           <p data-tw="6" style={s('font-size:16.5px;line-height:1.75;color:#44403c;margin:0 0 18px')}>My academic journey has been shaped by a single guiding question — <em style={s('color:#1c1917')}>how can we design intelligent systems that adapt, optimize and create, not just compute?</em> It runs through everything from generative AI and evolutionary computing to expert systems and games informatics.</p>
@@ -141,6 +142,15 @@ export default function AboutClient({ name, jobTitle, profiles }: { name: string
             </div>
           </div>
         </aside>
+      </section>
+
+      {/* PILLARS -> IMPACT: the continuity of the research programme */}
+      <section id="impact" style={s('max-width:1120px;margin:0 auto;padding:50px 28px 10px;scroll-margin-top:80px')}>
+        <p style={s("font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#a39a8f;margin:0 0 10px")}>/ from pillars to impact</p>
+        <h2 style={s(`font-family:${stack};font-weight:600;font-size:clamp(26px,3.4vw,38px);letter-spacing:-.02em;margin:0 0 10px`)}>Three pillars, one continuous line.</h2>
+        <p style={s('font-size:16px;line-height:1.7;color:#57514b;margin:0 0 26px;max-width:780px')}>The programme is a loop of three stages, and each stage is aimed at something beyond the algorithm. This is what the work is for.</p>
+        <ImpactBridge stats={stats} />
+        <p style={s('margin:18px 0 0')}><a href="/research/#ideas" style={s("font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:600;color:#16142e;text-decoration:none;border-bottom:2px solid #8b7bf0;padding-bottom:3px")}>See the programme and its record →</a></p>
       </section>
 
       {/* COMPETENCIES */}
