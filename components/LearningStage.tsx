@@ -28,7 +28,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 
 export type Focus = 'teaching' | 'training' | 'supervision' | 'open'
-export type StageTile = { group: Focus; kicker: string; title: string; href: string; inner?: boolean }
+export type StageTile = { group: Focus; kicker: string; title: string; href: string; inner?: boolean; /** greyed, not a link */ dim?: boolean }
 
 export const FOCUS: Record<Focus, { label: string; col: string; shape: string; says: string; anchor: string }> = {
   teaching: { label: 'Teaching', col: '#8b7bf0', shape: 'Hall', says: 'Courses sit in rows, like a lecture hall: a set path, taken together, one level above the last.', anchor: 'teaching' },
@@ -144,11 +144,11 @@ export default function LearningStage({ tiles, focus, onFocus }: { tiles: StageT
           {tiles.map((t, i) => {
             const p = pos[i], on = t.group === focus
             return (
-              <a key={i} href={t.href} tabIndex={on ? 0 : -1} aria-hidden={on ? undefined : true} className="ls-tile"
+              <a key={i} href={t.dim ? undefined : t.href} tabIndex={on && !t.dim ? 0 : -1} aria-hidden={on ? undefined : true} className={'ls-tile' + (t.dim ? ' ls-dim' : '')}
                 style={{
                   ['--c' as string]: FOCUS[t.group].col,
                   transform: `translate3d(${p.x.toFixed(1)}px, ${p.y.toFixed(1)}px, ${p.z.toFixed(1)}px) scale(${p.s})`,
-                  opacity: p.o, pointerEvents: on ? 'auto' : 'none', transitionDelay: (i % 12) * 22 + 'ms',
+                  opacity: p.o, pointerEvents: on && !t.dim ? 'auto' : 'none', transitionDelay: (i % 12) * 22 + 'ms',
                 }}>
                 {/* the face undoes the model's turn and tilt, so the text always faces the reader */}
                 <span className="ls-face"><i>{t.kicker}</i><span>{t.title}</span></span>
@@ -158,7 +158,7 @@ export default function LearningStage({ tiles, focus, onFocus }: { tiles: StageT
         </div>
         </div>
         <div className="ls-say"><b>{f.shape}.</b> {f.says}</div>
-        <div className="ls-hint">drag to turn · tiles are links</div>
+        <div className="ls-hint">drag to turn · bright tiles are links</div>
       </div>
     </div>
   )
