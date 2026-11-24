@@ -35,13 +35,13 @@ const EASE = 'cubic-bezier(.62,.02,.18,1)'
 
 const ROUTE_LABEL: Record<string, string> = {
   '': 'Home',
-  '/about': 'About',
-  '/research': 'Research',
+  '/about': 'Scholar',
+  '/research': 'Researcher',
   '/publications': 'Publications',
   '/playground': 'Playground',
-  '/teaching': 'Teaching',
-  '/cv': 'Curriculum Vitae',
-  '/contact': 'Contact',
+  '/teaching': 'Educator',
+  '/cv': 'Collaborator',
+  '/contact': 'Connect',
   '/postgraduate-guide': 'Postgraduate Guide',
 }
 const APP_ROUTES = Object.keys(ROUTE_LABEL).map((r) => r || '/')

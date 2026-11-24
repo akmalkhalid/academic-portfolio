@@ -7,14 +7,15 @@ import { s } from '@/lib/style'
 import Glyph from '@/components/Glyph'
 
 // Kept to five links (Nov 2026 simplification): Playground is linked from
-// Research, and Contact is the Collaborate button.
+// Research, and Contact is the Connect button.
 // Postgraduate is intentionally NOT in the nav — it stays a quiet page reachable
 // from Teaching and the Research CTA. Add a link by appending one entry here.
+// Labels name the role each page shows (the addresses are unchanged).
 const NAV = [
-  { href: '/about', label: 'About' },
-  { href: '/research', label: 'Research' },   // papers, grants, students and the programme, on one page
-  { href: '/teaching', label: 'Teaching' },
-  { href: '/cv', label: 'CV' },
+  { href: '/about', label: 'Scholar' },
+  { href: '/research', label: 'Researcher' },   // papers, grants, students and the programme, on one page
+  { href: '/teaching', label: 'Educator' },
+  { href: '/cv', label: 'Collaborator' },
 ]
 
 // Routes that open on a dark banner. The nav rides transparent over them until
@@ -81,13 +82,13 @@ export default function SiteNav({ shortName }: { shortName: string }) {
           ))}
         </ul>
 
-        {/* right side: theme switch (always visible) and the Collaborate button (desktop) */}
+        {/* right side: theme switch (always visible) and the Connect button (desktop) */}
         <div style={s('display:flex;align-items:center;gap:12px')} className="nav-right">
           <button type="button" className="theme-btn" onClick={flipTheme} aria-label={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'} title={theme === 'dark' ? 'Light theme' : 'Dark theme'}>
             <Glyph name={theme === 'dark' ? 'sun' : 'moon'} size={18} />
           </button>
           <Link className="nav-cta" href="/contact" style={s("font-family:'JetBrains Mono',monospace;font-size:12.5px;font-weight:500;text-decoration:none;padding:8px 15px;border-radius:7px")}>
-            Collaborate
+            Connect
           </Link>
         </div>
 
@@ -108,7 +109,7 @@ export default function SiteNav({ shortName }: { shortName: string }) {
         {/* Mobile dropdown */}
         {open && (
           <ul style={s('position:absolute;top:100%;left:0;right:0;display:flex;flex-direction:column;list-style:none;background:var(--bg);border-bottom:1px solid #e7e3dd;padding:6px 0;margin:0;box-shadow:0 14px 26px -18px rgba(28,25,23,.5);z-index:50')}>
-            {NAV.concat({ href: '/contact', label: 'Collaborate' }).map((n) => (
+            {NAV.concat({ href: '/contact', label: 'Connect' }).map((n) => (
               <li key={n.href} style={s('padding:11px 28px')}>
                 <Link href={n.href} onClick={() => setOpen(false)} style={s('text-decoration:none;font-size:14px;' + (isActive(n.href) ? 'color:#16142e;font-weight:500' : 'color:#57514b'))}>
                   {n.label}
