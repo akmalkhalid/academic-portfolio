@@ -25,7 +25,7 @@ export default function TailoredCVPage() {
         <a href="/cv/industry/" className="btn-ghost">Industry (trainer) CV <span aria-hidden="true">→</span></a>
       </PageBanner>
 
-      <div className="cvb-page" style={{ background: "#f4f5f7", minHeight: "100vh", padding: "28px 12px 64px" }}>
+      <div className="cvb-page" style={{ background: "var(--bg)", minHeight: "100vh", padding: "28px 12px 64px" }}>
         <link
           rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
