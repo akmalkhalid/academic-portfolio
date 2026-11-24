@@ -7,7 +7,7 @@ import LearningStage, { FOCUS, FOCUS_ORDER, type Focus, type StageTile } from '@
 
 const stack = "'Space Grotesk', system-ui, sans-serif"
 
-type Course = { code: string; title: string; meta: string; accent: string; hasLabs: boolean; labs: { title: string; href: string; blurb: string }[] }
+type Course = { code: string; title: string; meta: string; accent: string; link: string; hasLabs: boolean; labs: { title: string; href: string; blurb: string }[] }
 type Ongoing = { name: string; thesis: string; startYear: string; degShort: string; degStyle: string; roleShort: string; dots: string[] }
 type TrRow = { when: string; kind: string; title: string; client: string; audience: string }
 type Training = { done: TrRow[]; next: TrRow[]; stats: { num: string; label: string; color: string }[] }
@@ -25,7 +25,9 @@ export default function TeachingClient({
 
   // ---- the learning focus ------------------------------------------------------------
   // One choice drives two things: the 3D stage at the top (which structure is in front)
-  // and the order of the four sections below it (the chosen one comes first).
+  // and which of the four panels below it is shown. Only the chosen panel is visible;
+  // the other three stay in the page (hidden) so search engines and the site assistant
+  // still read them.
   // The address can carry it too: /teaching/#training opens on Training.
   const [focus, setFocus] = useState<Focus>('teaching')
   useEffect(() => {
@@ -38,21 +40,20 @@ export default function TeachingClient({
     return () => window.removeEventListener('hashchange', fromHash)
   }, [])
   const pickFocus = (f: Focus) => {
-    // Where the browser supports it, the re-ordering of the sections is cross-faded.
+    // Where the browser supports it, the swap of panels is cross-faded.
     const doc = document as Document & { startViewTransition?: (cb: () => void) => void }
     if (doc.startViewTransition && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) doc.startViewTransition(() => setFocus(f))
     else setFocus(f)
     history.replaceState(null, '', '#' + f)
   }
-  // chosen section first, the rest in their usual order
-  const orderOf = (f: Focus) => (f === focus ? 0 : 1 + FOCUS_ORDER.indexOf(f))
 
   // Every item on the page as one small tile for the 3D stage.
   const tiles = useMemo<StageTile[]>(() => {
     const labs = [...current, ...past].flatMap((c) => c.labs.map((l) => ({ group: 'open' as const, kicker: c.code + ' · lab tool', title: l.title, href: l.href })))
     return [
-      ...current.map((c) => ({ group: 'teaching' as const, kicker: c.code + ' · now', title: c.title, href: '#teaching' })),
-      ...past.map((c) => ({ group: 'teaching' as const, kicker: c.code + ' · taught', title: c.title, href: '#teaching' })),
+      // current courses open their material; previously taught ones are greyed and not links
+      ...current.map((c) => ({ group: 'teaching' as const, kicker: c.code + ' · now', title: c.title, href: c.link || '#teaching' })),
+      ...past.map((c) => ({ group: 'teaching' as const, kicker: c.code + ' · taught', title: c.title, href: '', dim: true })),
       ...training.next.slice(0, 2).map((r) => ({ group: 'training' as const, kicker: r.when + ' · next', title: r.title, href: '#training' })),
       ...training.done.slice(0, 12).map((r) => ({ group: 'training' as const, kicker: r.when, title: r.title, href: '#training' })),
       ...ongoing.map((o) => ({ group: 'supervision' as const, kicker: o.degShort + ' · ' + o.roleShort, title: o.name, href: '#supervision', inner: o.roleShort === 'Main' })),
@@ -98,173 +99,113 @@ export default function TeachingClient({
       {/* THE 3D STAGE: pick a focus, the model and the sections below rearrange */}
       <LearningStage tiles={tiles} focus={focus} onFocus={pickFocus} />
 
-      {/* Prompt Engineering Architect used to be featured here. It now lives with
-          the other self-paced series under /workshops/, which are unlisted —
-          shared directly with a cohort rather than linked from the site.
-          Kopi & Prompt is the opposite: public, indexed and linked — see the
-          Open learning section at the foot of this page. */}
-
+      {/* THE PANEL: only the chosen focus is shown. Each panel is a short list, not a wall
+          of cards; the 3D stage above is the overview, this is the readable detail.
+          Unlisted workshop kits are deliberately not linked from here. */}
       <div className="teach-flow">
-      {/* COURSES */}
-      <section id="teaching" style={s(`order:${orderOf('teaching')};width:100%;max-width:1120px;margin:0 auto;padding:46px 28px 10px`)}>
-        <h2 style={s(`font-family:${stack};font-weight:600;font-size:clamp(24px,3vw,32px);letter-spacing:-.02em;margin:0 0 8px`)}>Courses</h2>
-        <p style={s("font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#a39a8f;margin:0 0 16px")}>Currently teaching · {currentCount}</p>
-        <div style={s('display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:26px')}>
-          {current.map((c) => (
-            <div key={c.code} style={s(`background:#fff;border:1px solid #e7e3dd;border-top:3px solid ${c.accent};border-radius:12px;padding:14px 15px`)}>
-              <p style={s(`font-family:'JetBrains Mono',monospace;font-size:11px;color:${c.accent};font-weight:600;margin:0 0 6px`)}>{c.code}</p>
-              <h3 style={s('font-size:15px;font-weight:600;line-height:1.28;margin:0 0 7px')}>{c.title}</h3>
-              <p style={s("font-family:'JetBrains Mono',monospace;font-size:11px;color:#8a8279;margin:0")}>{c.meta}</p>
-              {c.hasLabs && (
-                <div style={s('margin-top:12px;padding-top:11px;border-top:1px solid #f0ece5')}>
-                  <p style={s("font-family:'JetBrains Mono',monospace;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:#b4ab9f;margin:0 0 8px")}>Companion lab tools</p>
-                  {c.labs.map((lab, i) => (
-                    <a key={i} href={lab.href} style={s('display:flex;gap:9px;text-decoration:none;color:#1c1917;padding:8px 8px;margin:0 -6px;border-radius:9px')}>
-                      <span style={s(`width:7px;height:7px;border-radius:50%;background:${c.accent};flex-shrink:0;margin-top:5px`)} />
-                      <span style={s('min-width:0')}>
-                        <span style={s('display:block;font-size:13px;font-weight:600;line-height:1.25')}>{lab.title}</span>
-                        <span style={s('display:block;font-size:11.5px;color:#8a8279;line-height:1.4;margin-top:2px')}>{lab.blurb}</span>
-                      </span>
-                    </a>
-                  ))}
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-        <p style={s("font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#a39a8f;margin:0 0 16px")}>Previously taught · {pastCount}</p>
-        <div style={s('display:grid;grid-template-columns:repeat(4,1fr);gap:12px')}>
-          {past.map((c) => (
-            <div key={c.code} style={s('background:#fbfaf8;border:1px solid #ece8e1;border-radius:11px;padding:15px')}>
-              <p style={s("font-family:'JetBrains Mono',monospace;font-size:11px;color:#a39a8f;font-weight:600;margin:0 0 6px")}>{c.code}</p>
-              <h3 style={s('font-size:14px;font-weight:600;line-height:1.3;margin:0 0 6px')}>{c.title}</h3>
-              <p style={s("font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#a39a8f;margin:0")}>{c.meta}</p>
-              {/* Lab tools outlive the semester — keep them reachable once a course moves here. */}
-              {c.hasLabs && (
-                <div style={s('margin-top:10px;padding-top:9px;border-top:1px solid #ece8e1')}>
-                  {c.labs.map((lab, i) => (
-                    <a key={i} href={lab.href} style={s('display:flex;gap:7px;align-items:baseline;text-decoration:none;color:#57514b;font-size:12px;font-weight:600;line-height:1.3;padding:3px 0')}>
-                      <span style={s(`width:6px;height:6px;border-radius:50%;background:${c.accent};flex-shrink:0;transform:translateY(-1px)`)} />
-                      <span>{lab.title}</span>
-                    </a>
-                  ))}
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      </section>
 
-      {/* SUPERVISION */}
-      <section id="supervision" style={s(`order:${orderOf('supervision')};width:100%;max-width:1120px;margin:0 auto;padding:46px 28px 10px`)}>
-        <h2 style={s(`font-family:${stack};font-weight:600;font-size:clamp(24px,3vw,32px);letter-spacing:-.02em;margin:0 0 18px`)}>Postgraduate supervision</h2>
-        <div style={s('display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:28px')}>
-          {supStats.map((st, i) => (
-            <div key={i} style={s(`border-top:2px solid ${st.color};padding-top:12px`)}>
-              <div style={s(`font-family:${stack};font-weight:600;font-size:30px;line-height:1;letter-spacing:-.02em`)}>{st.num}</div>
-              <div style={s('font-size:13px;color:#57514b;margin-top:6px')}>{st.label}</div>
-            </div>
-          ))}
-        </div>
-        <p style={s("font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#a39a8f;margin:0 0 14px")}>Ongoing researchers</p>
-        <div style={s('display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-bottom:30px')}>
-          {ongoing.map((st, i) => (
-            <div key={i} title={st.thesis} style={s('display:flex;flex-direction:column;background:#fff;border:1px solid #e7e3dd;border-radius:11px;padding:13px 14px')}>
-              <div style={s('display:flex;align-items:center;gap:7px;margin-bottom:7px')}>
-                <span style={s(st.degStyle)}>{st.degShort}</span>
-                <span style={s('display:flex;gap:3px')}>{st.dots.map((d, k) => (<span key={k} style={s(`width:7px;height:7px;border-radius:50%;background:${d}`)} />))}</span>
-                <span style={s("font-family:'JetBrains Mono',monospace;font-size:10px;color:#a39a8f;margin-left:auto")}>{st.roleShort} · &apos;{st.startYear}</span>
-              </div>
-              <h3 style={s('font-size:13.5px;font-weight:600;line-height:1.3;margin:0 0 4px')}>{st.name}</h3>
-              <p style={s('font-size:11.5px;color:#8a8279;line-height:1.45;margin:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden')}>{st.thesis}</p>
-            </div>
-          ))}
-        </div>
-        <p style={s("font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#a39a8f;margin:0 0 14px")}>Graduated</p>
-        <div style={s('display:grid;grid-template-columns:repeat(2,1fr);gap:14px')}>
-          {graduated.map((st, i) => (
-            <div key={i} title={st.thesis} style={s('background:#fbfaf8;border:1px solid #ece8e1;border-radius:11px;padding:13px 14px')}>
-              <div style={s('display:flex;align-items:center;gap:8px;margin-bottom:6px')}>
-                <span style={s("font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:600;color:#27500a;background:#eaf3de;padding:2px 7px;border-radius:5px")}>{st.degree} · {st.completion}</span>
-                <span style={s("font-family:'JetBrains Mono',monospace;font-size:10px;color:#a39a8f;margin-left:auto")}>{st.role}</span>
-              </div>
-              <h3 style={s('font-size:13.5px;font-weight:600;line-height:1.3;margin:0 0 3px')}>{st.name}</h3>
-              <p style={s('font-size:11.5px;color:#8a8279;line-height:1.45;margin:0 0 6px;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden')}>{st.thesis}</p>
-              <p style={s("font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#1c1917;margin:0")}>Now: {st.now}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* TRAINING & WORKSHOPS — rows come from content/cv.yml › training.delivered,
-          the same data both CVs print. Future-dated rows show as "Coming up". */}
-      <section id="training" style={s(`order:${orderOf('training')};width:100%;max-width:1120px;margin:0 auto;padding:46px 28px 10px`)}>
-        <h2 style={s(`font-family:${stack};font-weight:600;font-size:clamp(24px,3vw,32px);letter-spacing:-.02em;margin:0 0 8px`)}>Training &amp; workshops</h2>
-        <p style={s('font-size:15px;line-height:1.6;color:#57514b;margin:0 0 18px;max-width:660px')}>Hands-on AI training beyond the lecture hall — for police officers, hospital staff, corporate teams, faculties, libraries and visiting cohorts. <a href="/cv/industry/" style={s('color:#1c1917')}>See the trainer CV →</a></p>
-        <div className="tr-grid" style={s('display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:26px')}>
-          {training.stats.map((st, i) => (
-            <div key={i} style={s(`border-top:2px solid ${st.color};padding-top:12px`)}>
-              <div style={s(`font-family:${stack};font-weight:600;font-size:30px;line-height:1;letter-spacing:-.02em`)}>{st.num}</div>
-              <div style={s('font-size:13px;color:#57514b;margin-top:6px')}>{st.label}</div>
-            </div>
-          ))}
-        </div>
-        {training.next.length > 0 && (
-          <>
-            <p style={s("font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#a39a8f;margin:0 0 14px")}>Coming up</p>
-            <div className="tr-grid" style={s('display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-bottom:26px')}>
-              {training.next.map((r, i) => (
-                <div key={i} style={s('background:#fbfaf8;border:1px dashed #d9d3c9;border-radius:11px;padding:13px 14px')}>
-                  <p style={s(`font-family:'JetBrains Mono',monospace;font-size:10.5px;color:${KIND_COL[r.kind] || '#8a8279'};font-weight:600;margin:0 0 6px;text-transform:uppercase`)}>{r.when} · {r.kind}</p>
-                  <h3 style={s('font-size:13.5px;font-weight:600;line-height:1.3;margin:0 0 4px')}>{r.title}</h3>
-                  <p style={s('font-size:11.5px;color:#8a8279;line-height:1.45;margin:0')}>{r.client}</p>
-                </div>
-              ))}
-            </div>
-          </>
-        )}
-        <p style={s("font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#a39a8f;margin:0 0 14px")}>Delivered · newest first</p>
-        <div className="tr-grid" style={s('display:grid;grid-template-columns:repeat(3,1fr);gap:11px')}>
-          {training.done.slice(0, 9).map((r, i) => (
-            <div key={i} style={s(`background:#fff;border:1px solid #e7e3dd;border-top:3px solid ${KIND_COL[r.kind] || '#8a8279'};border-radius:11px;padding:13px 14px`)}>
-              <p style={s(`font-family:'JetBrains Mono',monospace;font-size:10.5px;color:${KIND_COL[r.kind] || '#8a8279'};font-weight:600;margin:0 0 6px;text-transform:uppercase`)}>{r.when} · {r.kind}</p>
-              <h3 style={s('font-size:13.5px;font-weight:600;line-height:1.3;margin:0 0 4px')}>{r.title}</h3>
-              <p style={s('font-size:11.5px;color:#8a8279;line-height:1.45;margin:0')}>{r.client}{r.audience ? ' · ' + r.audience : ''}</p>
-            </div>
-          ))}
-        </div>
-        {training.done.length > 9 && (
-          <p style={s('margin:16px 0 0;font-size:14px')}><a href="/cv/industry/" style={s('color:#1c1917;font-weight:600')}>All {training.done.length} sessions, with audiences and formats, in the trainer CV →</a></p>
-        )}
-      </section>
-
-      {/* OPEN LEARNING — Kopi & Prompt archive (static page under /public/newsletter/) */}
-      <section id="open-learning" style={s(`order:${orderOf('open')};width:100%;max-width:1120px;margin:0 auto;padding:46px 28px 10px`)}>
-        <h2 style={s(`font-family:${stack};font-weight:600;font-size:clamp(24px,3vw,32px);letter-spacing:-.02em;margin:0 0 8px`)}>Open learning</h2>
-        <p style={s('font-size:15px;line-height:1.6;color:#57514b;margin:0 0 18px;max-width:660px')}>Open-access material anyone can read, use and adapt — no sign-up, no paywall.</p>
-        <a
-          href="/newsletter/kopi-prompt/"
-          style={s('display:block;text-decoration:none;color:#1c1917;background:#fff;border:1px solid #e7e3dd;border-top:3px solid #c58a1a;border-radius:15px;padding:24px 26px')}
-        >
-          <div style={s('display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:12px')}>
-            <span style={s("font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:3px 9px;border-radius:5px;background:#fbf0dd;color:#7a5210")}>Weekly newsletter · archive</span>
-            <span style={s("font-family:'JetBrains Mono',monospace;font-size:10.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:3px 9px;border-radius:5px;background:#eaf3de;color:#27500a")}>Free · open access</span>
+        {/* TEACHING */}
+        <section id="teaching" hidden={focus !== 'teaching'} className="tp">
+          <h2 className="tp-h">Courses</h2>
+          <p className="tp-label">Teaching now · {currentCount}</p>
+          <div className="tp-list">
+            {current.map((c) => {
+              const inside = (<>
+                <span className="tp-code" style={s(`color:${c.accent}`)}>{c.code}</span>
+                <span className="tp-main"><b>{c.title}</b><i>{c.meta}{c.hasLabs ? ` · ${c.labs.length} lab ${c.labs.length === 1 ? 'tool' : 'tools'}` : ''}</i></span>
+                <span className="tp-go">{c.link ? 'Open →' : ''}</span>
+              </>)
+              // a current course is a link when it has material to open (see page.tsx › link)
+              return c.link
+                ? <a key={c.code} href={c.link} className="tp-row tp-link" style={s(`border-left-color:${c.accent}`)}>{inside}</a>
+                : <div key={c.code} className="tp-row" style={s(`border-left-color:${c.accent}`)}>{inside}</div>
+            })}
           </div>
-          <h3 style={s(`font-family:${stack};font-weight:600;font-size:clamp(19px,2.6vw,24px);line-height:1.18;letter-spacing:-.02em;margin:0 0 9px`)}>Kopi &amp; Prompt — the archive</h3>
-          <p style={s('font-size:15px;line-height:1.6;color:#57514b;margin:0 0 14px;max-width:660px')}>
-            Thirty-one Friday issues of practical AI prompts written for academic staff at FTSM. Each issue
-            takes one real teaching, research or admin headache and solves it with a specific tool, a named
-            technique and cited evidence. Searchable, filterable, and every issue readable in full.
-          </p>
-          <div style={s('display:flex;flex-wrap:wrap;gap:7px;margin-bottom:16px')}>
-            {['31 issues', 'Every Friday', 'Gemini · NotebookLM', 'Copy-ready prompts', 'CAIT, FTSM, UKM'].map((f) => (
-              <span key={f} style={s("font-family:'JetBrains Mono',monospace;font-size:10.5px;color:#6b6560;background:#f4f1ec;border:1px solid #e7e3dd;padding:3px 9px;border-radius:5px")}>{f}</span>
+          <p className="tp-label">Previously taught · {pastCount}</p>
+          <div className="tp-past">
+            {past.map((c) => (<span key={c.code}><b>{c.code}</b> {c.title}</span>))}
+          </div>
+        </section>
+
+        {/* TRAINING — rows come from content/cv.yml › training.delivered, the same data both
+            CVs print. Future-dated rows show as "next". */}
+        <section id="training" hidden={focus !== 'training'} className="tp">
+          <h2 className="tp-h">Training &amp; workshops</h2>
+          <p className="tp-lede">Hands-on AI training beyond the lecture hall, for police officers, hospital staff, corporate teams, faculties, libraries and visiting cohorts.</p>
+          <div className="tp-stats">
+            {training.stats.map((st, i) => (<div key={i} style={s(`border-top-color:${st.color}`)}><b>{st.num}</b><span>{st.label}</span></div>))}
+          </div>
+          <div className="tp-list">
+            {training.next.map((r, i) => (
+              <div key={'n' + i} className="tp-row tp-next" style={s(`border-left-color:${KIND_COL[r.kind] || '#8a8279'}`)}>
+                <span className="tp-code" style={s(`color:${KIND_COL[r.kind] || '#8a8279'}`)}>{r.when}</span>
+                <span className="tp-main"><b>{r.title}</b><i>{r.client}</i></span>
+                <span className="tp-go">next · {r.kind}</span>
+              </div>
+            ))}
+            {training.done.slice(0, 8).map((r, i) => (
+              <div key={i} className="tp-row" style={s(`border-left-color:${KIND_COL[r.kind] || '#8a8279'}`)}>
+                <span className="tp-code" style={s(`color:${KIND_COL[r.kind] || '#8a8279'}`)}>{r.when}</span>
+                <span className="tp-main"><b>{r.title}</b><i>{r.client}{r.audience ? ' · ' + r.audience : ''}</i></span>
+                <span className="tp-go">{r.kind}</span>
+              </div>
             ))}
           </div>
-          <span style={s("display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:#fff;background:#16142e;padding:9px 16px;border-radius:8px")}>Open the archive →</span>
-        </a>
-      </section>
+          <p className="tp-more"><a href="/cv/industry/">All {training.done.length} sessions, with audiences and formats, in the trainer CV →</a></p>
+        </section>
 
+        {/* SUPERVISION */}
+        <section id="supervision" hidden={focus !== 'supervision'} className="tp">
+          <h2 className="tp-h">Postgraduate supervision</h2>
+          <div className="tp-stats">
+            {supStats.map((st, i) => (<div key={i} style={s(`border-top-color:${st.color}`)}><b>{st.num}</b><span>{st.label}</span></div>))}
+          </div>
+          <p className="tp-label">Ongoing researchers</p>
+          <div className="tp-list">
+            {ongoing.map((st, i) => (
+              <div key={i} className="tp-row" style={s('border-left-color:#4d8df0')}>
+                <span className="tp-code" style={s('color:#4d8df0')}>{st.degShort} · {st.roleShort}</span>
+                <span className="tp-main"><b>{st.name}</b><i>{st.thesis}</i></span>
+                <span className="tp-go">since &apos;{st.startYear}</span>
+              </div>
+            ))}
+          </div>
+          <p className="tp-label">Graduated</p>
+          <div className="tp-list">
+            {graduated.map((st, i) => (
+              <div key={i} className="tp-row" style={s('border-left-color:#84b53a')}>
+                <span className="tp-code" style={s('color:#84b53a')}>{st.degree} · {st.completion}</span>
+                <span className="tp-main"><b>{st.name}</b><i>{st.thesis}{st.now && st.now !== '—' ? ' · Now: ' + st.now : ''}</i></span>
+                <span className="tp-go">{st.role}</span>
+              </div>
+            ))}
+          </div>
+          <p className="tp-more"><a href="/postgraduate-guide/">Thinking of applying? Read the postgraduate guide →</a></p>
+        </section>
+
+        {/* OPEN LEARNING — everything here is public: no sign-up, no paywall */}
+        <section id="open-learning" hidden={focus !== 'open'} className="tp">
+          <h2 className="tp-h">Open learning</h2>
+          <p className="tp-lede">Open-access material anyone can read, use and adapt. No sign-up, no paywall.</p>
+          <div className="tp-list">
+            {[
+              { k: 'Newsletter', t: 'Kopi & Prompt, the archive', d: 'Weekly Friday issues of practical AI prompts for academic staff: one real headache, one tool, one named technique, cited evidence.', h: '/newsletter/kopi-prompt/' },
+              { k: 'Book · free', t: 'Prompt Cookbook', d: 'The published prompt book, as a free download.', h: '/cookbook/' },
+              { k: 'Tools', t: 'The toolkit', d: 'The AI tools I use and teach in workshops, with what each is good for.', h: '/toolkit/' },
+              { k: 'Live demos', t: 'Playground', d: 'Small simulations and research demos you can run in the browser.', h: '/playground/' },
+            ].map((o) => (
+              <a key={o.h} href={o.h} className="tp-row tp-link" style={s('border-left-color:#21b3a0')}>
+                <span className="tp-code" style={s('color:#21b3a0')}>{o.k}</span>
+                <span className="tp-main"><b>{o.t}</b><i>{o.d}</i></span>
+                <span className="tp-go">Open →</span>
+              </a>
+            ))}
+          </div>
+          <p className="tp-label">Course lab tools, open to anyone</p>
+          <div className="tp-chips">
+            {[...current, ...past].flatMap((c) => c.labs.map((l) => (<a key={l.href} href={l.href} title={l.blurb}><b>{c.code}</b> {l.title}</a>)))}
+          </div>
+        </section>
       </div>
 
       {/* CTA */}
