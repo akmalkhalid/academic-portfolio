@@ -957,6 +957,19 @@ main input[style*='var(--panel)'], main textarea[style*='var(--panel)'], main se
 .tp-link:hover .tp-go, .tp-link .tp-go { color: var(--ink); }
 .tp-link:focus-visible { outline: 2px solid #8b7bf0; outline-offset: -2px; }
 .tp-next { background: var(--panel-2); }
+/* a current course with companion tools: the row is a button, the tools unfold under it */
+.tp-course { border-left: 3px solid transparent; border-bottom: 1px solid var(--line); scroll-margin-top: 110px; }
+.tp-course:last-child { border-bottom: none; }
+.tp-course > .tp-row { width: 100%; border: none; border-left: none; background: transparent; text-align: left; cursor: pointer; font: inherit; padding-left: 15px; }
+.tp-course > .tp-row:hover { background: var(--panel-2); }
+.tp-tools { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 8px; padding: 2px 18px 16px 163px; }
+.tp-tools[hidden] { display: none; }
+.tp-tools a { display: block; text-decoration: none; border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; background: var(--panel-2); transition: border-color .2s ease; }
+.tp-tools a:hover { border-color: var(--line-2); }
+.tp-tools b { display: block; font-size: 13px; font-weight: 600; line-height: 1.3; color: var(--ink); }
+.tp-tools i { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font-style: normal; font-size: 11.5px; line-height: 1.45; color: var(--muted); margin-top: 3px; }
+.tp-tools span { display: block; font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: var(--ink-2); margin-top: 6px; }
+@media (max-width: 760px) { .tp-tools { padding: 2px 12px 14px 12px; } }
 /* previously taught: greyed, plain text, no links */
 .tp-past { display: flex; flex-wrap: wrap; gap: 8px; }
 .tp-past span { font-size: 12.5px; color: var(--faint); border: 1px dashed var(--line-2); border-radius: 8px; padding: 6px 11px; filter: grayscale(1); }
