@@ -30,9 +30,17 @@ export default function TeachingClient({
   // still read them.
   // The address can carry it too: /teaching/#training opens on Training.
   const [focus, setFocus] = useState<Focus>('teaching')
+  // which current course has its companion tools unfolded (a course code, or '')
+  const [openCourse, setOpenCourse] = useState('')
   useEffect(() => {
     const fromHash = () => {
       const h = location.hash.slice(1)
+      // #course-TTTC6544 (a course tile in the stage): show Teaching and unfold that course
+      if (h.startsWith('course-')) {
+        setFocus('teaching'); setOpenCourse(h.slice(7))
+        requestAnimationFrame(() => document.getElementById(h)?.scrollIntoView({ block: 'center', behavior: 'smooth' }))
+        return
+      }
       const hit = FOCUS_ORDER.find((k) => k === h || FOCUS[k].anchor === h)
       if (hit) setFocus(hit)
     }
@@ -51,8 +59,9 @@ export default function TeachingClient({
   const tiles = useMemo<StageTile[]>(() => {
     const labs = [...current, ...past].flatMap((c) => c.labs.map((l) => ({ group: 'open' as const, kicker: c.code + ' · lab tool', title: l.title, href: l.href })))
     return [
-      // current courses open their material; previously taught ones are greyed and not links
-      ...current.map((c) => ({ group: 'teaching' as const, kicker: c.code + ' · now', title: c.title, href: c.link || '#teaching' })),
+      // a current course tile jumps to that course in the list below and unfolds its tools;
+      // previously taught ones are greyed and not links
+      ...current.map((c) => ({ group: 'teaching' as const, kicker: c.code + ' · now', title: c.title, href: '#course-' + c.code })),
       ...past.map((c) => ({ group: 'teaching' as const, kicker: c.code + ' · taught', title: c.title, href: '', dim: true })),
       ...training.next.slice(0, 2).map((r) => ({ group: 'training' as const, kicker: r.when + ' · next', title: r.title, href: '#training' })),
       ...training.done.slice(0, 12).map((r) => ({ group: 'training' as const, kicker: r.when, title: r.title, href: '#training' })),
@@ -110,15 +119,34 @@ export default function TeachingClient({
           <p className="tp-label">Teaching now · {currentCount}</p>
           <div className="tp-list">
             {current.map((c) => {
-              const inside = (<>
-                <span className="tp-code" style={s(`color:${c.accent}`)}>{c.code}</span>
-                <span className="tp-main"><b>{c.title}</b><i>{c.meta}{c.hasLabs ? ` · ${c.labs.length} lab ${c.labs.length === 1 ? 'tool' : 'tools'}` : ''}</i></span>
-                <span className="tp-go">{c.link ? 'Open →' : ''}</span>
-              </>)
-              // a current course is a link when it has material to open (see page.tsx › link)
-              return c.link
-                ? <a key={c.code} href={c.link} className="tp-row tp-link" style={s(`border-left-color:${c.accent}`)}>{inside}</a>
-                : <div key={c.code} className="tp-row" style={s(`border-left-color:${c.accent}`)}>{inside}</div>
+              const row = (
+                <>
+                  <span className="tp-code" style={s(`color:${c.accent}`)}>{c.code}</span>
+                  <span className="tp-main"><b>{c.title}</b><i>{c.meta}{c.hasLabs ? ` · ${c.labs.length} companion ${c.labs.length === 1 ? 'tool' : 'tools'}` : ''}</i></span>
+                  <span className="tp-go">{c.hasLabs ? (openCourse === c.code ? 'Hide tools ↑' : 'Show tools ↓') : ''}</span>
+                </>
+              )
+              // A course with companion tools unfolds in place (it does not jump to a tool);
+              // a course without any is a plain row.
+              if (!c.hasLabs) return c.link
+                ? <a key={c.code} id={'course-' + c.code} href={c.link} className="tp-row tp-link" style={s(`border-left-color:${c.accent}`)}>{row}<span className="tp-go">Syllabus →</span></a>
+                : <div key={c.code} id={'course-' + c.code} className="tp-row" style={s(`border-left-color:${c.accent}`)}>{row}</div>
+              const open = openCourse === c.code
+              return (
+                <div key={c.code} id={'course-' + c.code} className="tp-course" style={s(`border-left-color:${c.accent}`)}>
+                  <button type="button" className="tp-row tp-link" aria-expanded={open} onClick={() => setOpenCourse(open ? '' : c.code)}>{row}</button>
+                  <div className="tp-tools" hidden={!open}>
+                    {c.link ? <a href={c.link}><b>Syllabus</b><span>Open →</span></a> : null}
+                    {c.labs.map((l) => (
+                      <a key={l.href} href={l.href}>
+                        <b>{l.title}</b>
+                        {l.blurb ? <i>{l.blurb}</i> : null}
+                        <span>Open →</span>
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )
             })}
           </div>
           <p className="tp-label">Previously taught · {pastCount}</p>
@@ -201,10 +229,7 @@ export default function TeachingClient({
               </a>
             ))}
           </div>
-          <p className="tp-label">Course lab tools, open to anyone</p>
-          <div className="tp-chips">
-            {[...current, ...past].flatMap((c) => c.labs.map((l) => (<a key={l.href} href={l.href} title={l.blurb}><b>{c.code}</b> {l.title}</a>)))}
-          </div>
+          <p className="tp-more"><a href="#teaching">Course lab tools are listed under each course in Teaching →</a></p>
         </section>
       </div>
 

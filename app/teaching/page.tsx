@@ -19,9 +19,9 @@ export default function Page() {
     title: c.courseTitle,
     meta: `${c.level}${c.program ? ' · ' + c.program : ''}`,
     accent: accentOf(c.topicTags),
-    // where a course card leads: its syllabus if content/courses/<file>.md has syllabusLink,
-    // otherwise its first companion lab hub; '' means there is nothing to open yet
-    link: c.syllabusLink || (c.labs && c.labs[0] ? c.labs[0].href : ''),
+    // optional syllabus address (syllabusLink in content/courses/<file>.md); '' if none.
+    // Companion lab tools are NOT used as the course link: they unfold under the course.
+    link: c.syllabusLink || '',
     hasLabs: !!(c.labs && c.labs.length),
     labs: (c.labs || []).map((l) => ({ title: l.title, href: l.href, blurb: l.blurb || '' })),
   })
