@@ -23,6 +23,8 @@ import { s } from '@/lib/style'
 import PageBanner from '@/components/PageBanner'
 import Constellation3D, { type CLink } from '@/components/Constellation3D'
 import ResearchAtlas from '@/components/ResearchAtlas'
+import ImpactBridge, { type PillarStats } from '@/components/ImpactBridge'
+import Glyph from '@/components/Glyph'
 import { PCOL, PNAME, QCOL, CATNAME, type Code } from '@/lib/view'
 import type { Pillar } from '@/lib/pillars'
 
@@ -77,14 +79,16 @@ const REFS = [
   { text: 'Liu, S., Chen, C., Qu, X., Tang, K. & Ong, Y.-S. “Large language models as evolutionary optimizers.” arXiv:2310.19046 (2023, rev. 2024).', href: 'https://arxiv.org/abs/2310.19046' },
 ]
 
+const GLYPH = { gen: 'generate', eva: 'evaluate', sea: 'search' } as const
 const MONO = "font-family:'JetBrains Mono',monospace;"
 const HEAD = "font-family:'Space Grotesk',system-ui,sans-serif;"
 const rm = (n: number) => 'RM ' + (n >= 1e6 ? (n / 1e6).toFixed(2) + 'M' : n ? Math.round(n / 1e3) + 'k' : '0')
 const TABS: Tab[] = ['papers', 'grants', 'people', 'ideas']
 
 export default function ResearchClient({
-  papers, grants, students, links, linkCounts, citeUpdated, years, today,
+  papers, grants, students, links, linkCounts, citeUpdated, years, today, stats,
 }: {
+  stats: PillarStats
   papers: Paper[]; grants: Grant[]; students: Student[]
   links: CLink[]; linkCounts: Record<CLink['kind'], number>; citeUpdated: string | null
   years: [number, number]; today: number
@@ -214,7 +218,7 @@ export default function ResearchClient({
                   return (
                     <button key={k} type="button" aria-pressed={on} onClick={() => setPillar(on ? null : k)} className="rs-pill"
                       style={s(`border-color:${on ? PIL[k].col : 'rgba(255,255,255,.1)'};background:${on ? PIL[k].col + '1f' : 'rgba(255,255,255,.03)'};opacity:${pillar && !on ? '.55' : '1'}`)}>
-                      <span style={s(`width:9px;height:9px;border-radius:50%;flex-shrink:0;background:${PIL[k].col}`)} />
+                      <Glyph name={GLYPH[k]} size={26} color={PIL[k].col} />
                       <span style={s('flex:1;min-width:0;text-align:left')}>
                         <span style={s(`${HEAD}font-weight:600;font-size:14.5px;color:#ECEAF3`)}>{PIL[k].verb}</span>
                         <span style={s('font-size:12.5px;color:#9b96aa;margin-left:8px')}>{PIL[k].q}</span>
@@ -393,6 +397,12 @@ export default function ResearchClient({
                   </div>
                 ))}
               </div>
+
+              {/* what each stage is for: pillar -> expected impact. The research stage is always
+                  dark, so the cards are told to use the dark palette whatever the site theme is. */}
+              <h3 style={s(`${HEAD}font-weight:600;font-size:17px;color:#ECEAF3;margin:28px 0 4px`)}>What each stage is for</h3>
+              <p style={s('font-size:13.5px;color:#9b96aa;margin:0 0 14px')}>Generate ↔ design thinking · Evaluate ↔ explainability · Search ↔ sustainability</p>
+              <div data-theme="dark"><ImpactBridge stats={stats} /></div>
 
               <h3 style={s(`${HEAD}font-weight:600;font-size:17px;color:#ECEAF3;margin:28px 0 10px`)}>Next to neighbouring fields</h3>
               <div className="rs-list" style={s('max-height:none')}>

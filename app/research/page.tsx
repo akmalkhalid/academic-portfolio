@@ -67,12 +67,19 @@ export default function Page() {
   const yearMin = Math.min(...papers.map((p) => p.y))
   const yearMax = Math.max(...papers.map((p) => p.y), ...grants.map((g) => Math.floor(g.y1)))
 
+  // per pillar: first publication year and number of papers, for the pillar-to-impact rows
+  const stats = Object.fromEntries((['gen', 'eva', 'sea'] as const).map((k) => {
+    const mine = papers.filter((p) => p.pl === k)
+    return [k, { since: Math.min(...mine.map((p) => p.y)), papers: mine.length }]
+  })) as Record<'gen' | 'eva' | 'sea', { since: number; papers: number }>
+
   const now = new Date()   // build date: where the "today" line sits on the timeline
 
   return (
     <ResearchClient
       papers={papers} grants={grants} students={students}
       links={links} linkCounts={counts} citeUpdated={citeSource.updated}
+      stats={stats}
       years={[yearMin, yearMax]} today={now.getFullYear() + now.getMonth() / 12}
     />
   )
