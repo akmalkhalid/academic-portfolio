@@ -401,7 +401,7 @@ export default function ResearchClient({
               {/* what each stage is for: pillar -> expected impact. The research stage is always
                   dark, so the cards are told to use the dark palette whatever the site theme is. */}
               <h3 style={s(`${HEAD}font-weight:600;font-size:17px;color:#ECEAF3;margin:28px 0 4px`)}>What each stage is for</h3>
-              <p style={s('font-size:13.5px;color:#9b96aa;margin:0 0 14px')}>Generate ↔ design thinking · Evaluate ↔ explainability · Search ↔ sustainability</p>
+              <p style={s('font-size:13.5px;color:#9b96aa;margin:0 0 14px')}>Generate ↔ ludogenist · Evaluate ↔ explainability · Search ↔ sustainability</p>
               <div data-theme="dark"><ImpactBridge stats={stats} /></div>
 
               <h3 style={s(`${HEAD}font-weight:600;font-size:17px;color:#ECEAF3;margin:28px 0 10px`)}>Next to neighbouring fields</h3>
