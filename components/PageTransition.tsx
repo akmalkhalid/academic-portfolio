@@ -2,31 +2,31 @@
 
 import { useEffect, useRef } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
-import { landscape } from '@/lib/landscape'
 
 // ---------------------------------------------------------------------------
-// Page transition — an organic pixel dissolve.
+// Page transition — an "aperture": the next page opens from the point you clicked.
 //
-// The screen is divided into chunky cells. Each cell gets a threshold made of
-// fractal noise (so cells flip in connected, organic clumps rather than as TV
-// static), a per-cell random jitter (so the edges speckle), and a bias by
-// distance from the click point (so the dissolve GROWS from wherever the visitor
-// pressed). A rising cutoff sweeps that threshold field: cells below the cutoff
-// are painted, and the last ones to flip glow, which gives the advancing front a
-// visible leading edge.
+// Leaving a page (cover):
+//   1. a veil in the page's own background colour grows as a circle from the click
+//      point (CSS clip-path), with a thin glowing ring riding its edge;
+//   2. the old page sinks back a little (scale + fade), so the veil reads as
+//      something in front of it, not a flash;
+//   3. the destination's name appears in the middle, then we navigate.
+// Arriving (reveal):
+//   4. the veil fades out while the new page settles forward into place.
 //
-// The cells are painted in the colours of the latent-space background
-// (LatentField writes them to lib/landscape), so a page change reads as the
-// background itself dissolving into the next page rather than a generic overlay.
+// Everything is one smooth eased motion on two elements, driven by the browser's
+// Web Animations API (element.animate). No canvas and no per-pixel work, so it
+// cannot stutter into a glitch the way the old pixel dissolve could.
 //
-// Cost: ~340ms cover + ~420ms reveal, and the reveal overlaps the incoming
-// page's first paint. prefers-reduced-motion skips the whole thing.
+// Cost: ~420ms cover + ~520ms reveal; the reveal overlaps the new page's first
+// paint. prefers-reduced-motion skips the whole thing. The colours come from the
+// theme variables, so it matches dark and light.
 // ---------------------------------------------------------------------------
 
-const COVER_MS = 380
-const REVEAL_MS = 460
-/** Cell edge in CSS pixels — the "pixel" of the pixel dissolve. */
-const CELL = 13
+const COVER_MS = 420
+const REVEAL_MS = 520
+const EASE = 'cubic-bezier(.62,.02,.18,1)'
 
 const ROUTE_LABEL: Record<string, string> = {
   '': 'Home',
@@ -50,159 +50,67 @@ function labelFor(route: string): string {
   return seg.replace(/[-_]+/g, ' ').replace(/[^A-Za-z0-9 ]/g, '').slice(0, 24).trim().toUpperCase() || 'LOADING'
 }
 
-// ---- a small value-noise, just for the dissolve pattern --------------------
-function hash(ix: number, iy: number, seed: number): number {
-  let h = ix * 374761393 + iy * 668265263 + seed * 2147483647
-  h = (h ^ (h >> 13)) * 1274126177
-  return ((h ^ (h >> 16)) >>> 0) / 4294967295
-}
-function vnoise(x: number, y: number, seed: number): number {
-  const ix = Math.floor(x), iy = Math.floor(y)
-  const fx = x - ix, fy = y - iy
-  const ux = fx * fx * (3 - 2 * fx), uy = fy * fy * (3 - 2 * fy)
-  const a = hash(ix, iy, seed), b = hash(ix + 1, iy, seed)
-  const c = hash(ix, iy + 1, seed), d = hash(ix + 1, iy + 1, seed)
-  return a + (b - a) * ux + (c - a) * uy + (a - b - c + d) * ux * uy
-}
-
-function parseRgb(css: string): [number, number, number] {
-  const m = css.match(/(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/)
-  return m ? [+m[1], +m[2], +m[3]] : [10, 9, 20]
-}
-
 export default function PageTransition() {
   const pathname = usePathname()
   const router = useRouter()
   const ovRef = useRef<HTMLDivElement>(null)
-  const cvRef = useRef<HTMLCanvasElement>(null)
+  const veilRef = useRef<HTMLDivElement>(null)
+  const ringRef = useRef<HTMLDivElement>(null)
   const tagRef = useRef<HTMLSpanElement>(null)
   const ctrl = useRef<{ reveal: () => void } | null>(null)
   const pathnameRef = useRef(pathname)
 
   useEffect(() => {
     const reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    const ov = ovRef.current!
-    const cv = cvRef.current!
-    const tag = tagRef.current!
-    const ctx = cv.getContext('2d')!
-
-    let cols = 0, rows = 0
-    let thr = new Float32Array(0)
-    let tint = new Float32Array(0)
-    let img: ImageData | null = null
-    let cell: HTMLCanvasElement | null = null
-    let cellCtx: CanvasRenderingContext2D | null = null
-    let raf = 0
+    const ov = ovRef.current!, veil = veilRef.current!, ring = ringRef.current!, tag = tagRef.current!
+    const page = () => document.querySelector('main') as HTMLElement | null
     let leaving = false
+    let covered = false          // is the veil currently up?
     let safety: number | null = null
 
-    function sizeTo(originX: number, originY: number, seed: number) {
-      const W = window.innerWidth, H = window.innerHeight
-      cv.width = W; cv.height = H
-      cv.style.width = W + 'px'; cv.style.height = H + 'px'
-      cols = Math.max(2, Math.ceil(W / CELL))
-      rows = Math.max(2, Math.ceil(H / CELL))
-      thr = new Float32Array(cols * rows)
-      tint = new Float32Array(cols * rows)
+    const hide = () => { ov.style.display = 'none'; ov.style.pointerEvents = 'none'; tag.style.opacity = '0'; covered = false }
 
-      if (!cell) { cell = document.createElement('canvas'); cellCtx = cell.getContext('2d') }
-      cell.width = cols; cell.height = rows
-      img = cellCtx!.createImageData(cols, rows)
-
-      // Origin in cell space; the dissolve grows outward from here.
-      const ox = originX * cols, oy = originY * rows
-      const maxD = Math.hypot(Math.max(ox, cols - ox), Math.max(oy, rows - oy)) || 1
-
-      for (let j = 0; j < rows; j++) {
-        for (let i = 0; i < cols; i++) {
-          const k = j * cols + i
-          // two octaves of noise → connected organic clumps
-          const n = 0.65 * vnoise(i * 0.075, j * 0.075, seed) + 0.35 * vnoise(i * 0.19, j * 0.19, seed + 7)
-          const jitter = hash(i, j, seed + 31)
-          const d = Math.hypot(i - ox, j - oy) / maxD
-          thr[k] = d * 0.52 + n * 0.36 + jitter * 0.12
-          tint[k] = n
-        }
-      }
-      // Stretch to a full 0..1 so the front sweeps for the whole duration.
-      let lo = Infinity, hi = -Infinity
-      for (let k = 0; k < thr.length; k++) { if (thr[k] < lo) lo = thr[k]; if (thr[k] > hi) hi = thr[k] }
-      const span = Math.max(1e-4, hi - lo)
-      for (let k = 0; k < thr.length; k++) thr[k] = (thr[k] - lo) / span
-    }
-
-    function paint(cut: number, inverted: boolean) {
-      if (!img || !cell || !cellCtx) return
-      const lo = parseRgb(landscape.low)
-      const hi = parseRgb(landscape.high)
-      const d = img.data
-      for (let k = 0; k < thr.length; k++) {
-        const t = thr[k]
-        const on = inverted ? t > cut : t <= cut
-        const o = k * 4
-        if (!on) { d[o + 3] = 0; continue }
-        // cells that flipped most recently glow — this is the advancing front
-        const age = Math.max(0, Math.min(1, Math.abs(cut - t) * 3.4))
-        const edge = 1 - age
-        const mix = Math.min(1.3, 0.05 + tint[k] * 0.1 + edge * edge * 1.2)
-        d[o] = Math.min(255, lo[0] + (hi[0] - lo[0]) * mix)
-        d[o + 1] = Math.min(255, lo[1] + (hi[1] - lo[1]) * mix)
-        d[o + 2] = Math.min(255, lo[2] + (hi[2] - lo[2]) * mix)
-        d[o + 3] = 255
-      }
-      cellCtx.putImageData(img, 0, 0)
-      ctx.clearRect(0, 0, cv.width, cv.height)
-      ctx.imageSmoothingEnabled = false
-      ctx.drawImage(cell, 0, 0, cv.width, cv.height)
-    }
-
-    const hide = () => {
-      ov.style.display = 'none'
-      ov.style.pointerEvents = 'none'
-      tag.style.opacity = '0'
-      if (raf) { cancelAnimationFrame(raf); raf = 0 }
-    }
-
-    function animate(ms: number, inverted: boolean, done?: () => void) {
-      const t0 = performance.now()
-      const stepFn = (now: number) => {
-        const p = Math.min(1, (now - t0) / ms)
-        // ease so the front accelerates then settles
-        const e = p < 0.5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2
-        paint(e, inverted)
-        if (p < 1) raf = requestAnimationFrame(stepFn)
-        else { raf = 0; done?.() }
-      }
-      raf = requestAnimationFrame(stepFn)
-    }
-
-    // Dissolve the cover AWAY, revealing whatever page is underneath.
+    // Arriving: fade the veil (if it is up) and let the page settle forward.
     function reveal() {
-      if (reduce) { hide(); return }
       if (safety) { clearTimeout(safety); safety = null }
-      ov.style.display = 'block'
-      ov.style.pointerEvents = 'none'
-      sizeTo(Math.random() * 0.6 + 0.2, Math.random() * 0.6 + 0.2, Math.floor(Math.random() * 9999))
-      tag.style.opacity = '0'
-      paint(0, true)
-      animate(REVEAL_MS, true, hide)
       leaving = false
+      if (reduce) { hide(); return }
+      page()?.animate(
+        [{ opacity: 0, transform: 'translateY(14px) scale(1.012)' }, { opacity: 1, transform: 'none' }],
+        { duration: REVEAL_MS, easing: 'cubic-bezier(.2,.7,.2,1)' },
+      )
+      if (!covered) { hide(); return }
+      tag.style.opacity = '0'
+      ring.style.opacity = '0'
+      veil.animate([{ opacity: 1 }, { opacity: 0 }], { duration: REVEAL_MS * 0.8, easing: 'ease-out', fill: 'forwards' }).onfinish = hide
     }
 
-    // Dissolve a cover IN from the click point, then navigate.
-    function cover(href: string, label: string, spa: boolean, ox: number, oy: number) {
+    // Leaving: open the veil from the click point, then navigate.
+    function cover(href: string, label: string, spa: boolean, x: number, y: number) {
       const go = () => { if (spa) router.push(href); else window.location.href = href }
       if (reduce) { go(); return }
       if (leaving) return
-      leaving = true
+      leaving = true; covered = true
 
+      const W = window.innerWidth, H = window.innerHeight
+      // radius that reaches the farthest corner from the click point
+      const R = Math.hypot(Math.max(x, W - x), Math.max(y, H - y)) + 40
       ov.style.display = 'block'
       ov.style.pointerEvents = 'auto' // swallow clicks mid-flight
-      sizeTo(ox, oy, Math.floor(Math.random() * 9999))
+      veil.getAnimations().forEach((a) => a.cancel())
+      veil.style.setProperty('--px', x + 'px'); veil.style.setProperty('--py', y + 'px')
+      veil.animate(
+        [{ clipPath: `circle(0px at ${x}px ${y}px)`, opacity: 1 }, { clipPath: `circle(${R}px at ${x}px ${y}px)`, opacity: 1 }],
+        { duration: COVER_MS, easing: EASE, fill: 'forwards' },
+      )
+      // the ring is a circle of diameter 2R centred on the click, scaled up from nothing
+      ring.style.cssText = `left:${x - R}px;top:${y - R}px;width:${2 * R}px;height:${2 * R}px;opacity:1`
+      ring.animate([{ transform: 'scale(0)', opacity: 1 }, { transform: 'scale(1)', opacity: 0.2 }], { duration: COVER_MS, easing: EASE, fill: 'forwards' })
+      page()?.animate([{ opacity: 1, transform: 'none' }, { opacity: 0.35, transform: 'scale(.985)' }], { duration: COVER_MS, easing: 'ease-out' })
+
       tag.textContent = label
-      animate(COVER_MS, false)
-      window.setTimeout(() => { tag.style.opacity = '1' }, COVER_MS * 0.55)
-      window.setTimeout(go, COVER_MS + 30)
+      window.setTimeout(() => { tag.style.opacity = '1' }, COVER_MS * 0.5)
+      window.setTimeout(go, COVER_MS + 20)
 
       // If the navigation never lands, uncover rather than stranding the visitor.
       safety = window.setTimeout(() => { if (leaving) reveal() }, 2600)
@@ -232,24 +140,28 @@ export default function PageTransition() {
       if (!href) return
       e.preventDefault()
       const route = routeOf(href)
-      const ox = e.clientX / Math.max(1, window.innerWidth)
-      const oy = e.clientY / Math.max(1, window.innerHeight)
-      cover(href, labelFor(route), APP_ROUTES.includes(route === '' ? '/' : route), ox, oy)
+      // keyboard "clicks" report 0,0: open from the centre of the link instead
+      let x = e.clientX, y = e.clientY
+      if (!x && !y && a) { const b = a.getBoundingClientRect(); x = b.left + b.width / 2; y = b.top + b.height / 2 }
+      cover(href, labelFor(route), APP_ROUTES.includes(route === '' ? '/' : route), x, y)
     }
     document.addEventListener('click', onClick, true)
+    // Coming back with the browser's Back button can restore a page with the veil still up.
+    const onShow = () => { if (covered) { hide(); leaving = false } }
+    window.addEventListener('pageshow', onShow)
 
     ctrl.current = { reveal }
-    reveal() // first load dissolves in
+    reveal() // first load: the page just settles in
 
     return () => {
       document.removeEventListener('click', onClick, true)
+      window.removeEventListener('pageshow', onShow)
       if (safety) clearTimeout(safety)
-      if (raf) cancelAnimationFrame(raf)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  // Dissolve away whenever the route actually changes.
+  // Reveal whenever the route actually changes.
   useEffect(() => {
     pathnameRef.current = pathname
     ctrl.current?.reveal()
@@ -257,7 +169,8 @@ export default function PageTransition() {
 
   return (
     <div ref={ovRef} className="pt-root" aria-hidden="true">
-      <canvas ref={cvRef} className="pt-canvas" />
+      <div ref={veilRef} className="pt-veil" />
+      <div ref={ringRef} className="pt-ring" />
       <span ref={tagRef} className="pt-label" />
     </div>
   )
