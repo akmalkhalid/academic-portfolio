@@ -32,7 +32,7 @@ const eyebrow = (dark: boolean) => s(`font-family:'JetBrains Mono',monospace;fon
 const h2 = (dark: boolean) => s(`font-family:${stack};font-weight:600;font-size:clamp(28px,3.6vw,40px);line-height:1.08;letter-spacing:-.02em;margin:0;color:${dark ? '#ECEAF3' : '#1c1917'}`)
 
 const STAGES = [
-  { n: '01', key: 'gen' as const, q: 'What could exist?', stage: 'Generate', accent: PCOL.gen, title: 'Generative & Agentic AI', line: 'Generative models, LLMs and agent teams propose candidate designs.', glyph: 'generate' as const, impact: 'Design thinking' },
+  { n: '01', key: 'gen' as const, q: 'What could exist?', stage: 'Generate', accent: PCOL.gen, title: 'Generative & Agentic AI', line: 'Generative models, LLMs and agent teams propose candidate designs.', glyph: 'generate' as const, impact: 'Ludogenist' },
   { n: '02', key: 'eva' as const, q: 'Is it any good, for people?', stage: 'Evaluate', accent: PCOL.gam, title: 'Games Informatics & Engagement Modelling', line: 'Game refinement theory scores each design by how engaging it is to people.', glyph: 'evaluate' as const, impact: 'Explainability' },
   { n: '03', key: 'sea' as const, q: 'How do we find better ones?', stage: 'Search', accent: PCOL.evo, title: 'Computational Intelligence & Optimization', line: 'Metaheuristics and quality-diversity search decide what to generate next.', glyph: 'search' as const, impact: 'Sustainability' },
 ]
