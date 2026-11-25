@@ -99,9 +99,12 @@ const PRESETS: Record<string, Preset> = {
 };
 
 /* ---------- the templates: how the sheet looks. `lines` = lines of text that fit one A4 page ---------- */
-const TEMPLATES: Record<string, { name: string; hint: string; lines: number }> = {
+// `side` (Modern only) = lines that fit one page of the side column. The side column sits beside
+// the main column, so it has its own budget: filling it does not push anything off the page.
+// `head` = extra lines the template's header takes on page 1 (Modern has a colour band and a stats bar).
+const TEMPLATES: Record<string, { name: string; hint: string; lines: number; side?: number; head?: number }> = {
   classic: { name: "Classic", hint: "One column, navy and gold", lines: 54 },
-  modern: { name: "Modern", hint: "Colour header, side column", lines: 38 },   // fewer: the main column is narrower, so entries wrap more
+  modern: { name: "Modern", hint: "Colour header, side column", lines: 40, side: 40, head: 5 },   // fewer: the main column is narrower, so entries wrap more
   compact: { name: "Compact", hint: "Plain, dense, black and white", lines: 66 },
   tech: { name: "Tech", hint: "Monospace labels, numbered sections", lines: 52 },
 };
@@ -160,12 +163,17 @@ function buildPool(d: any, today: string): Entry[] {
 }
 
 /* ---------- steps 3 and 4: score for this reader, then pack greedily by value per line ---------- */
-function assemble(d: any, pool: Entry[], presetKey: string, pages: number, focus: string, hidden: string[], linesPerPage: number) {
+function assemble(d: any, pool: Entry[], presetKey: string, pages: number, focus: string, hidden: string[], linesPerPage: number, sideLines = 0, headLines = 0) {
   const preset = PRESETS[presetKey];
   const lead = preset.lead(d);
   const full = pages === 0;
-  const budget = full ? Infinity : pages * linesPerPage - (8 + Math.ceil(lead.length / 95));   // the header and lead take space too
-  let used = 0;
+  const budget = full ? Infinity : pages * linesPerPage - headLines - (8 + Math.ceil(lead.length / 95));   // the header and lead take space too
+  // Two columns (Modern): side sections are packed against the side column's own budget.
+  // An entry there wraps more (the column is a third of the page) and its date takes a line of its own.
+  const twoCol = sideLines > 0;
+  const sideBudget = full ? Infinity : pages * sideLines - headLines - (8 + Math.ceil(lead.length / 95));
+  const sideCost = (e: Entry) => Math.ceil(e.text.length / 34) + (e.when ? 1 : 0);
+  let used = 0, usedSide = 0;
   const count: Record<string, number> = {};
   const kept: Entry[] = [];
 
@@ -176,6 +184,12 @@ function assemble(d: any, pool: Entry[], presetKey: string, pages: number, focus
 
   for (const { e } of scored) {
     const heading = count[e.sec] ? 0 : 2;                                          // a new section costs a heading
+    if (twoCol && SIDE.includes(e.sec)) {                                          // side column: its own budget
+      const c = sideCost(e) + heading;
+      if (usedSide + c > sideBudget) continue;
+      usedSide += c; count[e.sec] = (count[e.sec] || 0) + 1; kept.push(e);
+      continue;
+    }
     if (used + e.cost + heading > budget) continue;                                // does not fit: try a smaller entry
     if (!full && pages < 3 && e.sec === "pubs" && (count.pubs || 0) >= pages * 9) continue;        // short CVs must not be all papers
     if (!full && pages < 3 && e.sec === "training" && (count.training || 0) >= pages * 8) continue; // nor all training rows
@@ -270,7 +284,7 @@ export default function CVEngine({ data, today }: { data: any; today: string }) 
   }, [ready, reader, pages, focus, template, accent, hidden, numbers, photo]);
 
   const pool = useMemo(() => buildPool(data, today), [data, today]);
-  const cv = useMemo(() => assemble(data, pool, reader, pages, focus, hidden, TEMPLATES[template].lines), [data, pool, reader, pages, focus, hidden, template]);
+  const cv = useMemo(() => assemble(data, pool, reader, pages, focus, hidden, TEMPLATES[template].lines, TEMPLATES[template].side || 0, TEMPLATES[template].head || 0), [data, pool, reader, pages, focus, hidden, template]);
 
   const chooseReader = (k: string) => { setReader(k); setPages(PRESETS[k].pages); };   // each reader starts at a sensible length
   const toggleSection = (k: string) => setHidden((h) => (h.includes(k) ? h.filter((x) => x !== k) : [...h, k]));
@@ -381,7 +395,9 @@ export default function CVEngine({ data, today }: { data: any; today: string }) 
           </header>
           {numbers ? <div className="cve-stats">{stats.map(([v, l]) => (<div key={l}><b>{v}</b><span>{l}</span></div>))}</div> : null}
           <p className="cve-lead">{cv.lead}</p>
-          <div className="cve-body">
+          {/* Modern has two columns only when a side section was kept. Without this class the
+              main column would fall into the narrow first grid track and leave the page half empty. */}
+          <div className={"cve-body" + (template === "modern" && !side.length ? " no-side" : "")}>
             {template === "modern" && side.length ? <aside>{side.map((s, n) => renderSec(s, n))}</aside> : null}
             <div>{mainSecs.map((s, n) => renderSec(s, n))}</div>
           </div>
@@ -467,6 +483,8 @@ const CSS = `
 .t-modern .cve-body{display:grid;grid-template-columns:32% 1fr;gap:0}
 .t-modern .cve-body>aside{background:color-mix(in srgb,var(--acc) 7%,#fff);padding:4px 22px 24px 40px}
 .t-modern .cve-body>div{padding:4px 40px 24px 26px}
+.t-modern .cve-body.no-side{grid-template-columns:1fr}
+.t-modern .cve-body.no-side>div{padding-left:40px}
 .t-modern .cve-body>aside li{grid-template-columns:1fr;gap:0}
 .t-modern h3{border-bottom:2px solid var(--acc)}
 .t-modern .cve-foot{padding:0 40px 22px;margin-top:6px}
@@ -516,6 +534,7 @@ const CSS = `
   .t-modern .cve-body{display:block}
   .t-modern .cve-body>aside{float:left;width:31%;padding:0 10px 10px 16px;box-sizing:border-box;border-radius:0 0 6px 0}
   .t-modern .cve-body>div{margin-left:33%;padding:0 16px 12px 0}
+  .t-modern .cve-body.no-side>div{margin-left:0;padding-left:16px}
   .t-modern .cve-body::after{content:'';display:block;clear:both}
   .t-modern .cve-foot{padding:0 16px}
   .t-compact{font-size:8.3pt;line-height:1.3}.t-compact h2{font-size:15pt}.t-compact li{grid-template-columns:66px 1fr}
