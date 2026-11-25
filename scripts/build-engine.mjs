@@ -7,7 +7,7 @@
 //
 // Two things read that file in the visitor's browser, with no server and no API:
 //   - the site assistant        public/assistant/widget.js
-//   - the tailored CV builder   components/CVBuilder.tsx  (/cv/custom/)
+//   - the CV engine             components/CVEngine.tsx   (/cv/)
 // Run by `npm run build` (prebuild). Run by hand:  node scripts/build-engine.mjs
 //
 // (The name is historical: this script first built the standalone /engine/ page. That page was
@@ -70,6 +70,16 @@ function build() {
   const keep = {}
   for (const k of ['profile', 'education', 'employment', 'awards', 'teaching', 'ip', 'membership', 'service', 'skills', 'selectedPapers']) keep[k] = cv[k]
   keep.meta = Object.fromEntries(['name', 'credential', 'title', 'subtitle', 'affiliation'].map((k) => [k, cv.meta[k]]))
+  // For the CV engine (/cv): training delivered and scheduled, what he teaches, certifications,
+  // training appointments, and the trainer-first title used by the Industry reader.
+  const tr = cv.training || {}
+  keep.training = {
+    rows: (tr.delivered || []).map((r) => ({ date: String(r.date), when: r.when, kind: r.kind, title: r.title, client: r.client, audience: r.audience || '' })),
+    expertise: (tr.expertise || []).map((e) => ({ title: e.title, text: e.text })),
+    development: (tr.development || []).map((e) => ({ year: String(e.year), title: e.title, provider: e.provider })),
+    appointments: tr.appointments || [],
+  }
+  keep.industry = cv.industry ? { title: cv.industry.title, subtitle: cv.industry.subtitle } : null
 
   const data = { pubs, grants, students, cv: keep, metrics: site.metrics }
   // One small JSON file for the assistant and the CV builder.
