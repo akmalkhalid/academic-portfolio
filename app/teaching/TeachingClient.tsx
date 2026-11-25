@@ -179,7 +179,7 @@ export default function TeachingClient({
               </div>
             ))}
           </div>
-          <p className="tp-more"><a href="/cv/industry/">All {training.done.length} sessions, with audiences and formats, in the trainer CV →</a></p>
+          <p className="tp-more"><a href="/cv/?reader=industry&pages=full">All {training.done.length} sessions, with audiences and formats, in the trainer CV →</a></p>
         </section>
 
         {/* SUPERVISION */}
