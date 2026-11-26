@@ -70,6 +70,15 @@ footer{padding:36px 0 60px;border-top:1px solid var(--line);color:var(--mute);fo
 .next{display:flex;flex-wrap:wrap;gap:16px 28px;align-items:center;justify-content:space-between;background:rgba(20,18,28,.7);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:12px;padding:22px 24px;margin-top:24px}
 .next b{font:600 19px 'Space Grotesk',sans-serif}
 .next p{margin:4px 0 0;color:var(--mute);font-size:14.5px}
+form{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;margin-top:22px;max-width:760px}
+label{display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--mute)}
+input{font:inherit;color:#fff;padding:12px 13px;border-radius:9px;border:1px solid var(--line);background:rgba(7,6,15,.7)}
+input:focus-visible,.btn:focus-visible,a:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+form .btn{align-self:end;justify-content:center}
+.trap{position:absolute;left:-9999px}
+#st{grid-column:1/-1;min-height:22px;font-size:14px;color:var(--gold);margin:0}
+.fine{grid-column:1/-1;margin:0;font:500 12px 'JetBrains Mono',monospace;color:rgba(214,208,240,.5)}
+@media (max-width:720px){form{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -82,12 +91,33 @@ footer{padding:36px 0 60px;border-top:1px solid var(--line);color:var(--mute);fo
     <h1>Prompt Cookbook</h1>
     <p class="sub">Recipes for AI Innovation</p>
     <p class="lede">A primer and a manual for prompting in research and academic writing: what prompts are, the frameworks that make them work, templates for every section of a paper, and how to use AI with integrity.</p>
-    <div class="row"><a class="btn pri" href="Prompt_Cookbook.pdf" download>Download the PDF</a><a class="btn" href="Prompt_Cookbook.pdf" target="_blank" rel="noopener">Read in the browser</a></div>
-    <div class="facts"><span><b>88</b> pages</span><span><b>7</b> chapters</span><span>PDF · 4.7 MB</span><span>No sign-up</span></div>
+    <div class="row"><a class="btn pri" href="#get">Get the free PDF</a><a class="btn" href="#inside">See what is inside</a></div>
+    <div class="facts"><span><b>88</b> pages</span><span><b>7</b> chapters</span><span>PDF · 4.7 MB</span><span>Free</span></div>
     <p class="meta">eISBN 978-629-94258-0-9</p>
   </div>
   <img class="cover" src="cover.jpg" width="720" height="1080" alt="Cover of Prompt Cookbook: Recipes for AI Innovation, for academics, writers, professionals and AI explorers">
 </header>
+
+  <section id="get">
+    <p class="eyebrow">/ free download</p>
+    <h2>Get your copy.</h2>
+    <div id="gate">
+      <p class="lede" style="margin:0">Leave your name and email, and the PDF downloads straight away.</p>
+      <form id="f" novalidate data-key="23f2a62f-3654-4a8e-83a5-8e2634920f17">
+        <input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" style="display:none">
+        <div class="trap" aria-hidden="true"><label for="f-web">Website</label><input type="text" id="f-web" name="website" tabindex="-1" autocomplete="off"></div>
+        <label for="f-name">Name<input type="text" id="f-name" name="name" autocomplete="name" required maxlength="100"></label>
+        <label for="f-email">Email<input type="email" id="f-email" name="email" autocomplete="email" required maxlength="200"></label>
+        <button class="btn pri" type="submit" id="f-send">Download the PDF</button>
+        <p id="st" role="status" aria-live="polite"></p>
+        <p class="fine">I will email you when the Masterclass and AutoWriterAI are released. Nothing else.</p>
+      </form>
+    </div>
+    <div id="done" hidden>
+      <p class="lede" id="done-msg" style="margin:0 0 22px">Thank you. Your download should start now. If it does not, use the button below.</p>
+      <div class="row"><a class="btn pri" id="dl" href="Prompt_Cookbook.pdf" download>Download the PDF</a><a class="btn" href="Prompt_Cookbook.pdf" target="_blank" rel="noopener">Read in the browser</a></div>
+    </div>
+  </section>
 
 <section id="inside">
   <p class="eyebrow">/ inside</p>
@@ -118,5 +148,32 @@ footer{padding:36px 0 60px;border-top:1px solid var(--line);color:var(--mute);fo
 
 <footer><span>© Mohd Nor Akmal Khalid · FTSM, UKM</span><span><a href="/">akmal.app</a> · <a href="/masterclass/">Masterclass</a> · <a href="/autowriter/">AutoWriterAI</a> · <a href="/newsletter/kopi-prompt/">Kopi &amp; Prompt</a></span></footer>
 </div>
+<script>
+(function(){
+  var KEY='aw-cookbook-ok';
+  var gate=document.getElementById('gate'),done=document.getElementById('done'),msg=document.getElementById('done-msg');
+  var f=document.getElementById('f'),st=document.getElementById('st'),send=document.getElementById('f-send');
+  function unlock(text,start){
+    gate.hidden=true;done.hidden=false;if(text)msg.textContent=text;
+    if(start)document.getElementById('dl').click();
+  }
+  // Returning visitors who already signed up on this browser go straight to the buttons.
+  try{if(localStorage.getItem(KEY)){unlock('Welcome back. Your copy is here whenever you need it.',false)}}catch(e){}
+  f.addEventListener('submit',function(e){e.preventDefault();
+    var name=f.elements.name.value.trim(),email=f.elements.email.value.trim();
+    if(f.elements.website.value||f.elements.botcheck.checked)return;            // bot trap
+    if(!name){st.textContent='Please enter your name.';f.elements.name.focus();return}
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){st.textContent='Please enter a valid email address.';f.elements.email.focus();return}
+    send.disabled=true;send.textContent='One moment';st.textContent='';
+    fetch('https://api.web3forms.com/submit',{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},
+      body:JSON.stringify({access_key:f.dataset.key,subject:'Prompt Cookbook: '+name+' downloaded the free PDF',from_name:'Prompt Cookbook page',name:name,email:email,botcheck:false})})
+    .then(function(r){return r.json()}).then(function(j){if(!j.success)throw 0;
+      try{localStorage.setItem(KEY,'1')}catch(e){}
+      unlock(null,true)})
+    // If the sign-up service is down, do not hold the free book back.
+    .catch(function(){unlock('Your details did not go through, but the book is yours. Your download should start now.',true)});
+  });
+})();
+</script>
 </body>
 </html>
