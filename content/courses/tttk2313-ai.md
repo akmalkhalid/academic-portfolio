@@ -19,4 +19,8 @@ labs:
     href: "/courses/prolog-lab/"
     emoji: "🧩"
     blurb: "Five hands-on modules in the browser — unification, resolution, conjunction and disjunction, cut and lists, then a small expert system."
+  - title: "Lab 3 · Fuzzy Logic Kit"
+    href: "/courses/fuzzy-logic-lab3/"
+    emoji: "🎚️"
+    blurb: "A 60-minute guided lab on a mammogram diagnosis system — fuzzify, fire nine rules, clip and defuzzify, build it in Juzzy Online, then debug it in Colab."
 ---

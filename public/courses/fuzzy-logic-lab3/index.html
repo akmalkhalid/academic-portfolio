@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab 3 Fuzzy Logic Kit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* VOICE: lab-console coach — energetic, precise, every number earns its place.
+   IDEA: a holographic diagnostic console (style spine /HOLOGRAPHIC + /NEONLIGHTS + /ISOMETRIC).
+   PICTURE: live membership curves, clipped areas and a sandbox engine on every key slide.
+   COLOUR+TYPE: night #070a1f; mint/amber/magenta = the three fuzzy sets; cyan = COG. Orbitron / Space Grotesk / JetBrains Mono.
+   LAYOUT: fixed 1600x900 stage scaled to fit; sparse slides, detail revealed step by step. */
+:root{color-scheme:dark;--bg:#070a1f;--panel:rgba(18,24,58,.78);--line:rgba(130,160,255,.2);--ink:#eef2ff;--mute:#9ba7d8;
+--cy:#2ae6ff;--mg:#ff3da8;--vi:#9b6bff;--s1:#3ef0a1;--s2:#ffc53d;--s3:#ff4d8d;--mono:'JetBrains Mono',ui-monospace,monospace}
+*{box-sizing:border-box;min-width:0}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);overflow:hidden;font:22px/1.45 'Space Grotesk',system-ui,sans-serif}
+#bg{position:fixed;inset:0;width:100%;height:100%}
+#stage{position:absolute;left:50%;top:50%;width:1600px;height:900px;transform-origin:0 0}
+.slide{position:absolute;inset:0;padding:64px 80px 92px;display:none;flex-direction:column;gap:22px}
+.slide.on{display:flex;animation:in .5s cubic-bezier(.2,.8,.2,1)}
+@keyframes in{from{opacity:0;transform:translateY(18px) scale(.99)}to{opacity:1;transform:none}}
+h1,h2{font-family:Orbitron,'Space Grotesk',sans-serif;margin:0;line-height:1.08;letter-spacing:.01em}
+h1{font-size:76px;background:linear-gradient(90deg,var(--cy),var(--vi) 45%,var(--mg));-webkit-background-clip:text;background-clip:text;color:transparent}
+h2{font-size:44px}
+h3{margin:0 0 8px;font-size:26px;color:var(--cy)}
+p{margin:0}
+.k{font-family:var(--mono);font-size:18px;color:var(--cy)}
+.sub{font-size:28px;color:var(--mute);max-width:1100px}
+.row{display:flex;gap:28px;flex:1;min-height:0}.col{display:flex;flex-direction:column;gap:18px;flex:1}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:24px 28px;backdrop-filter:blur(6px);box-shadow:0 0 0 1px rgba(42,230,255,.04),0 18px 50px rgba(0,0,0,.35)}
+.glow{box-shadow:0 0 28px rgba(42,230,255,.25),inset 0 0 0 1px rgba(42,230,255,.35)}
+.why{display:inline-block;font-size:18px;color:#0a0d22;background:var(--s2);border-radius:99px;padding:2px 12px;font-weight:700;margin-right:8px}
+.note{font-size:19px;color:var(--mute)}
+.m{font-family:var(--mono);font-size:21px}
+.big{font-family:Orbitron;font-size:64px;font-weight:800}
+.fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 4px;line-height:1.15}
+.fr>span:first-child{border-bottom:2px solid currentColor;padding:0 4px}
+.c1{color:var(--s1)}.c2{color:var(--s2)}.c3{color:var(--s3)}.cy{color:var(--cy)}.vi{color:var(--vi)}.mg{color:var(--mg)}
+.f{opacity:0;transform:translateY(10px);transition:opacity .45s,transform .45s}
+.f.show{opacity:1;transform:none}
+g.f{transform:none}
+.chip{position:absolute;top:22px;right:80px;font-family:var(--mono);font-size:16px;color:var(--mute);border:1px solid var(--line);border-radius:99px;padding:4px 14px}
+table{border-collapse:collapse;width:100%;font-size:20px}
+th,td{padding:7px 10px;border-bottom:1px solid var(--line);text-align:left}
+th{color:var(--mute);font-weight:500;font-size:17px}
+td.n{text-align:right;font-family:var(--mono);white-space:nowrap}
+tr.hot td{background:rgba(42,230,255,.12)}
+tr.lite{opacity:1;transform:none}tr.lite.show td{background:rgba(42,230,255,.18);font-weight:700}
+button,select{font:inherit;font-size:19px;color:var(--ink);background:rgba(42,230,255,.08);border:1px solid rgba(42,230,255,.45);border-radius:12px;padding:8px 16px;cursor:pointer;min-height:44px}
+button:hover{background:rgba(42,230,255,.2)}button.sel{background:var(--cy);color:#06122a;font-weight:700}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--mg);outline-offset:2px}
+input[type=range]{width:100%;accent-color:var(--cy);height:32px}
+label.sl{display:grid;grid-template-columns:150px 1fr 74px;align-items:center;gap:14px;font-size:20px}
+label.sl b{font-family:var(--mono);color:var(--cy);text-align:right}
+svg text{font-family:'Space Grotesk',sans-serif}
+pre{margin:0;font:17px/1.5 var(--mono);background:#050817;border:1px solid var(--line);border-radius:16px;padding:18px 22px;overflow:auto;color:#cfd8ff}
+pre .hl{background:rgba(255,61,168,.18);display:inline-block;width:100%;border-left:3px solid var(--mg);margin-left:-8px;padding-left:5px}
+pre .cm{color:#6f7fb8}
+#bar{position:absolute;left:0;right:0;bottom:0;height:70px;display:flex;align-items:center;gap:14px;padding:0 80px;z-index:5}
+#prog{position:absolute;left:0;bottom:0;height:5px;background:linear-gradient(90deg,var(--s1),var(--cy),var(--mg));transition:width .4s}
+#num{font-family:var(--mono);font-size:17px;color:var(--mute);margin-right:auto}
+#clock{font-family:var(--mono);font-size:18px}
+.tl{display:flex;height:70px;border-radius:16px;overflow:hidden;border:1px solid var(--line)}
+.tl button{border:0;border-radius:0;flex:var(--w);display:flex;flex-direction:column;justify-content:center;align-items:flex-start;padding:6px 12px;font-size:16px;line-height:1.2;text-align:left;color:#071022;font-weight:700}
+.tl button span{font-weight:400;font-family:var(--mono);font-size:14px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}
+.cell{border-radius:14px;padding:12px;text-align:center;font-size:18px;border:1px solid var(--line)}
+.quiz button{display:block;width:100%;text-align:left;margin:6px 0}
+.quiz button.ok{background:rgba(62,240,161,.25);border-color:var(--s1)}.quiz button.no{background:rgba(255,77,141,.22);border-color:var(--s3)}
+.fb{min-height:30px;font-size:19px;color:var(--mute)}
+.pulse{animation:pulse 2.4s ease-in-out infinite}@keyframes pulse{50%{filter:drop-shadow(0 0 14px var(--cy))}}
+.flow path{stroke-dasharray:8 10;animation:dash 1.2s linear infinite}@keyframes dash{to{stroke-dashoffset:-36}}
+.sweep{animation:sw 5s ease-in-out infinite alternate}@keyframes sw{from{transform:translateX(0)}to{transform:translateX(520px)}}
+@media (prefers-reduced-motion:reduce){.slide.on,.pulse,.flow path,.sweep{animation:none}.f{transition:none}}
+
+.panel{position:relative}
+.bub{position:absolute;top:-17px;right:18px;z-index:3;padding:5px 14px;border-radius:999px;font:600 16px/1.3 var(--mono);color:#fff;white-space:nowrap;
+ background:linear-gradient(120deg,rgba(255,61,168,.62),rgba(155,107,255,.55) 50%,rgba(42,230,255,.55));border:1px solid rgba(255,255,255,.35);
+ backdrop-filter:blur(10px);box-shadow:0 0 22px rgba(155,107,255,.6),0 0 46px rgba(42,230,255,.25);animation:pop .6s cubic-bezier(.2,1.4,.4,1) both,float 4s 1s ease-in-out infinite}
+.bub.in{position:relative;top:auto;right:auto;display:inline-block;margin-left:10px;font-size:15px;padding:2px 12px;vertical-align:middle}
+.f .bub{animation:none;opacity:0}
+.f.show .bub{animation:pop .6s .2s cubic-bezier(.2,1.4,.4,1) both,float 4s 1.2s ease-in-out infinite}
+@keyframes pop{from{opacity:0;transform:scale(.4) translateY(10px);filter:blur(6px)}to{opacity:1;transform:none;filter:none}}
+@keyframes float{50%{transform:translateY(-4px)}}
+.flowl{stroke-dasharray:9 7;animation:dash 1.1s linear infinite}
+.sbub{animation:pop .6s cubic-bezier(.2,1.4,.4,1) both;transform-box:fill-box;transform-origin:50% 100%}
+.stk{gap:28px}
+.eq{font:19px/1.65 var(--mono);color:#dfe6ff}
+.eq .lb{display:inline-block;width:96px;color:var(--mute)}
+.eq b{color:#fff}
+.pcard h3{display:flex;gap:10px;align-items:baseline}
+.ptab td,.ptab th{padding:2px 8px;font-size:16px}
+.pcard .eq{font-size:18px;line-height:1.55}.tight .eq{font-size:17px;line-height:1.5}.tight .panel{padding:16px 22px}
+.ptab tr.dim{opacity:.18}.ptab tr.now td{background:rgba(255,61,168,.16)}
+@media (prefers-reduced-motion:reduce){.flowl{animation:none}.bub,.sbub,.f.show .bub{animation:none!important;opacity:1}}
+
+#trk{position:absolute;top:20px;left:80px;display:flex;gap:6px;z-index:4}
+#trk span{font:600 14px var(--mono);padding:4px 12px;border-radius:99px;border:1px solid rgba(130,160,255,.22);color:#4f5888;transition:all .3s}
+#trk span.in{color:var(--ink);border-color:var(--c)}
+#trk span.on{background:var(--c);color:#070a1f;box-shadow:0 0 18px var(--c);border-color:var(--c)}
+.stg{display:inline-block;width:max-content;font:700 14px/1.6 var(--mono);padding:0 10px;border-radius:99px;margin-right:8px;color:#070a1f;background:var(--c);vertical-align:2px}
+.src{display:block;font:15px/1.45 'Space Grotesk',sans-serif;color:var(--mute);margin-top:5px}.src b{color:var(--cy);font-weight:600}
+.wy{display:block;font:16px/1.45 'Space Grotesk',sans-serif;color:#cfd8ff;margin-top:5px}.wy::before{content:'why · ';color:var(--s2);font-weight:700}
+.tight2 .panel{padding:14px 20px}.tight2 .eq{font-size:16.5px;line-height:1.5}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<div id="stage">
+
+<!-- 1 TITLE -->
+<section class="slide" data-t="0-2">
+  <div class="k">TTTK2313 Artificial Intelligence · Lab 3 · Learning kit</div>
+  <h1 style="margin-top:40px">Fuzzy Logic<br>Mammogram Diagnosis</h1>
+  <p class="sub">Build it in Juzzy, prove it by hand, then run it in Google Colab. Every number on these slides is calculated in front of you.</p>
+  <div style="flex:1;position:relative" id="hero"></div>
+  <p class="note">→ / Space: next step · ← back · F fullscreen · clock (bottom right) keeps you on the 60-minute plan</p>
+</section>
+
+<!-- 2 PLAN -->
+<section class="slide" data-t="0-2">
+  <h2>Your 60-minute flight plan</h2>
+  <div class="tl" id="tl"></div>
+  <div class="row">
+    <div class="panel col"><h3>By the end you can</h3>
+      <p>1 · set up a Mamdani fuzzy system from membership ranges</p>
+      <p>2 · fire rules with min, aggregate with max</p>
+      <p>3 · defuzzify with COG, MoM and MM, <b>by hand and in code</b></p>
+      <p>4 · explain why two tools give different numbers</p></div>
+    <div class="panel col" style="flex:.8"><h3>Marks on the sheet</h3>
+      <table><tr><td>(a) definitions</td><td class="n">3</td></tr><tr><td>(b) membership set-up</td><td class="n">6</td></tr><tr><td>(c) 9 rules</td><td class="n">3</td></tr><tr><td>(d) predict (7, 15) + COG by hand</td><td class="n">5</td></tr><tr><td>(e) Colab model</td><td class="n">10</td></tr><tr><td>(e) cases a–c with COG, MoM, MM</td><td class="n">10</td></tr></table></div>
+  </div>
+  <p class="note f">The grey "buffer" block is deliberate: trial and error is part of the lab, not a delay.</p>
+</section>
+
+<!-- 3 WHY FUZZY -->
+<section class="slide" data-t="2-5">
+  <h2>Is this mass "large"?</h2>
+  <p class="sub">Crisp logic answers yes or no. Fuzzy logic answers <i>how much</i>.</p>
+  <div class="row">
+    <div class="panel col" style="flex:1.4"><label class="sl">Mass score <input type="range" id="wm" min="0" max="30" step="0.5" value="21"><b id="wmv">21</b></label><div id="wplot" style="flex:1"></div></div>
+    <div class="col">
+      <div class="panel"><div class="note">Crisp rule: large if mass ≥ 17</div><div class="big" id="wc">YES</div></div>
+      <div class="panel glow"><div class="note">Fuzzy: degree of "large"</div><div class="big cy" id="wf">0.50</div><div class="m" id="wff"></div></div>
+      <p class="f"><span class="why">why</span>A score of 16.9 and 17.1 are nearly the same patient. Fuzzy sets keep them nearly the same.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 4 PART A -->
+<section class="slide" data-t="5-8">
+  <h2>(a) The three variables</h2>
+  <div class="grid3" style="flex:1">
+    <div class="panel"><h3 class="c1">Calcification</h3><p>Small calcium deposits seen as bright white specks on a mammogram. Most are harmless; fine, clustered micro-calcifications need a closer look.</p><p class="k" style="margin-top:14px">Input · 0–10 · Less / Several / More</p></div>
+    <div class="panel f"><h3 class="c2">Mass</h3><p>A space-occupying lesion visible in two mammogram views. Radiologists judge its size, shape, margin and density.</p><p class="k" style="margin-top:14px">Input · 0–30 · Small / Medium / Large</p></div>
+    <div class="panel f"><h3 class="c3">Impression</h3><p>The radiologist's overall conclusion from all findings (reported in practice as a BI-RADS category).</p><p class="k" style="margin-top:14px">Output · −20 to 20 · Benign / Suspicious / Malignant</p></div>
+  </div>
+  <p class="note f"><span class="why">tip</span>Define the three <b>variables</b>, then the three impression terms (benign = not cancerous, suspicious = possibly cancerous, malignant = cancerous). This is a teaching model, not a clinical tool.</p>
+</section>
+
+<!-- 5 PIPELINE -->
+<section class="slide" data-t="8-10">
+  <h2>One pipeline, four moves</h2>
+  <div class="panel" style="flex:1" id="pipe"></div>
+  <p class="sub f">We will walk this pipeline twice: once by hand for Juzzy (7, 15), once in Colab for three patients.</p>
+</section>
+
+<!-- 6 PART B MF explorer -->
+<section class="slide" data-t="10-14" data-stage="1">
+  <h2>(b) Figure 1, live</h2>
+  <div class="row">
+    <div class="panel col" style="flex:1.5">
+      <div style="display:flex;gap:10px" id="mfTabs"></div>
+      <div id="mfPlot" style="flex:1"></div>
+      <label class="sl"><span id="mfLbl">Value</span><input type="range" id="mfX"><b id="mfXv"></b></label>
+    </div>
+    <div class="panel col"><h3>Membership at this value</h3><div id="mfRead" class="m" style="display:flex;flex-direction:column;gap:14px"></div>
+      <p class="note" style="margin-top:auto">Drag the slider. Try the overlaps: where can a value belong to two sets at once?</p></div>
+  </div>
+</section>
+
+<!-- 7 TRAPEZOID -->
+<section class="slide" data-t="14-16" data-stage="1">
+  <h2>Reading any trapezoid</h2>
+  <div class="row">
+    <div class="panel col" style="flex:1.1"><div id="trapPic" style="flex:1"></div>
+      <p class="m" style="text-align:center">μ(x) = max( 0, min( <span class="fr"><span>x − a</span><span>b − a</span></span>, 1, <span class="fr"><span>d − x</span><span>d − c</span></span> ) )</p>
+      <p class="note">A triangle is a trapezoid with b = c.</p></div>
+    <div class="col stk">
+      <div class="panel f"><span class="why">1</span>Where is x? Left edge, plateau, right edge or outside. That picks the formula.</div>
+      <div class="panel f eq"><span class="bub">right edge: μ = (d − x)/(d − c)</span><span class="c2">Several (2, 5, 8)</span> · 5 &lt; 7 &lt; 8<br>μ = (8 − 7)/(8 − 5) = 1/3 = <b class="c2">0.333</b></div>
+      <div class="panel f eq"><span class="bub">left edge: μ = (x − a)/(b − a)</span><span class="c3">More (6, 8, 10, 10)</span> · 6 &lt; 7 &lt; 8<br>μ = (7 − 6)/(8 − 6) = 1/2 = <b class="c3">0.5</b></div>
+      <div class="panel f eq"><span class="bub">x ≥ d → μ = 0</span><span class="c1">Less (0, 0, 2, 4)</span> · 7 ≥ d = 4<br>outside the set → μ = <b class="c1">0</b></div>
+    </div>
+  </div>
+</section>
+
+<!-- 8 JUZZY BUILD -->
+<section class="slide" data-t="16-20" data-stage="1-3">
+  <h2>Build it in Juzzy Online</h2>
+  <div class="row">
+    <div class="panel col" style="flex:.85">
+      <p><b class="cy">1</b> New system → <b>Type-1</b></p>
+      <p class="f"><b class="cy">2</b> Input <b>calcification</b>, bound [0, 10] → Edit: rename MF1, set type, type values</p>
+      <p class="f"><b class="cy">3</b> System view → input <b>mass</b>, bound [0, 30]</p>
+      <p class="f"><b class="cy">4</b> Output <b>impression</b>, bound [−20, 20]</p>
+      <p class="f"><b class="cy">5</b> Compare each plot with Figure 1 <i>before</i> writing rules</p>
+      <p class="note f" style="margin-top:auto"><span class="why">trial &amp; error</span>Values must be ascending. A trapezoid needs 4 numbers, a triangle 3.</p>
+    </div>
+    <div class="panel" style="flex:1.15"><table>
+      <tr><th>Variable</th><th>Term</th><th>Type</th><th>Values</th></tr>
+      <tr><td>Calcification</td><td class="c1">Less</td><td>trapezoid</td><td class="n">0, 0, 2, 4</td></tr>
+      <tr><td></td><td class="c2">Several</td><td>triangle</td><td class="n">2, 5, 8</td></tr>
+      <tr><td></td><td class="c3">More</td><td>trapezoid</td><td class="n">6, 8, 10, 10</td></tr>
+      <tr><td>Mass</td><td class="c1">Small</td><td>trapezoid</td><td class="n">0, 0, 4, 12</td></tr>
+      <tr><td></td><td class="c2">Medium</td><td>triangle</td><td class="n">5, 15, 25</td></tr>
+      <tr><td></td><td class="c3">Large</td><td>trapezoid</td><td class="n">17, 25, 30, 30</td></tr>
+      <tr><td>Impression</td><td class="c1">Benign</td><td>triangle</td><td class="n">−20, −10, 0</td></tr>
+      <tr><td></td><td class="c2">Suspicious</td><td>triangle</td><td class="n">−10, 0, 10</td></tr>
+      <tr><td></td><td class="c3">Malignant</td><td>triangle</td><td class="n">0, 10, 20</td></tr></table>
+      <p class="note" style="margin-top:10px">Read from Figure 1. Mass "small" ends at 4 and reaches zero at 12.</p></div>
+  </div>
+</section>
+
+<!-- 9 RULES -->
+<section class="slide" data-t="20-22" data-stage="2">
+  <h2>(c) Nine rules as one grid</h2>
+  <div class="row">
+    <div class="panel col" style="flex:1.1"><div id="ruleGrid" style="display:grid;grid-template-columns:150px repeat(3,minmax(0,1fr));gap:10px"></div>
+      <p class="m note">Rule editor: IF calcification = several AND mass = medium THEN impression = suspicious</p></div>
+    <div class="col">
+      <div class="panel f"><h3>Spot the pattern</h3>Each row has <b>one</b> answer. Calcification decides the impression.</div>
+      <div class="panel f"><h3>So what does mass do?</h3>It only caps how strongly a row fires:<p class="m" style="margin-top:8px">row strength = min( μ<sub>calc</sub>, μ<sub>mass</sub> )</p></div>
+      <div class="panel f note"><span class="why">discuss</span>Is that clinically sensible? A large mass with less calcification is still "benign" here.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 10 STEP 1 -->
+<section class="slide" data-t="22-25" data-stage="1">
+  <div class="k">(d) Calcification = 7, Mass = 15 · Step 1 of 4</div>
+  <h2>Fuzzify both inputs</h2>
+  <div class="row">
+    <div class="panel col"><div id="fzC" style="height:230px"></div>
+      <p class="eq f">less (0,0,2,4): 7 ≥ 4 → <b class="c1">0</b><span class="bub in">x ≥ d → 0</span></p>
+      <p class="eq f">several (2,5,8): (8−7)/(8−5) = <b class="c2">0.333</b><span class="bub in">(d−x)/(d−c)</span></p>
+      <p class="eq f">more (6,8,10,10): (7−6)/(8−6) = <b class="c3">0.5</b><span class="bub in">(x−a)/(b−a)</span></p></div>
+    <div class="panel col"><div id="fzM" style="height:230px"></div>
+      <p class="eq f">small (0,0,4,12): 15 ≥ 12 → <b class="c1">0</b><span class="bub in">x ≥ d → 0</span></p>
+      <p class="eq f">medium (5,15,25): 15 = b → <b class="c2">1.0</b><span class="bub in">b ≤ x ≤ c → 1</span></p>
+      <p class="eq f">large (17,25,30,30): 15 ≤ 17 → <b class="c3">0</b><span class="bub in">x ≤ a → 0</span></p></div>
+  </div>
+  <p class="note f"><span class="why">check</span>The 2026 Juzzy answer key prints 0.35 for "several". Figure 1 gives exactly 1/3 = 0.333. Use 0.333.</p>
+</section>
+
+<!-- 10b BRIDGE -->
+<section class="slide" data-t="24-26" data-stage="2" data-hook="bridge" data-steps="10">
+  <div class="k">From the charts to the rules · press → to fill each rule</div>
+  <h2>Carry each μ into the rule grid</h2>
+  <div class="panel" id="brPic" style="flex:1 1 0;min-height:0;padding:10px 14px"></div>
+  <div style="display:flex;gap:16px;align-items:center"><div class="panel" style="flex:1;padding:14px 22px;font-size:20px"><span class="bub">w = min(μ_calc, μ_mass)</span><span id="brCap"></span></div><button id="brAll">Show all 9</button></div>
+</section>
+
+<!-- 11 STEP 2 -->
+<section class="slide" data-t="26-28" data-stage="2">
+  <div class="k">Step 2 of 4</div>
+  <h2>Fire the rules: AND = min</h2>
+  <div class="row">
+    <div class="panel" style="flex:1.4"><table id="fireT"></table></div>
+    <div class="col stk">
+      <div class="panel"><span class="bub">w = min(μ_calc, μ_mass)</span><span class="why">why min</span>A rule is only as true as its weakest condition.</div>
+      <div class="panel f glow"><span class="bub">w &gt; 0 → rule fires</span><h3>Two rules fire</h3><p class="m">R5 → <span class="c2">suspicious</span> at 0.333<br>R8 → <span class="c3">malignant</span> at 0.5</p></div>
+      <div class="panel f"><span class="bub">μ(set) = max w of its rules</span>μ(benign) = max(0, 0, 0) = 0<br>μ(suspicious) = max(0, 0.333, 0) = 0.333<br>μ(malignant) = max(0, 0.5, 0) = 0.5</div>
+    </div>
+  </div>
+</section>
+
+<!-- 12 STEP 3 -->
+<section class="slide" data-t="28-31" data-stage="3">
+  <div class="k">Step 3 of 4</div>
+  <h2>Clip each consequent, then merge</h2>
+  <div class="row">
+    <div class="panel" style="flex:1.35" id="aggPic"></div>
+    <div class="col stk tight" style="font-size:18px">
+      <div class="panel"><span class="bub">μ′(y) = min(w, μ(y))</span><b>Clip</b> (implication): cut each output set flat at its rule strength w.</div>
+      <div class="panel f eq"><span class="bub">left edge: (y − a)/(b − a) = w</span><span class="c2">Suspicious (−10, 0, 10), w = 1/3</span><br>(y − (−10))/(0 − (−10)) = 1/3<br>y + 10 = 10/3 → y = <b>−6.67</b><br><span class="note">right edge (10 − y)/10 = 1/3 → y = 6.67 (hidden later)</span></div>
+      <div class="panel f eq"><span class="bub">both edges = w</span><span class="c3">Malignant (0, 10, 20), w = 0.5</span><br>(y − 0)/(10 − 0) = 0.5 → y = <b>5</b><br>(20 − y)/(20 − 10) = 0.5 → y = <b>15</b></div>
+      <div class="panel f eq"><span class="bub">μ_agg = max(μ′_S, μ′_M)</span><b>Merge</b>: keep the higher curve. Flat 1/3 meets the rise y/10 = 1/3 → y = <b>3.33</b></div>
+    </div>
+  </div>
+</section>
+
+<!-- 13 STEP 4 COG -->
+<section class="slide" data-t="31-36" data-stage="4-5" data-hook="pieces" data-set="fig1">
+  <div class="k">Step 4 of 4 · centre of gravity · press → to work each slice</div>
+  <h2>Slice the area, weigh each slice</h2>
+  <div class="row">
+    <div class="col" style="flex:1.12"><div class="panel" id="pv-fig1" style="flex:1"></div>
+      <p class="m" style="text-align:center">COG = <span class="fr"><span>∫ y·μ(y) dy</span><span>∫ μ(y) dy</span></span> = <span class="fr"><span>Σ Aᵢ·x̄ᵢ</span><span>Σ Aᵢ</span></span></p></div>
+    <div class="col stk"><div class="panel pcard" id="pc-fig1" style="flex:1"></div>
+      <div class="panel" style="padding:10px 18px"><table class="ptab" id="pt-fig1"></table></div></div>
+  </div>
+</section>
+
+<!-- 14 COMPARE -->
+<section class="slide" data-t="36-37" data-stage="4">
+  <div class="k">The merged area from step 3 → one number</div>
+  <h2>5.90, 5.89 or 5.88?</h2>
+  <div class="row">
+    <div class="col stk">
+      <div class="panel glow" data-st="4"><span class="bub">COG = ΣAᵢx̄ᵢ / ΣAᵢ</span><span class="stg" style="--c:#9b6bff">④ Defuzzify</span><b>Exact area COG</b><p class="big cy" style="font-size:54px">5.90</p>
+        <span class="src">from: the six slices on slide 14 · <b>63.889 / 10.833</b></span>
+        <span class="wy">COG is the balance point of the merged area, so every fired rule pulls on the answer in proportion to its area. Juzzy's "Centroid Defuzzification" is this method.</span></div>
+      <div class="panel f" data-st="4"><span class="stg" style="--c:#9b6bff">④ Defuzzify</span><b>Juzzy output</b><p class="big" style="font-size:54px">5.893</p>
+        <span class="src">from: Juzzy, Application tab, Centroid Defuzzification</span>
+        <span class="wy">Juzzy adds up the curve at many sample points instead of integrating exactly, so it lands 0.004 away.</span></div>
+    </div>
+    <div class="col stk">
+      <div class="panel f eq" data-st="4"><span class="bub">shortcut = Σ cᵢ·μᵢ / Σ μᵢ</span><span class="stg" style="--c:#9b6bff">④ Defuzzify</span><b style="font-family:'Space Grotesk'">Answer-key shortcut</b><br>
+        <span class="src"><b>cᵢ</b> = peak of each impression triangle in Figure 1: benign −10, suspicious 0, malignant 10</span>
+        <span class="src"><b>μᵢ</b> = output strengths from slide 12: 0, 0.35 (key) or 0.333 (exact), 0.5</span>
+        (−10×0 + 0×0.35 + 10×0.5)/(0 + 0.35 + 0.5) = 5/0.85 = <b>5.88</b><br>with 1/3: 5/(0.333 + 0.5) = 5/0.833 = <b>6.00</b>
+        <span class="wy">It squeezes each clipped set into one point at its peak, so width and overlap are ignored. It lands close here by luck, which is why we report the area COG.</span></div>
+      <div class="panel f"><span class="why">next</span>5.90 is a number on the impression axis. The next slide turns it back into a word.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 14b READ RESULT -->
+<section class="slide" data-t="37-38" data-stage="5">
+  <div class="k">Step 5 · read the result back as a word</div>
+  <h2>What does 5.90 mean?</h2>
+  <div class="row">
+    <div class="col" style="flex:1.05"><div class="panel" id="rbPic" style="flex:1"></div>
+      <p class="note">Same membership reading as step 1, but now on the <b>output</b> axis with the impression sets from Figure 1.</p></div>
+    <div class="col stk tight2">
+      <div class="panel eq" data-st="5"><span class="bub">left edge: (y − a)/(b − a)</span><span class="stg" style="--c:#2ae6ff">⑤ Read result</span><span class="c3">malignant (0, 10, 20)</span><br>0 &lt; 5.90 &lt; 10 → left edge<br>(5.90 − 0)/(10 − 0) = <b class="c3">0.59</b></div>
+      <div class="panel f eq" data-st="5"><span class="bub">right edge: (d − y)/(d − c)</span><span class="c2">suspicious (−10, 0, 10)</span><br>0 &lt; 5.90 &lt; 10 → right edge<br>(10 − 5.90)/(10 − 0) = <b class="c2">0.41</b></div>
+      <div class="panel f eq" data-st="5"><span class="c1">benign (−20, −10, 0)</span>: 5.90 &gt; 0 → <b class="c1">0</b><br>largest: 0.59 → <b class="c3">Malignant</b>, 41% suspicious<span class="wy">Pick the set the number belongs to most. A 0.59 / 0.41 split says "malignant, but borderline".</span></div>
+      <div class="panel f eq" data-st="4"><span class="bub">MoM = (y_first + y_last)/2</span><span class="stg" style="--c:#9b6bff">④ Defuzzify</span>max μ = 0.5, from R8's plateau [5, 15] (slide 13)<br>MoM = (5 + 15)/2 = <b class="vi">10</b> → malignant 1.0<br>MM = <b style="color:var(--s2)">5</b> → malignant 0.5 = suspicious 0.5 (a tie)<span class="wy">MoM and MM look only at the tallest part, so R5 (suspicious) is ignored.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 15 QUIZ -->
+<section class="slide" data-t="38-40">
+  <h2>Checkpoint: three quick ones</h2>
+  <div class="grid3 quiz" id="quiz" style="align-items:start"></div>
+</section>
+
+<!-- 16 TEMPLATE VS FIG1 -->
+<section class="slide" data-t="40-42">
+  <div class="k">(e) Google Colab</div>
+  <h2>The Colab template is a different system</h2>
+  <div class="panel"><table>
+    <tr><th></th><th>Juzzy (Figure 1)</th><th>Colab template</th></tr>
+    <tr><td>Inputs</td><td>calcification, mass</td><td>calcification, mass <b class="mg">+ impression</b></td></tr>
+    <tr><td>Ranges</td><td>0–10, 0–30</td><td>all 1–10</td></tr>
+    <tr><td>Output</td><td>impression −20…20</td><td>risk index 0–100 (green / yellow / red)</td></tr>
+    <tr><td>Terms</td><td>less / several / more …</td><td>low / moderate / high</td></tr>
+    <tr><td>Rules</td><td>9 (full 3×3 grid)</td><td>6 hand-picked rules</td></tr></table></div>
+  <div class="row" style="flex:none">
+    <p class="panel f" style="flex:1"><span class="why">expect</span>Colab numbers will <b>not</b> match Juzzy. Compare methods, not values.</p>
+    <p class="panel f" style="flex:1">Same five stages, different sets and rules. The next slide decodes every number in the template.</p>
+  </div>
+</section>
+
+<!-- 16b TEMPLATE DECODED -->
+<section class="slide" data-t="41-42" data-stage="1-4">
+  <div class="k">(e) where do 5, 4, 35, 45 … come from?</div>
+  <h2>The template's sets, decoded</h2>
+  <div class="row">
+    <div class="panel col" data-st="1"><span class="stg" style="--c:#3ef0a1">① Fuzzify</span><div><b>Input sets</b> <span class="note">· calcification, mass, impression: all 1–10</span></div><div id="tdIn" style="height:170px"></div>
+      <table class="eq" style="font-size:16px"><tr><th>code</th><th>meaning</th></tr>
+      <tr><td class="c1">(5 − x)/4</td><td>low: 1 at x = 1, 0 at x = 5</td></tr>
+      <tr><td class="c2">min((x−2)/3, (8−x)/3)</td><td>moderate: triangle (2, 5, 8)</td></tr>
+      <tr><td class="c3">(x − 5)/4</td><td>high: 0 at x = 5, 1 at x = 9</td></tr></table>
+      <span class="src">every set is wrapped in <b>max(0, min(1, …))</b>, which keeps μ between 0 and 1</span></div>
+    <div class="panel col" data-st="4"><div style="display:flex;gap:6px"><span class="stg" style="--c:#ff4d8d">③ Clip + merge</span><span class="stg" style="--c:#9b6bff">④ Defuzzify</span></div><div><b>Output sets</b> <span class="note">· risk index 0–100</span></div><div id="tdOut" style="height:170px"></div>
+      <table class="eq" style="font-size:16px"><tr><th>code</th><th>meaning</th></tr>
+      <tr><td class="c1">(45 − y)/35</td><td>green: 1 for y ≤ 10, 0 at y = 45</td></tr>
+      <tr><td class="c2">min((y−20)/25, (80−y)/25)</td><td>yellow: rises from 20, falls to 80</td></tr>
+      <tr><td class="c3">(y − 55)/30</td><td>red: 0 at 55, 1 at 85</td></tr></table>
+      <span class="src">yellow's raw peak is 1.2 at y = 50; once clipped by a rule (w ≤ 1) it has a flat top</span></div>
+  </div>
+  <p class="panel f" style="padding:12px 20px"><span class="why">impression = 1</span>The cases give calcification and mass only. The code fills impression with 0 (or a default) and clips it to the floor of 1–10, so impression = <b>1.0</b> and μ_low(1) = (5 − 1)/4 = <b>1</b>.</p>
+</section>
+
+<!-- 17 CODE -->
+<section class="slide" data-t="42-43" data-stage="1-4">
+  <h2>The five lines that matter</h2>
+  <div class="row">
+    <pre style="flex:1.3"><span class="cm"># ① fuzzify: a ramp clipped to [0, 1]</span>
+<span class="hl">"low": max(0.0, min(1.0, (5.0 - x) / 4.0)),</span>
+<span class="cm"># ② rule strength: AND = min</span>
+<span class="hl">("R6: Low all -> Green", min(c["low"], m["low"], i["low"]), "green"),</span>
+<span class="cm"># ③ implication: clip the output set at w</span>
+<span class="hl">clipped = np.minimum(strength, model.out_mfs[zone])</span>
+<span class="cm"># ③ aggregation: max envelope</span>
+<span class="hl">agg_max = np.maximum(agg_max, clipped)</span>
+<span class="cm"># ④ COG on a grid of 500 points (dy cancels)</span>
+<span class="hl">cog = np.sum(model.x_out * agg_max) / np.sum(agg_max)</span></pre>
+    <div class="col stk tight2">
+      <div class="panel f" data-st="1"><span class="stg" style="--c:#3ef0a1">① Fuzzify</span>Line 1 turns a crisp score into μ, as on slide 10.</div>
+      <div class="panel f" data-st="2"><span class="stg" style="--c:#ffc53d">② Rules · min</span>Line 2 is one rule cell from slides 11–12.</div>
+      <div class="panel f" data-st="3"><span class="stg" style="--c:#ff4d8d">③ Clip + merge</span>Lines 3–4 build the shape from slide 13: clip with min, merge with max.</div>
+      <div class="panel f" data-st="4"><span class="stg" style="--c:#9b6bff">④ Defuzzify</span>Line 5 is ∫yμ/∫μ as sums. The grid spacing appears above and below the line, so it cancels.<span class="wy">500 points is coarse, so Colab prints 16.79 where the exact answer is 16.84.</span></div>
+      <div class="panel f"><span class="why">careful</span><span class="m">cog_max = 50.0 if sum == 0</span> hides "no rule fired". Remember it for case (c).</div>
+    </div>
+  </div>
+</section>
+
+<!-- 18 DEFUZZ -->
+<section class="slide" data-t="43-45" data-stage="4">
+  <h2>Three ways to get one number</h2>
+  <div class="row">
+    <div class="panel col" style="flex:1.5"><div style="display:flex;gap:10px" id="dzBtn"></div><div id="dzPlot" style="flex:1"></div></div>
+    <div class="col stk">
+      <div class="panel"><span class="bub">ΣAᵢx̄ᵢ / ΣAᵢ</span><h3 class="cy">COG</h3>Balance point of the whole area.<span class="wy">Every fired rule counts, and the output moves smoothly as inputs change. The default for Mamdani systems.</span></div>
+      <div class="panel"><span class="bub">(y_first + y_last)/2</span><h3 class="vi">MoM · mean of maxima</h3>Middle of the highest plateau.<span class="wy">Only the strongest rule counts. Quick, but it jumps when another rule becomes strongest.</span></div>
+      <div class="panel"><span class="bub">y_first where μ = max</span><h3 style="color:var(--s2)">MM · first of maxima</h3>Where the highest plateau starts (as in the answer key).<span class="wy">The lowest reading of the peak: a cautious choice.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 19 CASE A1 -->
+<section class="slide" data-t="45-46" data-stage="1-3">
+  <div class="k">Case (a) · calcification 2, mass 2, impression 1 · part 1</div>
+  <h2>Fuzzify, fire, clip</h2>
+  <div class="row">
+    <div class="panel" style="flex:.8" id="a1Pic"></div>
+    <div class="col stk tight2">
+      <div class="panel eq" data-st="1"><span class="bub">low: μ = (5 − x)/4</span><span class="stg" style="--c:#3ef0a1">① Fuzzify</span>calc 2: (5 − 2)/4 = <b>0.75</b> · mass 2: (5 − 2)/4 = <b>0.75</b> · impr 1: (5 − 1)/4 = <b>1.0</b><br>moderate(2) = min(0/3, 6/3) = 0 · high(2) = 0 since 2 &lt; 5
+        <span class="src">from: template input sets (slide 19) · impression 1 = clipped default</span></div>
+      <div class="panel f eq" data-st="2"><span class="bub">w = min(μ₁, μ₂, μ₃)</span><span class="stg" style="--c:#ffc53d">② Rules · min</span>R6 (low ∧ low ∧ low → green) = min(0.75, 0.75, 1.0) = <b class="c1">0.75</b>
+        <span class="wy">R6 is the only rule whose terms are all above 0. R1–R5 each need a moderate or high term, and those are 0 here.</span></div>
+      <div class="panel f eq" data-st="3"><span class="bub">μ′ = min(0.75, μ_green)</span><span class="stg" style="--c:#ff4d8d">③ Clip + merge</span>green = (45 − y)/35, capped at 1<br>(45 − y)/35 = 0.75 → 45 − y = 26.25 → y = <b>18.75</b>
+        <span class="wy">Implication cuts green flat at w = 0.75. Only one rule fired, so merging with max changes nothing. Shape: flat 0.75 on [0, 18.75], down to 0 at 45.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 20 CASE A2 -->
+<section class="slide" data-t="46-48" data-stage="4-5" data-hook="pieces" data-set="a">
+  <div class="k">Case (a) · part 2 · press → to work each slice</div>
+  <h2>Two slices: COG, MoM, MM</h2>
+  <div class="row">
+    <div class="col" style="flex:1.12"><div class="panel" id="pv-a" style="flex:1"></div></div>
+    <div class="col stk"><div class="panel pcard" id="pc-a" style="flex:1"></div>
+      <div class="panel" style="padding:10px 18px"><table class="ptab" id="pt-a"></table></div></div>
+  </div>
+</section>
+
+<!-- 21 CASE B1 -->
+<section class="slide" data-t="48-49" data-stage="1-3">
+  <div class="k">Case (b) · calcification 2.5, mass 7.5, impression 1 · part 1</div>
+  <h2>Two rules, one colour</h2>
+  <div class="row">
+    <div class="panel" style="flex:.8" id="b1Pic"></div>
+    <div class="col stk tight2">
+      <div class="panel eq" data-st="1"><span class="bub">mod: min((x−2)/3, (8−x)/3)</span><span class="stg" style="--c:#3ef0a1">① Fuzzify</span>calc 2.5: low (5 − 2.5)/4 = <b>0.625</b> · mod (2.5 − 2)/3 = <b>0.167</b><br>mass 7.5: mod (8 − 7.5)/3 = <b>0.167</b> · high (7.5 − 5)/4 = <b>0.625</b> · impr 1: low <b>1.0</b>
+        <span class="src">2.5 sits on the <b>left</b> edge of moderate (2, 5, 8); 7.5 sits on its <b>right</b> edge. Both are 0.5 from an end, so both give 0.5/3 = 1/6.</span></div>
+      <div class="panel f eq" data-st="2"><span class="bub">w = min(…)</span><span class="stg" style="--c:#ffc53d">② Rules · min</span>R3 (mod calc ∧ mod mass) = min(0.167, 0.167) = <b class="c2">0.167</b><br>R5 (low calc ∧ mod mass) = min(0.625, 0.167) = <b class="c2">0.167</b>
+        <span class="wy">These are the only rules with no zero term. R1 needs high impression (0); R6 needs low mass (0).</span></div>
+      <div class="panel f eq" data-st="3"><span class="bub">(y−20)/25 = w · (80−y)/25 = w</span><span class="stg" style="--c:#ff4d8d">③ Clip + merge</span>yellow cut at w = 1/6:<br>y = 20 + 25/6 = <b>24.167</b> · y = 80 − 25/6 = <b>75.833</b>
+        <span class="wy">Both rules point to yellow at 1/6, so merging gives max(1/6, 1/6) = 1/6: the same shape, not a taller one.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 22 CASE B2 -->
+<section class="slide" data-t="49-50" data-stage="4-5" data-hook="pieces" data-set="b">
+  <div class="k">Case (b) · part 2 · press → to work each slice</div>
+  <h2>Three slices, one balance point</h2>
+  <div class="row">
+    <div class="col" style="flex:1.12"><div class="panel" id="pv-b" style="flex:1"></div></div>
+    <div class="col stk"><div class="panel pcard" id="pc-b" style="flex:1"></div>
+      <div class="panel" style="padding:10px 18px"><table class="ptab" id="pt-b"></table></div></div>
+  </div>
+</section>
+
+<!-- 23 CASE C BUG -->
+<section class="slide" data-t="50-51" data-stage="1-2">
+  <div class="k">Case (c) · calcification 4.5, mass 9, impression 1</div>
+  <h2>Bug hunt: nothing fires</h2>
+  <div class="row">
+    <div class="col stk tight2">
+      <div class="panel eq" data-st="1"><span class="bub">low (5−x)/4 · mod min((x−2)/3,(8−x)/3) · high (x−5)/4</span><span class="stg" style="--c:#3ef0a1">① Fuzzify</span><br>calc 4.5: low (5 − 4.5)/4 = <b>0.125</b><br>mod min(2.5/3, 3.5/3) = min(0.833, 1.167) = <b>0.833</b> · high 4.5 &lt; 5 → <b>0</b><br>mass 9: low 9 &gt; 5 → 0 · mod 9 &gt; 8 → 0 · high (9 − 5)/4 = <b>1.0</b><br>impr 1: low <b>1.0</b></div>
+      <div class="panel f"><span class="bub">no rule → sum(agg) = 0 → return 50.0</span>The code then prints <b class="m">50.0</b>. It looks like an answer, but it is a default.</div>
+    </div>
+    <div class="col stk">
+      <div class="panel f" data-st="2"><span class="bub">w = min(…)</span><span class="stg" style="--c:#ffc53d">② Rules · min</span><table>
+        <tr><td class="k">R1</td><td>high mass ∧ high impr</td><td class="n">min(1, 0) = 0</td></tr>
+        <tr><td class="k">R2</td><td>high calc</td><td class="n">0</td></tr>
+        <tr><td class="k">R3</td><td>mod calc ∧ mod mass</td><td class="n">min(0.833, 0) = 0</td></tr>
+        <tr><td class="k">R4</td><td>mod impr ∧ low mass</td><td class="n">min(0, 0) = 0</td></tr>
+        <tr><td class="k">R5</td><td>low calc ∧ mod mass</td><td class="n">min(0.125, 0) = 0</td></tr>
+        <tr><td class="k">R6</td><td>low calc ∧ low mass ∧ low impr</td><td class="n">min(0.125, 0, 1) = 0</td></tr></table><span class="wy">Mass 9 is only "high", and the one high-mass rule (R1) also needs high impression, which is 0. Every rule hits a 0, and min passes that 0 on.</span></div>
+      <div class="panel f"><span class="why">your turn</span>Gap: <i>moderate calcification + high mass</i>. Patch it in the sandbox (slide 29): yellow or red? The next slide shows what the answer key ran instead.</div>
+    </div>
+  </div>
+</section>
+
+<!-- 24 CASE C KEY -->
+<section class="slide" data-t="51-52" data-stage="1-5" data-hook="pieces" data-set="c">
+  <div class="k">Case (c) as the answer key ran it · calcification 7, mass 9, impression 1</div>
+  <h2>Calcification 7: one red slice pair</h2>
+  <div class="row">
+    <div class="col" style="flex:1.12"><div class="panel" id="pv-c" style="flex:1"></div></div>
+    <div class="col stk"><div class="panel pcard" id="pc-c" style="flex:1"></div>
+      <div class="panel" style="padding:10px 18px"><table class="ptab" id="pt-c"></table></div></div>
+  </div>
+</section>
+
+<!-- 22 FIG1 PYTHON -->
+<section class="slide" data-t="buffer" data-stage="1-4">
+  <h2>Extension: Figure 1 in Python</h2>
+  <div class="row">
+    <div class="col" style="flex:1.5"><pre id="code" style="flex:1;font-size:13px"></pre><button id="copy" style="align-self:flex-start">Copy code</button></div>
+    <div class="col"><div class="panel"><h3>Matches Juzzy</h3><table>
+      <tr><th>calc, mass</th><th>COG</th><th>MoM</th><th>MM</th></tr>
+      <tr class="hot"><td>7, 15</td><td class="n">5.90</td><td class="n">10.00</td><td class="n">5.00</td></tr>
+      <tr><td>2, 2</td><td class="n">−10.00</td><td class="n">−10.00</td><td class="n">−10.00</td></tr>
+      <tr><td>2.5, 7.5</td><td class="n">−7.58</td><td class="n">−10.00</td><td class="n">−14.38</td></tr>
+      <tr><td>4.5, 9</td><td class="n">0.00</td><td class="n">0.00</td><td class="n">−6.00</td></tr></table></div>
+      <p class="panel note">With the full 3×3 grid every input fires something, so case (c) works: <b class="c2">suspicious</b>.</p></div>
+  </div>
+</section>
+
+<!-- 23 SANDBOX -->
+<section class="slide" data-t="52-56" data-stage="1-5">
+  <h2>Sandbox: break it, fix it</h2>
+  <div class="row">
+    <div class="panel col" style="flex:.8">
+      <div style="display:flex;gap:10px"><button id="mFig" class="sel">Juzzy · Figure 1</button><button id="mTpl">Colab template</button></div>
+      <div id="sbSl" style="display:flex;flex-direction:column;gap:6px"></div>
+      <label id="patchL" style="display:none;font-size:19px">Patch rule · moderate calc AND high mass →
+        <select id="patch"><option value="">none</option><option value="yellow">yellow</option><option value="red">red</option></select></label>
+      <div id="sbRules" style="font-size:17px;display:flex;flex-direction:column;gap:5px"></div>
+    </div>
+    <div class="col" style="flex:1.3"><div class="panel" id="sbPlot" style="flex:1"></div>
+      <div class="panel m" id="sbOut" style="font-size:22px"></div></div>
+  </div>
+</section>
+
+<!-- 24 TROUBLESHOOT -->
+<section class="slide" data-t="as needed">
+  <h2>When it goes wrong</h2>
+  <div class="grid3" style="flex:1">
+    <div class="panel"><h3>Juzzy shape looks odd</h3>Values out of order, or a triangle given 4 numbers. Re-type ascending.</div>
+    <div class="panel"><h3>μ = 0.35, not 0.333</h3>Check "several" is exactly (2, 5, 8).</div>
+    <div class="panel"><h3>Output stuck at the centre</h3>No rule fired. Rule terms must match MF names exactly.</div>
+    <div class="panel"><h3>NameError in Colab</h3>Run the imports and class cell first, top to bottom.</div>
+    <div class="panel"><h3>COG off by 0.05</h3>Grid sampling (500 points). Exact areas give the true value.</div>
+    <div class="panel"><h3>MoM vs MM mixed up</h3>MoM = middle of the plateau. MM = its first point.</div>
+  </div>
+</section>
+
+<!-- 25 EXIT -->
+<section class="slide" data-t="56-60">
+  <h2>Exit ticket</h2>
+  <div class="row">
+    <div class="panel col"><h3>Answer in one line each</h3>
+      <p>1 · Why is AND computed with min?</p>
+      <p>2 · Why did case (b) need no integral?</p>
+      <p>3 · What does a "50" mean when no rule fires?</p>
+      <p class="f note">Answers: weakest condition limits the rule · symmetric shape · a default, not a diagnosis.</p></div>
+    <div class="panel col"><h3>Before you submit</h3>
+      <label><input type="checkbox"> (a) three variables defined</label>
+      <label><input type="checkbox"> (b) Juzzy screenshots match Figure 1</label>
+      <label><input type="checkbox"> (c) nine rules entered</label>
+      <label><input type="checkbox"> (d) μ, rule strengths, areas, COG = 5.90</label>
+      <label><input type="checkbox"> (e) Colab output for cases a–c</label>
+      <label><input type="checkbox"> (e) COG, MoM, MM by hand, case (c) explained</label></div>
+  </div>
+</section>
+
+<div class="chip" id="chip"></div><div id="trk"></div>
+<div id="bar"><span id="num"></span><button id="clkBtn">Start lab clock</button><span id="clock">60:00</span><button id="prev" aria-label="Previous">←</button><button id="next" aria-label="Next">→</button></div>
+<div id="prog"></div>
+</div>
+
+<script>
+{
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const COL=['#3ef0a1','#ffc53d','#ff4d8d'], CY='#2ae6ff', VI='#9b6bff', AM='#ffc53d';
+const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const f3=v=>(Math.abs(v)<5e-4?0:v).toFixed(2);
+
+/* ---------- fuzzy engine ---------- */
+function trap(x,[a,b,c,d]){const r=b===a?(x>=a?1:0):(x-a)/(b-a);const f=d===c?(x<=d?1:0):(d-x)/(d-c);return Math.max(0,Math.min(1,r,f))}
+const FIG={out:{min:-20,max:20,lab:'Impression',sets:[['benign','Benign',[-20,-10,-10,0]],['suspicious','Suspicious',[-10,0,0,10]],['malignant','Malignant',[0,10,10,20]]]},
+ inputs:[{k:'calc',lab:'Calcification',min:0,max:10,step:.1,def:7,sets:[['less','Less',[0,0,2,4]],['several','Several',[2,5,5,8]],['more','More',[6,8,10,10]]]},
+         {k:'mass',lab:'Mass',min:0,max:30,step:.5,def:15,sets:[['small','Small',[0,0,4,12]],['medium','Medium',[5,15,15,25]],['large','Large',[17,25,30,30]]]}],rules:[]};
+const THEN={less:'benign',several:'suspicious',more:'malignant'};let n=1;
+for(const c of ['less','several','more'])for(const m of ['small','medium','large'])FIG.rules.push({id:'R'+n++,txt:`${c} ∧ ${m}`,ants:[['calc',c],['mass',m]],out:THEN[c]});
+const LMH=[['low','Low',[0,0,1,5]],['moderate','Moderate',[2,5,5,8]],['high','High',[5,9,10,10]]];
+const TPL={out:{min:0,max:100,lab:'Risk index',sets:[['green','Green',[-1,-1,10,45]],['yellow','Yellow',[20,45,55,80]],['red','Red',[55,85,100,100]]]},
+ inputs:[{k:'calc',lab:'Calcification',min:1,max:10,step:.1,def:2,sets:LMH},{k:'mass',lab:'Mass',min:1,max:10,step:.1,def:2,sets:LMH},{k:'impr',lab:'Impression',min:1,max:10,step:.1,def:1,sets:LMH}],
+ rules:[{id:'R1',txt:'high mass ∧ high impr',ants:[['mass','high'],['impr','high']],out:'red'},{id:'R2',txt:'high calc',ants:[['calc','high']],out:'red'},
+ {id:'R3',txt:'mod calc ∧ mod mass',ants:[['calc','moderate'],['mass','moderate']],out:'yellow'},{id:'R4',txt:'mod impr ∧ low mass',ants:[['impr','moderate'],['mass','low']],out:'yellow'},
+ {id:'R5',txt:'low calc ∧ mod mass',ants:[['calc','low'],['mass','moderate']],out:'yellow'},{id:'R6',txt:'low calc ∧ low mass ∧ low impr',ants:[['calc','low'],['mass','low'],['impr','low']],out:'green'}]};
+function run(M,vals,patch){
+  const mu={};for(const v of M.inputs){mu[v.k]={};for(const [k,,p] of v.sets)mu[v.k][k]=trap(vals[v.k],p)}
+  const rules=M.rules.slice();if(patch)rules.push({id:'R7',txt:'mod calc ∧ high mass',ants:[['calc','moderate'],['mass','high']],out:patch});
+  const fired=rules.map(r=>({...r,w:Math.min(...r.ants.map(([v,s])=>mu[v][s]))}));
+  const N=40001,o=M.out,ys=[],agg=[];const op={};for(const [k,,p] of o.sets)op[k]=p;
+  for(let i=0;i<N;i++){const y=o.min+(o.max-o.min)*i/(N-1);let a=0;for(const r of fired)if(r.w>0)a=Math.max(a,Math.min(r.w,trap(y,op[r.out])));ys.push(y);agg.push(a)}
+  let s=0,sy=0,mx=0;for(let i=0;i<N;i++){s+=agg[i];sy+=agg[i]*ys[i];mx=Math.max(mx,agg[i])}
+  if(s===0)return{mu,fired,ys,agg,none:true};
+  const at=y=>{let a=0;for(const r of fired)if(r.w>0)a=Math.max(a,Math.min(r.w,trap(y,op[r.out])));return a};
+  const pi=[];for(let i=0;i<N;i++)if(agg[i]>=mx-1e-7)pi.push(i);
+  const edge=(lo,hi)=>{for(let k=0;k<60;k++){const m=(lo+hi)/2;(at(m)>=mx-1e-9)===(at(hi)>=mx-1e-9)?hi=m:lo=m}return hi};
+  const first=pi[0]>0?edge(ys[pi[0]-1],ys[pi[0]]):ys[pi[0]];const L=pi.at(-1);
+  const last=L<N-1?(()=>{let lo=ys[L],hi=ys[L+1];for(let k=0;k<60;k++){const m=(lo+hi)/2;at(m)>=mx-1e-9?lo=m:hi=m}return lo})():ys[L];
+  const contiguous=pi.length===L-pi[0]+1,pk=pi.map(i=>ys[i]);
+  const cog=sy/s,cls=o.sets.map(([k,l,p])=>[l,trap(cog,p)]).sort((a,b)=>b[1]-a[1])[0][0];
+  return{mu,fired,ys,agg,cog,mom:contiguous?(first+last)/2:pk.reduce((a,b)=>a+b,0)/pk.length,mm:first,cls};
+}
+
+/* ---------- SVG plot helper ---------- */
+function plot(o){const W=o.W||800,H=o.H||340,P={l:48,r:16,t:o.t??18,b:36},x0=o.x[0],x1=o.x[1],ym=o.ymax||1.12;
+  const X=x=>P.l+(x-x0)/(x1-x0)*(W-P.l-P.r),Y=v=>H-P.b-v/ym*(H-P.t-P.b);let s=`<svg viewBox="0 0 ${W} ${H}" width="100%" height="100%" preserveAspectRatio="xMidYMid meet">`;
+  for(const v of [0,.5,1])s+=`<line x1="${P.l}" x2="${W-P.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="rgba(130,160,255,.15)"/><text x="${P.l-8}" y="${Y(v)+5}" fill="#9ba7d8" font-size="14" text-anchor="end">${v}</text>`;
+  const st=o.ticks||5;for(let i=0;i<=st;i++){const x=x0+(x1-x0)*i/st;s+=`<text x="${X(x)}" y="${H-12}" fill="#9ba7d8" font-size="14" text-anchor="middle">${+x.toFixed(1)}</text>`}
+  for(const c of o.fills||[]){const p=c.ys.map((y,i)=>`${X(y).toFixed(1)},${Y(c.v[i]).toFixed(1)}`);s+=`<g class="${c.cls||''}"><path d="M${X(c.ys[0])},${Y(0)}L${p.join('L')}L${X(c.ys.at(-1))},${Y(0)}Z" fill="${c.color}" fill-opacity="${c.op??.35}" stroke="${c.stroke||c.color}" stroke-width="${c.sw||2}"/></g>`}
+  for(const c of o.sets||[]){const pts=[];for(let i=0;i<=400;i++){const x=x0+(x1-x0)*i/400;pts.push(`${X(x).toFixed(1)},${Y(trap(x,c.p)).toFixed(1)}`)}
+    s+=`<path d="M${pts.join('L')}" fill="none" stroke="${c.color}" stroke-width="${c.w||3}" ${c.dash?'stroke-dasharray="7 6"':''} opacity="${c.op??1}"/>`;
+    if(c.lab)s+=`<text x="${X(c.lx??(c.p[1]+c.p[2])/2)}" y="${Y(1)-8}" fill="${c.color}" font-size="17" font-weight="700" text-anchor="middle">${c.lab}</text>`}
+  (o.v||[]).forEach((l,i)=>{s+=`<line x1="${X(l.x)}" x2="${X(l.x)}" y1="${Y(0)}" y2="${P.t}" stroke="${l.c}" stroke-width="3" ${l.dash?'stroke-dasharray="6 5"':''}/>`;
+    if(l.lab){if(o.legend){s+=`<line x1="${P.l+i*190}" x2="${P.l+i*190+26}" y1="22" y2="22" stroke="${l.c}" stroke-width="4" ${l.dash?'stroke-dasharray="6 5"':''}/><text x="${P.l+i*190+34}" y="28" fill="${l.c}" font-size="18" font-weight="700">${l.lab}</text>`}
+      else{const tx=Math.min(Math.max(X(l.x),P.l+60),W-P.r-60);s+=`<text x="${tx}" y="${P.t+16+i*20}" fill="${l.c}" font-size="16" font-weight="700" text-anchor="middle" paint-order="stroke" stroke="#070a1f" stroke-width="5">${l.lab}</text>`}}});
+  for(const d of o.dots||[])s+=`<line x1="${P.l}" x2="${X(d.x)}" y1="${Y(d.y)}" y2="${Y(d.y)}" stroke="${d.c}" stroke-dasharray="3 5"/><circle cx="${X(d.x)}" cy="${Y(d.y)}" r="7" fill="${d.c}" stroke="#070a1f" stroke-width="2"/>`;
+  return s+(o.extra?o.extra(X,Y):'')+'</svg>'}
+const setCurves=(sets,lab=true)=>sets.map(([k,l,p],i)=>({p,color:COL[i],lab:lab?l:''}));
+
+/* ---------- slide 1 hero ---------- */
+$('#hero').innerHTML=`<svg viewBox="0 0 1440 300" width="100%" height="100%">${[[0,260,520],[360,620,880],[720,980,1240]].map((t,i)=>`<path d="M${t[0]},280 L${t[1]},30 L${t[2]},280" fill="${COL[i]}" fill-opacity=".12" stroke="${COL[i]}" stroke-width="4"/>`).join('')}
+<line x1="0" y1="281" x2="1440" y2="281" stroke="rgba(130,160,255,.35)"/><g class="sweep"><line x1="380" x2="380" y1="20" y2="290" stroke="${CY}" stroke-width="3" class="pulse"/><circle cx="380" cy="282" r="9" fill="${CY}"/></g></svg>`;
+
+/* ---------- slide 2 timeline ---------- */
+const PLAN=[['Warm-up',0,5,3,'#2ae6ff'],['Concepts',5,10,4,'#9b6bff'],['Juzzy build',10,22,6,'#3ef0a1'],['Hand calc (d)',22,40,10,'#ffc53d'],['Colab (e)',40,52,18,'#ff4d8d'],['Buffer + exit',52,60,29,'#8f9ac8']];
+$('#tl').innerHTML=PLAN.map(([l,a,b,s,c])=>`<button style="--w:${b-a};background:${c}" data-go="${s}">${l}<span>${a}–${b} min</span></button>`).join('');
+
+/* ---------- slide 3 crisp vs fuzzy ---------- */
+function drawW(){const x=+$('#wm').value;$('#wmv').textContent=x;const mu=trap(x,[17,25,30,30]);
+  $('#wc').textContent=x>=17?'YES':'NO';$('#wc').style.color=x>=17?COL[2]:COL[0];$('#wf').textContent=mu.toFixed(2);
+  $('#wff').textContent=x<=17?'x ≤ 17 → 0':x>=25?'x ≥ 25 → 1':`(${x} − 17) / (25 − 17) = ${mu.toFixed(3)}`;
+  $('#wplot').innerHTML=plot({x:[0,30],ticks:6,H:300,sets:[{p:[17,17,30,30],color:'#9ba7d8',dash:1,w:2,lab:'crisp',lx:23.5},{p:[17,25,30,30],color:CY,lab:''}],v:[{x,c:'#fff',dash:1}],dots:[{x,y:mu,c:CY}]})}
+$('#wm').oninput=drawW;drawW();
+
+/* ---------- slide 5 pipeline ---------- */
+$('#pipe').innerHTML=`<svg viewBox="0 0 1400 430" width="100%" height="100%">
+<g class="flow">${[0,1,2,3,4].map(i=>`<path d="M${212+i*228},215 L${246+i*228},215" stroke="${CY}" stroke-width="4" fill="none"/>`).join('')}</g>
+${[['Crisp in','calc 7, mass 15','#5a6390'],['Fuzzify','μ from each set',COL[0]],['Rules','AND = min',COL[1]],['Aggregate','clip, then max',COL[2]],['Defuzzify','COG',VI],['Crisp out','5.90',CY]].map(([t,s,c],i)=>`<g transform="translate(${20+i*228},140)"><rect width="190" height="150" rx="22" fill="rgba(18,24,58,.9)" stroke="${c}" stroke-width="3"/><text x="95" y="66" fill="${c}" font-size="28" font-weight="700" text-anchor="middle" font-family="Orbitron">${t}</text><text x="95" y="106" fill="#cfd8ff" font-size="21" text-anchor="middle">${s}</text></g>`).join('')}
+<text x="700" y="380" fill="#9ba7d8" font-size="22" text-anchor="middle">Mamdani inference: the same four moves in Juzzy, on paper and in Python</text></svg>`;
+
+/* ---------- slide 6 MF explorer ---------- */
+const VARS=[FIG.inputs[0],FIG.inputs[1],{k:'impr',lab:'Impression',min:-20,max:20,step:.5,def:5.9,sets:FIG.out.sets}];let cur=0;
+function why(p,x){const[a,b,c,d]=p;if(x<a||x>d||(x===a&&b!==a)||(x===d&&c!==d))return'outside → 0';if(x>=b&&x<=c)return'plateau → 1';
+  if(x<b)return`(${x} − ${a}) / (${b} − ${a}) = ${trap(x,p).toFixed(3)}`;return`(${d} − ${x}) / (${d} − ${c}) = ${trap(x,p).toFixed(3)}`}
+function drawMF(){const V=VARS[cur],x=+$('#mfX').value;$('#mfXv').textContent=x;$('#mfLbl').textContent=V.lab;
+  $('#mfPlot').innerHTML=plot({x:[V.min,V.max],H:400,sets:setCurves(V.sets),v:[{x,c:'#fff',dash:1}],dots:V.sets.map(([,,p],i)=>({x,y:trap(x,p),c:COL[i]})).filter(d=>d.y>0)});
+  $('#mfRead').innerHTML=V.sets.map(([,l,p],i)=>`<div><b style="color:${COL[i]}">${l}</b> (${p[1]===p[2]?[p[0],p[1],p[3]]:p}) <br><span style="color:#cfd8ff">${why(p,x)}</span></div>`).join('')}
+function setVar(i){cur=i;const V=VARS[i],s=$('#mfX');s.min=V.min;s.max=V.max;s.step=V.step;s.value=V.def;$$('#mfTabs button').forEach((b,j)=>b.classList.toggle('sel',j===i));drawMF()}
+$('#mfTabs').innerHTML=VARS.map((v,i)=>`<button data-v="${i}">${v.lab}</button>`).join('');$$('#mfTabs button').forEach(b=>b.onclick=()=>setVar(+b.dataset.v));$('#mfX').oninput=drawMF;setVar(0);
+
+/* ---------- slide 7 trapezoid ---------- */
+$('#trapPic').innerHTML=plot({x:[0,10],H:300,ticks:10,sets:[{p:[2,4,6.5,9],color:CY}],extra:(X,Y)=>[['a',2],['b',4],['c',6.5],['d',9]].map(([l,v])=>`<text x="${X(v)}" y="${(v===2||v===9?Y(0):Y(1))-12}" fill="${AM}" font-size="22" font-weight="700" text-anchor="middle">${l}</text>`).join('')});
+
+/* ---------- slide 9 rule grid ---------- */
+const OC={benign:COL[0],suspicious:COL[1],malignant:COL[2]};
+$('#ruleGrid').innerHTML='<div></div>'+['Small','Medium','Large'].map(m=>`<div class="cell" style="border:0;color:#9ba7d8">mass ${m}</div>`).join('')+
+ ['less','several','more'].map((c,i)=>`<div class="cell" style="border:0;color:${COL[i]};text-align:left">calc ${c}</div>`+[0,1,2].map(j=>`<div class="cell" style="background:${OC[THEN[c]]}26;border-color:${OC[THEN[c]]}"><b style="color:${OC[THEN[c]]}">${THEN[c]}</b><br><span class="k">R${i*3+j+1}</span></div>`).join('')).join('');
+
+/* ---------- slide 10 fuzzify plots ---------- */
+$('#fzC').innerHTML=plot({x:[0,10],H:250,sets:setCurves(FIG.inputs[0].sets),v:[{x:7,c:'#fff',dash:1}],dots:[{x:7,y:1/3,c:COL[1]},{x:7,y:.5,c:COL[2]}]});
+$('#fzM').innerHTML=plot({x:[0,30],ticks:6,H:250,sets:setCurves(FIG.inputs[1].sets),v:[{x:15,c:'#fff',dash:1}],dots:[{x:15,y:1,c:COL[1]}]});
+
+/* ---------- slide 11 firing table ---------- */
+const R715=run(FIG,{calc:7,mass:15});
+{const CN=['less','several','more'],MN=['small','medium','large'],g=v=>v.toFixed(3).replace(/\.?0+$/,'');
+$('#fireT').innerHTML='<tr><th>rule</th><th>calc term · μ<br><span class="k" style="font-size:13px">left chart, slide 10</span></th><th>mass term · μ<br><span class="k" style="font-size:13px">right chart, slide 10</span></th><th>THEN</th><th>w = min</th></tr>'+R715.fired.map(r=>{const[[,ct],[,mt]]=r.ants,c=R715.mu.calc[ct],m=R715.mu.mass[mt],ci=CN.indexOf(ct),mi=MN.indexOf(mt);
+ return`<tr class="${r.w>0?'f lite':''}"><td class="k">${r.id}</td><td><span style="color:${COL[ci]}">${ct}</span> <b class="m">${g(c)}</b></td><td><span style="color:${COL[mi]}">${mt}</span> <b class="m">${g(m)}</b></td><td style="color:${OC[r.out]}">${r.out}</td><td class="n">min(${g(c)}, ${g(m)}) = <b>${g(r.w)}</b></td></tr>`}).join('')}
+
+/* ---------- bridge slide: chart values → rule grid ---------- */
+function drawBridge(n){
+ const W=1440,H=650,mu=R715.mu,CT=['less','several','more'],MT=['small','medium','large'],CS=FIG.inputs[0].sets,MS=FIG.inputs[1].sets;
+ const act=n>=1&&n<=9?n-1:-1,done=n>=10;
+ const cx0=20,cx1=360,cy0=610,cy1=330,CX=x=>cx0+x/10*(cx1-cx0),CY=v=>cy0-v*(cy0-cy1);
+ const mx0=560,mx1=1400,my0=180,my1=46,MX=x=>mx0+x/30*(mx1-mx0),MY=v=>my0-v*(my0-my1);
+ const colX=j=>700+j*280,rowY=i=>341+i*112,g3=v=>v.toFixed(3).replace(/\.?0+$/,'');
+ let s=`<svg viewBox="0 0 ${W} ${H}" width="100%" height="100%"><defs><linearGradient id="brg" x1="0" x2="1"><stop offset="0" stop-color="#ff3da8" stop-opacity=".75"/><stop offset=".5" stop-color="#9b6bff" stop-opacity=".65"/><stop offset="1" stop-color="#2ae6ff" stop-opacity=".62"/></linearGradient></defs>`;
+ // charts
+ const curve=(sets,X,Y,lo,hi)=>sets.map(([,l,p],i)=>{const pts=[];for(let k=0;k<=200;k++){const x=lo+(hi-lo)*k/200;pts.push(`${X(x).toFixed(1)},${Y(trap(x,p)).toFixed(1)}`)}return`<path d="M${pts.join('L')}" fill="none" stroke="${COL[i]}" stroke-width="2.5" opacity=".85"/>`}).join('');
+ s+=`<rect x="${cx0-10}" y="${cy1-50}" width="${cx1-cx0+20}" height="${cy0-cy1+80}" rx="16" fill="rgba(18,24,58,.7)" stroke="rgba(130,160,255,.2)"/><text x="${cx0}" y="${cy1-24}" fill="#eef2ff" font-size="20" font-weight="700">Calcification = 7</text>
+  <line x1="${cx0}" x2="${cx1}" y1="${cy0}" y2="${cy0}" stroke="rgba(130,160,255,.4)"/>${curve(CS,CX,CY,0,10)}<line x1="${CX(7)}" x2="${CX(7)}" y1="${cy0}" y2="${cy1}" stroke="#fff" stroke-dasharray="5 5"/>`;
+ s+=`<rect x="${mx0-10}" y="${my1-36}" width="${mx1-mx0+20}" height="${my0-my1+52}" rx="16" fill="rgba(18,24,58,.7)" stroke="rgba(130,160,255,.2)"/><text x="${mx0}" y="${my1-12}" fill="#eef2ff" font-size="20" font-weight="700">Mass = 15</text>
+  <line x1="${mx0}" x2="${mx1}" y1="${my0}" y2="${my0}" stroke="rgba(130,160,255,.4)"/>${curve(MS,MX,MY,0,30)}<line x1="${MX(15)}" x2="${MX(15)}" y1="${my0}" y2="${my1}" stroke="#fff" stroke-dasharray="5 5"/>`;
+ const rAct=act>=0?Math.floor(act/3):-1,cAct=act>=0?act%3:-1;
+ // chart dots → row/column tokens
+ CT.forEach((t,i)=>{const v=mu.calc[t],x=CX(7),y=CY(v),on=act<0||i===rAct;
+  s+=`<path class="${on?'flowl':''}" d="M${x},${y} C${x+90},${y} 300,${rowY(i)} 395,${rowY(i)}" fill="none" stroke="${COL[i]}" stroke-width="${i===rAct?4:2.5}" opacity="${on?1:.25}"/><circle cx="${x}" cy="${y}" r="7" fill="${COL[i]}" stroke="#070a1f" stroke-width="2"/>`});
+ MT.forEach((t,j)=>{const v=mu.mass[t],x=MX(15),y=MY(v),on=act<0||j===cAct;
+  s+=`<path class="${on?'flowl':''}" d="M${x},${y} C${x},${y+30} ${colX(j)},${y+20} ${colX(j)},213" fill="none" stroke="${COL[j]}" stroke-width="${j===cAct?4:2.5}" opacity="${on?1:.25}"/><circle cx="${x}" cy="${y}" r="7" fill="${COL[j]}" stroke="#070a1f" stroke-width="2"/>`});
+ // tokens
+ const tok=(x,y,w,txt,c,hot)=>`<rect x="${x-w/2}" y="${y-22}" width="${w}" height="44" rx="22" fill="${c}26" stroke="${hot?'#fff':c}" stroke-width="${hot?3:1.5}" ${hot?'style="filter:drop-shadow(0 0 10px '+c+')"':''}/><text x="${x}" y="${y+7}" fill="${c}" font-size="19" font-weight="700" text-anchor="middle" font-family="JetBrains Mono,monospace">${txt}</text>`;
+ CT.forEach((t,i)=>s+=tok(470,rowY(i),160,`${t} ${g3(mu.calc[t])}`,COL[i],i===rAct));
+ MT.forEach((t,j)=>s+=tok(colX(j),235,230,`${t} ${g3(mu.mass[t])}`,COL[j],j===cAct));
+ // highlight bands
+ if(act>=0){s+=`<rect x="388" y="${rowY(rAct)-56}" width="${colX(cAct)+136-388}" height="112" rx="18" fill="${COL[rAct]}" fill-opacity=".13" stroke="${COL[rAct]}" stroke-dasharray="6 6"/><rect x="${colX(cAct)-138}" y="208" width="276" height="${rowY(rAct)+56-208}" rx="18" fill="${COL[cAct]}" fill-opacity=".13" stroke="${COL[cAct]}" stroke-dasharray="6 6"/>`}
+ // cells
+ const OCc={benign:COL[0],suspicious:COL[1],malignant:COL[2]};
+ R715.fired.forEach((r,k)=>{const i=Math.floor(k/3),j=k%3,x=colX(j)-130,y=rowY(i)-50,c=OCc[r.out],shown=done||k<=act,isA=k===act,fired=r.w>0;
+  const inBand=act>=0&&(i===rAct||j===cAct);const op=act<0&&!done?.55:isA?1:done?(fired?1:.3):inBand?.7:k<act?.5:.22;
+  s+=`<g opacity="${op}"><rect x="${x}" y="${y}" width="260" height="100" rx="16" fill="${c}${isA||done&&fired?'38':'18'}" stroke="${isA||done&&fired?'#fff':c}" stroke-width="${isA?3:done&&fired?2.5:1.5}"/>
+   <text x="${x+14}" y="${y+26}" fill="#9ba7d8" font-size="16" font-family="JetBrains Mono,monospace">${r.id}</text><text x="${x+246}" y="${y+26}" fill="${c}" font-size="17" font-weight="700" text-anchor="end">→ ${r.out}</text>
+   <text x="${x+130}" y="${y+60}" fill="#eef2ff" font-size="19" text-anchor="middle" font-family="JetBrains Mono,monospace">${shown?`min(${g3(mu.calc[CT[i]])}, ${g3(mu.mass[MT[j]])})`:'min( ? , ? )'}</text>
+   <text x="${x+130}" y="${y+88}" fill="${shown&&fired?c:'#eef2ff'}" font-size="21" font-weight="700" text-anchor="middle" font-family="JetBrains Mono,monospace">${shown?'= '+g3(r.w):''}</text></g>`});
+ s+='</svg>';$('#brPic').innerHTML=s;
+ const r=act>=0?R715.fired[act]:null;
+ $('#brCap').innerHTML=r?`<b>${r.id}</b>: IF calcification is <b style="color:${COL[rAct]}">${CT[rAct]}</b> (${g3(mu.calc[CT[rAct]])}, left chart) AND mass is <b style="color:${COL[cAct]}">${MT[cAct]}</b> (${g3(mu.mass[MT[cAct]])}, top chart) → min = <b>${g3(r.w)}</b> → ${r.w>0?`<b style="color:${OCc[r.out]}">${r.out} fires</b>`:'does not fire'}`
+  :done?'Only the <b class="c2">several</b> and <b class="c3">more</b> rows and the <b class="c2">medium</b> column carry a value above 0, so only where they cross can a rule fire: <b>R5 = 0.333</b> and <b>R8 = 0.5</b>.'
+  :'Each chart dot becomes a token: <b>rows = calcification</b>, <b>columns = mass</b>. Every cell is one rule. Press → to fill R1 to R9.';}
+
+/* ---------- read-back + decoded plots ---------- */
+$('#rbPic').innerHTML=plot({x:[-20,20],ticks:8,H:470,sets:FIG.out.sets.map(([k,l,p],i)=>({p,color:COL[i],lab:l})),v:[{x:5.897,c:CY,lab:'COG 5.90'}],legend:1,t:60,dots:[{x:5.897,y:.59,c:COL[2]},{x:5.897,y:.41,c:COL[1]}]});
+$('#tdIn').innerHTML=plot({x:[1,10],ticks:9,H:170,t:10,sets:LMH.map(([k,l,p],i)=>({p,color:COL[i],lab:l,lx:i===0?1.8:undefined}))});
+$('#tdOut').innerHTML=plot({x:[0,100],ticks:5,H:170,t:10,sets:TPL.out.sets.map(([k,l,p],i)=>({p,color:COL[i],lab:l}))});
+/* ---------- slide 12 aggregation build ---------- */
+{const ds=(a)=>a.filter((_,i)=>i%50===0),ys=ds(R715.ys),cl=(w,p)=>ys.map(y=>Math.min(w,trap(y,p)));const agg=ds(R715.agg);
+$('#aggPic').innerHTML=plot({x:[-20,20],ticks:8,H:520,sets:FIG.out.sets.map(([k,l,p],i)=>({p,color:COL[i],dash:1,w:2,op:.6,lab:l})),
+ fills:[{ys,v:cl(1/3,[-10,0,0,10]),color:COL[1],cls:'f'},{ys,v:cl(.5,[0,10,10,20]),color:COL[2],cls:'f'},{ys,v:agg,color:CY,op:.28,sw:4,cls:'f'}],
+ extra:(X,Y)=>`<g class="f">${[[-6.67,1/3],[3.33,1/3],[5,.5],[15,.5]].map(([x,v])=>`<circle cx="${X(x)}" cy="${Y(v)}" r="7" fill="#fff"/><text x="${X(x)}" y="${Y(v)-14}" fill="#fff" font-size="17" text-anchor="middle">${x}</text>`).join('')}</g>`});}
+
+/* ---------- slice-by-slice COG stepper (slides 13, 20, 22, 24) ---------- */
+const N=v=>{const t=(Math.abs(v)<5e-7?0:v).toFixed(3).replace(/\.?0+$/,'');return t.replace('-','−')};
+const PAR=v=>v<0?`(${N(v)})`:N(v);
+const BUB=(t,cls='')=>`<span class="bub in ${cls}">${t}</span>`;
+const pc=(n,kind,x0,x1,h,o={})=>({n,kind,x0,x1,h,tall:o.tall||'right',desc:o.desc||'',hTxt:o.hTxt,
+  pts:o.pts||(kind==='rect'?[[x0,0],[x0,h],[x1,h],[x1,0]]:o.tall==='left'?[[x0,0],[x0,h],[x1,0]]:[[x0,0],[x1,h],[x1,0]])});
+const PS={
+ fig1:{M:FIG,ymax:.95,ticks:8,intro:'From step 3 (slide 13): rise on [−10, −6.67], flat 1/3 to 3.33, climb to 0.5 at 5, flat to 15, fall to 0 at 20.',
+  pieces:[pc('P1','tri',-10,-20/3,1/3,{desc:'suspicious rising edge',hTxt:'1/3 = 0.333'}),
+   pc('P2','rect',-20/3,10/3,1/3,{desc:'suspicious plateau',hTxt:'1/3 = 0.333'}),
+   pc('P3','rect',10/3,5,1/3,{desc:'strip under the malignant climb',hTxt:'1/3 = 0.333'}),
+   pc('P4','tri',10/3,5,1/6,{desc:'malignant climb above 1/3',hTxt:'0.5 − 0.333 = 0.167',pts:[[10/3,1/3],[5,.5],[5,1/3]]}),
+   pc('P5','rect',5,15,.5,{desc:'malignant plateau'}),
+   pc('P6','tri',15,20,.5,{tall:'left',desc:'malignant falling edge'})],
+  extra:`<span class="note">exact fractions: (575/9)/(65/6) = 230/39 · read as a word on slide 16</span>`,lines:['cog']},
+ a:{M:TPL,ymax:1.45,ticks:5,intro:'From part 1 (slide 22): green clipped at 0.75, flat on [0, 18.75], falling to 0 at 45.',
+  pieces:[pc('P1','rect',0,18.75,.75,{desc:'flat top at 0.75'}),pc('P2','tri',18.75,45,.75,{tall:'left',desc:'falling edge (45 − y)/35'})],
+  extra:`max μ = 0.75 on [0, 18.75]${BUB('MoM = (y_first + y_last)/2')}<br>MoM = (0 + 18.75)/2 = <b class="vi">9.375</b> · MM = <b style="color:var(--s2)">0</b>${BUB('MM = y_first')}<br>read back at 16.84: green (45 − 16.84)/35 = 0.80, yellow 0 (below 20) → <b class="c1">GREEN</b><br><span class="note">key 16.80: moment slip · Colab 16.79: 500-point grid</span>`,lines:['cog','mom','mm']},
+ b:{M:TPL,ymax:.62,ticks:5,intro:'From part 1 (slide 24): yellow clipped at 1/6, rising 20 → 24.167, flat to 75.833, falling to 80.',
+  pieces:[pc('P1','tri',20,20+25/6,1/6,{desc:'yellow rising edge',hTxt:'1/6 = 0.167'}),pc('P2','rect',20+25/6,80-25/6,1/6,{desc:'flat top at 1/6',hTxt:'1/6 = 0.167'}),
+   pc('P3','tri',80-25/6,80,1/6,{tall:'left',desc:'yellow falling edge',hTxt:'1/6 = 0.167'})],
+  extra:`max μ = 1/6 on [24.167, 75.833]${BUB('MoM = (y_first + y_last)/2')}<br>MoM = (24.167 + 75.833)/2 = <b class="vi">50</b> · MM = <b style="color:var(--s2)">24.167</b><br>read back at 50: only yellow is above 0 → <b class="c2">YELLOW</b><br><span class="note">P1 and P3 mirror each other about 50</span>`,lines:['cog','mom','mm']},
+ c:{M:TPL,ymax:1.05,ticks:5,intro:`<span class="wy">The key swapped 4.5 for 7 so that a rule fires.</span>① calc 7: high (7 − 5)/4 = 0.5${BUB('high: (x − 5)/4')}<br>② R2 (high calc → red) = 0.5 · R1 = min(high mass 1, high impr 0) = 0<br>③ red: (y − 55)/30 = 0.5 → y = 70, flat 0.5 to 100`,
+  pieces:[pc('P1','tri',55,70,.5,{desc:'red rising edge'}),pc('P2','rect',70,100,.5,{desc:'flat top at 0.5'})],
+  extra:`max μ = 0.5 on [70, 100]${BUB('MoM = (y_first + y_last)/2')}<br>MoM = (70 + 100)/2 = <b class="vi">85</b> · MM = <b style="color:var(--s2)">70</b><br>read back at 81: red (81 − 55)/30 = 0.87, yellow (80 − 81)/25 &lt; 0 → 0 → <b class="c3">RED</b>`,lines:['cog','mom','mm']}};
+for(const k in PS){const D=PS[k];let SA=0,SM=0;for(const q of D.pieces){
+  if(q.kind==='rect'){q.w=q.x1-q.x0;q.A=q.w*q.h;q.xb=(q.x0+q.x1)/2}else{q.w=q.x1-q.x0;q.A=.5*q.w*q.h;q.xb=q.x0+(q.tall==='right'?2/3:1/3)*q.w}
+  q.M=q.A*q.xb;SA+=q.A;SM+=q.M}D.SA=SA;D.SM=SM;D.cog=SM/SA;
+  const pk=D.pieces.filter(q=>q.kind==='rect').sort((a,b)=>b.h-a.h)[0]||D.pieces[0];D.mom=(pk.x0+pk.x1)/2;D.mm=pk.x0}
+const PCOLS=['#2ae6ff','#9b6bff','#ff3da8','#ffc53d','#3ef0a1','#ff8a3d'];
+const FORM=q=>q.kind==='rect'?['▭  A = w · h','x̄ = (x₀ + x₁)/2']:['△  A = ½ · b · h',q.tall==='right'?'x̄ = x₀ + ⅔ · b':'x̄ = x₀ + ⅓ · b'];
+function pieceCard(q,i){const tri=q.kind==='tri',L=tri?'b':'w';
+ return `<h3><span style="color:${PCOLS[i]}">${q.n}</span> ${tri?'triangle':'rectangle'} <span class="note" style="font-size:18px">· ${q.desc}</span></h3>
+ <span class="bub">${FORM(q).join('  ·  ')}</span>
+ <div class="eq"><span class="lb">span</span>y = ${N(q.x0)} → ${N(q.x1)}<br>
+ <span class="lb">${tri?'base':'width'}</span>${L} = ${N(q.x1)} − ${PAR(q.x0)} = <b>${N(q.w)}</b><br>
+ <span class="lb">height</span>h = ${q.hTxt||N(q.h)}<br>
+ <span class="lb">area</span>A = ${tri?'½ × ':''}${N(q.w)} × ${N(q.h)} = <b>${N(q.A)}</b><br>
+ <span class="lb">centre</span>x̄ = ${tri?`${N(q.x0)} + ${q.tall==='right'?'⅔':'⅓'} × ${N(q.w)}`:`(${N(q.x0)} + ${N(q.x1)})/2`} = <b>${N(q.xb)}</b><br>
+ <span class="lb">moment</span>A·x̄ = ${N(q.A)} × ${PAR(q.xb)} = <b class="cy">${N(q.M)}</b></div>
+ <p class="note" style="margin-top:6px">${tri?`Tall side on the ${q.tall}, so the centre sits ${q.tall==='right'?'⅔':'⅓'} of the way from x₀.`:'A rectangle balances at its middle.'}</p>`}
+const sumTxt=a=>a.map((v,i)=>i===0?N(v):v<0?` − ${N(-v)}`:` + ${N(v)}`).join('');
+function totalCard(D){return `<h3>Add up the slices</h3><span class="bub">COG = ΣAᵢ·x̄ᵢ / ΣAᵢ</span>
+ <div class="eq">ΣA = ${sumTxt(D.pieces.map(q=>q.A))}<br>&nbsp;&nbsp;&nbsp;= <b>${N(D.SA)}</b><br>
+ ΣA·x̄ = ${sumTxt(D.pieces.map(q=>q.M))}<br>&nbsp;&nbsp;&nbsp;= <b>${N(D.SM)}</b><br>
+ COG = ${N(D.SM)} / ${N(D.SA)} = <b class="cy" style="font-size:24px">${N(D.cog)}</b><br>${D.extra}</div>
+ <p class="note" style="margin-top:4px">Area-weighted average of the slice centres: big slices pull harder.</p>`}
+function introCard(D){return `<h3>${D.pieces.length} simple slices</h3><div class="eq">${D.intro}</div><span class="wy">COG needs ∫yμ/∫μ. The shape is made of straight lines, so cutting it into rectangles and triangles gives both integrals exactly, with no calculus.</span>
+ <div class="eq" style="margin-top:14px">rectangle: A = w·h${BUB('x̄ = (x₀ + x₁)/2')}<br>triangle: A = ½·b·h${BUB('x̄ = ⅔ toward the tall side')}<br>moment of a slice: Aᵢ × x̄ᵢ</div>
+ <p class="note" style="margin-top:12px">Press → to work slice P1.</p>`}
+let gid=0;
+function drawPieces(k,n){const D=PS[k];if(!D)return;const K=D.pieces.length,act=n>=1&&n<=K?n-1:-1,done=n>K,M=D.M;
+ const V=done?[{x:D.cog,c:CY,lab:'COG '+N(D.cog)}].concat(D.lines.includes('mom')?[{x:D.mom,c:VI,lab:'MoM '+N(D.mom)},{x:D.mm,c:AM,dash:1,lab:'MM '+N(D.mm)}]:[]):[];
+ $('#pv-'+k).innerHTML=plot({x:[M.out.min,M.out.max],ticks:D.ticks,H:560,ymax:D.ymax,t:60,legend:1,v:V,
+  sets:M.out.sets.map(([kk,l,p],i)=>({p,color:COL[i],dash:1,w:2,op:.4,lab:l})),
+  extra:(X,Y)=>{let g='';D.pieces.forEach((q,i)=>{const op=act<0?.5:i===act?.9:i<act?.45:.1;
+    g+=`<path d="M${q.pts.map(([x,y])=>`${X(x).toFixed(1)},${Y(y).toFixed(1)}`).join('L')}Z" fill="${PCOLS[i]}" fill-opacity="${op}" stroke="${i===act?'#fff':'#070a1f'}" stroke-width="${i===act?3:1.5}"/>`;
+    const cx=q.xb,cy=q.pts.reduce((s,p)=>s+p[1],0)/q.pts.length;if(X(q.x1)-X(q.x0)>34)g+=`<text x="${X(cx)}" y="${Y(cy)+6}" fill="#fff" font-size="17" font-weight="700" text-anchor="middle" opacity="${act<0||i<=act?1:.35}">${q.n}</text>`});
+   if(act>=0){const q=D.pieces[act],top=Math.max(...q.pts.map(p=>p[1])),cy=q.pts.reduce((s,p)=>s+p[1],0)/q.pts.length,
+     L=[...FORM(q),`A = ${N(q.A)} · x̄ = ${N(q.xb)}`],bw=Math.max(...L.map(t=>t.length))*10.4+34,bh=L.length*26+18,W=800,id='gb'+(++gid);
+     let bx=Math.min(Math.max(X(q.xb)-bw/2,52),W-16-bw),by=Math.max(64,Y(top)-34-bh);
+     g+=`<defs><linearGradient id="${id}" x1="0" x2="1"><stop offset="0" stop-color="#ff3da8" stop-opacity=".72"/><stop offset=".5" stop-color="#9b6bff" stop-opacity=".62"/><stop offset="1" stop-color="#2ae6ff" stop-opacity=".6"/></linearGradient></defs>
+     <line x1="${X(q.xb)}" x2="${X(q.xb)}" y1="${by+bh}" y2="${Y(cy)}" stroke="#fff" stroke-dasharray="3 4" stroke-width="2"/><circle cx="${X(q.xb)}" cy="${Y(cy)}" r="6" fill="#fff"/>
+     <g class="sbub"><rect x="${bx}" y="${by}" width="${bw}" height="${bh}" rx="${bh/2>30?22:bh/2}" fill="url(#${id})" stroke="rgba(255,255,255,.55)" style="filter:drop-shadow(0 0 14px rgba(155,107,255,.8))"/>
+     ${L.map((t,j)=>`<text x="${bx+bw/2}" y="${by+31+j*26}" fill="#fff" font-size="${j===2?17:19}" font-weight="700" text-anchor="middle" font-family="JetBrains Mono,monospace">${t}</text>`).join('')}</g>`}
+   return g}});
+ $('#pc-'+k).innerHTML=done?totalCard(D):act>=0?pieceCard(D.pieces[act],act):introCard(D);
+ $('#pt-'+k).innerHTML='<tr><th>slice</th><th>Aᵢ</th><th>x̄ᵢ</th><th>Aᵢ·x̄ᵢ</th></tr>'+D.pieces.map((q,i)=>`<tr class="${i===act?'now':i<n?'':'dim'}"><td style="color:${PCOLS[i]}">${q.n}</td><td class="n">${N(q.A)}</td><td class="n">${N(q.xb)}</td><td class="n">${N(q.M)}</td></tr>`).join('')+
+  `<tr class="${done?'now':'dim'}"><td><b>Σ</b></td><td class="n"><b>${N(D.SA)}</b></td><td class="n">COG ${N(D.cog)}</td><td class="n"><b>${N(D.SM)}</b></td></tr>`}
+
+/* ---------- slide 15 quiz ---------- */
+const Q=[['μ for More (6, 8, 10, 10) at x = 7?',['0.333','0.5','1.0'],1,'(7 − 6)/(8 − 6) = 0.5, left edge.'],
+ ['Why do only R5 and R8 fire for (7, 15)?',['Calcification 7 is "more" only','Mass 15 is only "medium"','Juzzy ignores mass'],1,'μ_small(15) = μ_large(15) = 0, so every rule with those terms is min(…, 0) = 0.'],
+ ['Which method gives 10 for (7, 15)?',['COG','MoM','MM (first max)'],1,'The 0.5 plateau runs 5 → 15; its middle is 10.']];
+$('#quiz').innerHTML=Q.map(([q,o],i)=>`<div class="panel"><h3 style="color:#eef2ff;font-size:23px">${q}</h3>${o.map((t,j)=>`<button data-q="${i}" data-a="${j}">${t}</button>`).join('')}<p class="fb" id="fb${i}"></p></div>`).join('');
+$$('#quiz button').forEach(b=>b.onclick=()=>{const i=+b.dataset.q,ok=+b.dataset.a===Q[i][2];b.classList.add(ok?'ok':'no');$('#fb'+i).textContent=(ok?'Correct. ':'Not yet. ')+Q[i][3]});
+
+/* ---------- template plots (18-20) ---------- */
+function outPlot(M,r,H,lab=true,bare=false){const ys=r.ys.filter((_,i)=>i%50===0),v=r.agg.filter((_,i)=>i%50===0);
+ return plot({x:[M.out.min,M.out.max],H,legend:1,ticks:M===FIG?8:5,sets:M.out.sets.map(([k,l,p],i)=>({p,color:COL[i],dash:1,w:2,op:.55,lab:lab?l:''})),fills:r.none?[]:[{ys,v,color:CY,op:.3}],
+  v:r.none||bare?[]:[{x:r.cog,c:CY,lab:'COG '+f3(r.cog)},{x:r.mom,c:VI,lab:'MoM '+f3(r.mom)},{x:r.mm,c:AM,dash:1,lab:'MM '+f3(r.mm)}],t:62})}
+const CASES={a:{calc:2,mass:2,impr:1},b:{calc:2.5,mass:7.5,impr:1},c:{calc:7,mass:9,impr:1}};
+$('#dzBtn').innerHTML=[['a','Case (a)'],['b','Case (b)'],['c','Case (c) with calc 7']].map(([k,l])=>`<button data-c="${k}">${l}</button>`).join('');
+const dz=k=>{$('#dzPlot').innerHTML=outPlot(TPL,run(TPL,CASES[k]),420);$$('#dzBtn button').forEach(b=>b.classList.toggle('sel',b.dataset.c===k))};
+$$('#dzBtn button').forEach(b=>b.onclick=()=>dz(b.dataset.c));dz('a');
+$('#a1Pic').innerHTML=outPlot(TPL,run(TPL,CASES.a),440,true,true);$('#b1Pic').innerHTML=outPlot(TPL,run(TPL,CASES.b),440,true,true);
+
+/* ---------- slide 22 code ---------- */
+const CODE=`import numpy as np
+
+def trap(x, a, b, c, d):
+    """Trapezoid MF (a,b,c,d). A triangle is trap(a, b, b, c)."""
+    x = np.asarray(x, dtype=float)
+    rise = np.ones_like(x) if b == a else (x - a) / (b - a)
+    fall = np.ones_like(x) if d == c else (d - x) / (d - c)
+    return np.clip(np.minimum(rise, fall), 0, 1)
+
+CALC = {"less": (0, 0, 2, 4), "several": (2, 5, 5, 8), "more": (6, 8, 10, 10)}
+MASS = {"small": (0, 0, 4, 12), "medium": (5, 15, 15, 25), "large": (17, 25, 30, 30)}
+IMPR = {"benign": (-20, -10, -10, 0), "suspicious": (-10, 0, 0, 10), "malignant": (0, 10, 10, 20)}
+THEN = {"less": "benign", "several": "suspicious", "more": "malignant"}   # 9 rules
+y = np.linspace(-20, 20, 4001)
+
+def diagnose(calc, mass):
+    mu_c = {k: float(trap(calc, *p)) for k, p in CALC.items()}           # Step 1 fuzzify
+    mu_m = {k: float(trap(mass, *p)) for k, p in MASS.items()}
+    agg = np.zeros_like(y)
+    for c in CALC:
+        for m in MASS:
+            w = min(mu_c[c], mu_m[m])                                     # Step 2 AND = min
+            if w > 0:
+                print(f"IF calc={c} AND mass={m} THEN {THEN[c]}  w={w:.3f}")
+                agg = np.maximum(agg, np.minimum(w, trap(y, *IMPR[THEN[c]])))  # clip + max
+    if agg.sum() == 0:
+        return None
+    cog = (y * agg).sum() / agg.sum()                                     # Step 4 COG
+    peak = y[np.isclose(agg, agg.max())]
+    return {"COG": round(float(cog), 3), "MoM": round(float(peak.mean()), 3), "MM": round(float(peak[0]), 3)}
+
+for c, m in [(7, 15), (2, 2), (2.5, 7.5), (4.5, 9)]:
+    print((c, m), diagnose(c, m), "\\n")`;
+$('#code').textContent=CODE;
+$('#copy').onclick=async()=>{try{await navigator.clipboard.writeText(CODE);$('#copy').textContent='Copied'}catch(e){$('#copy').textContent='Select the code and copy manually'}};
+
+/* ---------- slide 23 sandbox ---------- */
+let SM=FIG;const SV={};
+function sbBuild(){$('#sbSl').innerHTML=SM.inputs.map(v=>`<label class="sl">${v.lab}<input type="range" data-k="${v.k}" min="${v.min}" max="${v.max}" step="${v.step}" value="${v.def}"><b>${v.def}</b></label>`).join('');
+ $$('#sbSl input').forEach(i=>i.oninput=()=>{i.nextElementSibling.textContent=i.value;sbDraw()});$('#patchL').style.display=SM===TPL?'block':'none';
+ $('#mFig').classList.toggle('sel',SM===FIG);$('#mTpl').classList.toggle('sel',SM===TPL);sbDraw()}
+function sbDraw(){$$('#sbSl input').forEach(i=>SV[i.dataset.k]=+i.value);const r=run(SM,SV,SM===TPL?$('#patch').value:'');
+ const OCx={...OC,green:COL[0],yellow:COL[1],red:COL[2]};
+ $('#sbRules').innerHTML=r.fired.map(f=>`<div style="display:grid;grid-template-columns:42px 1fr 120px 52px;align-items:center;gap:8px;opacity:${f.w>0?1:.4}"><span class="k">${f.id}</span><span>${f.txt} → <span style="color:${OCx[f.out]}">${f.out}</span></span><span style="height:12px;border-radius:6px;background:rgba(130,160,255,.15);overflow:hidden"><span style="display:block;height:100%;width:${f.w*100}%;background:${OCx[f.out]}"></span></span><b class="m" style="font-size:16px;text-align:right">${f.w.toFixed(2)}</b></div>`).join('');
+ $('#sbPlot').innerHTML=outPlot(SM,r,470);
+ $('#sbOut').innerHTML=r.none?'<span class="mg">No rule fired.</span> The template code would print 50.0. Add a patch rule.':`COG <b class="cy">${f3(r.cog)}</b> · MoM <b class="vi">${f3(r.mom)}</b> · MM <b style="color:${AM}">${f3(r.mm)}</b> → <b>${r.cls}</b>`}
+$('#mFig').onclick=()=>{SM=FIG;sbBuild()};$('#mTpl').onclick=()=>{SM=TPL;sbBuild()};$('#patch').onchange=sbDraw;sbBuild();
+
+/* ---------- deck engine ---------- */
+const S=$$('.slide');let si=0;
+S.forEach(sl=>{if(sl.dataset.hook){const k=sl.dataset.hook==='pieces'?PS[sl.dataset.set].pieces.length+1:+sl.dataset.steps;const d=document.createElement('div');d.hidden=true;d.innerHTML='<i class="f"></i>'.repeat(k);sl.appendChild(d)}});
+function fr(i){return [...S[i].querySelectorAll('.f')]}
+function go(i,back){si=Math.max(0,Math.min(S.length-1,i));S.forEach((s,j)=>s.classList.toggle('on',j===si));
+ fr(si).forEach(e=>e.classList.toggle('show',!!back));$('#num').textContent=`${si+1} / ${S.length}`;$('#prog').style.width=(si+1)/S.length*100+'%';
+ const t=S[si].dataset.t;$('#chip').textContent=/^\d/.test(t)?`plan: minute ${t}`:t;try{history.replaceState(null,'','#slide-'+(si+1))}catch(e){}hook();tick()}
+function next(){const h=fr(si).find(e=>!e.classList.contains('show'));if(h){h.classList.add('show');hook()}else if(si<S.length-1)go(si+1)}
+function prev(){const s=fr(si).filter(e=>e.classList.contains('show'));if(s.length){s.at(-1).classList.remove('show');hook()}else if(si>0)go(si-1,true)}
+function hook(){const sl=S[si],n=fr(si).filter(e=>e.classList.contains('show')).length;let fo=null;
+ if(sl.dataset.hook==='pieces'){drawPieces(sl.dataset.set,n);fo=n>PS[sl.dataset.set].pieces.length?5:4}else if(sl.dataset.hook==='bridge')drawBridge(n);trk(fo)}
+const TRK=[['① Fuzzify','#3ef0a1'],['② Rules · min','#ffc53d'],['③ Clip + merge','#ff4d8d'],['④ Defuzzify','#9b6bff'],['⑤ Read result','#2ae6ff']];
+function trk(fo){const sl=S[si],st=sl.dataset.stage,el=$('#trk');if(!st){el.innerHTML='';return}
+ const[a,b]=st.split('-').map(Number),hi=b||a;let f=fo;
+ if(f==null){const sh=[...sl.querySelectorAll('[data-st]')].filter(e=>!e.classList.contains('f')||e.classList.contains('show'));f=sh.length?+sh.at(-1).dataset.st:a}
+ el.innerHTML=TRK.map(([t,c],i)=>`<span style="--c:${c}" class="${i+1>=a&&i+1<=hi?'in':''} ${i+1===f?'on':''}">${t}</span>`).join('')}
+$('#brAll').onclick=()=>{fr(si).forEach(e=>e.classList.add('show'));hook()};
+$('#next').onclick=next;$('#prev').onclick=prev;
+$$('[data-go]').forEach(b=>b.onclick=()=>go(+b.dataset.go-1));
+addEventListener('keydown',e=>{if(e.target.matches('input,select,textarea'))return;
+ if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();next()}else if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();prev()}
+ else if(e.key==='Home')go(0);else if(e.key==='End')go(S.length-1);else if(e.key==='f'||e.key==='F'){(document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen?.())?.catch?.(()=>{})}});
+let tx=null;addEventListener('touchstart',e=>tx=e.touches[0].clientX,{passive:true});addEventListener('touchend',e=>{if(tx==null||e.target.matches('input'))return;const d=e.changedTouches[0].clientX-tx;if(Math.abs(d)>60)d<0?next():prev();tx=null});
+function fit(){const k=Math.min(innerWidth/1600,innerHeight/900);$('#stage').style.transform=`translate(${-800*k}px,${-450*k}px) scale(${k})`}
+addEventListener('resize',fit);fit();
+
+/* lab clock */
+let t0=null,acc=0,run_=false;
+function el(){return acc+(run_?(Date.now()-t0)/1000:0)}
+function tick(){const e=el(),left=Math.max(0,3600-e),m=Math.floor(left/60),s=Math.floor(left%60);$('#clock').textContent=`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+ const t=S[si].dataset.t,a=parseFloat(t);if(e>0&&!isNaN(a)){const lag=e/60-parseFloat(t.split('-')[1]);$('#clock').style.color=lag>3?COL[2]:lag>0?AM:COL[0]}}
+$('#clkBtn').onclick=()=>{if(run_){acc=el();run_=false;$('#clkBtn').textContent='Resume clock'}else{t0=Date.now();run_=true;$('#clkBtn').textContent='Pause clock'}};
+setInterval(tick,1000);
+const h=/^#slide-(\d+)$/.exec(location.hash);go(h?+h[1]-1:0);
+
+/* background: drifting membership curves on a grid */
+const cv=$('#bg'),cx=cv.getContext('2d');
+function bg(t){const W=cv.width=innerWidth,H=cv.height=innerHeight;cx.clearRect(0,0,W,H);
+ const g=cx.createRadialGradient(W*.2,H*.1,0,W*.2,H*.1,W*.9);g.addColorStop(0,'#141a4a');g.addColorStop(1,'#070a1f');cx.fillStyle=g;cx.fillRect(0,0,W,H);
+ cx.strokeStyle='rgba(120,150,255,.07)';cx.lineWidth=1;for(let x=(t*.01)%48;x<W;x+=48){cx.beginPath();cx.moveTo(x,0);cx.lineTo(x,H);cx.stroke()}for(let y=0;y<H;y+=48){cx.beginPath();cx.moveTo(0,y);cx.lineTo(W,y);cx.stroke()}
+ for(let i=0;i<3;i++){const c=COL[i],w=W*.38,x0=((t*.012*(i+1)+i*W*.4)%(W+w))-w*.5,bh=H*.32;cx.beginPath();cx.moveTo(x0,H);cx.lineTo(x0+w/2,H-bh);cx.lineTo(x0+w,H);
+  cx.strokeStyle=c+'33';cx.lineWidth=2;cx.stroke();cx.fillStyle=c+'0d';cx.fill()}}
+if(RM)bg(0);else{const loop=t=>{bg(t);requestAnimationFrame(loop)};requestAnimationFrame(loop)}
+}
+</script>
+</body>
+</html>
