@@ -112,10 +112,13 @@ section.band { padding-block: 4.5rem; }
 .band h2 { font-weight: 600; font-size: clamp(1.7rem, 3.3vw, 2.5rem); line-height: 1.12; letter-spacing: -0.02em; margin-top: 0.6rem; max-width: 44rem; }
 .band .intro { color: var(--soft); margin-top: 0.8rem; max-width: 40rem; }
 
-.names { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.1rem; margin-top: 2.2rem; }
+.names { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.1rem; margin-top: 2.2rem; }
 .names article { background: var(--card); border: 1px solid var(--rule); border-top: 2px solid var(--purple); border-radius: 12px; padding: 1.3rem 1.4rem 1.5rem; }
 .names article:nth-child(2) { border-top-color: var(--coral); }
 .names article:nth-child(3) { border-top-color: var(--teal); }
+.names article:nth-child(4) { border-top-color: #b6a8ff; }
+.names article:nth-child(4) .role { color: var(--purple); }
+@media (max-width: 1100px) { .names { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .names .moon { width: 2.1rem; height: 2.1rem; }
 .names h3 { font-weight: 600; font-size: 1.2rem; letter-spacing: -0.01em; margin-top: 0.7rem; }
 .names .role { font: 500 0.68rem var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--purple); margin-top: 0.3rem; }
@@ -226,7 +229,7 @@ footer .mono { font: 400 0.7rem var(--mono); color: var(--faint); margin-left: a
       <div>
         <span class="pill"><i></i><span data-ms="Akan datang">Coming soon</span></span>
         <h1 data-ms="Daripada &lt;span class=&quot;hl-b&quot;&gt;idea pertama&lt;/span&gt; hingga &lt;span class=&quot;hl-a&quot;&gt;kertas terbit&lt;/span&gt;, di atas &lt;span class=&quot;hl-c&quot;&gt;satu kanvas&lt;/span&gt;.">From <span class="hl-b">first idea</span> to <span class="hl-a">published paper</span>, on <span class="hl-c">one canvas</span>.</h1>
-        <p class="lead" data-ms="AutoWriterAI ialah ruang kerja desktop untuk penulisan saintifik. Susun manuskrip anda sebagai blok yang bersambung, jahit sumber anda menjadi hujah, dan biarkan U'lama' menyemak penaakulan anda semasa anda menulis. Hasil kerja anda kekal pada komputer anda.">AutoWriterAI is a desktop workspace for scientific writing. Lay out your manuscript as connected blocks, stitch your sources into arguments, and let U'lama' check your reasoning as you write. Your work stays on your computer.</p>
+        <p class="lead" data-ms="AutoWriterAI ialah ruang kerja desktop untuk penulisan saintifik. Susun manuskrip anda sebagai blok yang bersambung, jahit sumber anda menjadi hujah, tulis bersama Qalam, pena terbina dalam anda, dan biarkan U'lama' menyelia keseluruhan kertas. Hasil kerja anda kekal pada komputer anda.">AutoWriterAI is a desktop workspace for scientific writing. Lay out your manuscript as connected blocks, stitch your sources into arguments, write with Qalam, your built-in pen, and let U'lama' oversee the whole paper. Your work stays on your computer.</p>
         <div class="cta">
           <a class="btn primary" href="#notify" data-ms="Minta dimaklumkan">Ask to be notified</a>
           <a class="btn" href="#preview" data-ms="Tonton pratonton">Watch the preview</a>
@@ -234,7 +237,7 @@ footer .mono { font: 400 0.7rem var(--mono); color: var(--faint); margin-left: a
         <p class="meta" data-ms="Windows · macOS · Linux · dalam bahasa Inggeris dan Bahasa Melayu">Windows · macOS · Linux · in English and Bahasa Melayu</p>
       </div>
 
-      <div class="canvas" role="img" aria-label="A manuscript laid out as connected blocks, with U'lama' pointing out a claim that is stronger than its evidence">
+      <div class="canvas" role="img" aria-label="A manuscript laid out as connected blocks, with Qalam pointing out a claim that is stronger than its evidence">
         <svg viewBox="0 0 520 380" aria-hidden="true">
           <defs>
             <linearGradient id="edge" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#4fd8c6"/><stop offset="0.5" stop-color="#8b7bf0"/><stop offset="1" stop-color="#ff9b78"/></linearGradient>
@@ -268,7 +271,7 @@ footer .mono { font: 400 0.7rem var(--mono); color: var(--faint); margin-left: a
           </g>
         </svg>
         <div class="bubble"><b data-ms="Logik">Logic</b><br><span data-ms="“akan menghapuskan” lebih kuat daripada bukti anda. Cuba “boleh mengurangkan”.">“will eliminate” is stronger than your evidence. Try “may reduce”.</span></div>
-        <div class="orb" aria-hidden="true">✦</div>
+        <div class="orb" aria-hidden="true">✎</div>
       </div>
     </div>
   </div>
@@ -277,12 +280,11 @@ footer .mono { font: 400 0.7rem var(--mono); color: var(--faint); margin-left: a
 
 <section class="preview" id="preview">
   <div class="wrap">
-    <p class="kicker" data-ms="Pratonton konsep · 50 saat">Concept preview · 50 seconds</p>
+    <p class="kicker" data-ms="Pratonton konsep · 55 saat">Concept preview · 55 seconds</p>
     <h2 data-ms="Lihat bagaimana ia akan berfungsi.">See how it will work.</h2>
     <div class="player">
       <video id="preview-video" controls playsinline preload="metadata" poster="autowriterai-preview.jpg" aria-describedby="preview-note">
         <source src="autowriterai-preview.mp4" type="video/mp4">
-        <track kind="captions" srclang="en" label="English" src="autowriterai-preview.vtt">
       </video>
     </div>
     <p class="preview-note" id="preview-note" data-ms="&lt;strong&gt;Pratonton konsep.&lt;/strong&gt; AutoWriterAI masih dalam pembangunan. Video ini menunjukkan cara produk dirancang untuk berfungsi; ciri dan reka bentuk mungkin berubah, dan ini bukan produk akhir. Suara penceritaan dijana oleh AI."><strong>Concept preview.</strong> AutoWriterAI is in development. This video shows how the product is intended to work; features and design may change, and this is not the final product. The narration is an AI-generated voice.</p>
@@ -291,8 +293,8 @@ footer .mono { font: 400 0.7rem var(--mono); color: var(--faint); margin-left: a
 
 <section class="band" id="inside">
   <div class="wrap">
-    <p class="kicker" data-ms="Tiga nama untuk dikenali">Three names to know</p>
-    <h2 data-ms="Sebuah bengkel menulis dengan tiga bahagian.">A writing workshop with three parts.</h2>
+    <p class="kicker" data-ms="Empat nama untuk dikenali">Four names to know</p>
+    <h2 data-ms="Sebuah bengkel menulis dengan empat bahagian.">A writing workshop with four parts.</h2>
     <div class="names">
       <article>
         <svg class="moon" viewBox="0 0 40 40" aria-hidden="true"><mask id="m1"><rect width="40" height="40" fill="#fff"/><circle cx="13" cy="15" r="15" fill="#000"/></mask><circle cx="20" cy="20" r="17" fill="#8b7bf0" mask="url(#m1)"/></svg>
@@ -303,14 +305,20 @@ footer .mono { font: 400 0.7rem var(--mono); color: var(--faint); margin-left: a
       <article>
         <svg class="moon" viewBox="0 0 40 40" aria-hidden="true"><mask id="m2"><rect width="40" height="40" fill="#fff"/><circle cx="3" cy="9" r="15" fill="#000"/></mask><circle cx="20" cy="20" r="17" fill="#f2683f" mask="url(#m2)"/></svg>
         <h3>Tre Lune</h3>
-        <p class="role" data-ms="Tanda, jahit, tenun">Annotate, stitch, weave</p>
-        <p class="txt" data-ms="Tiga bulan, tiga langkah. Tandakan petikan dalam PDF, simpan ayat anda sebagai jahitan yang boleh dipetik, kemudian tenun beberapa jahitan menjadi perenggan. Sitasi kekal terlekat dan senarai rujukan terhasil sendiri.">Three moons, three steps. Highlight a passage in a PDF, keep your sentence as a citable stitch, then weave several stitches into a paragraph. Citations stay attached and the reference list writes itself.</p>
+        <p class="role" data-ms="Di sinilah setiap kertas bermula">Where every paper starts</p>
+        <p class="txt" data-ms="Tiga bulan, tiga langkah. Kumpulkan rujukan anda dalam satu koleksi, tandakan petikan dalam PDF, simpan ayat anda sebagai jahitan yang boleh dipetik, kemudian tenun beberapa jahitan menjadi perenggan. Sitasi kekal terlekat dan senarai rujukan terhasil sendiri.">Three moons, three steps. Gather your references into a collection, highlight a passage in a PDF, keep your sentence as a citable stitch, then weave several stitches into a paragraph. Citations stay attached and the reference list writes itself.</p>
       </article>
       <article>
-        <svg class="moon" viewBox="0 0 40 40" aria-hidden="true"><defs><linearGradient id="m3" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#21b3a0"/><stop offset="1" stop-color="#4fd8c6"/></linearGradient></defs><circle cx="20" cy="20" r="17" fill="url(#m3)"/></svg>
+        <svg class="moon" viewBox="0 0 40 40" aria-hidden="true"><defs><linearGradient id="m3" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#21b3a0"/><stop offset="1" stop-color="#4fd8c6"/></linearGradient></defs><mask id="m3m"><rect width="40" height="40" fill="#fff"/><circle cx="-4" cy="6" r="15" fill="#000"/></mask><circle cx="20" cy="20" r="17" fill="url(#m3)" mask="url(#m3m)"/></svg>
+        <h3>Qalam</h3>
+        <p class="role" data-ms="Pena terbina dalam anda">Your built-in pen</p>
+        <p class="txt" data-ms="Model AI kecil yang berjalan pada komputer anda, dalam setiap pelan termasuk Percuma. Anda menulis; Qalam menyusun semula ayat, mencadangkan ayat seterusnya, atau menukar petikan menjadi ayat anda sendiri; kemudian anda menulis semula dengan suara anda. Ia tidak sesekali mereka-reka rujukan.">A small AI model that runs on your computer, on every plan including Free. You write; Qalam rephrases a sentence, suggests the next one, or turns an extracted passage into your own sentence; then you rewrite it in your voice. It never invents a reference.</p>
+      </article>
+      <article>
+        <svg class="moon" viewBox="0 0 40 40" aria-hidden="true"><defs><linearGradient id="m4" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#4fd8c6"/><stop offset=".5" stop-color="#8b7bf0"/><stop offset="1" stop-color="#ff9b78"/></linearGradient></defs><circle cx="20" cy="20" r="17" fill="url(#m4)"/></svg>
         <h3>U'lama'</h3>
-        <p class="role" data-ms="Mentor di sisi anda">The mentor beside you</p>
-        <p class="txt" data-ms="Apabila anda berhenti menulis seketika, U'lama' membaca bahagian itu berbanding rancangan anda dan menunjukkan masalah hujah, logik, koheren dan ketekalan. Ia tidak sesekali mereka-reka rujukan.">When you pause, U'lama' reads the section against your plan and points out problems of argument, logic, coherence and consistency. It never invents a reference.</p>
+        <p class="role" data-ms="Penyelia keseluruhan kertas">The overseer of the whole paper</p>
+        <p class="txt" data-ms="U'lama' melihat gambaran penuh: koleksi, jahitan dan tulisan anda. Ia merancang setiap bahagian, menghantar tiga Qalam untuk mendraf dari sudut berbeza, membiarkan mereka mengundi, lalu menggabungkan hasilnya. Anda menyunting rancangan itu dan menerima atau menolak setiap bahagian.">U'lama' sees the full picture: your collection, your stitches and your writing. It plans each section, sends three Qalams to draft it from different angles, lets them vote, and merges the result. You edit the plan and accept or reject every section.</p>
       </article>
     </div>
   </div>
@@ -338,11 +346,11 @@ footer .mono { font: 400 0.7rem var(--mono); color: var(--faint); margin-left: a
     <div>
       <p class="kicker" data-ms="Peribadi sejak awal">Private by design</p>
       <h2 data-ms="Draf anda tidak perlu meninggalkan bilik.">Your draft never has to leave the room.</h2>
-      <p class="intro" data-ms="Kebanyakan alat penulisan AI menghantar teks anda ke pelayan orang lain. AutoWriterAI boleh menjalankan mentornya pada komputer anda sendiri.">Most AI writing tools send your text to someone else's server. AutoWriterAI can run its mentor on your own computer.</p>
+      <p class="intro" data-ms="Kebanyakan alat penulisan AI menghantar teks anda ke pelayan orang lain. AutoWriterAI menjalankan penanya, Qalam, pada komputer anda sendiri.">Most AI writing tools send your text to someone else's server. AutoWriterAI runs its pen, Qalam, on your own computer.</p>
     </div>
     <ul class="facts">
       <li><span class="num grad">0</span><span><strong data-ms="akaun diperlukan">accounts required</strong><span data-ms="Kanvas, templat, senarai semak dan perpustakaan Tre Lune berfungsi luar talian, secara percuma.">The canvas, templates, checklists and Tre Lune library work offline, for free.</span></span></li>
-      <li><span class="num grad">2.5 GB</span><span><strong data-ms="sekali muat turun untuk model terbina dalam">one download for the built-in model</strong><span data-ms="Selepas itu U'lama' berjalan pada komputer anda: tanpa kunci API, dan tiada apa-apa dihantar ke mana-mana.">After that U'lama' runs on your computer: no API key, and nothing sent anywhere.</span></span></li>
+      <li><span class="num grad">1.8 GB</span><span><strong data-ms="sekali muat turun untuk model terbina dalam">one download for the built-in model</strong><span data-ms="Selepas itu Qalam berjalan pada komputer anda: tanpa kunci API, dan tiada apa-apa dihantar ke mana-mana.">After that Qalam runs on your computer: no API key, and nothing sent anywhere.</span></span></li>
       <li><span class="num grad">.docx</span><span><strong data-ms="masuk dan keluar">in and out</strong><span data-ms="Import draf Word sedia ada ke dalam blok, dan eksport ke Word, Markdown atau LaTeX apabila siap.">Import an existing Word draft into blocks, and export to Word, Markdown or LaTeX when you are done.</span></span></li>
     </ul>
   </div>

@@ -205,7 +205,7 @@ sections:
         url: "/autowriter/"
         own: true
         price: "Coming soon"
-        why: "A desktop workspace for the whole paper, from research question to cover letter, with a mentor that checks your argument and never invents a reference. Runs on your own computer."
+        why: "A desktop workspace for the whole paper, from research question to cover letter. Its built-in pen, Qalam, runs on your own computer and never invents a reference."
         usedIn: []
 
   - id: local

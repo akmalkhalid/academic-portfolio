@@ -159,7 +159,7 @@ export default function HomeClient({
             <div className="bt-body">
               <span className="bt-tag">App · Coming soon</span>
               <h3>AutoWriterAI</h3>
-              <p>A private desktop workspace for scientific writing, from first idea to published paper, with a mentor that checks your argument as you write.</p>
+              <p>A private desktop workspace for scientific writing, from first idea to published paper, with a built-in pen that runs on your own computer.</p>
               <span className="bt-cta">Join the waitlist →</span>
             </div>
           </a>
