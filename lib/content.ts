@@ -206,8 +206,12 @@ export type ToolkitTool = {
   partnerLink?: string
   price: 'Free' | 'Free tier' | 'Open source' | 'Paid' | 'Institutional' | 'Coming soon'
   why: string
-  /** Built by me (lives on this site). */
+  /** Built by me (on this site, or my own book in a store). */
   own?: boolean
+  /** Button label override, e.g. "Get it on Kindle". */
+  cta?: string
+  /** A second place to get it, shown under the description. */
+  alsoAt?: { label: string; href: string }
   usedIn?: string[]
 }
 

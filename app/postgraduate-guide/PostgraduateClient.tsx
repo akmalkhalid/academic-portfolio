@@ -3,6 +3,7 @@
 import { useEffect, useRef } from 'react'
 import { s } from '@/lib/style'
 import PageBanner from '@/components/PageBanner'
+import { STORE_BOOKS } from '@/lib/books'
 
 const stack = "'Space Grotesk', system-ui, sans-serif"
 
@@ -138,6 +139,33 @@ export default function PostgraduateClient({ email }: { email: string }) {
               <p style={s('font-size:15px;color:#44403c;line-height:1.55;margin:0')}>{it.text}</p>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* PROPOSAL HELP — the workbook and the AI guide (lib/books.ts) */}
+      <section style={s('max-width:1120px;margin:0 auto;padding:22px 28px 6px')}>
+        <div className="pg-books">
+          <div>
+            <h3 style={s(`font-family:${stack};font-size:17px;font-weight:600;margin:0 0 6px;line-height:1.3`)}>Need help shaping that one-page proposal?</h3>
+            <p style={s('font-size:14px;color:#57514b;line-height:1.6;margin:0')}>
+              I wrote a workbook that walks you from a research idea to a proposal you can defend, and a short guide to using AI in research without handing over your judgment. Neither is required to apply.
+            </p>
+          </div>
+          <ul className="pg-book-list">
+            {STORE_BOOKS.map((b) => (
+              <li key={b.slug}>
+                <img src={b.cover} alt="" loading="lazy" referrerPolicy="no-referrer" />
+                <span>
+                  <b>{b.title}</b>
+                  <span className="pg-book-links">
+                    {b.links.map((l) => (
+                      <a key={l.href} href={l.href} target="_blank" rel="noopener noreferrer">{l.label} ↗</a>
+                    ))}
+                  </span>
+                </span>
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
 

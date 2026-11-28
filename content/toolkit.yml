@@ -22,6 +22,8 @@
 #
 # price: one of  Free | Free tier | Open source | Paid | Institutional | Coming soon
 #   (Coming soon is for my own unreleased tools; the button reads "Join waitlist".)
+# cta: optional button label (used for my own books in stores).
+# alsoAt: optional second store, shown under the description: { label, href }.
 # usedIn: keys from `sessions` below.
 
 sessions:
@@ -206,6 +208,21 @@ sections:
         own: true
         price: "Coming soon"
         why: "A desktop workspace for the whole paper, from research question to cover letter. Its built-in pen, Qalam, runs on your own computer and never invents a reference."
+        usedIn: []
+      - name: "Delegate Tasks, Never Judgment (book)"
+        url: "https://www.amazon.com/dp/B0HRFQDL74"
+        own: true
+        price: "Paid"
+        cta: "Get it on Kindle"
+        why: "My short guide to using AI across the research cycle: what to delegate at each stage, the traffic-light rule for data, and the 4S check for every reference."
+        usedIn: []
+      - name: "From Idea to Proposal (workbook)"
+        url: "https://www.amazon.com/dp/B0HRFGWH55"
+        own: true
+        price: "Paid"
+        cta: "Paperback on Amazon"
+        why: "My 108-page proposal workbook for Master's and PhD students, with an AI-assisted search log, citation checks and a literature matrix."
+        alsoAt: { label: "Printable PDF on Etsy", href: "https://www.etsy.com/listing/4627503337/thesis-and-research-proposal-workbook" }
         usedIn: []
 
   - id: local

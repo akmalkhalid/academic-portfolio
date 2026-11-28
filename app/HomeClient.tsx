@@ -2,7 +2,7 @@
 
 // Home — deliberately sparse. Six beats, in order:
 //   hero (the question + the record)
-//   → books and tools (free Prompt Cookbook; AutoWriterAI and Prompt Culinary Masterclass coming soon)
+//   → books and tools (research books on Amazon/Etsy, free Prompt Cookbook; AutoWriterAI and Prompt Culinary Masterclass coming soon)
 //   → the signature demo (the loop, running on two problems: Sudoku puzzles and game levels)
 //   → the three research pillars (one per stage of the loop, each with its record) + horizon
 //   → selected work → contact.
@@ -16,6 +16,7 @@ import { s } from '@/lib/style'
 import { PCOL } from '@/lib/view'
 import LatentField from '@/components/LatentField'
 import DemoDeck from '@/components/DemoDeck'
+import { STORE_BOOKS } from '@/lib/books'
 
 type Stats = {
   pubs: number; citations: number; hIndex: number | null; i10Index: number | null
@@ -126,9 +127,29 @@ export default function HomeClient({
         <p style={eyebrow(false)}>/ books and tools</p>
         <h2 style={h2(false)}>Things I have built that you can use.</h2>
         <p style={s('font-size:15.5px;line-height:1.65;color:#57514b;max-width:680px;margin:14px 0 28px')}>
-          A free book to start with today, and a writing app and a second book on the way.
+          Two research books from my workshops, a free book to start with today, and a writing app and a second book on the way.
         </p>
         <div className="bt-grid">
+          {/* Store books (KDP / Etsy): data in lib/books.ts. A div, not a link, because a book can have two stores. */}
+          {STORE_BOOKS.map((b) => (
+            <div key={b.slug} className={`bt-tile bt-store bt-${b.slug}`}>
+              <a className="bt-stage" href={b.links[0].href} target="_blank" rel="noopener noreferrer" aria-label={`${b.title}: ${b.links[0].label} (opens in a new tab)`}>
+                <span className="bt-chip">{b.format}</span>
+                <div className="bt-page bt-page-back" aria-hidden="true" />
+                <img className="bt-cover" src={b.cover} alt={`${b.title} cover`} loading="lazy" referrerPolicy="no-referrer" />
+              </a>
+              <div className="bt-body">
+                <span className="bt-tag">{b.tag}</span>
+                <h3>{b.title}</h3>
+                <p>{b.blurb}</p>
+                <span className="bt-ctas">
+                  {b.links.map((l) => (
+                    <a key={l.href} className="bt-cta" href={l.href} target="_blank" rel="noopener noreferrer">{l.label} ↗</a>
+                  ))}
+                </span>
+              </div>
+            </div>
+          ))}
           <a href="/cookbook/" className="bt-tile bt-cook">
             <div className="bt-stage">
               <span className="bt-chip">PDF · 88 pages</span>

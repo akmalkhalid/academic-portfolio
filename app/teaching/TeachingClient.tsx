@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { s } from '@/lib/style'
 import PageBanner from '@/components/PageBanner'
+import { AMAZON_DELEGATE, AMAZON_PROPOSAL, ETSY_PROPOSAL } from '@/lib/books'
 import LearningStage, { FOCUS, FOCUS_ORDER, type Focus, type StageTile } from '@/components/LearningStage'
 
 const stack = "'Space Grotesk', system-ui, sans-serif"
@@ -180,6 +181,7 @@ export default function TeachingClient({
             ))}
           </div>
           <p className="tp-more"><a href="/cv/?reader=industry&pages=full">All {training.done.length} sessions, with audiences and formats, in the trainer CV →</a></p>
+          <p className="tp-book">The AI-in-research sessions, condensed into a short book: <a href={AMAZON_DELEGATE} target="_blank" rel="noopener noreferrer"><i>Delegate Tasks, Never Judgment</i> on Kindle ↗</a></p>
         </section>
 
         {/* SUPERVISION */}
@@ -209,6 +211,7 @@ export default function TeachingClient({
             ))}
           </div>
           <p className="tp-more"><a href="/postgraduate-guide/">Thinking of applying? Read the postgraduate guide →</a></p>
+          <p className="tp-book">My proposal workbook for Master&apos;s and PhD students: <i>From Idea to Proposal</i>, as a <a href={AMAZON_PROPOSAL} target="_blank" rel="noopener noreferrer">paperback on Amazon ↗</a> or a <a href={ETSY_PROPOSAL} target="_blank" rel="noopener noreferrer">printable on Etsy ↗</a></p>
         </section>
 
         {/* OPEN LEARNING — everything here is public: no sign-up, no paywall */}

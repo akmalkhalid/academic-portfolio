@@ -106,6 +106,12 @@ export default function ToolkitPage() {
 
                       <div className="tk-body">
                         <p className="tk-why">{t.why}</p>
+                        {t.alsoAt && (
+                          <p className="tk-used">
+                            <span style={mono('font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#a39a8f')}>Also </span>
+                            <a href={t.alsoAt.href} target="_blank" rel="noopener noreferrer">{t.alsoAt.label} ↗</a>
+                          </p>
+                        )}
                         {t.usedIn && t.usedIn.length > 0 && (
                           <p className="tk-used">
                             <span style={mono('font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#a39a8f')}>Used in </span>
@@ -124,10 +130,10 @@ export default function ToolkitPage() {
                         href={href}
                         target={external || partner ? '_blank' : undefined}
                         rel={rel}
-                        aria-label={`${t.price === 'Coming soon' ? 'Join the waitlist for' : t.own ? 'Open' : 'Visit'} ${t.name}${external || partner ? ' (opens in a new tab)' : ''}`}
+                        aria-label={`${t.cta ? t.cta + ':' : t.price === 'Coming soon' ? 'Join the waitlist for' : t.own ? 'Open' : 'Visit'} ${t.name}${external || partner ? ' (opens in a new tab)' : ''}`}
                         style={mono('')}
                       >
-                        {t.price === 'Coming soon' ? 'Join waitlist →' : t.own ? 'Open tool →' : 'Visit site ↗'}
+                        {t.cta ? `${t.cta} ${external ? '↗' : '→'}` : t.price === 'Coming soon' ? 'Join waitlist →' : t.own ? 'Open tool →' : 'Visit site ↗'}
                       </a>
                     </li>
                   )

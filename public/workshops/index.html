@@ -219,6 +219,22 @@
         .js .card { opacity: 1; translate: none; scale: none; }
         .card { transform: none !important; }
       }
+    
+      /* Companion books (my KDP / Etsy titles) — same list as lib/books.ts */
+      .reads { margin: 34px 0 6px; padding: 22px 24px; border-radius: 14px;
+        border: 1px solid rgba(148,170,255,.18); background: rgba(16,22,48,.55);
+        backdrop-filter: blur(8px); }
+      .reads h3 { font-family: 'Space Grotesk', system-ui, sans-serif; font-size: 18px; margin: 0 0 4px; }
+      .reads > p { margin: 0 0 16px; font-size: 14px; line-height: 1.6; color: rgba(220,228,255,.75); }
+      .reads ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+      .reads li { display: flex; gap: 14px; align-items: center; }
+      .reads img { width: 52px; aspect-ratio: 720 / 1060; object-fit: cover; border-radius: 3px; flex-shrink: 0; background: #1b1b24;
+        box-shadow: 0 8px 18px -10px rgba(0,0,0,.6); }
+      .reads b { font-size: 14.5px; line-height: 1.3; }
+      .reads li > span { display: flex; flex-direction: column; align-items: flex-start; gap: 3px; }
+      .reads li span.d { font-size: 12.5px; line-height: 1.45; margin: 2px 0 4px; color: rgba(220,228,255,.65); }
+      .reads a.s { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 12px; font-weight: 600; margin-right: 12px;
+        text-decoration: none; color: #9fe9ff; border-bottom: 1.5px solid #38e1ff; }
     </style>
   </head>
   <body>
@@ -718,6 +734,35 @@
           <span class="btn" data-en>Open the module</span>
           <span class="btn" data-bm>Buka modul</span>
         </a>
+      </section>
+
+      <!-- ================= Companion books (KDP / Etsy) — keep in step with lib/books.ts ================= -->
+      <section class="reads" aria-labelledby="reads-h">
+        <h3 id="reads-h" data-en>Take it further: two companion books</h3>
+        <h3 data-bm>Langkah seterusnya: dua buku pendamping</h3>
+        <p data-en>The sessions stay free. If you want the method on paper, I wrote these two from the same material.</p>
+        <p data-bm>Sesi-sesi ini kekal percuma. Jika anda mahukan kaedahnya dalam bentuk buku, saya menulis dua buku ini berdasarkan bahan yang sama.</p>
+        <ul>
+          <li>
+            <img src="https://m.media-amazon.com/images/I/719fFUKxH5L._SL600_.jpg" alt="" loading="lazy" referrerpolicy="no-referrer" />
+            <span>
+              <b>Delegate Tasks, Never Judgment</b>
+              <span class="d" data-en>A short guide to using AI responsibly at every stage of research.</span>
+              <span class="d" data-bm>Panduan ringkas menggunakan AI secara bertanggungjawab di setiap peringkat penyelidikan.</span>
+              <a class="s" href="https://www.amazon.com/dp/B0HRFQDL74" target="_blank" rel="noopener noreferrer">Kindle ↗</a>
+            </span>
+          </li>
+          <li>
+            <img src="https://m.media-amazon.com/images/I/51eoIrGllML._SL600_.jpg" alt="" loading="lazy" referrerpolicy="no-referrer" />
+            <span>
+              <b>From Idea to Proposal</b>
+              <span class="d" data-en>A 108-page thesis and research proposal workbook for Master's and PhD students.</span>
+              <span class="d" data-bm>Buku kerja cadangan tesis dan penyelidikan setebal 108 halaman untuk pelajar Sarjana dan PhD.</span>
+              <a class="s" href="https://www.amazon.com/dp/B0HRFGWH55" target="_blank" rel="noopener noreferrer"><span data-en>Paperback</span><span data-bm>Kulit lembut</span> ↗</a>
+              <a class="s" href="https://www.etsy.com/listing/4627503337/thesis-and-research-proposal-workbook" target="_blank" rel="noopener noreferrer"><span data-en>Printable (Etsy)</span><span data-bm>Boleh cetak (Etsy)</span> ↗</a>
+            </span>
+          </li>
+        </ul>
       </section>
 
       <footer>
